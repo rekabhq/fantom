@@ -12,6 +12,8 @@ import 'package:io/ansi.dart' as ansi;
 Logger logger = Logger.standard();
 final _ansiPen = AnsiPen();
 
+// remove other ansti-color libraries and try tint package to colorize
+
 /// Logger for fantom
 class Log {
   /// Prints sucess message
