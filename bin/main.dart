@@ -1,5 +1,5 @@
-import 'dart:io';
+import 'package:fantom/fantom.dart';
 
-void main(List<String> args) async {
-  exit(0);
+Future main(List<String> args) async {
+  await FantomCli().run(args);
 }

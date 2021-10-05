@@ -14,6 +14,8 @@ dependencies:
   cli_notify: ^0.0.3
   console: ^4.1.0
   cli_util: ^0.3.4
+  io: ^1.0.3
+  ansicolor: ^2.0.1
 
 dev_dependencies:
   flutter_lints: ^1.0.0
