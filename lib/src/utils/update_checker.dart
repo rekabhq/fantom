@@ -50,21 +50,17 @@ class UpdateChecker {
       if (needUpdate) {
         Log.info('new version of fantom is available');
         final updateCmd = 'pub global activate $packageName'.cyan();
-        final current = '$currentVersion'.grey();
-        final latest = '$latestVersion'.green();
+        final current = currentVersion.black().onRed();
+        final latest = latestVersion.black().onGreen();
 
-        print(
-          '\n\n\n___________________________________________________\n\n'.yellow(),
-        );
+        Log.divider();
         print(
           'Update Available '
           '$current → $latest ',
         );
         print('Run $updateCmd to update');
         print('Changelog: ${_changelogUrl(packageName)}');
-        print(
-          '\n___________________________________________________\n\n\n'.yellow(),
-        );
+        Log.divider();
         return;
       }
       return;

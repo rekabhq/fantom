@@ -32,6 +32,7 @@ class GenerateCommand extends BaseCommand<GenerateCommandArguments> {
   @override
   FutureOr<int> runCommand(GenerateCommandArguments arguments) async {
     Log.info('📚 Reading openapi document from path');
+    Log.fine('this line should be green');
     Log.spacer();
     await runFromCmd('java', args: ['--version']);
     await 0.3.secondsDelay();
@@ -39,7 +40,7 @@ class GenerateCommand extends BaseCommand<GenerateCommandArguments> {
     await runFromCmd('flutter', args: ['--version']);
     Log.spacer();
     var progress = Log.progress('⚙️ ⚙️ ⚙️  generating module files');
-    await 4.secondsDelay();
+    await 2.secondsDelay();
     progress.finish(showTiming: true);
     Log.divider();
     Log.fine('🦄 module generated successfuly, you\'re good to go');

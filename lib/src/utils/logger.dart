@@ -6,13 +6,14 @@ import 'dart:io' as io;
 import 'package:ansicolor/ansicolor.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:io/ansi.dart' as ansi;
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid
+
+// TODO - for some reason when we try to colorize the strings using ansi color libraries like tint and others here
+// it will only result in orange color . WHYYYYYYYYYYYYYYYY?
 
 /// Sets default logger mode
 Logger logger = Logger.standard();
 final _ansiPen = AnsiPen();
-
-// remove other ansti-color libraries and try tint package to colorize
 
 /// Logger for fantom
 class Log {
