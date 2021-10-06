@@ -21,8 +21,8 @@ dependencies:
 dev_dependencies:
   flutter_lints: ^1.0.0
 
-fantom:
-  path: example/openapi-files/petstore.openapi.yaml
-  output: example/module
-  # models-output: example/models
-  apis-output: example/apis
+# fantom:
+#   path: example/openapi-files/petstore.openapi.yaml
+#   output: example/module
+#   # models-output: example/models
+#   # apis-output: example/apis

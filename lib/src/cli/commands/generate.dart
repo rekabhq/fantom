@@ -9,6 +9,21 @@ import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 
+/// generates network client module from openapi document
+///
+///
+/// examples of how this command can be run :
+///
+/// generate
+///
+/// generate -c fantom.yaml
+///
+/// generate -c some-config.yaml
+///
+/// generate --path path/to/openapi --output path/to/module/output
+///
+/// generate --path path/to/openapi --models-output path/output/models --apis-output path/output/apis
+///
 class GenerateCommand extends BaseCommand<GenerateArgs> {
   GenerateCommand() : super(name: 'generate', description: 'generates network client module from openapi document');
 
