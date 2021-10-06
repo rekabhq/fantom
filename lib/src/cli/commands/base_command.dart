@@ -4,14 +4,14 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:fantom/src/utils/constants.dart';
 
-/// [BaseCommand] is a generic CLI Command that can be added to fantom-cli
+/// [BaseCommand] is a generic CLI Command which is inherited to add more commands to fantom-cli
 ///
-/// [BaseCommand] has an argument object of type [T] which will be created from cli options input user has entered
-/// and later will be used by [runCommand] method. [runCommand] does the actual that [BaseCommand] implementations are
+/// [BaseCommand] has an argument object of type [T] which will be created from cli options user has entered
+/// and later will be used by [runCommand] method. [runCommand] does the actual work that [BaseCommand] implementations are
 /// supposed to do.
 ///
-/// to create a new CustomCommand that extends [BaseCommand] a [name], [description] of the command and at last
-/// 3 lifecycle callbacks which are [defineCliOptions], [createArguments] and [runCommand] must be implemented
+/// to create a new CustomCommand that extends [BaseCommand] a [name], [description] of the command and are required
+/// also 3 lifecycle callbacks which are [defineCliOptions], [createArguments] and [runCommand] must be implemented
 ///
 /// [BaseCommand]'s lifecycle method are ran in the said order and note that [runCommand] will be called immediately after
 /// [createArguments] and uses its return type as arguments

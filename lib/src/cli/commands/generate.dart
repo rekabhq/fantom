@@ -64,8 +64,8 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
         path: inputOpenApiFilePath,
         notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
       );
+      // check if user wants to generate module as part of the project where models and apis are in separate folders
       if (outputModelsPath != null && outputApisPath != null) {
-        // at this point we don't want to create network client as a module since models and apis path are separate
         var modelsDirectory = await getDirectoryInPath(
           path: outputModelsPath,
           directoryPathIsNotValid: '(models-output | m) directory path is not valid',
@@ -76,12 +76,13 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
           directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
         );
 
-        return GenerateSeparateModelsAndApisArgs(
+        return GenerateAsPartOfProject(
           inputOpenapiFilePath: openApiFile,
           outputModelsPath: modelsDirectory,
           outputApisPath: apisDirectory,
         );
       } else {
+        // warning user
         if (outputModelsPath != null || outputApisPath != null) {
           Log.divider();
           Log.warning(
@@ -95,7 +96,8 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
           path: outputModulePath,
           directoryPathIsNotValid: '(output | o) module directory path is not provided or not valid',
         );
-        return GenerateAsModuleArgs(inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
+        return GenerateAsStandAloneModuleArgs(
+            inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
       }
     } else if (fantomConfigPath.isNotNullOrBlank) {
       var file = await getFileInPath(
@@ -132,10 +134,10 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
 
   @override
   FutureOr<int> runCommand(GenerateArgs arguments) async {
-    if (arguments is GenerateAsModuleArgs) {
+    if (arguments is GenerateAsStandAloneModuleArgs) {
       Log.debug(arguments);
       // TODO generate client as a standalone module and return the correct exit code
-    } else if (arguments is GenerateSeparateModelsAndApisArgs) {
+    } else if (arguments is GenerateAsPartOfProject) {
       // TODO generate client not as a module but part of the project with models and apis in separate packages
       // TODO and return the correct exit code
       Log.debug(arguments);
@@ -173,7 +175,7 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
         directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
       );
 
-      return GenerateSeparateModelsAndApisArgs(
+      return GenerateAsPartOfProject(
         inputOpenapiFilePath: openApiFile,
         outputModelsPath: modelsDirectory,
         outputApisPath: apisDirectory,
@@ -192,18 +194,19 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
         path: moduleOutput,
         directoryPathIsNotValid: '(output | o) module directory path is not valid or not provided',
       );
-      return GenerateAsModuleArgs(inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
+      return GenerateAsStandAloneModuleArgs(inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
     }
   }
 }
 
 class GenerateArgs {}
 
-class GenerateAsModuleArgs extends GenerateArgs {
+/// this argument is used by generate command to generate the fantom client as a standalone module
+class GenerateAsStandAloneModuleArgs extends GenerateArgs {
   final File inputOpenapiFilePath;
   final Directory outputModulePath;
 
-  GenerateAsModuleArgs({
+  GenerateAsStandAloneModuleArgs({
     required this.inputOpenapiFilePath,
     required this.outputModulePath,
   });
@@ -215,12 +218,14 @@ class GenerateAsModuleArgs extends GenerateArgs {
   }
 }
 
-class GenerateSeparateModelsAndApisArgs extends GenerateArgs {
+/// this argument is used by generate command to generate the fantom client as part of the user's project
+/// where models and apis can be generated in different directories.
+class GenerateAsPartOfProject extends GenerateArgs {
   final File inputOpenapiFilePath;
   final Directory outputModelsPath;
   final Directory outputApisPath;
 
-  GenerateSeparateModelsAndApisArgs({
+  GenerateAsPartOfProject({
     required this.inputOpenapiFilePath,
     required this.outputModelsPath,
     required this.outputApisPath,

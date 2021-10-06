@@ -19,9 +19,8 @@ class FantomCli extends CommandRunner<int> {
     try {
       await _checkIfNewVersionOfThisLibraryIsAvailable();
       final argResults = parse(args);
-      await runCommand(argResults);
-      // TODO - we should return the correct exit code here
-      return ExitCode.success.code;
+      var exitCode = await runCommand(argResults);
+      return exitCode ?? -1;
     } catch (e, stacktrace) {
       handleExceptions(e, stacktrace);
       if (e is FantomException) {
