@@ -20,7 +20,7 @@ class ValidateCommand extends BaseCommand<ValidateCommandArgs> {
   }
 
   @override
-  FutureOr<ValidateCommandArgs> createArgumnets(ArgResults argResults) {
+  FutureOr<ValidateCommandArgs> createArguments(ArgResults argResults) {
     return ValidateCommandArgs();
   }
 

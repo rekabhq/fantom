@@ -37,7 +37,7 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
   }
 
   @override
-  FutureOr<GenerateArgs> createArgumnets(ArgResults argResults) async {
+  FutureOr<GenerateArgs> createArguments(ArgResults argResults) async {
     String? fantomConfigPath;
     String? inputOpenApiFilePath;
     String? outputModulePath;
