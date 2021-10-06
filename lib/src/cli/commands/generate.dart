@@ -62,18 +62,18 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     if (inputOpenApiFilePath.isNotNullOrBlank) {
       var openApiFile = await getFileInPath(
         path: inputOpenApiFilePath,
-        notFoundErrorMessage: 'openapi file path is either not provided or invalid',
+        notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
       );
       if (outputModelsPath != null && outputApisPath != null) {
         // at this point we don't want to create network client as a module since models and apis path are separate
         var modelsDirectory = await getDirectoryInPath(
           path: outputModelsPath,
-          directoryPathIsNotValid: 'Output models directory path is not valid',
+          directoryPathIsNotValid: '(models-output | m) directory path is not valid',
         );
 
         var apisDirectory = await getDirectoryInPath(
           path: outputApisPath,
-          directoryPathIsNotValid: 'Output Apis directory path is not valid',
+          directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
         );
 
         return GenerateSeparateModelsAndApisArgs(
@@ -86,21 +86,21 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
           Log.divider();
           Log.warning(
             'If you want to generate models and api in separate directories in your project instead '
-            'of generating the whole fantom client in a module you must provide both (models-output) and (apis-output) '
-            'arguments, if not fantom client will be generated in a module if (output) argument is provided',
+            'of generating the whole fantom client in a module you must provide both (models-output | m) and (apis-output | a) '
+            'arguments, if not fantom client will be generated in a module if (output | o) argument is provided',
           );
           Log.divider();
         }
         var outputModuleDirectory = await getDirectoryInPath(
           path: outputModulePath,
-          directoryPathIsNotValid: 'Output module directory path is not valid',
+          directoryPathIsNotValid: '(output | o) module directory path is not provided or not valid',
         );
         return GenerateAsModuleArgs(inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
       }
     } else if (fantomConfigPath.isNotNullOrBlank) {
       var file = await getFileInPath(
         path: fantomConfigPath,
-        notFoundErrorMessage: 'Config file path is invalid',
+        notFoundErrorMessage: '(config | c) file path is invalid',
       );
       var config = await readJsonOrYamlFile(file);
       return _getGenerateArgsFromFantomConfig(config);
@@ -134,7 +134,10 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
   FutureOr<int> runCommand(GenerateArgs arguments) async {
     if (arguments is GenerateAsModuleArgs) {
       Log.debug(arguments);
+      // TODO generate client as a standalone module and return the correct exit code
     } else if (arguments is GenerateSeparateModelsAndApisArgs) {
+      // TODO generate client not as a module but part of the project with models and apis in separate packages
+      // TODO and return the correct exit code
       Log.debug(arguments);
     } else {
       throw Exception(
@@ -142,7 +145,6 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
         'if you\'re seeing this message please open an issue',
       );
     }
-    // TODO - we should return the correct exit code here
     return 0;
   }
 
@@ -157,18 +159,18 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     String? apisOutput = fantomConfig.getValue('apis-output');
     var openApiFile = await getFileInPath(
       path: path,
-      notFoundErrorMessage: 'openapi file path is either not provided or invalid',
+      notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
     );
     if (modelsOutput != null && apisOutput != null) {
       // at this point we don't want to create network client as a module since models and apis path are separate
       var modelsDirectory = await getDirectoryInPath(
         path: modelsOutput,
-        directoryPathIsNotValid: 'Output models directory path is not valid',
+        directoryPathIsNotValid: '(models-output | m) directory path is not valid',
       );
 
       var apisDirectory = await getDirectoryInPath(
         path: apisOutput,
-        directoryPathIsNotValid: 'Output Apis directory path is not valid',
+        directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
       );
 
       return GenerateSeparateModelsAndApisArgs(
@@ -188,7 +190,7 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
       }
       var outputModuleDirectory = await getDirectoryInPath(
         path: moduleOutput,
-        directoryPathIsNotValid: 'Output module directory path is not valid',
+        directoryPathIsNotValid: '(output | o) module directory path is not valid or not provided',
       );
       return GenerateAsModuleArgs(inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
     }
