@@ -20,9 +20,6 @@ class FantomCli extends CommandRunner<int> {
       await _checkIfNewVersionOfThisLibraryIsAvailable();
       final argResults = parse(args);
       await runCommand(argResults);
-      if (ConsoleController.isCli) {
-        await sharedStdIn.terminate();
-      }
       // TODO - we should return the correct exit code here
       return ExitCode.success.code;
     } catch (e, stacktrace) {

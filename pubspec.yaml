@@ -16,6 +16,13 @@ dependencies:
   io: ^1.0.3
   ansicolor: ^2.0.1
   tint: ^2.0.0
+  yaml: ^3.1.0
 
 dev_dependencies:
   flutter_lints: ^1.0.0
+
+fantom:
+  path: example/openapi-files/petstore.openapi.yaml
+  output: example/module
+  # models-output: example/models
+  apis-output: example/apis

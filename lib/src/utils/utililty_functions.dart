@@ -1,0 +1,58 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:fantom/src/exceptions/base.dart';
+import 'package:fantom/src/exceptions/types.dart';
+import 'package:fantom/src/extensions/extensions.dart';
+import 'package:yaml/yaml.dart';
+
+/// checks [path] to file and a file exists there a file will be returned otherwise
+/// provided [FantomException] will be thrown
+Future<File> getFileInPath({required String? path, required String notFoundErrorMessage}) async {
+  if (path.isNullOrBlank) {
+    throw NoSuchFileException(notFoundErrorMessage, 'path of file was null or blank');
+  }
+  var file = File(path!);
+  if (await file.exists()) {
+    return file;
+  } else {
+    throw NoSuchFileException(notFoundErrorMessage, path);
+  }
+}
+
+Future<Directory> getDirectoryInPath({required String? path, required String directoryPathIsNotValid}) async {
+  if (path.isNullOrBlank) {
+    throw CannotCreateDirectoryException(directoryPathIsNotValid, 'path of directory was null or blank');
+  }
+  var directory = Directory(path!);
+
+  try {
+    if (await directory.exists()) {
+      return directory;
+    } else {
+      await directory.create(recursive: true);
+      return directory;
+    }
+  } catch (e, _) {
+    throw CannotCreateDirectoryException(directoryPathIsNotValid, path);
+  }
+}
+
+Future<Map<String, dynamic>> readJsonOrYamlFile(File file) async {
+  var fileContent = await file.readAsString();
+  try {
+    if (fileContent.startsWith('{')) {
+      var json = jsonDecode(fileContent);
+      return json;
+    } else {
+      YamlMap yaml = loadYaml(fileContent);
+      var map = yaml.map((key, value) => MapEntry(key.toString(), value));
+      return map;
+    }
+  } catch (e, _) {
+    throw UnsupportedFileException(
+      'Unsupported File: make sure the file content is in correct json or yaml format',
+      file.path,
+    );
+  }
+}

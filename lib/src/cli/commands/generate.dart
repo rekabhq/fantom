@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
+import 'package:fantom/src/exceptions/types.dart';
 import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';
-import 'package:fantom/src/utils/process_manager.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 
-class GenerateCommand extends BaseCommand<GenerateCommandArguments> {
+class GenerateCommand extends BaseCommand<GenerateArgs> {
   GenerateCommand() : super(name: 'generate', description: 'generates network client module from openapi document');
 
   @override
@@ -19,8 +22,7 @@ class GenerateCommand extends BaseCommand<GenerateCommandArguments> {
   }
 
   @override
-  FutureOr<GenerateCommandArguments> createArgumnets(ArgResults argResults) {
-    Log.debug(argResults.arguments.toString());
+  FutureOr<GenerateArgs> createArgumnets(ArgResults argResults) async {
     String? fantomConfigPath;
     String? inputOpenApiFilePath;
     String? outputModulePath;
@@ -42,49 +44,174 @@ class GenerateCommand extends BaseCommand<GenerateCommandArguments> {
     if (argResults.wasParsed('apis-output')) {
       outputApisPath = argResults['apis-output'];
     }
-    Log.debug(fantomConfigPath ?? '');
-    Log.debug(inputOpenApiFilePath ?? '');
-    Log.debug(outputModulePath ?? '');
-    Log.debug(outputModelsPath ?? '');
-    Log.debug(outputApisPath ?? '');
-    return GenerateCommandArguments(
-      inputOpenapiFilePath: 'fake/path/to/file',
-      outputModulePath: 'fake/path/to/modulePath',
-      outputModelsPath: 'fake/path/to/modelsPath',
-      outputApisPath: 'fake/path/to/apisPath',
-    );
+    if (inputOpenApiFilePath.isNotNullOrBlank) {
+      var openApiFile = await getFileInPath(
+        path: inputOpenApiFilePath,
+        notFoundErrorMessage: 'openapi file path is either not provided or invalid',
+      );
+      if (outputModelsPath != null && outputApisPath != null) {
+        // at this point we don't want to create network client as a module since models and apis path are separate
+        var modelsDirectory = await getDirectoryInPath(
+          path: outputModelsPath,
+          directoryPathIsNotValid: 'Output models directory path is not valid',
+        );
+
+        var apisDirectory = await getDirectoryInPath(
+          path: outputApisPath,
+          directoryPathIsNotValid: 'Output Apis directory path is not valid',
+        );
+
+        return GenerateSeparateModelsAndApisArgs(
+          inputOpenapiFilePath: openApiFile,
+          outputModelsPath: modelsDirectory,
+          outputApisPath: apisDirectory,
+        );
+      } else {
+        if (outputModelsPath != null || outputApisPath != null) {
+          Log.divider();
+          Log.warning(
+            'If you want to generate models and api in separate directories in your project instead '
+            'of generating the whole fantom client in a module you must provide both (models-output) and (apis-output) '
+            'arguments, if not fantom client will be generated in a module if (output) argument is provided',
+          );
+          Log.divider();
+        }
+        var outputModuleDirectory = await getDirectoryInPath(
+          path: outputModulePath,
+          directoryPathIsNotValid: 'Output module directory path is not valid',
+        );
+        return GenerateAsModuleArgs(inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
+      }
+    } else if (fantomConfigPath.isNotNullOrBlank) {
+      var file = await getFileInPath(
+        path: fantomConfigPath,
+        notFoundErrorMessage: 'Config file path is invalid',
+      );
+      var config = await readJsonOrYamlFile(file);
+      return _getGenerateArgsFromFantomConfig(config);
+    } else {
+      var children = kCurrentDirectory.listSync();
+      Map<String, dynamic>? config;
+      File? fantomFile;
+      File? pubspecFile;
+      for (var element in children) {
+        if (element.path.endsWith('fantom.yaml')) {
+          fantomFile = File(element.path);
+        }
+        if (element.path.endsWith('pubspec.yaml')) {
+          pubspecFile = File(element.path);
+        }
+      }
+      if (fantomFile != null) {
+        config = await readJsonOrYamlFile(fantomFile);
+      } else if (pubspecFile != null) {
+        config = await readJsonOrYamlFile(pubspecFile);
+      } else {
+        throw GenerationConfigNotProvidedException();
+      }
+      return _getGenerateArgsFromFantomConfig(config);
+      // check if current dir has a fantom.yaml or pubspec.yaml with config
+      // else throw error
+    }
   }
 
   @override
-  FutureOr<int> runCommand(GenerateCommandArguments arguments) async {
-    Log.info('📚 Reading openapi document from path');
-    Log.fine('this line should be green');
-    Log.spacer();
-    await runFromCmd('java', args: ['--version']);
-    await 0.3.secondsDelay();
-    Log.spacer();
-    await runFromCmd('flutter', args: ['--version']);
-    Log.spacer();
-    var progress = Log.progress('⚙️ ⚙️ ⚙️  generating module files');
-    await 2.secondsDelay();
-    progress.finish(showTiming: true);
-    Log.divider();
-    Log.fine('🦄 module generated successfuly, you\'re good to go');
+  FutureOr<int> runCommand(GenerateArgs arguments) async {
+    if (arguments is GenerateAsModuleArgs) {
+      Log.debug(arguments);
+    } else if (arguments is GenerateSeparateModelsAndApisArgs) {
+      Log.debug(arguments);
+    } else {
+      throw Exception(
+        'Unknown arguments type for generate command'
+        'if you\'re seeing this message please open an issue',
+      );
+    }
     // TODO - we should return the correct exit code here
     return 0;
   }
+
+  Future<GenerateArgs> _getGenerateArgsFromFantomConfig(Map<String, dynamic> config) async {
+    if (!config.containsKey('fantom')) {
+      throw GenerationConfigNotProvidedException();
+    }
+    Map fantomConfig = config['fantom'];
+    var path = fantomConfig.getValue('path');
+    String? moduleOutput = fantomConfig.getValue('output');
+    String? modelsOutput = fantomConfig.getValue('models-output');
+    String? apisOutput = fantomConfig.getValue('apis-output');
+    var openApiFile = await getFileInPath(
+      path: path,
+      notFoundErrorMessage: 'openapi file path is either not provided or invalid',
+    );
+    if (modelsOutput != null && apisOutput != null) {
+      // at this point we don't want to create network client as a module since models and apis path are separate
+      var modelsDirectory = await getDirectoryInPath(
+        path: modelsOutput,
+        directoryPathIsNotValid: 'Output models directory path is not valid',
+      );
+
+      var apisDirectory = await getDirectoryInPath(
+        path: apisOutput,
+        directoryPathIsNotValid: 'Output Apis directory path is not valid',
+      );
+
+      return GenerateSeparateModelsAndApisArgs(
+        inputOpenapiFilePath: openApiFile,
+        outputModelsPath: modelsDirectory,
+        outputApisPath: apisDirectory,
+      );
+    } else {
+      if (modelsOutput != null || apisOutput != null) {
+        Log.divider();
+        Log.warning(
+          'If you want to generate models and api in separate directories in your project instead '
+          'of generating the whole fantom client in a module you must provide both (models-output) and (apis-output) '
+          'arguments, if not fantom client will be generated in a module if (output) argument is provided',
+        );
+        Log.divider();
+      }
+      var outputModuleDirectory = await getDirectoryInPath(
+        path: moduleOutput,
+        directoryPathIsNotValid: 'Output module directory path is not valid',
+      );
+      return GenerateAsModuleArgs(inputOpenapiFilePath: openApiFile, outputModulePath: outputModuleDirectory);
+    }
+  }
 }
 
-class GenerateCommandArguments {
-  final String inputOpenapiFilePath;
-  final String outputModulePath;
-  final String? outputModelsPath;
-  final String? outputApisPath;
+class GenerateArgs {}
 
-  GenerateCommandArguments({
+class GenerateAsModuleArgs extends GenerateArgs {
+  final File inputOpenapiFilePath;
+  final Directory outputModulePath;
+
+  GenerateAsModuleArgs({
     required this.inputOpenapiFilePath,
     required this.outputModulePath,
-    this.outputModelsPath,
-    this.outputApisPath,
   });
+
+  @override
+  String toString() {
+    var map = {'path': inputOpenapiFilePath, 'output': outputModulePath};
+    return map.toString();
+  }
+}
+
+class GenerateSeparateModelsAndApisArgs extends GenerateArgs {
+  final File inputOpenapiFilePath;
+  final Directory outputModelsPath;
+  final Directory outputApisPath;
+
+  GenerateSeparateModelsAndApisArgs({
+    required this.inputOpenapiFilePath,
+    required this.outputModelsPath,
+    required this.outputApisPath,
+  });
+
+  @override
+  String toString() {
+    var map = {'path': inputOpenapiFilePath, 'models-output': outputModelsPath, 'apis-output': outputApisPath};
+    return map.toString();
+  }
 }
