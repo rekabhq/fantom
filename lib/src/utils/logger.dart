@@ -35,12 +35,12 @@ class Log {
     consoleController.stdout.add(utf8.encode(message));
   }
 
-  static void debug(String message) {
+  static void debug(message) {
     _ansiPen
       ..rgb(r: 0, g: 1, b: 1, bg: true)
       ..black();
-    print(_ansiPen(message));
-    consoleController.stdout.add(utf8.encode(message));
+    print(_ansiPen(message.toString()));
+    consoleController.stdout.add(utf8.encode(message.toString()));
   }
 
   /// Prints [message] with error formatting

@@ -7,20 +7,46 @@ import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/process_manager.dart';
 
 class GenerateCommand extends BaseCommand<GenerateCommandArguments> {
-  GenerateCommand()
-      : super(
-          name: 'generate',
-          description: 'generates network client module from openapi document',
-        );
+  GenerateCommand() : super(name: 'generate', description: 'generates network client module from openapi document');
 
   @override
   void defineCliOptions(ArgParser argParser) {
     argParser.addOption('config', abbr: 'c', help: 'gathers all the argument for generate command from a yaml file');
+    argParser.addOption('path', abbr: 'p', help: 'path to the yaml/json openapi file');
+    argParser.addOption('output', abbr: 'o', help: 'path where network module should be generated in');
+    argParser.addOption('models-output', abbr: 'm', help: 'path where generated models will be stored in');
+    argParser.addOption('apis-output', abbr: 'a', help: 'path where generated apis will be stored in');
   }
 
   @override
   FutureOr<GenerateCommandArguments> createArgumnets(ArgResults argResults) {
-    //TODO - this should be overriden to return arguments from argResults
+    Log.debug(argResults.arguments.toString());
+    String? fantomConfigPath;
+    String? inputOpenApiFilePath;
+    String? outputModulePath;
+    String? outputModelsPath;
+    String? outputApisPath;
+    // getting cli options user entered
+    if (argResults.wasParsed('config')) {
+      fantomConfigPath = argResults['config'];
+    }
+    if (argResults.wasParsed('path')) {
+      inputOpenApiFilePath = argResults['path'];
+    }
+    if (argResults.wasParsed('output')) {
+      outputModulePath = argResults['output'];
+    }
+    if (argResults.wasParsed('models-output')) {
+      outputModelsPath = argResults['models-output'];
+    }
+    if (argResults.wasParsed('apis-output')) {
+      outputApisPath = argResults['apis-output'];
+    }
+    Log.debug(fantomConfigPath ?? '');
+    Log.debug(inputOpenApiFilePath ?? '');
+    Log.debug(outputModulePath ?? '');
+    Log.debug(outputModelsPath ?? '');
+    Log.debug(outputApisPath ?? '');
     return GenerateCommandArguments(
       inputOpenapiFilePath: 'fake/path/to/file',
       outputModulePath: 'fake/path/to/modulePath',
@@ -52,13 +78,13 @@ class GenerateCommand extends BaseCommand<GenerateCommandArguments> {
 class GenerateCommandArguments {
   final String inputOpenapiFilePath;
   final String outputModulePath;
-  final String outputModelsPath;
-  final String outputApisPath;
+  final String? outputModelsPath;
+  final String? outputApisPath;
 
   GenerateCommandArguments({
     required this.inputOpenapiFilePath,
     required this.outputModulePath,
-    required this.outputModelsPath,
-    required this.outputApisPath,
+    this.outputModelsPath,
+    this.outputApisPath,
   });
 }
