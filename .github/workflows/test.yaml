@@ -1,13 +1,13 @@
-name: Dart
+name: Test
 
 on:
   push:
-    branches: [ master, ci ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 jobs:
   test:
-    name: "${{ matrix.sdk-version }} / ${{ matrix.os }}"
+    name: "${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
