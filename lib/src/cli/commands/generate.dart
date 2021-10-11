@@ -158,7 +158,15 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     );
   }
 
+  /// checks if either both paths are null or both are not null and if not it will log a warning to the user
+  /// about the usercase of (models-output | m) cli option and (apis-output | a) cli option
   void _warnUser(String? outputModelsPath, String? outputApisPath) {
+    if (outputModelsPath == null && outputApisPath == null) {
+      return;
+    }
+    if (outputModelsPath != null && outputApisPath != null) {
+      return;
+    }
     if (outputModelsPath != null || outputApisPath != null) {
       Log.divider();
       Log.warning(
