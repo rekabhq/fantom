@@ -10,3 +10,4 @@ part 'request_body.dart';
 part 'response.dart';
 part 'responses.dart';
 part 'schema.dart';
+part 'parameter.dart';
