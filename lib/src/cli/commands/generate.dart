@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
-import 'package:fantom/src/exceptions/types.dart';
+import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/extensions/extensions.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';

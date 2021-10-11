@@ -1,8 +1,7 @@
 import 'package:args/command_runner.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/cli/commands/validate.dart';
-import 'package:fantom/src/exceptions/base.dart';
-import 'package:fantom/src/exceptions/utils.dart';
+import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/update_checker.dart';

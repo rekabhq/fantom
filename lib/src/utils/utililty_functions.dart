@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fantom/src/exceptions/base.dart';
-import 'package:fantom/src/exceptions/types.dart';
+import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/extensions/extensions.dart';
 import 'package:yaml/yaml.dart';
 

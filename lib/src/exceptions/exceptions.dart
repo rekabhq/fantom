@@ -1,6 +1,14 @@
-import 'package:fantom/src/exceptions/base.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:io/io.dart' as io;
+import 'package:fantom/src/utils/logger.dart';
+
+class FantomException implements Exception {
+  const FantomException(this.message, this.exitCode);
+
+  final String message;
+
+  final int exitCode;
+}
 
 class NoSuchFileException extends FantomException {
   NoSuchFileException(String message, String filePath)
@@ -37,4 +45,13 @@ class GenerationConfigNotProvidedException extends FantomException {
           ' of required arguments by $kPackageName cli. Please read the documentation for more info\n',
           io.ExitCode.noInput.code,
         );
+}
+
+void handleExceptions(e, stacktrace) {
+  if (e is FantomException) {
+    Log.error('❌❌ ${e.message}');
+  } else {
+    Log.error(e.toString());
+    Log.error(stacktrace.toString());
+  }
 }
