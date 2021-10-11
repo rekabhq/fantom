@@ -16,13 +16,24 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 ///
 /// generate
 ///
+/// generate --path path/to/openapi --output path/to/module/output
+///
+/// generate --path path/to/openapi --models-output path/output/models --apis-output path/output/apis
+///
 /// generate -c fantom.yaml
 ///
 /// generate -c some-config.yaml
 ///
-/// generate --path path/to/openapi --output path/to/module/output
+/// **NOTE**: note that config file must be either in json or yaml format and the config should be something like example
+/// below:
 ///
-/// generate --path path/to/openapi --models-output path/output/models --apis-output path/output/apis
+/// ```yaml
+///  fantom:
+///    path: path/to/openapi.yaml
+///    output: path/to/module
+///    models-output: path/to/models/output/dir
+///    apis-output: path/to/apis/output/dir
+///```
 ///
 class GenerateCommand extends BaseCommand<GenerateArgs> {
   GenerateCommand() : super(name: 'generate', description: 'generates network client module from openapi document');
@@ -96,6 +107,21 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     return 0;
   }
 
+  /// tries to read the user defined configuration for how to generate the fantom network client and
+  /// returns a [GenerateArgs] based on user's configuration.
+  ///
+  /// if file in [configFilePath] does not contain a fantom configuration [GenerationConfigNotProvidedException] will be thrown
+  ///
+  /// **NOTE**: note that config file must be either in json or yaml format and the config should be something like example
+  /// below:
+  ///
+  /// ```yaml
+  ///  fantom:
+  ///    path: path/to/openapi.yaml
+  ///    output: path/to/module
+  ///    models-output: path/to/models/output/dir
+  ///    apis-output: path/to/apis/output/dir
+  ///```
   Future<GenerateArgs> _getGenerateArgsFromFantomConfig(String configFilePath) async {
     var file = await getFileInPath(
       path: configFilePath,
@@ -123,6 +149,7 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     }
   }
 
+  /// tries to creates a [GenerateAsPartOfProjectArgs] from the given arguments
   Future<GenerateAsPartOfProjectArgs> _createGenerateAsPartOfProjectArgs(
     Map<String, dynamic> openApiMap,
     String outputModelsPath,
@@ -145,8 +172,11 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     );
   }
 
-  FutureOr<GenerateArgs> _createGenerateAsStandAlonePackageArgs(
-      Map<String, dynamic> openApiMap, String? outputModulePath) async {
+  /// tries to creates a [GenerateAsStandAlonePackageArgs] from the given arguments
+  FutureOr<GenerateAsStandAlonePackageArgs> _createGenerateAsStandAlonePackageArgs(
+    Map<String, dynamic> openApiMap,
+    String? outputModulePath,
+  ) async {
     // warning user
     var outputModuleDirectory = await getDirectoryInPath(
       path: outputModulePath,
@@ -159,7 +189,8 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
   }
 
   /// checks if either both paths are null or both are not null and if not it will log a warning to the user
-  /// about the usercase of (models-output | m) cli option and (apis-output | a) cli option
+  /// about the usercase of (models-output | m) cli option and (apis-output | a) cli option since if one of these
+  /// cli options is provided the other one is needed as well
   void _warnUser(String? outputModelsPath, String? outputApisPath) {
     if (outputModelsPath == null && outputApisPath == null) {
       return;
@@ -178,6 +209,14 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     }
   }
 
+  /// will try to find a fantom config in `pubspec.yaml` or `fantom.yaml` if said files exist in current directory
+  /// where the generate command is ran
+  ///
+  ///
+  /// this is useful for when when user has provided no options or config file when running the generate command
+  /// or in other words if user ran the following command from the command line without providing any options
+  ///
+  /// `$ fantom generate`
   Future<GenerateArgs> tryToCreateGenerateArgsWithoutAnyCliInput() async {
     var children = kCurrentDirectory.listSync();
     File? fantomFile;
