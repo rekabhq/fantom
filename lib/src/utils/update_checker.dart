@@ -1,3 +1,15 @@
+///
+/// this code has been copied here from the https://github.com/leoafarias/cli_notify
+///
+/// since bug fix and some changes where needed
+///
+/// TODO :  create a pull request to this repo and fix the bug
+///
+/// TODO :  create a pull request to this repo to allow developer to customzie the update log
+///
+///
+///
+
 import 'dart:convert';
 
 import 'package:fantom/src/utils/logger.dart';
