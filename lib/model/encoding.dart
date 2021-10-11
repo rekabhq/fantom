@@ -11,7 +11,7 @@ class Encoding {
 
   final bool? allowReserved;
 
-  Encoding({
+  const Encoding({
     required this.contentType,
     required this.headers,
     required this.style,
