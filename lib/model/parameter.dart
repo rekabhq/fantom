@@ -3,7 +3,8 @@ part of 'model.dart';
 class Parameter {
   final String name;
 
-  // described as [in] in documentation. but in is a keyword in Dart.
+  /// described as [in] in documentation.
+  /// but inو is a keyword in Dart.
   final String location;
 
   final String? description;
@@ -12,7 +13,8 @@ class Parameter {
 
   final bool? deprecated;
 
-  // this parameter is going to depreciate in the following versions of the Open Api Spec
+  /// this parameter is going to depreciate in
+  /// the following versions of the Open Api Spec
   final bool? allowEmptyValue;
 
   final String? style;
