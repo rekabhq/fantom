@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 class Responses {
-  final Map<StatusCode, Response> map;
+  final Map<String, Response> map;
 
   const Responses({
     required this.map,
