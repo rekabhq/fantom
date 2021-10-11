@@ -7,8 +7,6 @@ class Parameter {
   /// but inو is a keyword in Dart.
   final String location;
 
-  final String? description;
-
   final bool? required;
 
   final bool? deprecated;
@@ -30,7 +28,6 @@ class Parameter {
   const Parameter({
     required this.name,
     required this.location,
-    required this.description,
     required this.required,
     required this.deprecated,
     required this.allowEmptyValue,
