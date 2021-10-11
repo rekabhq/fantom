@@ -13,7 +13,7 @@ class Components {
 
   final Map<String, PathItem>? pathItems;
 
-  Components({
+  const Components({
     required this.schemas,
     required this.responses,
     required this.parameters,
