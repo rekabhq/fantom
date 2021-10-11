@@ -8,3 +8,4 @@ part 'response.dart';
 part 'responses.dart';
 part 'schema.dart';
 part 'parameter.dart';
+part 'request_body.dart';
