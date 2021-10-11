@@ -66,71 +66,15 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
       ).then((file) => readJsonOrYamlFile(file));
       // check if user wants to generate module as part of the project where models and apis are in separate folders
       if (outputModelsPath != null && outputApisPath != null) {
-        var modelsDirectory = await getDirectoryInPath(
-          path: outputModelsPath,
-          directoryPathIsNotValid: '(models-output | m) directory path is not valid',
-        );
-
-        var apisDirectory = await getDirectoryInPath(
-          path: outputApisPath,
-          directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
-        );
-
-        return GenerateAsPartOfProject(
-          openApi: openApiMap,
-          outputModelsPath: modelsDirectory,
-          outputApisPath: apisDirectory,
-        );
+        return _createGenerateAsPartOfProjectArgs(openApiMap, outputModelsPath, outputApisPath);
       } else {
-        // warning user
-        if (outputModelsPath != null || outputApisPath != null) {
-          Log.divider();
-          Log.warning(
-            'If you want to generate models and api in separate directories in your project instead '
-            'of generating the whole fantom client in a module you must provide both (models-output | m) and (apis-output | a) '
-            'arguments, if not fantom client will be generated in a module if (output | o) argument is provided',
-          );
-          Log.divider();
-        }
-        var outputModuleDirectory = await getDirectoryInPath(
-          path: outputModulePath,
-          directoryPathIsNotValid: '(output | o) module directory path is not provided or not valid',
-        );
-        return GenerateAsStandAlonePackageArgs(
-          inputOpenapiFilePath: openApiMap,
-          outputModulePath: outputModuleDirectory,
-        );
+        _warnUser(outputModelsPath, outputApisPath);
+        return _createGenerateAsStandAlonePackageArgs(openApiMap, outputModulePath);
       }
     } else if (fantomConfigPath.isNotNullOrBlank) {
-      var file = await getFileInPath(
-        path: fantomConfigPath,
-        notFoundErrorMessage: '(config | c) file path is invalid',
-      );
-      var config = await readJsonOrYamlFile(file);
-      return _getGenerateArgsFromFantomConfig(config);
+      return _getGenerateArgsFromFantomConfig(fantomConfigPath!);
     } else {
-      var children = kCurrentDirectory.listSync();
-      Map<String, dynamic>? config;
-      File? fantomFile;
-      File? pubspecFile;
-      for (var element in children) {
-        if (element.path.endsWith('fantom.yaml')) {
-          fantomFile = File(element.path);
-        }
-        if (element.path.endsWith('pubspec.yaml')) {
-          pubspecFile = File(element.path);
-        }
-      }
-      if (fantomFile != null) {
-        config = await readJsonOrYamlFile(fantomFile);
-      } else if (pubspecFile != null) {
-        config = await readJsonOrYamlFile(pubspecFile);
-      } else {
-        throw GenerationConfigNotProvidedException();
-      }
-      return _getGenerateArgsFromFantomConfig(config);
-      // check if current dir has a fantom.yaml or pubspec.yaml with config
-      // else throw error
+      return tryToCreateGenerateArgsWithoutAnyCliInput();
     }
   }
 
@@ -139,7 +83,7 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     if (arguments is GenerateAsStandAlonePackageArgs) {
       Log.debug(arguments);
       // TODO generate client as a standalone module and return the correct exit code
-    } else if (arguments is GenerateAsPartOfProject) {
+    } else if (arguments is GenerateAsPartOfProjectArgs) {
       // TODO generate client not as a module but part of the project with models and apis in separate packages
       // TODO and return the correct exit code
       Log.debug(arguments);
@@ -152,54 +96,98 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
     return 0;
   }
 
-  Future<GenerateArgs> _getGenerateArgsFromFantomConfig(Map<String, dynamic> config) async {
+  Future<GenerateArgs> _getGenerateArgsFromFantomConfig(String configFilePath) async {
+    var file = await getFileInPath(
+      path: configFilePath,
+      notFoundErrorMessage: '(config | c) file path is invalid',
+    );
+    var config = await readJsonOrYamlFile(file);
     if (!config.containsKey('fantom')) {
       throw GenerationConfigNotProvidedException();
     }
     Map fantomConfig = config['fantom'];
     var path = fantomConfig.getValue('path');
-    String? moduleOutput = fantomConfig.getValue('output');
-    String? modelsOutput = fantomConfig.getValue('models-output');
-    String? apisOutput = fantomConfig.getValue('apis-output');
+    String? outputModulePath = fantomConfig.getValue('output');
+    String? outputModelsPath = fantomConfig.getValue('models-output');
+    String? outputApisPath = fantomConfig.getValue('apis-output');
     var openApiMap = await getFileInPath(
       path: path,
       notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
     ).then((file) => readJsonOrYamlFile(file));
-    if (modelsOutput != null && apisOutput != null) {
+    if (outputModelsPath != null && outputApisPath != null) {
       // at this point we don't want to create network client as a module since models and apis path are separate
-      var modelsDirectory = await getDirectoryInPath(
-        path: modelsOutput,
-        directoryPathIsNotValid: '(models-output | m) directory path is not valid',
-      );
-
-      var apisDirectory = await getDirectoryInPath(
-        path: apisOutput,
-        directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
-      );
-
-      return GenerateAsPartOfProject(
-        openApi: openApiMap,
-        outputModelsPath: modelsDirectory,
-        outputApisPath: apisDirectory,
-      );
+      return _createGenerateAsPartOfProjectArgs(openApiMap, outputModelsPath, outputApisPath);
     } else {
-      if (modelsOutput != null || apisOutput != null) {
-        Log.divider();
-        Log.warning(
-          'If you want to generate models and api in separate directories in your project instead '
-          'of generating the whole fantom client in a module you must provide both (models-output) and (apis-output) '
-          'arguments, if not fantom client will be generated in a module if (output) argument is provided',
-        );
-        Log.divider();
+      _warnUser(outputModelsPath, outputApisPath);
+      return _createGenerateAsStandAlonePackageArgs(openApiMap, outputModulePath);
+    }
+  }
+
+  Future<GenerateAsPartOfProjectArgs> _createGenerateAsPartOfProjectArgs(
+    Map<String, dynamic> openApiMap,
+    String outputModelsPath,
+    String outputApisPath,
+  ) async {
+    var modelsDirectory = await getDirectoryInPath(
+      path: outputModelsPath,
+      directoryPathIsNotValid: '(models-output | m) directory path is not valid',
+    );
+
+    var apisDirectory = await getDirectoryInPath(
+      path: outputApisPath,
+      directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
+    );
+
+    return GenerateAsPartOfProjectArgs(
+      openApi: openApiMap,
+      outputModelsPath: modelsDirectory,
+      outputApisPath: apisDirectory,
+    );
+  }
+
+  FutureOr<GenerateArgs> _createGenerateAsStandAlonePackageArgs(
+      Map<String, dynamic> openApiMap, String? outputModulePath) async {
+    // warning user
+    var outputModuleDirectory = await getDirectoryInPath(
+      path: outputModulePath,
+      directoryPathIsNotValid: '(output | o) module directory path is not provided or not valid',
+    );
+    return GenerateAsStandAlonePackageArgs(
+      inputOpenapiFilePath: openApiMap,
+      outputModulePath: outputModuleDirectory,
+    );
+  }
+
+  void _warnUser(String? outputModelsPath, String? outputApisPath) {
+    if (outputModelsPath != null || outputApisPath != null) {
+      Log.divider();
+      Log.warning(
+        'If you want to generate models and api in separate directories in your project instead '
+        'of generating the whole fantom client in a module you must provide both (models-output | m) and (apis-output | a) '
+        'arguments, if not fantom client will be generated in a module if (output | o) argument is provided',
+      );
+      Log.divider();
+    }
+  }
+
+  Future<GenerateArgs> tryToCreateGenerateArgsWithoutAnyCliInput() async {
+    var children = kCurrentDirectory.listSync();
+    File? fantomFile;
+    File? pubspecFile;
+    for (var element in children) {
+      if (element.path.endsWith('fantom.yaml')) {
+        fantomFile = File(element.path);
       }
-      var outputModuleDirectory = await getDirectoryInPath(
-        path: moduleOutput,
-        directoryPathIsNotValid: '(output | o) module directory path is not valid or not provided',
-      );
-      return GenerateAsStandAlonePackageArgs(
-        inputOpenapiFilePath: openApiMap,
-        outputModulePath: outputModuleDirectory,
-      );
+      if (element.path.endsWith('pubspec.yaml')) {
+        pubspecFile = File(element.path);
+      }
+    }
+    if (fantomFile != null) {
+      return _getGenerateArgsFromFantomConfig(fantomFile.path);
+    } else if (pubspecFile != null) {
+      return _getGenerateArgsFromFantomConfig(pubspecFile.path);
+    } else {
+      throw GenerationConfigNotProvidedException();
     }
   }
 }
@@ -225,12 +213,12 @@ class GenerateAsStandAlonePackageArgs extends GenerateArgs {
 
 /// this argument is used by generate command to generate the fantom client as part of the user's project
 /// where models and apis can be generated in different directories.
-class GenerateAsPartOfProject extends GenerateArgs {
+class GenerateAsPartOfProjectArgs extends GenerateArgs {
   final Map<String, dynamic> openApi;
   final Directory outputModelsPath;
   final Directory outputApisPath;
 
-  GenerateAsPartOfProject({
+  GenerateAsPartOfProjectArgs({
     required this.openApi,
     required this.outputModelsPath,
     required this.outputApisPath,
