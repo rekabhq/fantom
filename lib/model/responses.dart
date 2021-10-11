@@ -1,4 +1,4 @@
-import 'package:fantom/model/model.dart';
+part of 'model.dart';
 
 class Responses {
   final Map<StatusCode, Response> map;
