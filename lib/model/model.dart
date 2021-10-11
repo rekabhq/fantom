@@ -6,6 +6,7 @@ part 'open_api.dart';
 part 'operation.dart';
 part 'parameter.dart';
 part 'paths.dart';
+part 'path_item.dart';
 part 'request_body.dart';
 part 'response.dart';
 part 'responses.dart';
