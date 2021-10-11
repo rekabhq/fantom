@@ -1,9 +1,9 @@
 part of 'model.dart';
 
 class Responses {
-  final Map<String, Response> map;
+  final Map<String, Response>? fields;
 
   const Responses({
-    required this.map,
+    required this.fields,
   });
 }
