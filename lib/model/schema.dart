@@ -19,7 +19,7 @@ class Schema {
   /// but [enum], is a keyword in Dart.
   final List? enumerated;
 
-  final Reference<Schema>? items;
+  final Referenceable<Schema>? items;
 
   final Map<String, Referenceable<Schema>>? properties;
 
