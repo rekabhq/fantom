@@ -28,6 +28,12 @@ Fantom is a cli tool for generating API layer based on OpenAPI Spec.
     **Note:** it will generates a package called `network` inside `packages/network` from where `fantom generate` command runs.
     
  - Define configs inside `pubspec.yaml`
+     ```shell
+    $ fantom generate 
+    # or
+    $ fantom generate pubspec.yaml
+    ```
+    Your `pubspec.yaml` file:
     ```yaml
     fantom:
       - openapi: openapi.yaml   
