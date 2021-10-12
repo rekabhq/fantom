@@ -1,4 +1,6 @@
 import 'package:args/command_runner.dart';
+import 'package:fantom/fantom.dart';
+import 'package:fantom/src/cli/commands/base_command.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/cli/commands/validate.dart';
 import 'package:fantom/src/exceptions/exceptions.dart';
@@ -8,9 +10,17 @@ import 'package:fantom/src/utils/update_checker.dart';
 import 'package:io/io.dart';
 
 class FantomCli extends CommandRunner<int> {
-  FantomCli() : super(kCliName, 'OpenApi Network Client Generator and much more') {
-    addCommand(ValidateCommand());
-    addCommand(GenerateCommand());
+  static FantomCli createDefaultInstance() {
+    return FantomCli([
+      GenerateCommand(),
+      ValidateCommand(),
+    ]);
+  }
+
+  FantomCli(List<BaseCommand> commands) : super(kCliName, 'OpenApi Network Client Generator and much more') {
+    for (var command in commands) {
+      addCommand(command);
+    }
   }
 
   @override
