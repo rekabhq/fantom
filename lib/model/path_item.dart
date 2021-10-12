@@ -17,7 +17,7 @@ class PathItem {
 
   final Operation? trace;
 
-  final List<Parameter>? parameters;
+  final List<Either<Parameter, Reference<Parameter>>>? parameters;
 
   const PathItem({
     required this.get,
