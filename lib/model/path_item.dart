@@ -17,7 +17,7 @@ class PathItem {
 
   final Operation? trace;
 
-  final List<Either<Parameter, Reference<Parameter>>>? parameters;
+  final List<Referenceable<Parameter>>? parameters;
 
   const PathItem({
     required this.get,
