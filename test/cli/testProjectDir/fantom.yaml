@@ -1,5 +1,5 @@
 fantom:
-  path: petstore.openapi.yaml
-  output: generated/module
-  models-output: generated/models
-  apis-output: generated/apis
+  path: test/cli/testProjectDir/petstore.openapi.yaml
+  output: test/cli/testProjectDir/gen/module
+  models-output: test/cli/testProjectDir/gen/models
+  apis-output: test/cli/testProjectDir/gen/apis
