@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
+import 'package:fantom/src/cli/fantom_config_file.dart';
 import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/extensions/extensions.dart';
 import 'package:fantom/src/utils/constants.dart';
@@ -145,25 +146,17 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       path: configFilePath,
       notFoundErrorMessage: '(config | c) file path is invalid',
     );
-    var config = await readJsonOrYamlFile(file);
-    if (!config.containsKey('fantom')) {
-      throw NoFantomConfigFound(configFilePath);
-    }
-    Map fantomConfig = config['fantom'];
-    var path = fantomConfig.getValue('path');
-    String? outputModulePath = fantomConfig.getValue('output');
-    String? outputModelsPath = fantomConfig.getValue('models-output');
-    String? outputApisPath = fantomConfig.getValue('apis-output');
+    var config = await FantomConfigFile.fromFile(file);
     var openApiMap = await getFileInPath(
-      path: path,
+      path: config.path,
       notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
     ).then((file) => readJsonOrYamlFile(file));
-    if (outputModelsPath != null && outputApisPath != null) {
+    if (config.outputModelsPath != null && config.outputApisPath != null) {
       // at this point we don't want to create network client as a module since models and apis path are separate
-      return _createGenerateAsPartOfProjectArgs(openApiMap, outputModelsPath, outputApisPath);
+      return _createGenerateAsPartOfProjectArgs(openApiMap, config.outputModelsPath!, config.outputApisPath!);
     } else {
-      _warnUser(outputModelsPath, outputApisPath);
-      return _createGenerateAsStandAlonePackageArgs(openApiMap, outputModulePath);
+      _warnUser(config.outputModelsPath, config.outputApisPath);
+      return _createGenerateAsStandAlonePackageArgs(openApiMap, config.outputModulePath);
     }
   }
 
