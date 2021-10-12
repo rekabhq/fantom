@@ -19,7 +19,6 @@ class PathItem {
 
   final Operation? trace;
 
-  // TODO: check the documentation for the implementing this property
   final List<Parameter>? parameters;
 
   const PathItem({
