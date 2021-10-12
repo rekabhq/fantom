@@ -7,3 +7,5 @@ class Reference<T extends Object> {
     required this.ref,
   });
 }
+
+typedef Referenceable<T extends Object> = Either<T, Reference<T>>;
