@@ -1,8 +1,6 @@
 part of 'model.dart';
 
 class PathItem {
-  final String? ref;
-
   final Operation? get;
 
   final Operation? put;
@@ -22,7 +20,6 @@ class PathItem {
   final List<Parameter>? parameters;
 
   const PathItem({
-    required this.ref,
     required this.get,
     required this.put,
     required this.post,
