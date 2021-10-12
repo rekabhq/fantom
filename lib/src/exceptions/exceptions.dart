@@ -8,6 +8,11 @@ class FantomException implements Exception {
   final String message;
 
   final int exitCode;
+
+  @override
+  String toString() {
+    return '${super.toString()}\n$message\n';
+  }
 }
 
 class NoSuchFileException extends FantomException {

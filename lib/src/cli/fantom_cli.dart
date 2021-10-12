@@ -12,7 +12,7 @@ import 'package:io/io.dart';
 class FantomCli extends CommandRunner<int> {
   static FantomCli createDefaultInstance() {
     return FantomCli([
-      GenerateCommand(),
+      GenerateCommand.createDefaultInstance(),
       ValidateCommand(),
     ]);
   }

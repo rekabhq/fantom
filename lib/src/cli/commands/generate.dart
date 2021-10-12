@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
@@ -36,7 +37,21 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 ///```
 ///
 class GenerateCommand extends BaseCommand<GenerateConfig> {
-  GenerateCommand() : super(name: 'generate', description: 'generates network client module from openapi document');
+  GenerateCommand({
+    required this.currentDirectory,
+    required this.defaultModelsOutputPath,
+    required this.defaultApisOutputPath,
+  }) : super(name: 'generate', description: 'generates network client module from openapi document');
+
+  final Directory currentDirectory;
+  final String defaultModelsOutputPath;
+  final String defaultApisOutputPath;
+
+  static GenerateCommand createDefaultInstance() => GenerateCommand(
+        currentDirectory: kCurrentDirectory,
+        defaultModelsOutputPath: kDefaultModelsOutputPath,
+        defaultApisOutputPath: kDefaultApisOutputPath,
+      );
 
   @override
   void defineCliOptions(ArgParser argParser) {
@@ -221,7 +236,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   ///
   /// `$ fantom generate`
   Future<GenerateConfig> tryToCreateGenerateArgsWithoutAnyCliInput() async {
-    var children = kCurrentDirectory.listSync();
+    var children = currentDirectory.listSync();
     File? fantomFile;
     File? pubspecFile;
     for (var element in children) {
@@ -242,14 +257,14 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   }
 
   Future<GenerateAsPartOfProjectConfig> _createDefaultGenerateArgs(Map<String, dynamic> openApiMap) async {
-    if (kCurrentDirectory.isDartOrFlutterProject) {
+    if (currentDirectory.isDartOrFlutterProject) {
       var outputModelsPath = await getDirectoryInPath(
-        path: kDefaultModelsOutputPath,
+        path: defaultModelsOutputPath,
         directoryPathIsNotValid: 'default directory path for models is not valid',
       );
 
       var outputApisPath = await getDirectoryInPath(
-        path: kDefaultApisOutputPath,
+        path: defaultApisOutputPath,
         directoryPathIsNotValid: 'default directory path for apis is not valid',
       );
 
@@ -278,8 +293,12 @@ class GenerateAsStandAlonePackageConfig extends GenerateConfig {
 
   @override
   String toString() {
-    var map = {'openapi': openApi, 'output': outputModuleDir};
-    return map.toString();
+    var map = {
+      'openapi': openApi['info'].toString(),
+      'output': outputModuleDir.toString(),
+    };
+    JsonEncoder encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(map);
   }
 }
 
@@ -298,7 +317,12 @@ class GenerateAsPartOfProjectConfig extends GenerateConfig {
 
   @override
   String toString() {
-    var map = {'openapi': openApi, 'models-output': outputModelsDir, 'apis-output': outputApisDir};
-    return map.toString();
+    var map = {
+      'openapi': openApi['info'].toString(),
+      'models-output': outputModelsDir.toString(),
+      'apis-output': outputApisDir.toString(),
+    };
+    JsonEncoder encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(map);
   }
 }

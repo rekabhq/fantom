@@ -1,0 +1,5 @@
+fantom:
+  path: petstore.openapi.yaml
+  output: generated/module
+  models-output: generated/models
+  apis-output: generated/apis
