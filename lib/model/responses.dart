@@ -2,7 +2,7 @@ part of 'model.dart';
 
 class Responses {
   /// described as [default] in documentation.
-  /// but in, is a keyword in Dart.
+  /// but [default], is a keyword in Dart.
   final Referenceable<Response>? other;
 
   /// other key-value pairs

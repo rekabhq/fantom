@@ -4,7 +4,7 @@ class Parameter {
   final String name;
 
   /// described as [in] in documentation.
-  /// but in, is a keyword in Dart.
+  /// but [in], is a keyword in Dart.
   final String location;
 
   final bool? required;

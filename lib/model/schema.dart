@@ -16,7 +16,7 @@ class Schema {
   final List<String>? required;
 
   /// described as [enum] in documentation.
-  /// but in, is a keyword in Dart.
+  /// but [enum], is a keyword in Dart.
   final List? enumerated;
 
   final Schema? items;
