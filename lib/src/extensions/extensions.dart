@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:fantom/src/utils/constants.dart';
+
 extension MapExt<K, V> on Map<K, V> {
   V? getValue(K key) {
     if (containsKey(key)) {
@@ -48,4 +52,17 @@ extension StringExtentions on String {
   }
 
   bool get isValidUrl => Uri.parse(this).isAbsolute;
+}
+
+extension DirectoryExtensions on Directory {
+  bool get isDartOrFlutterProject {
+    var flag = false;
+    var children = kCurrentDirectory.listSync();
+    for (var element in children) {
+      if (element.path.endsWith('pubspec.yaml')) {
+        flag = true;
+      }
+    }
+    return flag;
+  }
 }

@@ -75,8 +75,11 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
         path: inputOpenApiFilePath,
         notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
       ).then((file) => readJsonOrYamlFile(file));
+      if (outputModelsPath == null && outputApisPath == null && outputModulePath == null && fantomConfigPath == null) {
+        return _createDefaultGenerateArgs(openApiMap);
+      }
       // check if user wants to generate module as part of the project where models and apis are in separate folders
-      if (outputModelsPath != null && outputApisPath != null) {
+      else if (outputModelsPath != null && outputApisPath != null) {
         return _createGenerateAsPartOfProjectArgs(openApiMap, outputModelsPath, outputApisPath);
       } else {
         _warnUser(outputModelsPath, outputApisPath);
@@ -233,6 +236,28 @@ class GenerateCommand extends BaseCommand<GenerateArgs> {
       return _getGenerateArgsFromFantomConfig(fantomFile.path);
     } else if (pubspecFile != null) {
       return _getGenerateArgsFromFantomConfig(pubspecFile.path);
+    } else {
+      throw GenerationConfigNotProvidedException();
+    }
+  }
+
+  Future<GenerateAsPartOfProjectArgs> _createDefaultGenerateArgs(Map<String, dynamic> openApiMap) async {
+    if (kCurrentDirectory.isDartOrFlutterProject) {
+      var outputModelsPath = await getDirectoryInPath(
+        path: kDefaultModelsOutputPath,
+        directoryPathIsNotValid: 'default directory path for models is not valid',
+      );
+
+      var outputApisPath = await getDirectoryInPath(
+        path: kDefaultApisOutputPath,
+        directoryPathIsNotValid: 'default directory path for apis is not valid',
+      );
+
+      return GenerateAsPartOfProjectArgs(
+        openApi: openApiMap,
+        outputModelsPath: outputModelsPath,
+        outputApisPath: outputApisPath,
+      );
     } else {
       throw GenerationConfigNotProvidedException();
     }

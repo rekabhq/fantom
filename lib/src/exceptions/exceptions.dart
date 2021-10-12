@@ -40,9 +40,14 @@ class UnsupportedFileException extends FantomException {
 class GenerationConfigNotProvidedException extends FantomException {
   GenerationConfigNotProvidedException()
       : super(
-          'There is no Configuration options provided to generate fantom client. \n'
-          '(path) to the openapi file and (output) directory path is the least\n'
-          ' of required arguments by $kPackageName cli. Please read the documentation for more info\n',
+          'Not Enough Configuration options provided to generate fantom network client. \n'
+          'you must specify where is your openapi file and where you want to generate the network files\n\n'
+          '(path | p) to the openapi file and (output | o) directory path is the least\n'
+          'of required arguments by $kPackageName cli. if you are calling (generate) command\n'
+          'from your project root directory only (path | p) options is required and a default\n'
+          'output path in your project\'s lib directory will be used to store generated files\n\n'
+          'Please read the documentation for more info on how to provide $kPackageName cli with'
+          'the required configuration to generate your network client\n',
           io.ExitCode.noInput.code,
         );
 }
