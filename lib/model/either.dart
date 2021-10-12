@@ -24,4 +24,10 @@ class Either<Left extends Object, Right extends Object> {
   Right get right => _right!;
 
   Right? get rightOrNull => _right;
+
+  R match<R extends Object?>({
+    required R Function(Left left) left,
+    required R Function(Right right) right,
+  }) =>
+      _left != null ? left(_left!) : right(_right!);
 }
