@@ -1,9 +1,9 @@
 part of 'model.dart';
 
 class Operation {
-  final List<Parameter>? parameters;
+  final List<Referenceable<Parameter>>? parameters;
 
-  final RequestBody? requestBody;
+  final Referenceable<RequestBody>? requestBody;
 
   final Responses? responses;
 

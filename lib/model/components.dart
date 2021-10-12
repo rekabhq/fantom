@@ -3,15 +3,15 @@ part of 'model.dart';
 class Components {
   final Map<String, Schema>? schemas;
 
-  final Map<String, Response>? responses;
+  final Map<String, Referenceable<Response>>? responses;
 
-  final Map<String, Parameter>? parameters;
+  final Map<String, Referenceable<Parameter>>? parameters;
 
-  final Map<String, RequestBody>? requestBodies;
+  final Map<String, Referenceable<RequestBody>>? requestBodies;
 
-  final Map<String, Header>? headers;
+  final Map<String, Referenceable<Header>>? headers;
 
-  final Map<String, PathItem>? pathItems;
+  final Map<String, Referenceable<PathItem>>? pathItems;
 
   const Components({
     required this.schemas,

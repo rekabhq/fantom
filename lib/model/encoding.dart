@@ -3,7 +3,7 @@ part of 'model.dart';
 class Encoding {
   final String? contentType;
 
-  final Map<String, Header>? headers;
+  final Map<String, Referenceable<Header>>? headers;
 
   final String? style;
 
