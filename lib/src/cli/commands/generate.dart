@@ -132,7 +132,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     );
     var config = await readJsonOrYamlFile(file);
     if (!config.containsKey('fantom')) {
-      throw GenerationConfigNotProvidedException();
+      throw NoFantomConfigFound(configFilePath);
     }
     Map fantomConfig = config['fantom'];
     var path = fantomConfig.getValue('path');

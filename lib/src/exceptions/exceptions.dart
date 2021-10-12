@@ -52,6 +52,15 @@ class GenerationConfigNotProvidedException extends FantomException {
         );
 }
 
+class NoFantomConfigFound extends FantomException {
+  NoFantomConfigFound(String configFilePath)
+      : super(
+          'No Fantom Config Found in provided directory for fantom configurations\n'
+          '(config | c) directory was -> $configFilePath',
+          io.ExitCode.noInput.code,
+        );
+}
+
 void handleExceptions(e, stacktrace) {
   if (e is FantomException) {
     Log.error('❌❌ ${e.message}');
