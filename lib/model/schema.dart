@@ -1,4 +1,36 @@
 part of 'model.dart';
 
-/// todo
-class Schema {}
+class Schema {
+  final String? type;
+
+  final String? format;
+
+  final String? pattern;
+
+  final Object? defaultValue;
+
+  final bool? nullable;
+
+  final bool? depreciated;
+
+  final List<String>? required;
+
+  final List? enumerated;
+
+  final Schema? items;
+
+  final Map<String, Schema>? properties;
+
+  const Schema({
+    required this.type,
+    required this.format,
+    required this.pattern,
+    required this.defaultValue,
+    required this.nullable,
+    required this.depreciated,
+    required this.required,
+    required this.enumerated,
+    required this.items,
+    required this.properties,
+  });
+}
