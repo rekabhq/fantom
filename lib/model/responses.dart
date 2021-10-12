@@ -1,15 +1,15 @@
 part of 'model.dart';
 
 class Responses {
-  /// renamed from `default`.
-  /// since this is a keyword in dart.
-  final Response? common;
+  /// described as [default] in documentation.
+  /// but in, is a keyword in Dart.
+  final Response? other;
 
   /// other key-value pairs
-  final Map<String, Response>? fields;
+  final Map<String, Response>? map;
 
   const Responses({
-    required this.common,
-    required this.fields,
+    required this.other,
+    required this.map,
   });
 }
