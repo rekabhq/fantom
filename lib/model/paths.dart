@@ -1,4 +1,9 @@
 part of 'model.dart';
 
-/// todo
-class Paths {}
+class Paths {
+  final Map<String, PathItem> paths;
+
+  Paths({
+    required this.paths,
+  });
+}
