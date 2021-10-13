@@ -11,7 +11,7 @@ class Parameter {
 
   final bool? deprecated;
 
-  /// this parameter is going to depreciate in
+  /// this parameter is going to deprecate in
   /// the following versions of the Open Api Spec
   final bool? allowEmptyValue;
 

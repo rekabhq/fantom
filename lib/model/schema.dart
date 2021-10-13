@@ -11,7 +11,7 @@ class Schema {
 
   final bool? nullable;
 
-  final bool? depreciated;
+  final bool? deprecated;
 
   final List<String>? required;
 
@@ -29,7 +29,7 @@ class Schema {
     required this.pattern,
     required this.defaultValue,
     required this.nullable,
-    required this.depreciated,
+    required this.deprecated,
     required this.required,
     required this.enumerated,
     required this.items,
