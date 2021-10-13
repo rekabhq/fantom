@@ -68,7 +68,7 @@ void main() {
     });
 
     test('should create GenerateConfig as GenerateAsPartOfProjectConfig with provided cli options', () async {
-      // with different cli input options provided for both models & apis ouput directory 
+      // with different cli input options provided for both models & apis ouput directory
       var modelsOutputPath = '${currentDir.path}/gen/models';
       var apisOutputPath = '${currentDir.path}/gen/apis';
       insertOptionsForGenerateCommand([testOpenApiFilePath, '-m', modelsOutputPath, '-a', apisOutputPath]);
@@ -81,6 +81,24 @@ void main() {
       expect(config.outputApisDir.path, apisOutputPath);
       expect(config.openApi, testOpenApi);
     });
+
+    test(
+      'should create GenerateConfig as GenerateAsPartOfProjectConfig '
+      'with a single directory provided for generated code',
+      () async {
+        // with different cli input options provided for both models & apis ouput directory
+        var outputDir = '${currentDir.path}/gen/dir';
+        insertOptionsForGenerateCommand([testOpenApiFilePath, '-d', outputDir]);
+        // when we create a GenerateConfig as arguments
+        var config = await command.createArguments(argResults!);
+        // then created GenerateConfig object should be as expected
+        assert(config is GenerateAsPartOfProjectConfig);
+        config = config as GenerateAsPartOfProjectConfig;
+        expect(config.outputModelsDir.path, '$outputDir/model');
+        expect(config.outputApisDir.path, '$outputDir/api');
+        expect(config.openApi, testOpenApi);
+      },
+    );
 
     test('should create GenerateConfig as GenerateAsPartOfProjectConfig with provided fantom config', () async {
       // with a config file provided in cli options (-c)
@@ -96,7 +114,8 @@ void main() {
       expect(config.openApi, testOpenApi);
     });
 
-    test('should create GenerateConfig from pubspec.yaml file in current dir when no cli options is provided', () async {
+    test('should create GenerateConfig from pubspec.yaml file in current dir when no cli options is provided',
+        () async {
       // with absolutly no options provided
       insertOptionsForGenerateCommand([]);
       // when we create a GenerateConfig as arguments
