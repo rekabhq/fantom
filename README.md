@@ -43,6 +43,10 @@ Fantom is a cli tool for generating API layer based on OpenAPI Spec.
     fantom: 
       - openapi: openapi.yaml
       - dir: lib/src/network
+    # or
+    fantom: 
+      - openapi: openapi.yaml
+      - package: packages/network  
     ```        
 
 ## Activate from Source

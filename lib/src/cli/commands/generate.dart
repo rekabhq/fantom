@@ -48,10 +48,10 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   final String defaultModelsOutputPath;
   final String defaultApisOutputPath;
 
-  static const String optionConfig = 'config';
-  static const String optionOutput = 'output';
-  static const String optionModelsOutput = 'models-output';
-  static const String optionApisOutput = 'apis-output';
+  static const String optionOutputDir = 'dir';
+  static const String optionOutputModule = 'package';
+  static const String optionModelsOutput = 'model-dir';
+  static const String optionApisOutput = 'api-dir';
 
   static GenerateCommand createDefaultInstance() => GenerateCommand(
         currentDirectory: kCurrentDirectory,
@@ -61,19 +61,14 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   @override
   void defineCliOptions(ArgParser argParser) {
-    argParser.addOption(optionOutput, abbr: 'o', help: 'path where network module should be generated in');
+    argParser.addOption(optionOutputDir, abbr: 'd', help: 'path where generated files will be stored in');
+    argParser.addOption(optionOutputModule, abbr: 'p', help: 'path where network module should be generated in');
     argParser.addOption(optionModelsOutput, abbr: 'm', help: 'path where generated models will be stored in');
     argParser.addOption(optionApisOutput, abbr: 'a', help: 'path where generated apis will be stored in');
   }
 
   @override
   FutureOr<GenerateConfig> createArguments(ArgResults argResults) async {
-    Log.debug(argResults.arguments);
-    Log.debug(argResults.command);
-    Log.debug(argResults.name);
-    Log.debug(argResults.options);
-    Log.debug(argResults.rest);
-
     // if user entered a path to a file like openapi.yaml or openapi.json or fantom.yaml etc
     var userEnteredAPathToAFile = argResults.rest.isNotEmpty;
 
@@ -82,9 +77,10 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       var fantomConfig = await FantomConfig.fromArgResults(openapiOrFantomConfigFile, argResults);
       var openApiMap = await getFileInPath(
         path: fantomConfig.path,
-        notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
+        notFoundErrorMessage: 'openapi file path is either not provided or invalid',
       ).then((file) => readJsonOrYamlFile(file));
       if (fantomConfig.outputModelsPath == null &&
+          fantomConfig.outputDirPath == null &&
           fantomConfig.outputApisPath == null &&
           fantomConfig.outputModulePath == null) {
         return _createDefaultGenerateArgs(openApiMap);
@@ -96,6 +92,8 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
           fantomConfig.outputModelsPath!,
           fantomConfig.outputApisPath!,
         );
+      } else if (fantomConfig.outputDirPath != null) {
+        return _createGenerateAsPartOfProjectArgsWithOutputDir(openApiMap, fantomConfig.outputDirPath!);
       } else {
         _warnUser(fantomConfig.outputModelsPath, fantomConfig.outputApisPath);
         return _createGenerateAsStandAlonePackageArgs(openApiMap, fantomConfig.outputModulePath);
@@ -131,7 +129,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   /// **NOTE**: note that config file must be either in json or yaml format and the config should be something like example
   /// below:
   ///
-  /// ```yaml
+  ///```yaml
   ///  fantom:
   ///    path: path/to/openapi.yaml
   ///    output: path/to/module
@@ -175,6 +173,32 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     var apisDirectory = await getDirectoryInPath(
       path: outputApisPath,
       directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
+    );
+
+    return GenerateAsPartOfProjectConfig(
+      openApi: openApiMap,
+      outputModelsDir: modelsDirectory,
+      outputApisDir: apisDirectory,
+    );
+  }
+
+  /// tries to creates a [GenerateAsPartOfProjectConfig] from the given arguments
+  Future<GenerateAsPartOfProjectConfig> _createGenerateAsPartOfProjectArgsWithOutputDir(
+    Map<String, dynamic> openApiMap,
+    String outputDirPath,
+  ) async {
+    var directory = await getDirectoryInPath(
+      path: outputDirPath,
+      directoryPathIsNotValid: '(dir | d) directory path is not valid',
+    );
+    var modelsDirectory = await getDirectoryInPath(
+      path: '${directory.path}/model',
+      directoryPathIsNotValid: '(dir | d) directory path is not valid',
+    );
+
+    var apisDirectory = await getDirectoryInPath(
+      path: '${directory.path}/api',
+      directoryPathIsNotValid: '(dir | d) directory path is not valid',
     );
 
     return GenerateAsPartOfProjectConfig(
@@ -289,7 +313,7 @@ class GenerateAsStandAlonePackageConfig extends GenerateConfig {
   String toString() {
     var map = {
       'openapi': openApi['info'].toString(),
-      GenerateCommand.optionOutput: outputModuleDir.toString(),
+      GenerateCommand.optionOutputModule: outputModuleDir.toString(),
     };
     JsonEncoder encoder = JsonEncoder.withIndent('  ');
     return encoder.convert(map);

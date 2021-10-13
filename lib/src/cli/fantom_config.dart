@@ -10,12 +10,14 @@ import 'package:io/io.dart';
 class FantomConfig {
   FantomConfig._({
     required this.path,
+    this.outputDirPath,
     this.outputModulePath,
     this.outputModelsPath,
     this.outputApisPath,
   });
 
   final String path;
+  final String? outputDirPath;
   final String? outputModulePath;
   final String? outputModelsPath;
   final String? outputApisPath;
@@ -30,9 +32,13 @@ class FantomConfig {
       String? outputModulePath;
       String? outputModelsPath;
       String? outputApisPath;
+      String? outputDirPath;
       // getting cli options user entered
-      if (argResults.wasParsed(GenerateCommand.optionOutput)) {
-        outputModulePath = argResults[GenerateCommand.optionOutput];
+      if (argResults.wasParsed(GenerateCommand.optionOutputDir)) {
+        outputDirPath = argResults[GenerateCommand.optionOutputDir];
+      }
+      if (argResults.wasParsed(GenerateCommand.optionOutputModule)) {
+        outputModulePath = argResults[GenerateCommand.optionOutputModule];
       }
       if (argResults.wasParsed(GenerateCommand.optionModelsOutput)) {
         outputModelsPath = argResults[GenerateCommand.optionModelsOutput];
@@ -45,6 +51,7 @@ class FantomConfig {
         outputModulePath: outputModulePath,
         outputModelsPath: outputModelsPath,
         outputApisPath: outputApisPath,
+        outputDirPath: outputDirPath,
       );
     } else if (await file.isFantomConfigFile) {
       return fromFile(file);
@@ -59,21 +66,23 @@ class FantomConfig {
       throw NoFantomConfigFound(file.path);
     }
     Map fantomConfig = json['fantom'];
-    if (!fantomConfig.containsKey('path')) {
+    if (!fantomConfig.containsKey('openapi')) {
       throw FantomException(
         '(path) to openapi file is not provided in fantom config file',
         ExitCode.noInput.code,
       );
     }
-    var path = fantomConfig.getValue('path');
-    String? outputModulePath = fantomConfig.getValue('output');
-    String? outputModelsPath = fantomConfig.getValue('models-output');
-    String? outputApisPath = fantomConfig.getValue('apis-output');
+    var path = fantomConfig.getValue('openapi');
+    String? outputModulePath = fantomConfig.getValue(GenerateCommand.optionOutputModule);
+    String? outputModelsPath = fantomConfig.getValue(GenerateCommand.optionModelsOutput);
+    String? outputApisPath = fantomConfig.getValue(GenerateCommand.optionApisOutput);
+    String? outputDirPath = fantomConfig.getValue(GenerateCommand.optionOutputDir);
     return FantomConfig._(
       path: path,
       outputModulePath: outputModulePath,
       outputModelsPath: outputModelsPath,
       outputApisPath: outputApisPath,
+      outputDirPath: outputDirPath,
     );
   }
 }

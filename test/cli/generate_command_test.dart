@@ -57,7 +57,7 @@ void main() {
     test('should create GenerateConfig as GenerateAsStandAlonePackageConfig with provided cli options', () async {
       // with cli input option (-o) for output directory provided
       var moduleOutputPath = '${currentDir.path}/gen/module';
-      insertOptionsForGenerateCommand([testOpenApiFilePath, '-o', moduleOutputPath]);
+      insertOptionsForGenerateCommand([testOpenApiFilePath, '-p', moduleOutputPath]);
       // when we create a GenerateConfig as arguments
       var config = await command.createArguments(argResults!);
       // then created GenerateConfig object should be as expected
