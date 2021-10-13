@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
-import 'package:fantom/src/cli/fantom_config_file.dart';
+import 'package:fantom/src/cli/fantom_config.dart';
 import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/extensions/extensions.dart';
 import 'package:fantom/src/utils/constants.dart';
@@ -66,40 +66,33 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   @override
   FutureOr<GenerateConfig> createArguments(ArgResults argResults) async {
     String? fantomConfigPath;
-    String? inputOpenApiFilePath;
-    String? outputModulePath;
-    String? outputModelsPath;
-    String? outputApisPath;
     // getting cli options user entered
     if (argResults.wasParsed('config')) {
       fantomConfigPath = argResults['config'];
     }
+
     if (argResults.wasParsed('path')) {
-      inputOpenApiFilePath = argResults['path'];
-    }
-    if (argResults.wasParsed('output')) {
-      outputModulePath = argResults['output'];
-    }
-    if (argResults.wasParsed('models-output')) {
-      outputModelsPath = argResults['models-output'];
-    }
-    if (argResults.wasParsed('apis-output')) {
-      outputApisPath = argResults['apis-output'];
-    }
-    if (inputOpenApiFilePath.isNotNullOrBlank) {
+      var fantomConfig = FantomConfig.fromArgResults(argResults);
       var openApiMap = await getFileInPath(
-        path: inputOpenApiFilePath,
+        path: fantomConfig.path,
         notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
       ).then((file) => readJsonOrYamlFile(file));
-      if (outputModelsPath == null && outputApisPath == null && outputModulePath == null && fantomConfigPath == null) {
+      if (fantomConfig.outputModelsPath == null &&
+          fantomConfig.outputApisPath == null &&
+          fantomConfig.outputModulePath == null &&
+          fantomConfigPath == null) {
         return _createDefaultGenerateArgs(openApiMap);
       }
       // check if user wants to generate module as part of the project where models and apis are in separate folders
-      else if (outputModelsPath != null && outputApisPath != null) {
-        return _createGenerateAsPartOfProjectArgs(openApiMap, outputModelsPath, outputApisPath);
+      else if (fantomConfig.outputModelsPath != null && fantomConfig.outputApisPath != null) {
+        return _createGenerateAsPartOfProjectArgs(
+          openApiMap,
+          fantomConfig.outputModelsPath!,
+          fantomConfig.outputApisPath!,
+        );
       } else {
-        _warnUser(outputModelsPath, outputApisPath);
-        return _createGenerateAsStandAlonePackageArgs(openApiMap, outputModulePath);
+        _warnUser(fantomConfig.outputModelsPath, fantomConfig.outputApisPath);
+        return _createGenerateAsStandAlonePackageArgs(openApiMap, fantomConfig.outputModulePath);
       }
     } else if (fantomConfigPath.isNotNullOrBlank) {
       return _getGenerateArgsFromFantomConfig(fantomConfigPath!);
@@ -146,17 +139,21 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       path: configFilePath,
       notFoundErrorMessage: '(config | c) file path is invalid',
     );
-    var config = await FantomConfigFile.fromFile(file);
+    var fantomConfig = await FantomConfig.fromFile(file);
     var openApiMap = await getFileInPath(
-      path: config.path,
+      path: fantomConfig.path,
       notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
     ).then((file) => readJsonOrYamlFile(file));
-    if (config.outputModelsPath != null && config.outputApisPath != null) {
+    if (fantomConfig.outputModelsPath != null && fantomConfig.outputApisPath != null) {
       // at this point we don't want to create network client as a module since models and apis path are separate
-      return _createGenerateAsPartOfProjectArgs(openApiMap, config.outputModelsPath!, config.outputApisPath!);
+      return _createGenerateAsPartOfProjectArgs(
+        openApiMap,
+        fantomConfig.outputModelsPath!,
+        fantomConfig.outputApisPath!,
+      );
     } else {
-      _warnUser(config.outputModelsPath, config.outputApisPath);
-      return _createGenerateAsStandAlonePackageArgs(openApiMap, config.outputModulePath);
+      _warnUser(fantomConfig.outputModelsPath, fantomConfig.outputApisPath);
+      return _createGenerateAsStandAlonePackageArgs(openApiMap, fantomConfig.outputModulePath);
     }
   }
 

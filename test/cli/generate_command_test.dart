@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
-import 'package:fantom/src/cli/fantom_config_file.dart';
+import 'package:fantom/src/cli/fantom_config.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
@@ -15,13 +15,13 @@ void main() {
   late String testOpenApiFilePath;
   late Map<String, dynamic> testOpenApi;
   late Directory currentDir;
-  late FantomConfigFile testFantomConfig;
+  late FantomConfig testFantomConfig;
 
   setUp(() async {
     currentDir = Directory('${kCurrentDirectory.path}/test/cli/testProjectDir');
     testOpenApiFilePath = '${currentDir.path}/petstore.openapi.yaml';
     testOpenApi = await readJsonOrYamlFile(File(testOpenApiFilePath));
-    testFantomConfig = await FantomConfigFile.fromFile(File('${currentDir.path}/fantom.yaml'));
+    testFantomConfig = await FantomConfig.fromFile(File('${currentDir.path}/fantom.yaml'));
     command = GenerateCommand(
       currentDirectory: currentDir,
       defaultModelsOutputPath: '${currentDir.path}/gen/lib/src/models',
