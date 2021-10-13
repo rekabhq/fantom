@@ -56,6 +56,11 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   static const String optionModelsOutput = 'model-dir';
   static const String optionApisOutput = 'api-dir';
 
+  static const String abbrOutputDir = 'd';
+  static const String abbrOutputModule = 'p';
+  static const String abbrModelsOutput = 'm';
+  static const String abbrApisOutput = 'a';
+
   static GenerateCommand createDefaultInstance() => GenerateCommand(
         currentDirectory: kCurrentDirectory,
         defaultModelsOutputPath: kDefaultModelsOutputPath,
@@ -64,14 +69,26 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   @override
   void defineCliOptions(ArgParser argParser) {
-    argParser.addOption(optionOutputDir,
-        abbr: 'd', help: 'path where generated files will be stored in');
-    argParser.addOption(optionOutputModule,
-        abbr: 'p', help: 'path where network module should be generated in');
-    argParser.addOption(optionModelsOutput,
-        abbr: 'm', help: 'path where generated models will be stored in');
-    argParser.addOption(optionApisOutput,
-        abbr: 'a', help: 'path where generated apis will be stored in');
+    argParser.addOption(
+      optionOutputDir,
+      abbr: abbrOutputDir,
+      help: 'path where generated files will be stored in',
+    );
+    argParser.addOption(
+      optionOutputModule,
+      abbr: abbrOutputModule,
+      help: 'path where network module should be generated in',
+    );
+    argParser.addOption(
+      optionModelsOutput,
+      abbr: abbrModelsOutput,
+      help: 'path where generated models will be stored in',
+    );
+    argParser.addOption(
+      optionApisOutput,
+      abbr: abbrApisOutput,
+      help: 'path where generated apis will be stored in',
+    );
   }
 
   @override
@@ -149,16 +166,18 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   ///    apis-output: path/to/apis/output/dir
   ///```
   Future<GenerateConfig> _getGenerateArgsFromFantomConfig(
-      String configFilePath) async {
+    String configFilePath,
+  ) async {
     var file = await getFileInPath(
       path: configFilePath,
-      notFoundErrorMessage: '(config | c) file path is invalid',
+      notFoundErrorMessage:
+          'file path for config file is not valid $configFilePath',
     );
     var fantomConfig = await FantomConfig.fromFile(file);
     var openApiMap = await getFileInPath(
       path: fantomConfig.path,
       notFoundErrorMessage:
-          'openapi file (path | p) is either not provided or invalid',
+          'openapi file path is either not provided or invalid in the config provided in file $configFilePath',
     ).then((file) => readJsonOrYamlFile(file));
     if (fantomConfig.outputModelsPath != null &&
         fantomConfig.outputApisPath != null) {
@@ -184,12 +203,13 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     var modelsDirectory = await getDirectoryInPath(
       path: outputModelsPath,
       directoryPathIsNotValid:
-          '(models-output | m) directory path is not valid',
+          '($optionModelsOutput | $abbrModelsOutput) directory path is not valid',
     );
 
     var apisDirectory = await getDirectoryInPath(
       path: outputApisPath,
-      directoryPathIsNotValid: '(apis-output | a) directory path is not valid',
+      directoryPathIsNotValid:
+          '($optionApisOutput | $abbrApisOutput) directory path is not valid',
     );
 
     return GenerateAsPartOfProjectConfig(
@@ -207,16 +227,19 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   ) async {
     var directory = await getDirectoryInPath(
       path: outputDirPath,
-      directoryPathIsNotValid: '(dir | d) directory path is not valid',
+      directoryPathIsNotValid:
+          '($optionOutputDir | $abbrOutputDir) directory path is not valid',
     );
     var modelsDirectory = await getDirectoryInPath(
       path: '${directory.path}/model',
-      directoryPathIsNotValid: '(dir | d) directory path is not valid',
+      directoryPathIsNotValid:
+          '($optionOutputDir | $abbrOutputDir) directory path is not valid',
     );
 
     var apisDirectory = await getDirectoryInPath(
       path: '${directory.path}/api',
-      directoryPathIsNotValid: '(dir | d) directory path is not valid',
+      directoryPathIsNotValid:
+          '($optionOutputDir | $abbrOutputDir) directory path is not valid',
     );
 
     return GenerateAsPartOfProjectConfig(
@@ -236,7 +259,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     var outputModuleDirectory = await getDirectoryInPath(
       path: outputModulePath,
       directoryPathIsNotValid:
-          '(output | o) module directory path is not provided or not valid',
+          '($optionOutputModule | $abbrOutputModule) module directory path is not provided or not valid',
     );
     return GenerateAsStandAlonePackageConfig(
       openApi: openApiMap,
@@ -258,8 +281,8 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       Log.divider();
       Log.warning(
         'If you want to generate models and api in separate directories in your project instead '
-        'of generating the whole fantom client in a module you must provide both (models-output | m) and (apis-output | a) '
-        'arguments, if not fantom client will be generated in a module if (output | o) argument is provided',
+        'of generating the whole fantom client in a module you must provide both ($optionModelsOutput | $abbrModelsOutput) and ($optionApisOutput | $abbrApisOutput) '
+        'arguments, if not fantom client will be generated in a module if ($optionOutputModule | $abbrOutputModule) argument is provided',
       );
       Log.divider();
     }
@@ -300,12 +323,13 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       var outputModelsPath = await getDirectoryInPath(
         path: defaultModelsOutputPath,
         directoryPathIsNotValid:
-            'default directory path for models is not valid',
+            'default directory path for models is not valid $defaultModelsOutputPath',
       );
 
       var outputApisPath = await getDirectoryInPath(
         path: defaultApisOutputPath,
-        directoryPathIsNotValid: 'default directory path for apis is not valid',
+        directoryPathIsNotValid:
+            'default directory path for apis is not valid $defaultApisOutputPath',
       );
 
       return GenerateAsPartOfProjectConfig(

@@ -35,9 +35,9 @@ or a fantom config file in yaml format. note that if you are providing a fantom 
 valid fantom config like below
 
 fantom:
-  path: example/openapi-files/petstore.openapi.yaml
-  models-output: example/models
-  apis-output: example/apis
+  openapi: example/openapi-files/petstore.openapi.yaml
+  model-dir: example/models
+  api-dir: example/apis
 
 ''',
           io.ExitCode.noInput.code,
@@ -76,9 +76,8 @@ class GenerationConfigNotProvidedException extends FantomException {
       : super(
           'Not Enough Configuration options provided to generate fantom network client. \n'
           'you must specify where is your openapi file and where you want to generate the network files\n\n'
-          '(path | p) to the openapi file and (output | o) directory path is the least\n'
-          'of required arguments by $kPackageName cli. if you are calling (generate) command\n'
-          'from your project root directory only (path | p) options is required and a default\n'
+          'path to the openapi file is the least of required arguments by $kPackageName cli. if you are \n'
+          'calling (generate) command from your project root directory only openapi path is required and a default\n'
           'output path in your project\'s lib directory will be used to store generated files\n\n'
           'Please read the documentation for more info on how to provide $kPackageName cli with'
           'the required configuration to generate your network client\n',
@@ -90,7 +89,7 @@ class NoFantomConfigFound extends FantomException {
   NoFantomConfigFound(String configFilePath)
       : super(
           'No Fantom Config Found in provided directory for fantom configurations\n'
-          '(config | c) directory was -> $configFilePath',
+          'config file directory was -> $configFilePath',
           io.ExitCode.noInput.code,
         );
 }

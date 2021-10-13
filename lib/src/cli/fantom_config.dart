@@ -69,7 +69,7 @@ class FantomConfig {
     Map fantomConfig = json['fantom'];
     if (!fantomConfig.containsKey('openapi')) {
       throw FantomException(
-        '(path) to openapi file is not provided in fantom config file',
+        '(openapi) file path is not provided in fantom config file',
         ExitCode.noInput.code,
       );
     }
