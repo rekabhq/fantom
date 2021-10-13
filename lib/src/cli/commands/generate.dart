@@ -51,15 +51,15 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   final String defaultModelsOutputPath;
   final String defaultApisOutputPath;
 
-  static const String optionOutputDir = 'dir';
-  static const String optionOutputModule = 'package';
-  static const String optionModelsOutput = 'model-dir';
-  static const String optionApisOutput = 'api-dir';
+  static const String optionDir = 'dir';
+  static const String optionPackage = 'package';
+  static const String optionModelDir = 'model-dir';
+  static const String optionApiDir = 'api-dir';
 
-  static const String abbrOutputDir = 'd';
-  static const String abbrOutputModule = 'p';
-  static const String abbrModelsOutput = 'm';
-  static const String abbrApisOutput = 'a';
+  static const String abbrDir = 'd';
+  static const String abbrPackage = 'p';
+  static const String abbrModelsDir = 'm';
+  static const String abbrApiDir = 'a';
 
   static GenerateCommand createDefaultInstance() => GenerateCommand(
         currentDirectory: kCurrentDirectory,
@@ -70,23 +70,23 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   @override
   void defineCliOptions(ArgParser argParser) {
     argParser.addOption(
-      optionOutputDir,
-      abbr: abbrOutputDir,
+      optionDir,
+      abbr: abbrDir,
       help: 'path where generated files will be stored in',
     );
     argParser.addOption(
-      optionOutputModule,
-      abbr: abbrOutputModule,
+      optionPackage,
+      abbr: abbrPackage,
       help: 'path where network module should be generated in',
     );
     argParser.addOption(
-      optionModelsOutput,
-      abbr: abbrModelsOutput,
+      optionModelDir,
+      abbr: abbrModelsDir,
       help: 'path where generated models will be stored in',
     );
     argParser.addOption(
-      optionApisOutput,
-      abbr: abbrApisOutput,
+      optionApiDir,
+      abbr: abbrApiDir,
       help: 'path where generated apis will be stored in',
     );
   }
@@ -105,27 +105,27 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
         notFoundErrorMessage:
             'openapi file path is either not provided or invalid',
       ).then((file) => readJsonOrYamlFile(file));
-      if (fantomConfig.outputModelsPath == null &&
-          fantomConfig.outputDirPath == null &&
-          fantomConfig.outputApisPath == null &&
-          fantomConfig.outputModulePath == null) {
+      if (fantomConfig.outputModelsDir == null &&
+          fantomConfig.outputDir == null &&
+          fantomConfig.outputApiDir == null &&
+          fantomConfig.outputPackageDir == null) {
         return _createDefaultGenerateArgs(openApiMap);
       }
       // check if user wants to generate module as part of the project where models and apis are in separate folders
-      else if (fantomConfig.outputModelsPath != null &&
-          fantomConfig.outputApisPath != null) {
+      else if (fantomConfig.outputModelsDir != null &&
+          fantomConfig.outputApiDir != null) {
         return _createGenerateAsPartOfProjectArgs(
           openApiMap,
-          fantomConfig.outputModelsPath!,
-          fantomConfig.outputApisPath!,
+          fantomConfig.outputModelsDir!,
+          fantomConfig.outputApiDir!,
         );
-      } else if (fantomConfig.outputDirPath != null) {
+      } else if (fantomConfig.outputDir != null) {
         return _createGenerateAsPartOfProjectArgsWithOutputDir(
-            openApiMap, fantomConfig.outputDirPath!);
+            openApiMap, fantomConfig.outputDir!);
       } else {
-        _warnUser(fantomConfig.outputModelsPath, fantomConfig.outputApisPath);
+        _warnUser(fantomConfig.outputModelsDir, fantomConfig.outputApiDir);
         return _createGenerateAsStandAlonePackageArgs(
-            openApiMap, fantomConfig.outputModulePath);
+            openApiMap, fantomConfig.outputPackageDir);
       }
     } else {
       return tryToCreateGenerateArgsWithoutAnyCliInput();
@@ -179,18 +179,18 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       notFoundErrorMessage:
           'openapi file path is either not provided or invalid in the config provided in file $configFilePath',
     ).then((file) => readJsonOrYamlFile(file));
-    if (fantomConfig.outputModelsPath != null &&
-        fantomConfig.outputApisPath != null) {
+    if (fantomConfig.outputModelsDir != null &&
+        fantomConfig.outputApiDir != null) {
       // at this point we don't want to create network client as a module since models and apis path are separate
       return _createGenerateAsPartOfProjectArgs(
         openApiMap,
-        fantomConfig.outputModelsPath!,
-        fantomConfig.outputApisPath!,
+        fantomConfig.outputModelsDir!,
+        fantomConfig.outputApiDir!,
       );
     } else {
-      _warnUser(fantomConfig.outputModelsPath, fantomConfig.outputApisPath);
+      _warnUser(fantomConfig.outputModelsDir, fantomConfig.outputApiDir);
       return _createGenerateAsStandAlonePackageArgs(
-          openApiMap, fantomConfig.outputModulePath);
+          openApiMap, fantomConfig.outputPackageDir);
     }
   }
 
@@ -203,13 +203,13 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     var modelsDirectory = await getDirectoryInPath(
       path: outputModelsPath,
       directoryPathIsNotValid:
-          '($optionModelsOutput | $abbrModelsOutput) directory path is not valid',
+          '($optionModelDir | $abbrModelsDir) directory path is not valid',
     );
 
     var apisDirectory = await getDirectoryInPath(
       path: outputApisPath,
       directoryPathIsNotValid:
-          '($optionApisOutput | $abbrApisOutput) directory path is not valid',
+          '($optionApiDir | $abbrApiDir) directory path is not valid',
     );
 
     return GenerateAsPartOfProjectConfig(
@@ -228,18 +228,18 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     var directory = await getDirectoryInPath(
       path: outputDirPath,
       directoryPathIsNotValid:
-          '($optionOutputDir | $abbrOutputDir) directory path is not valid',
+          '($optionDir | $abbrDir) directory path is not valid',
     );
     var modelsDirectory = await getDirectoryInPath(
       path: '${directory.path}/model',
       directoryPathIsNotValid:
-          '($optionOutputDir | $abbrOutputDir) directory path is not valid',
+          '($optionDir | $abbrDir) directory path is not valid',
     );
 
     var apisDirectory = await getDirectoryInPath(
       path: '${directory.path}/api',
       directoryPathIsNotValid:
-          '($optionOutputDir | $abbrOutputDir) directory path is not valid',
+          '($optionDir | $abbrDir) directory path is not valid',
     );
 
     return GenerateAsPartOfProjectConfig(
@@ -259,7 +259,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     var outputModuleDirectory = await getDirectoryInPath(
       path: outputModulePath,
       directoryPathIsNotValid:
-          '($optionOutputModule | $abbrOutputModule) module directory path is not provided or not valid',
+          '($optionPackage | $abbrPackage) module directory path is not provided or not valid',
     );
     return GenerateAsStandAlonePackageConfig(
       openApi: openApiMap,
@@ -281,8 +281,8 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       Log.divider();
       Log.warning(
         'If you want to generate models and api in separate directories in your project instead '
-        'of generating the whole fantom client in a module you must provide both ($optionModelsOutput | $abbrModelsOutput) and ($optionApisOutput | $abbrApisOutput) '
-        'arguments, if not fantom client will be generated in a module if ($optionOutputModule | $abbrOutputModule) argument is provided',
+        'of generating the whole fantom client in a module you must provide both ($optionModelDir | $abbrModelsDir) and ($optionApiDir | $abbrApiDir) '
+        'arguments, if not fantom client will be generated in a module if ($optionPackage | $abbrPackage) argument is provided',
       );
       Log.divider();
     }
@@ -359,7 +359,7 @@ class GenerateAsStandAlonePackageConfig extends GenerateConfig {
   String toString() {
     var map = {
       'openapi': openApi['info'].toString(),
-      GenerateCommand.optionOutputModule: outputModuleDir.toString(),
+      GenerateCommand.optionPackage: outputModuleDir.toString(),
     };
     JsonEncoder encoder = JsonEncoder.withIndent('  ');
     return encoder.convert(map);
@@ -383,8 +383,8 @@ class GenerateAsPartOfProjectConfig extends GenerateConfig {
   String toString() {
     var map = {
       'openapi': openApi['info'].toString(),
-      GenerateCommand.optionModelsOutput: outputModelsDir.toString(),
-      GenerateCommand.optionApisOutput: outputApisDir.toString(),
+      GenerateCommand.optionModelDir: outputModelsDir.toString(),
+      GenerateCommand.optionApiDir: outputApisDir.toString(),
     };
     JsonEncoder encoder = JsonEncoder.withIndent('  ');
     return encoder.convert(map);

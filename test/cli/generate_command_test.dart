@@ -121,8 +121,8 @@ void main() {
       // then created GenerateConfig object should be as expected
       assert(config is GenerateAsPartOfProjectConfig);
       config = config as GenerateAsPartOfProjectConfig;
-      expect(config.outputModelsDir.path, testFantomConfig.outputModelsPath);
-      expect(config.outputApisDir.path, testFantomConfig.outputApisPath);
+      expect(config.outputModelsDir.path, testFantomConfig.outputModelsDir);
+      expect(config.outputApisDir.path, testFantomConfig.outputApiDir);
       expect(config.openApi, testOpenApi);
     });
 
@@ -136,8 +136,8 @@ void main() {
       // then created GenerateConfig object should be as expected
       assert(config is GenerateAsPartOfProjectConfig);
       config = config as GenerateAsPartOfProjectConfig;
-      expect(config.outputModelsDir.path, testPubspecConfig.outputModelsPath);
-      expect(config.outputApisDir.path, testPubspecConfig.outputApisPath);
+      expect(config.outputModelsDir.path, testPubspecConfig.outputModelsDir);
+      expect(config.outputApisDir.path, testPubspecConfig.outputApiDir);
       expect(config.openApi, testOpenApi);
     });
   });

@@ -10,17 +10,17 @@ import 'package:io/io.dart';
 class FantomConfig {
   FantomConfig._({
     required this.path,
-    this.outputDirPath,
-    this.outputModulePath,
-    this.outputModelsPath,
-    this.outputApisPath,
+    this.outputDir,
+    this.outputPackageDir,
+    this.outputModelsDir,
+    this.outputApiDir,
   });
 
   final String path;
-  final String? outputDirPath;
-  final String? outputModulePath;
-  final String? outputModelsPath;
-  final String? outputApisPath;
+  final String? outputDir;
+  final String? outputPackageDir;
+  final String? outputModelsDir;
+  final String? outputApiDir;
 
   static Future<FantomConfig> fromArgResults(
       String openapiOrConfigFilePath, ArgResults argResults) async {
@@ -30,29 +30,29 @@ class FantomConfig {
       notFoundErrorMessage: error.message,
     );
     if (await file.isOpenApiFile) {
-      String? outputModulePath;
+      String? outputPackagePath;
       String? outputModelsPath;
       String? outputApisPath;
       String? outputDirPath;
       // getting cli options user entered
-      if (argResults.wasParsed(GenerateCommand.optionOutputDir)) {
-        outputDirPath = argResults[GenerateCommand.optionOutputDir];
+      if (argResults.wasParsed(GenerateCommand.optionDir)) {
+        outputDirPath = argResults[GenerateCommand.optionDir];
       }
-      if (argResults.wasParsed(GenerateCommand.optionOutputModule)) {
-        outputModulePath = argResults[GenerateCommand.optionOutputModule];
+      if (argResults.wasParsed(GenerateCommand.optionPackage)) {
+        outputPackagePath = argResults[GenerateCommand.optionPackage];
       }
-      if (argResults.wasParsed(GenerateCommand.optionModelsOutput)) {
-        outputModelsPath = argResults[GenerateCommand.optionModelsOutput];
+      if (argResults.wasParsed(GenerateCommand.optionModelDir)) {
+        outputModelsPath = argResults[GenerateCommand.optionModelDir];
       }
-      if (argResults.wasParsed(GenerateCommand.optionApisOutput)) {
-        outputApisPath = argResults[GenerateCommand.optionApisOutput];
+      if (argResults.wasParsed(GenerateCommand.optionApiDir)) {
+        outputApisPath = argResults[GenerateCommand.optionApiDir];
       }
       return FantomConfig._(
         path: file.path,
-        outputModulePath: outputModulePath,
-        outputModelsPath: outputModelsPath,
-        outputApisPath: outputApisPath,
-        outputDirPath: outputDirPath,
+        outputPackageDir: outputPackagePath,
+        outputModelsDir: outputModelsPath,
+        outputApiDir: outputApisPath,
+        outputDir: outputDirPath,
       );
     } else if (await file.isFantomConfigFile) {
       return fromFile(file);
@@ -74,20 +74,19 @@ class FantomConfig {
       );
     }
     var path = fantomConfig.getValue('openapi');
-    String? outputModulePath =
-        fantomConfig.getValue(GenerateCommand.optionOutputModule);
+    String? outputPackagePath =
+        fantomConfig.getValue(GenerateCommand.optionPackage);
     String? outputModelsPath =
-        fantomConfig.getValue(GenerateCommand.optionModelsOutput);
+        fantomConfig.getValue(GenerateCommand.optionModelDir);
     String? outputApisPath =
-        fantomConfig.getValue(GenerateCommand.optionApisOutput);
-    String? outputDirPath =
-        fantomConfig.getValue(GenerateCommand.optionOutputDir);
+        fantomConfig.getValue(GenerateCommand.optionApiDir);
+    String? outputDirPath = fantomConfig.getValue(GenerateCommand.optionDir);
     return FantomConfig._(
       path: path,
-      outputModulePath: outputModulePath,
-      outputModelsPath: outputModelsPath,
-      outputApisPath: outputApisPath,
-      outputDirPath: outputDirPath,
+      outputPackageDir: outputPackagePath,
+      outputModelsDir: outputModelsPath,
+      outputApiDir: outputApisPath,
+      outputDir: outputDirPath,
     );
   }
 }
