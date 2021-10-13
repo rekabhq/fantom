@@ -13,8 +13,21 @@ class OpenApi {
     required this.components,
   });
 
+  // TODO - unit tests are required
   factory OpenApi.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    Paths? paths;
+    Components? components;
+    if (map.containsKey('paths')) {
+      paths = Paths.fromMap(map['paths']);
+    }
+    if (map.containsKey('components')) {
+      components = Components.fromMap(map['components']);
+    }
+
+    return OpenApi(
+      openapi: map['openapi'],
+      paths: paths,
+      components: components,
+    );
   }
 }
