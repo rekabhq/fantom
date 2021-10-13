@@ -49,7 +49,6 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   final String defaultApisOutputPath;
 
   static const String optionConfig = 'config';
-  static const String optionPath = 'path';
   static const String optionOutput = 'output';
   static const String optionModelsOutput = 'models-output';
   static const String optionApisOutput = 'apis-output';
@@ -62,9 +61,6 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   @override
   void defineCliOptions(ArgParser argParser) {
-    argParser.addOption(optionConfig,
-        abbr: 'c', help: 'gathers all the argument for generate command from a yaml file');
-    argParser.addOption(optionPath, abbr: 'p', help: 'path to the yaml/json openapi file');
     argParser.addOption(optionOutput, abbr: 'o', help: 'path where network module should be generated in');
     argParser.addOption(optionModelsOutput, abbr: 'm', help: 'path where generated models will be stored in');
     argParser.addOption(optionApisOutput, abbr: 'a', help: 'path where generated apis will be stored in');
@@ -72,22 +68,25 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   @override
   FutureOr<GenerateConfig> createArguments(ArgResults argResults) async {
-    String? fantomConfigPath;
-    // getting cli options user entered
-    if (argResults.wasParsed(optionConfig)) {
-      fantomConfigPath = argResults[optionConfig];
-    }
+    Log.debug(argResults.arguments);
+    Log.debug(argResults.command);
+    Log.debug(argResults.name);
+    Log.debug(argResults.options);
+    Log.debug(argResults.rest);
 
-    if (argResults.wasParsed(optionPath)) {
-      var fantomConfig = FantomConfig.fromArgResults(argResults);
+    // if user entered a path to a file like openapi.yaml or openapi.json or fantom.yaml etc
+    var userEnteredAPathToAFile = argResults.rest.isNotEmpty;
+
+    if (userEnteredAPathToAFile) {
+      var openapiOrFantomConfigFile = argResults.rest[0];
+      var fantomConfig = await FantomConfig.fromArgResults(openapiOrFantomConfigFile, argResults);
       var openApiMap = await getFileInPath(
         path: fantomConfig.path,
         notFoundErrorMessage: 'openapi file (path | p) is either not provided or invalid',
       ).then((file) => readJsonOrYamlFile(file));
       if (fantomConfig.outputModelsPath == null &&
           fantomConfig.outputApisPath == null &&
-          fantomConfig.outputModulePath == null &&
-          fantomConfigPath == null) {
+          fantomConfig.outputModulePath == null) {
         return _createDefaultGenerateArgs(openApiMap);
       }
       // check if user wants to generate module as part of the project where models and apis are in separate folders
@@ -101,8 +100,6 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
         _warnUser(fantomConfig.outputModelsPath, fantomConfig.outputApisPath);
         return _createGenerateAsStandAlonePackageArgs(openApiMap, fantomConfig.outputModulePath);
       }
-    } else if (fantomConfigPath.isNotNullOrBlank) {
-      return _getGenerateArgsFromFantomConfig(fantomConfigPath!);
     } else {
       return tryToCreateGenerateArgsWithoutAnyCliInput();
     }

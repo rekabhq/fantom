@@ -1,0 +1,5 @@
+fantom:
+  path: test/cli/testProjectDir/petstore2.openapi.yaml
+  output: test/cli/testProjectDir/gen/module2
+  models-output: test/cli/testProjectDir/gen/models2
+  apis-output: test/cli/testProjectDir/gen/apis2

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fantom/src/utils/constants.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 
 extension MapExt<K, V> on Map<K, V> {
   V? getValue(K key) {
@@ -64,5 +65,33 @@ extension DirectoryExtensions on Directory {
       }
     }
     return flag;
+  }
+}
+
+extension FileExtensions on File {
+  Future<bool> get isOpenApiFile async {
+    try {
+      var map = await readJsonOrYamlFile(this);
+      if (map.containsKey('openapi')) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e, _) {
+      return false;
+    }
+  }
+
+  Future<bool> get isFantomConfigFile async {
+    try {
+      var map = await readJsonOrYamlFile(this);
+      if (map.containsKey('fantom')) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e, _) {
+      return false;
+    }
   }
 }

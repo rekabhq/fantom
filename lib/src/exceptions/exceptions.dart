@@ -15,6 +15,35 @@ class FantomException implements Exception {
   }
 }
 
+/// this Error message should only be used when there is something wrong with the provided path to the
+/// openapi.yaml file or fantom.yaml file even though they are different files but fantom cli uses
+/// the same cli option to accept the path argument to these files like below command
+///
+/// ```shell
+/// $ fantom generate path/to/openapi.yaml
+/// $ fantom generate path/to/fantom-config.yaml
+/// ```
+class IncorrectFilePathArgument extends FantomException {
+  IncorrectFilePathArgument(String openapiOrConfigFilePath)
+      : super(
+          '''
+InvalidArgument -> $openapiOrConfigFilePath
+Either the file path is invalid or the file is not in correct json or yaml format
+please provide a valid path to a valid file which is either an openapi file in yaml or json format
+
+or a fantom config file in yaml format. note that if you are providing a fantom config file make sure it has a
+valid fantom config like below
+
+fantom:
+  path: example/openapi-files/petstore.openapi.yaml
+  models-output: example/models
+  apis-output: example/apis
+
+''',
+          io.ExitCode.noInput.code,
+        );
+}
+
 class NoSuchFileException extends FantomException {
   NoSuchFileException(String message, String filePath)
       : super(
