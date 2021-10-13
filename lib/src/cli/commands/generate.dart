@@ -48,6 +48,12 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   final String defaultModelsOutputPath;
   final String defaultApisOutputPath;
 
+  static const String optionConfig = 'config';
+  static const String optionPath = 'path';
+  static const String optionOutput = 'output';
+  static const String optionModelsOutput = 'models-output';
+  static const String optionApisOutput = 'apis-output';
+
   static GenerateCommand createDefaultInstance() => GenerateCommand(
         currentDirectory: kCurrentDirectory,
         defaultModelsOutputPath: kDefaultModelsOutputPath,
@@ -56,22 +62,23 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   @override
   void defineCliOptions(ArgParser argParser) {
-    argParser.addOption('config', abbr: 'c', help: 'gathers all the argument for generate command from a yaml file');
-    argParser.addOption('path', abbr: 'p', help: 'path to the yaml/json openapi file');
-    argParser.addOption('output', abbr: 'o', help: 'path where network module should be generated in');
-    argParser.addOption('models-output', abbr: 'm', help: 'path where generated models will be stored in');
-    argParser.addOption('apis-output', abbr: 'a', help: 'path where generated apis will be stored in');
+    argParser.addOption(optionConfig,
+        abbr: 'c', help: 'gathers all the argument for generate command from a yaml file');
+    argParser.addOption(optionPath, abbr: 'p', help: 'path to the yaml/json openapi file');
+    argParser.addOption(optionOutput, abbr: 'o', help: 'path where network module should be generated in');
+    argParser.addOption(optionModelsOutput, abbr: 'm', help: 'path where generated models will be stored in');
+    argParser.addOption(optionApisOutput, abbr: 'a', help: 'path where generated apis will be stored in');
   }
 
   @override
   FutureOr<GenerateConfig> createArguments(ArgResults argResults) async {
     String? fantomConfigPath;
     // getting cli options user entered
-    if (argResults.wasParsed('config')) {
-      fantomConfigPath = argResults['config'];
+    if (argResults.wasParsed(optionConfig)) {
+      fantomConfigPath = argResults[optionConfig];
     }
 
-    if (argResults.wasParsed('path')) {
+    if (argResults.wasParsed(optionPath)) {
       var fantomConfig = FantomConfig.fromArgResults(argResults);
       var openApiMap = await getFileInPath(
         path: fantomConfig.path,
@@ -285,7 +292,7 @@ class GenerateAsStandAlonePackageConfig extends GenerateConfig {
   String toString() {
     var map = {
       'openapi': openApi['info'].toString(),
-      'output': outputModuleDir.toString(),
+      GenerateCommand.optionOutput: outputModuleDir.toString(),
     };
     JsonEncoder encoder = JsonEncoder.withIndent('  ');
     return encoder.convert(map);
@@ -309,8 +316,8 @@ class GenerateAsPartOfProjectConfig extends GenerateConfig {
   String toString() {
     var map = {
       'openapi': openApi['info'].toString(),
-      'models-output': outputModelsDir.toString(),
-      'apis-output': outputApisDir.toString(),
+      GenerateCommand.optionModelsOutput: outputModelsDir.toString(),
+      GenerateCommand.optionApisOutput: outputApisDir.toString(),
     };
     JsonEncoder encoder = JsonEncoder.withIndent('  ');
     return encoder.convert(map);
