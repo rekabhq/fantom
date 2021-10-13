@@ -17,7 +17,8 @@ class FantomCli extends CommandRunner<int> {
     ]);
   }
 
-  FantomCli(List<BaseCommand> commands) : super(kCliName, 'OpenApi Network Client Generator and much more') {
+  FantomCli(List<BaseCommand> commands)
+      : super(kCliName, 'OpenApi Network Client Generator and much more') {
     for (var command in commands) {
       addCommand(command);
     }
@@ -47,7 +48,8 @@ class FantomCli extends CommandRunner<int> {
   Future _checkIfNewVersionOfThisLibraryIsAvailable() async {
     await UpdateChecker(packageName: kCliName, currentVersion: kCurrentVersion)
         .update()
-        .onError((error, stackTrace) => Log.debug('could not check for package new version'))
+        .onError((error, stackTrace) =>
+            Log.debug('could not check for package new version'))
         .timeout(const Duration(seconds: 4), onTimeout: () {/* do nothing */});
   }
 }

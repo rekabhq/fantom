@@ -22,7 +22,8 @@ class FantomConfig {
   final String? outputModelsPath;
   final String? outputApisPath;
 
-  static Future<FantomConfig> fromArgResults(String openapiOrConfigFilePath, ArgResults argResults) async {
+  static Future<FantomConfig> fromArgResults(
+      String openapiOrConfigFilePath, ArgResults argResults) async {
     var error = IncorrectFilePathArgument(openapiOrConfigFilePath);
     var file = await getFileInPath(
       path: openapiOrConfigFilePath,
@@ -73,10 +74,14 @@ class FantomConfig {
       );
     }
     var path = fantomConfig.getValue('openapi');
-    String? outputModulePath = fantomConfig.getValue(GenerateCommand.optionOutputModule);
-    String? outputModelsPath = fantomConfig.getValue(GenerateCommand.optionModelsOutput);
-    String? outputApisPath = fantomConfig.getValue(GenerateCommand.optionApisOutput);
-    String? outputDirPath = fantomConfig.getValue(GenerateCommand.optionOutputDir);
+    String? outputModulePath =
+        fantomConfig.getValue(GenerateCommand.optionOutputModule);
+    String? outputModelsPath =
+        fantomConfig.getValue(GenerateCommand.optionModelsOutput);
+    String? outputApisPath =
+        fantomConfig.getValue(GenerateCommand.optionApisOutput);
+    String? outputDirPath =
+        fantomConfig.getValue(GenerateCommand.optionOutputDir);
     return FantomConfig._(
       path: path,
       outputModulePath: outputModulePath,

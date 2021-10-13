@@ -7,9 +7,11 @@ import 'package:yaml/yaml.dart';
 
 /// checks [path] to file and if a file exists there a it will be returned otherwise
 /// a [FantomException] with message [notFoundErrorMessage] will be thrown
-Future<File> getFileInPath({required String? path, required String notFoundErrorMessage}) async {
+Future<File> getFileInPath(
+    {required String? path, required String notFoundErrorMessage}) async {
   if (path.isNullOrBlank) {
-    throw NoSuchFileException(notFoundErrorMessage, 'path of file was null or blank');
+    throw NoSuchFileException(
+        notFoundErrorMessage, 'path of file was null or blank');
   }
   var file = File(path!);
   if (await file.exists()) {
@@ -21,9 +23,11 @@ Future<File> getFileInPath({required String? path, required String notFoundError
 
 /// checks [path] to directory and if a directory exists or can be created there a directory will be returned otherwise
 /// a [FantomException] with message [directoryPathIsNotValid] will be thrown
-Future<Directory> getDirectoryInPath({required String? path, required String directoryPathIsNotValid}) async {
+Future<Directory> getDirectoryInPath(
+    {required String? path, required String directoryPathIsNotValid}) async {
   if (path.isNullOrBlank) {
-    throw CannotCreateDirectoryException(directoryPathIsNotValid, 'path of directory was null or blank');
+    throw CannotCreateDirectoryException(
+        directoryPathIsNotValid, 'path of directory was null or blank');
   }
   var directory = Directory(path!);
 
