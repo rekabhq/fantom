@@ -6,4 +6,9 @@ class Paths {
   Paths({
     required this.paths,
   });
+
+  factory Paths.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

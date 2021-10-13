@@ -19,4 +19,9 @@ class Operation {
     required this.deprecated,
     required this.hasSecurity,
   });
+
+  factory Operation.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

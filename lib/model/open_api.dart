@@ -12,4 +12,9 @@ class OpenApi {
     required this.paths,
     required this.components,
   });
+
+  factory OpenApi.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

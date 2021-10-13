@@ -37,4 +37,9 @@ class Parameter {
     required this.schema,
     required this.content,
   });
+
+  factory Parameter.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

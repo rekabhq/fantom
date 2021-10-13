@@ -30,4 +30,9 @@ class PathItem {
     required this.trace,
     required this.parameters,
   });
+
+  factory PathItem.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

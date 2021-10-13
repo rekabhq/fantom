@@ -21,4 +21,9 @@ class Components {
     required this.headers,
     required this.pathItems,
   });
+
+  factory Components.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

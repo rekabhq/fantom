@@ -12,4 +12,9 @@ class Responses {
     required this.other,
     required this.map,
   });
+
+  factory Responses.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

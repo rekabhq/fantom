@@ -1,5 +1,6 @@
 part of 'model.dart';
 
+/// [Either] is a Union object that represents union of two types [Left] and [Right]
 class Either<Left extends Object, Right extends Object> {
   final Left? _left;
 

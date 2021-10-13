@@ -9,4 +9,9 @@ class RequestBody {
     required this.content,
     required this.required,
   });
+
+  factory RequestBody.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

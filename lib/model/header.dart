@@ -24,4 +24,9 @@ class Header {
     required this.schema,
     required this.content,
   });
+
+  factory Header.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

@@ -9,4 +9,9 @@ class Response {
     required this.headers,
     required this.content,
   });
+
+  factory Response.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

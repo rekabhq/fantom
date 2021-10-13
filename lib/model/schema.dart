@@ -35,4 +35,9 @@ class Schema {
     required this.items,
     required this.properties,
   });
+
+  factory Schema.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

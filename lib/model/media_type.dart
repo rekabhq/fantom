@@ -9,4 +9,9 @@ class MediaType {
     required this.schema,
     required this.encoding,
   });
+
+  factory MediaType.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }

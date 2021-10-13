@@ -18,4 +18,9 @@ class Encoding {
     required this.explode,
     required this.allowReserved,
   });
+
+  factory Encoding.fromMap(Map<String, dynamic> map) {
+    // TODO: implement method
+    throw UnimplementedError();
+  }
 }
