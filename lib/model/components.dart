@@ -28,7 +28,7 @@ class Components {
     final schemas = map['schemas'] == null
         ? null
         : (map['schemas'] as Map<String, dynamic>).map<String, Schema>(
-            (key, value) => MapEntry(key, Schema.fromMap(map)),
+            (key, value) => MapEntry(key, Schema.fromMap(value)),
           );
 
     // Mapping responses object
@@ -39,8 +39,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Response.fromMap(map))
-                  : Referenceable.right(Reference.fromMap(map)),
+                  ? Referenceable.left(Response.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
             ),
           );
 
@@ -52,8 +52,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Parameter.fromMap(map))
-                  : Referenceable.right(Reference.fromMap(map)),
+                  ? Referenceable.left(Parameter.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
             ),
           );
 
@@ -65,8 +65,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(RequestBody.fromMap(map))
-                  : Referenceable.right(Reference.fromMap(map)),
+                  ? Referenceable.left(RequestBody.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
             ),
           );
 
@@ -78,8 +78,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Header.fromMap(map))
-                  : Referenceable.right(Reference.fromMap(map)),
+                  ? Referenceable.left(Header.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
             ),
           );
 
@@ -91,8 +91,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(PathItem.fromMap(map))
-                  : Referenceable.right(Reference.fromMap(map)),
+                  ? Referenceable.left(PathItem.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
             ),
           );
 
