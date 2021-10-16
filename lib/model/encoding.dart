@@ -19,8 +19,26 @@ class Encoding {
     required this.allowReserved,
   });
 
+  // TODO - unit tests are required
   factory Encoding.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    final headers = map['headers'] == null
+        ? null
+        : (map['headers'] as Map<String, dynamic>)
+            .map<String, Referenceable<Header>>(
+            (key, value) => MapEntry(
+              key,
+              !value.contain('\$ref')
+                  ? Referenceable.left(Header.fromMap(map))
+                  : Referenceable.right(Reference.fromMap(map)),
+            ),
+          );
+
+    return Encoding(
+      contentType: map['contentType'],
+      headers: headers,
+      style: map['style'],
+      explode: map['explode'],
+      allowReserved: map['allowReserved'],
+    );
   }
 }
