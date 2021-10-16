@@ -14,20 +14,11 @@ class OpenApi {
   });
 
   // TODO - unit tests are required
-  factory OpenApi.fromMap(Map<String, dynamic> map) {
-    Paths? paths;
-    Components? components;
-    if (map.containsKey('paths')) {
-      paths = Paths.fromMap(map['paths']);
-    }
-    if (map.containsKey('components')) {
-      components = Components.fromMap(map['components']);
-    }
-
-    return OpenApi(
-      openapi: map['openapi'],
-      paths: paths,
-      components: components,
-    );
-  }
+  factory OpenApi.fromMap(Map<String, dynamic> map) => OpenApi(
+        openapi: map['openapi'],
+        paths: map['paths'] == null ? null : Paths.fromMap(map['paths']),
+        components: map['components'] == null
+            ? null
+            : Components.fromMap(map['components']),
+      );
 }

@@ -10,27 +10,15 @@ class Response {
     required this.content,
   });
 
-  factory Response.fromMap(Map<String, dynamic> map) {
-    // Mapping headers object
-    final headers = map['headers'] == null
-        ? null
-        : (map['headers'] as Map<String, dynamic>)
-            .map<String, Referenceable<Header>>(
-            (key, value) => MapEntry(
-              key,
-              !value.contain('\$ref')
-                  ? Referenceable.value(Header.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    // Mapping content object
-    final content = map['content'] == null
-        ? null
-        : (map['content'] as Map<String, dynamic>).map<String, MediaType>(
-            (key, value) => MapEntry(key, MediaType.fromMap(value)),
-          );
-
-    return Response(headers: headers, content: content);
-  }
+  factory Response.fromMap(Map<String, dynamic> map) => Response(
+        headers: (map['headers'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Header.fromMap(m),
+          ),
+        ),
+        content: (map['content'] as Map<String, dynamic>?)?.mapValues(
+          (e) => MediaType.fromMap(e),
+        ),
+      );
 }

@@ -14,21 +14,18 @@ class Responses {
   });
 
   factory Responses.fromMap(Map<String, dynamic> map) {
-    // Mapping responses object
-    final responses = map.map<String, Referenceable<Response>>(
-      (key, value) => MapEntry(
-        key,
-        !value.contain('\$ref')
-            ? Referenceable.value(Response.fromMap(value))
-            : Referenceable.reference(Reference.fromMap(value)),
+    final all = (map['pathItems'] as Map<String, dynamic>?)?.mapValues(
+      (e) => Referenceable.fromMap(
+        e,
+        builder: (m) => Response.fromMap(m),
       ),
     );
-
-    final otherValue = responses.remove('default');
+    // removing `default` from responses
+    final other = all?.remove('default');
 
     return Responses(
-      map: responses,
-      other: otherValue,
+      other: other,
+      map: all,
     );
   }
 }

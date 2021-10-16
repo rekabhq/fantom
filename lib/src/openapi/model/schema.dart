@@ -41,43 +41,26 @@ class Schema {
   });
 
   // TODO - unit tests are required
-  factory Schema.fromMap(Map<String, dynamic> map) {
-    final requiredItems = map['required'] == null
-        ? <String>[]
-        : (map['required'] as List).map((item) => item.toString()).toList();
-    final enumerated = map['enum'] == null
-        ? null
-        : (map['enum'] as List<dynamic>).cast<Object?>();
-
-    final items = map['items'] == null
-        ? null
-        : (!map['items'].contains('\$ref'))
-            ? Referenceable<Schema>.value(Schema.fromMap(map['items']))
-            : Referenceable<Schema>.reference(Reference.fromMap(map['items']));
-
-    final properties = map['properties'] == null
-        ? null
-        : (map['responses'] as Map<String, dynamic>)
-            .map<String, Referenceable<Schema>>(
-            (key, value) => MapEntry(
-              key,
-              !value.contain('\$ref')
-                  ? Referenceable.value(Schema.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    return Schema(
+  factory Schema.fromMap(Map<String, dynamic> map) => Schema(
       type: map['type'],
       format: map['format'],
       pattern: map['pattern'],
       defaultValue: map['default'],
       nullable: map['nullable'],
       deprecated: map['deprecated'],
-      requiredItems: requiredItems,
-      enumerated: enumerated,
-      items: items,
-      properties: properties,
+      requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
+      enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
+      items: map['items'] == null
+          ? null
+          : Referenceable.fromMap(
+              map['items'],
+              builder: (m) => Schema.fromMap(m),
+            ),
+      properties: (map['properties'] as Map<String, dynamic>?)?.mapValues(
+        (e) => Referenceable.fromMap(
+          e,
+          builder: (m) => Schema.fromMap(m),
+        ),
+      ),
     );
-  }
 }

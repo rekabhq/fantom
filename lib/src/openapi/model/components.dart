@@ -23,86 +23,40 @@ class Components {
   });
 
   // TODO - unit tests are required
-  factory Components.fromMap(Map<String, dynamic> map) {
-    // Mapping schemas object
-    final schemas = map['schemas'] == null
-        ? null
-        : (map['schemas'] as Map<String, dynamic>).map<String, Schema>(
-            (key, value) => MapEntry(key, Schema.fromMap(value)),
-          );
-
-    // Mapping responses object
-    final responses = map['responses'] == null
-        ? null
-        : (map['responses'] as Map<String, dynamic>)
-            .map<String, Referenceable<Response>>(
-            (key, value) => MapEntry(
-              key,
-              !value.contain('\$ref')
-                  ? Referenceable.value(Response.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    // Mapping parameters object
-    final parameters = map['parameters'] == null
-        ? null
-        : (map['parameters'] as Map<String, dynamic>)
-            .map<String, Referenceable<Parameter>>(
-            (key, value) => MapEntry(
-              key,
-              !value.contain('\$ref')
-                  ? Referenceable.value(Parameter.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    // Mapping requestBodies object
-    final requestBodies = map['requestBodies'] == null
-        ? null
-        : (map['requestBodies'] as Map<String, dynamic>)
-            .map<String, Referenceable<RequestBody>>(
-            (key, value) => MapEntry(
-              key,
-              !value.contain('\$ref')
-                  ? Referenceable.value(RequestBody.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    // Mapping headers object
-    final headers = map['headers'] == null
-        ? null
-        : (map['headers'] as Map<String, dynamic>)
-            .map<String, Referenceable<Header>>(
-            (key, value) => MapEntry(
-              key,
-              !value.contain('\$ref')
-                  ? Referenceable.value(Header.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    // Mapping pathItems object
-    final pathItems = map['pathItems'] == null
-        ? null
-        : (map['pathItems'] as Map<String, dynamic>)
-            .map<String, Referenceable<PathItem>>(
-            (key, value) => MapEntry(
-              key,
-              !value.contain('\$ref')
-                  ? Referenceable.value(PathItem.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    return Components(
-      schemas: schemas,
-      responses: responses,
-      parameters: parameters,
-      requestBodies: requestBodies,
-      headers: headers,
-      pathItems: pathItems,
-    );
-  }
+  factory Components.fromMap(Map<String, dynamic> map) => Components(
+        schemas: (map['schemas'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Schema.fromMap(e),
+        ),
+        responses: (map['responses'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Response.fromMap(m),
+          ),
+        ),
+        parameters: (map['parameters'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Parameter.fromMap(m),
+          ),
+        ),
+        requestBodies:
+            (map['requestBodies'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => RequestBody.fromMap(m),
+          ),
+        ),
+        headers: (map['headers'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Header.fromMap(m),
+          ),
+        ),
+        pathItems: (map['pathItems'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => PathItem.fromMap(m),
+          ),
+        ),
+      );
 }

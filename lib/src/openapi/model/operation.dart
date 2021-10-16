@@ -20,39 +20,23 @@ class Operation {
     required this.hasSecurity,
   });
 
-  factory Operation.fromMap(Map<String, dynamic> map) {
-    // Mapping parameters object
-    final parameters = map["parameters"] == null
-        ? null
-        : List<Referenceable<Parameter>>.from(
-            map["parameters"].map<Referenceable<Parameter>>(
-              (value) => !value.contain('\$ref')
-                  ? Referenceable.value(Parameter.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
-            ),
-          );
-
-    // Mapping requestBody object
-    final requestBody = map["requestBody"] == null
-        ? null
-        : map["requestBody"].contain('\$ref')
-            ? Referenceable<RequestBody>.value(
-                RequestBody.fromMap(map["requestBody"]),
-              )
-            : Referenceable<RequestBody>.reference(
-                Reference.fromMap(map["requestBody"]),
-              );
-
-    // Mapping responses object
-    final responses =
-        map['responses'] == null ? null : Responses.fromMap(map['responses']);
-
-    return Operation(
-      parameters: parameters,
-      requestBody: requestBody,
-      responses: responses,
-      deprecated: map['deprecated'],
-      hasSecurity: map['security'] != null,
-    );
-  }
+  factory Operation.fromMap(Map<String, dynamic> map) => Operation(
+        parameters: (map['parameters'] as List<dynamic>?)?.mapToList(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Parameter.fromMap(m),
+          ),
+        ),
+        requestBody: map['responses'] == null
+            ? null
+            : Referenceable.fromMap(
+                map['responses'],
+                builder: (m) => RequestBody.fromMap(m),
+              ),
+        responses: map['responses'] == null
+            ? null
+            : Responses.fromMap(map['responses']),
+        deprecated: map['deprecated'],
+        hasSecurity: map['security'] != null,
+      );
 }

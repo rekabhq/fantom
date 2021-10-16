@@ -11,22 +11,10 @@ class MediaType {
   });
 
   // TODO - unit tests are required
-  factory MediaType.fromMap(Map<String, dynamic> map) {
-    Schema? schema;
-    Map<String, Encoding>? encoding;
-    if (map.containsKey('schema')) {
-      schema = Schema.fromMap(map['schema']);
-    }
-    if (map.containsKey('encoding')) {
-      encoding = (map['encoding'] as Map<String, dynamic>).map((key, value) {
-        var encoding = Encoding.fromMap(value);
-        return MapEntry(key, encoding);
-      });
-    }
-
-    return MediaType(
-      schema: schema,
-      encoding: encoding,
-    );
-  }
+  factory MediaType.fromMap(Map<String, dynamic> map) => MediaType(
+        schema: map['schema'] == null ? null : Schema.fromMap(map['schema']),
+        encoding: (map['encoding'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Encoding.fromMap(e),
+        ),
+      );
 }

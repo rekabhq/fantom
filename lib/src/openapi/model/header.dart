@@ -27,25 +27,15 @@ class Header {
     required this.content,
   });
 
-  factory Header.fromMap(Map<String, dynamic> map) {
-    // Mapping schema object
-    final schema = map['schema'] == null ? null : Schema.fromMap(map['schema']);
-
-    // Mapping content object
-    final content = map['content'] == null
-        ? null
-        : (map['content'] as Map<String, dynamic>).map<String, MediaType>(
-            (key, value) => MapEntry(key, MediaType.fromMap(value)),
-          );
-
-    return Header(
-      isRequired: map['required'],
-      deprecated: map['deprecated'],
-      style: map['style'],
-      explode: map['explode'],
-      allowReserved: map['allowReserved'],
-      schema: schema,
-      content: content,
-    );
-  }
+  factory Header.fromMap(Map<String, dynamic> map) => Header(
+        isRequired: map['required'],
+        deprecated: map['deprecated'],
+        style: map['style'],
+        explode: map['explode'],
+        allowReserved: map['allowReserved'],
+        schema: map['schema'] == null ? null : Schema.fromMap(map['schema']),
+        content: (map['content'] as Map<String, dynamic>?)?.mapValues(
+          (e) => MediaType.fromMap(e),
+        ),
+      );
 }
