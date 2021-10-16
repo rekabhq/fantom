@@ -19,7 +19,7 @@ class Schema {
 
   /// described as [enum] in documentation.
   /// but [enum], is a keyword in Dart.
-  final List? enumerated;
+  final List<String>? enumerated;
 
   final Referenceable<Schema>? items;
 
