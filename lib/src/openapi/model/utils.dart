@@ -3,7 +3,7 @@ part of 'model.dart';
 /// extensions for mapping maps
 extension MapMappingExt<K, V> on Map<K, V> {
   /// map only values and preserve
-  Map<K, U> mapValues<U>(U Function(V) mapper) => map<K, U>(
+  Map<K, U> mapValues<U>(U Function(V e) mapper) => map<K, U>(
         (K key, V value) => MapEntry<K, U>(
           key,
           mapper(value),
