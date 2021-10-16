@@ -34,7 +34,8 @@ class Components {
     // Mapping responses object
     final responses = map['responses'] == null
         ? null
-        : (map['responses'] as Map<String, dynamic>).map<String, Referenceable<Response>>(
+        : (map['responses'] as Map<String, dynamic>)
+            .map<String, Referenceable<Response>>(
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
@@ -46,7 +47,8 @@ class Components {
     // Mapping parameters object
     final parameters = map['parameters'] == null
         ? null
-        : (map['parameters'] as Map<String, dynamic>).map<String, Referenceable<Parameter>>(
+        : (map['parameters'] as Map<String, dynamic>)
+            .map<String, Referenceable<Parameter>>(
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
@@ -58,7 +60,8 @@ class Components {
     // Mapping requestBodies object
     final requestBodies = map['requestBodies'] == null
         ? null
-        : (map['requestBodies'] as Map<String, dynamic>).map<String, Referenceable<RequestBody>>(
+        : (map['requestBodies'] as Map<String, dynamic>)
+            .map<String, Referenceable<RequestBody>>(
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
@@ -70,7 +73,8 @@ class Components {
     // Mapping headers object
     final headers = map['headers'] == null
         ? null
-        : (map['headers'] as Map<String, dynamic>).map<String, Referenceable<Header>>(
+        : (map['headers'] as Map<String, dynamic>)
+            .map<String, Referenceable<Header>>(
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
@@ -82,7 +86,8 @@ class Components {
     // Mapping pathItems object
     final pathItems = map['pathItems'] == null
         ? null
-        : (map['pathItems'] as Map<String, dynamic>).map<String, Referenceable<PathItem>>(
+        : (map['pathItems'] as Map<String, dynamic>)
+            .map<String, Referenceable<PathItem>>(
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')

@@ -18,9 +18,11 @@ import 'dart:io';
 
 import 'package:tint/tint.dart';
 
-String _packageUrl(String packageName) => 'https://pub.dev/api/packages/$packageName';
+String _packageUrl(String packageName) =>
+    'https://pub.dev/api/packages/$packageName';
 
-String _changelogUrl(String packageName) => 'https://pub.dev/packages/$packageName/changelog';
+String _changelogUrl(String packageName) =>
+    'https://pub.dev/packages/$packageName/changelog';
 
 /// cli update
 class UpdateChecker {

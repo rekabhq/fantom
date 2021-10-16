@@ -22,8 +22,10 @@ void main() {
     currentDir = Directory('${kCurrentDirectory.path}/test/cli/testProjectDir');
     testOpenApiFilePath = '${currentDir.path}/petstore.openapi.yaml';
     testOpenApi = await readJsonOrYamlFile(File(testOpenApiFilePath));
-    testFantomConfig = await FantomConfig.fromFile(File('${currentDir.path}/fantom-config.yaml'));
-    testPubspecConfig = await FantomConfig.fromFile(File('${currentDir.path}/pubspec.yaml'));
+    testFantomConfig = await FantomConfig.fromFile(
+        File('${currentDir.path}/fantom-config.yaml'));
+    testPubspecConfig =
+        await FantomConfig.fromFile(File('${currentDir.path}/pubspec.yaml'));
     command = GenerateCommand(
       currentDirectory: currentDir,
       defaultModelsOutputPath: '${currentDir.path}/gen/lib/src/models',
@@ -41,7 +43,9 @@ void main() {
       argResults = argParser.parse(options);
     }
 
-    test('should create GenerateConfig with default directory paths defined for GenerateCommand', () async {
+    test(
+        'should create GenerateConfig with default directory paths defined for GenerateCommand',
+        () async {
       // with no cli input options for output directory provided
       insertOptionsForGenerateCommand([testOpenApiFilePath]);
       // when we create a GenerateConfig as arguments
@@ -54,10 +58,13 @@ void main() {
       expect(config.openApi, testOpenApi);
     });
 
-    test('should create GenerateConfig as GenerateAsStandAlonePackageConfig with provided cli options', () async {
+    test(
+        'should create GenerateConfig as GenerateAsStandAlonePackageConfig with provided cli options',
+        () async {
       // with cli input option (-o) for output directory provided
       var moduleOutputPath = '${currentDir.path}/gen/module';
-      insertOptionsForGenerateCommand([testOpenApiFilePath, '-p', moduleOutputPath]);
+      insertOptionsForGenerateCommand(
+          [testOpenApiFilePath, '-p', moduleOutputPath]);
       // when we create a GenerateConfig as arguments
       var config = await command.createArguments(argResults!);
       // then created GenerateConfig object should be as expected
@@ -67,11 +74,14 @@ void main() {
       expect(config.openApi, testOpenApi);
     });
 
-    test('should create GenerateConfig as GenerateAsPartOfProjectConfig with provided cli options', () async {
+    test(
+        'should create GenerateConfig as GenerateAsPartOfProjectConfig with provided cli options',
+        () async {
       // with different cli input options provided for both models & apis ouput directory
       var modelsOutputPath = '${currentDir.path}/gen/models';
       var apisOutputPath = '${currentDir.path}/gen/apis';
-      insertOptionsForGenerateCommand([testOpenApiFilePath, '-m', modelsOutputPath, '-a', apisOutputPath]);
+      insertOptionsForGenerateCommand(
+          [testOpenApiFilePath, '-m', modelsOutputPath, '-a', apisOutputPath]);
       // when we create a GenerateConfig as arguments
       var config = await command.createArguments(argResults!);
       // then created GenerateConfig object should be as expected
@@ -100,7 +110,9 @@ void main() {
       },
     );
 
-    test('should create GenerateConfig as GenerateAsPartOfProjectConfig with provided fantom config', () async {
+    test(
+        'should create GenerateConfig as GenerateAsPartOfProjectConfig with provided fantom config',
+        () async {
       // with a config file provided in cli options (-c)
       var fantomYamlFile = '${currentDir.path}/fantom-config.yaml';
       insertOptionsForGenerateCommand([fantomYamlFile]);
@@ -114,7 +126,8 @@ void main() {
       expect(config.openApi, testOpenApi);
     });
 
-    test('should create GenerateConfig from pubspec.yaml file in current dir when no cli options is provided',
+    test(
+        'should create GenerateConfig from pubspec.yaml file in current dir when no cli options is provided',
         () async {
       // with absolutly no options provided
       insertOptionsForGenerateCommand([]);
