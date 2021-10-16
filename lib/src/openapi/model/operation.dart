@@ -5,6 +5,8 @@ class Operation {
 
   final Referenceable<RequestBody>? requestBody;
 
+  final String? operationId;
+
   final Responses? responses;
 
   final bool? deprecated;
@@ -18,6 +20,7 @@ class Operation {
     required this.responses,
     required this.deprecated,
     required this.hasSecurity,
+    required this.operationId,
   });
 
   factory Operation.fromMap(Map<String, dynamic> map) => Operation(
@@ -27,10 +30,10 @@ class Operation {
             builder: (m) => Parameter.fromMap(m),
           ),
         ),
-        requestBody: map['responses'] == null
+        requestBody: map['requestBody'] == null
             ? null
             : Referenceable.fromMap(
-                map['responses'],
+                map['requestBody'],
                 builder: (m) => RequestBody.fromMap(m),
               ),
         responses: map['responses'] == null
@@ -38,5 +41,6 @@ class Operation {
             : Responses.fromMap(map['responses']),
         deprecated: map['deprecated'],
         hasSecurity: map['security'] != null,
+        operationId: map['operationId'],
       );
 }
