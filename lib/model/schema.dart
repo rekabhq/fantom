@@ -38,8 +38,44 @@ class Schema {
     required this.properties,
   });
 
+  // TODO - unit tests are required
   factory Schema.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    final requiredItems = map['required'] == null
+        ? <String>[]
+        : (map['required'] as List).map((item) => item.toString()).toList();
+    final enumerated = map['enum'] == null
+        ? null
+        : (map['enum'] as List).map((item) => item.toString()).toList();
+
+    final items = map['items'] == null
+        ? null
+        : (!map['items'].contains('\$ref'))
+            ? Referenceable<Schema>.left(Schema.fromMap(map['items']))
+            : Referenceable<Schema>.right(Reference.fromMap(map['items']));
+
+    final properties = map['properties'] == null
+        ? null
+        : (map['responses'] as Map<String, dynamic>)
+            .map<String, Referenceable<Schema>>(
+            (key, value) => MapEntry(
+              key,
+              !value.contain('\$ref')
+                  ? Referenceable.left(Schema.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
+            ),
+          );
+
+    return Schema(
+      type: map['type'],
+      format: map['format'],
+      pattern: map['pattern'],
+      defaultValue: map['default'],
+      nullable: map['nullable'],
+      deprecated: map['deprecated'],
+      requiredItems: requiredItems,
+      enumerated: enumerated,
+      items: items,
+      properties: properties,
+    );
   }
 }
