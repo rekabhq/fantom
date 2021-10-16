@@ -51,7 +51,7 @@ class Schema {
 
     final items = map['items'] == null
         ? null
-        : (!map['items'].contains('\$ref'))
+        : (!map['items'].containsKey('\$ref'))
             ? Referenceable<Schema>.value(Schema.fromMap(map['items']))
             : Referenceable<Schema>.reference(Reference.fromMap(map['items']));
 

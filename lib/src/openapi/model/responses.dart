@@ -3,13 +3,13 @@ part of 'model.dart';
 class Responses {
   /// described as [default] in documentation.
   /// but [default], is a keyword in Dart.
-  final Referenceable<Response>? other;
+  final Referenceable<Response>? defaultValue;
 
   /// other key-value pairs
   final Map<String, Referenceable<Response>>? map;
 
   const Responses({
-    required this.other,
+    required this.defaultValue,
     required this.map,
   });
 
@@ -28,7 +28,7 @@ class Responses {
 
     return Responses(
       map: responses,
-      other: otherValue,
+      defaultValue: otherValue,
     );
   }
 }

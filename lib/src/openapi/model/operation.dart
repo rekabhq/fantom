@@ -9,6 +9,8 @@ class Operation {
 
   final bool? deprecated;
 
+  final String? operationId;
+
   /// we only check if security	is not empty
   final bool hasSecurity;
 
@@ -18,6 +20,7 @@ class Operation {
     required this.responses,
     required this.deprecated,
     required this.hasSecurity,
+    required this.operationId,
   });
 
   factory Operation.fromMap(Map<String, dynamic> map) {
@@ -25,10 +28,12 @@ class Operation {
     final parameters = map["parameters"] == null
         ? null
         : List<Referenceable<Parameter>>.from(
-            map["parameters"].map<Referenceable<Parameter>>(
-              (value) => !value.containsKey('\$ref')
-                  ? Referenceable.value(Parameter.fromMap(value))
-                  : Referenceable.reference(Reference.fromMap(value)),
+            map["parameters"].map(
+              (value) {
+                return !value.containsKey('\$ref')
+                    ? Referenceable.value(Parameter.fromMap(value))
+                    : Referenceable.reference(Reference.fromMap(value));
+              },
             ),
           );
 
@@ -48,11 +53,11 @@ class Operation {
         map['responses'] == null ? null : Responses.fromMap(map['responses']);
 
     return Operation(
-      parameters: parameters,
-      requestBody: requestBody,
-      responses: responses,
-      deprecated: map['deprecated'],
-      hasSecurity: map['security'] != null,
-    );
+        parameters: parameters,
+        requestBody: requestBody,
+        responses: responses,
+        deprecated: map['deprecated'],
+        hasSecurity: map['security'] != null,
+        operationId: map['operationId']);
   }
 }
