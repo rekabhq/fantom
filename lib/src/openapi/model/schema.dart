@@ -7,6 +7,8 @@ class Schema {
 
   final String? pattern;
 
+  /// described as [default] in openapi documentation
+  /// but [default] is a keyword in Dart.
   final Object? defaultValue;
 
   final bool? nullable;
