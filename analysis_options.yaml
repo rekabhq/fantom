@@ -1,6 +1,10 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  #  strong-mode:
+  #    implicit-dynamic: false
+  #    implicit-casts: false
+
   enable-experiment:
     - non-nullable
 
@@ -11,7 +15,7 @@ analyzer:
     invalid_annotation_target: ignore
     prefer_const_constructors: ignore
     avoid_print: ignore
-    
+
 linter:
   rules:
     - avoid_void_async
