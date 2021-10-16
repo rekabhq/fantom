@@ -55,7 +55,7 @@ Future<Map<String, dynamic>> readJsonOrYamlFile(File file) async {
       return json;
     } else {
       YamlMap yaml = loadYaml(fileContent);
-      var map = yaml.map((key, value) => MapEntry(key.toString(), value));
+      var map = jsonDecode(jsonEncode(yaml)) as Map<String, dynamic>;
       return map;
     }
   } catch (e, _) {
