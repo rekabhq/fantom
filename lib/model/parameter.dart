@@ -7,7 +7,9 @@ class Parameter {
   /// but [in], is a keyword in Dart.
   final String location;
 
-  final bool? required;
+  /// described as [required] in openapi documentation
+  /// but [required] is a keyword in Dart.
+  final bool? isRequired;
 
   final bool? deprecated;
 
@@ -28,7 +30,7 @@ class Parameter {
   const Parameter({
     required this.name,
     required this.location,
-    required this.required,
+    required this.isRequired,
     required this.deprecated,
     required this.allowEmptyValue,
     required this.allowReserved,
@@ -52,7 +54,7 @@ class Parameter {
     return Parameter(
       name: map['name'],
       location: map['in'],
-      required: map['required'],
+      isRequired: map['required'],
       deprecated: map['deprecated'],
       style: map['style'],
       explode: map['explode'],

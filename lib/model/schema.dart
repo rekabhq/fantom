@@ -13,7 +13,9 @@ class Schema {
 
   final bool? deprecated;
 
-  final List<String>? required;
+  /// described as [required] in openapi documentation
+  /// but [required] is a keyword in Dart.
+  final List<String>? requiredItems;
 
   /// described as [enum] in documentation.
   /// but [enum], is a keyword in Dart.
@@ -30,7 +32,7 @@ class Schema {
     required this.defaultValue,
     required this.nullable,
     required this.deprecated,
-    required this.required,
+    required this.requiredItems,
     required this.enumerated,
     required this.items,
     required this.properties,

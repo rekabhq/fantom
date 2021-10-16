@@ -1,7 +1,9 @@
 part of 'model.dart';
 
 class Header {
-  final bool? required;
+  /// described as [required] in openapi documentation
+  /// but [required] is a keyword in Dart.
+  final bool? isRequired;
 
   final bool? deprecated;
 
@@ -16,7 +18,7 @@ class Header {
   final Map<String, MediaType>? content;
 
   const Header({
-    required this.required,
+    required this.isRequired,
     required this.deprecated,
     required this.style,
     required this.explode,
@@ -37,7 +39,7 @@ class Header {
           );
 
     return Header(
-      required: map['required'],
+      isRequired: map['required'],
       deprecated: map['deprecated'],
       style: map['style'],
       explode: map['explode'],

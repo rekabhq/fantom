@@ -3,11 +3,13 @@ part of 'model.dart';
 class RequestBody {
   final Map<String, MediaType> content;
 
-  final bool? required;
+  /// described as [required] in openapi documentation
+  /// but [required] is a keyword in Dart.
+  final bool? isRequired;
 
   const RequestBody({
     required this.content,
-    required this.required,
+    required this.isRequired,
   });
 
   factory RequestBody.fromMap(Map<String, dynamic> map) {
@@ -23,7 +25,7 @@ class RequestBody {
 
     return RequestBody(
       content: content,
-      required: map['required'],
+      isRequired: map['required'],
     );
   }
 }
