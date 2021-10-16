@@ -8,8 +8,7 @@ class Reference<T extends Object> {
   });
 
   factory Reference.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    return Reference(ref: map['\$ref']);
   }
 }
 
