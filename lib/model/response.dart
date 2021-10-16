@@ -11,7 +11,26 @@ class Response {
   });
 
   factory Response.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    // Mapping headers object
+    final headers = map['headers'] == null
+        ? null
+        : (map['headers'] as Map<String, dynamic>)
+            .map<String, Referenceable<Header>>(
+            (key, value) => MapEntry(
+              key,
+              !value.contain('\$ref')
+                  ? Referenceable.left(Header.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
+            ),
+          );
+
+    // Mapping content object
+    final content = map['content'] == null
+        ? null
+        : (map['content'] as Map<String, dynamic>).map<String, MediaType>(
+            (key, value) => MapEntry(key, MediaType.fromMap(value)),
+          );
+
+    return Response(headers: headers, content: content);
   }
 }
