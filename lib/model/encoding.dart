@@ -23,8 +23,7 @@ class Encoding {
   factory Encoding.fromMap(Map<String, dynamic> map) {
     final headers = map['headers'] == null
         ? null
-        : (map['headers'] as Map<String, dynamic>)
-            .map<String, Referenceable<Header>>(
+        : (map['headers'] as Map<String, dynamic>).map<String, Referenceable<Header>>(
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')

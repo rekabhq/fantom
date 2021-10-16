@@ -1,0 +1,5 @@
+fantom:
+  openapi: example/openapi-files/petstore.openapi.yaml
+  package: example/module
+  model-dir: example/models
+  api-dir: example/apis

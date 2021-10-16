@@ -44,8 +44,7 @@ class Operation {
               );
 
     // Mapping responses object
-    final responses =
-        map['responses'] == null ? null : Responses.fromMap(map['responses']);
+    final responses = map['responses'] == null ? null : Responses.fromMap(map['responses']);
 
     return Operation(
       parameters: parameters,

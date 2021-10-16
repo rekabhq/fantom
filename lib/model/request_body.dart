@@ -13,8 +13,7 @@ class RequestBody {
   factory RequestBody.fromMap(Map<String, dynamic> map) {
     // Mapping content object
     // this is a required parameter so if we have a null object we will get a error
-    final content =
-        (map['content'] as Map<String, dynamic>).map<String, MediaType>(
+    final content = (map['content'] as Map<String, dynamic>).map<String, MediaType>(
       (key, value) => MapEntry(
         key,
         MediaType.fromMap(value),

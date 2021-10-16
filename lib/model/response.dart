@@ -14,8 +14,7 @@ class Response {
     // Mapping headers object
     final headers = map['headers'] == null
         ? null
-        : (map['headers'] as Map<String, dynamic>)
-            .map<String, Referenceable<Header>>(
+        : (map['headers'] as Map<String, dynamic>).map<String, Referenceable<Header>>(
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')

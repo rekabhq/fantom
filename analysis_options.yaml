@@ -1,2 +1,17 @@
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  enable-experiment:
+    - non-nullable
+
+  errors:
+    unused_import: error
+    dead_code: error
+    use_key_in_widget_constructors: ignore
+    invalid_annotation_target: ignore
+    prefer_const_constructors: ignore
+    avoid_print: ignore
+    
+linter:
+  rules:
+    - avoid_void_async
