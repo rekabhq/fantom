@@ -14,7 +14,21 @@ class Responses {
   });
 
   factory Responses.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    // Mapping responses object
+    final responses = map.map<String, Referenceable<Response>>(
+      (key, value) => MapEntry(
+        key,
+        !value.contain('\$ref')
+            ? Referenceable.left(Response.fromMap(value))
+            : Referenceable.right(Reference.fromMap(value)),
+      ),
+    );
+
+    final otherValue = responses.remove('default');
+
+    return Responses(
+      map: responses,
+      other: otherValue,
+    );
   }
 }
