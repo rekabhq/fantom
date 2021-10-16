@@ -18,7 +18,7 @@
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
-#.vscode/
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -75,3 +75,8 @@ build/
 !**/ios/**/default.perspectivev3
 
 pubspec.lock
+
+# in case someone ran the fantom cli on current project
+# we don't want generate models and apis to be added to fantom sourse code 
+lib/src/fantom/*
+test/cli/testProjectDir/gen

@@ -1,0 +1,6 @@
+fantom:
+  openapi: test/cli/testProjectDir/petstore.openapi.yaml
+  package: test/cli/testProjectDir/gen/module
+  model-dir: test/cli/testProjectDir/gen/models
+  api-dir: test/cli/testProjectDir/gen/apis
+  dir: test/cli/testProjectDir/gen/
