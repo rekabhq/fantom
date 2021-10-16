@@ -8,7 +8,11 @@ class Paths {
   });
 
   factory Paths.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    // this is a required parameter so if we have a null paths object we will get a error
+    final paths = map.map<String, PathItem>(
+      (key, value) => MapEntry(key, PathItem.fromMap(value)),
+    );
+
+    return Paths(paths: paths);
   }
 }
