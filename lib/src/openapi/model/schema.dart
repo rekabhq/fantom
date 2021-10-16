@@ -57,11 +57,11 @@ class Schema {
 
     final properties = map['properties'] == null
         ? null
-        : (map['responses'] as Map<String, dynamic>)
+        : (map['properties'] as Map<String, dynamic>)
             .map<String, Referenceable<Schema>>(
             (key, value) => MapEntry(
               key,
-              !value.contain('\$ref')
+              !value.containsKey('\$ref')
                   ? Referenceable.value(Schema.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),

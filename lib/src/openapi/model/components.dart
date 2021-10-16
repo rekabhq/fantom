@@ -38,7 +38,7 @@ class Components {
             .map<String, Referenceable<Response>>(
             (key, value) => MapEntry(
               key,
-              !value.contain('\$ref')
+              !value.containsKey('\$ref')
                   ? Referenceable.value(Response.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),
@@ -51,7 +51,7 @@ class Components {
             .map<String, Referenceable<Parameter>>(
             (key, value) => MapEntry(
               key,
-              !value.contain('\$ref')
+              !value.containsKey('\$ref')
                   ? Referenceable.value(Parameter.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),
@@ -64,7 +64,7 @@ class Components {
             .map<String, Referenceable<RequestBody>>(
             (key, value) => MapEntry(
               key,
-              !value.contain('\$ref')
+              !value.containsKey('\$ref')
                   ? Referenceable.value(RequestBody.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),
@@ -77,7 +77,7 @@ class Components {
             .map<String, Referenceable<Header>>(
             (key, value) => MapEntry(
               key,
-              !value.contain('\$ref')
+              !value.containsKey('\$ref')
                   ? Referenceable.value(Header.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),
@@ -90,7 +90,7 @@ class Components {
             .map<String, Referenceable<PathItem>>(
             (key, value) => MapEntry(
               key,
-              !value.contain('\$ref')
+              !value.containsKey('\$ref')
                   ? Referenceable.value(PathItem.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),

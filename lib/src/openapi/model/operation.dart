@@ -26,7 +26,7 @@ class Operation {
         ? null
         : List<Referenceable<Parameter>>.from(
             map["parameters"].map<Referenceable<Parameter>>(
-              (value) => !value.contain('\$ref')
+              (value) => !value.containsKey('\$ref')
                   ? Referenceable.value(Parameter.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),

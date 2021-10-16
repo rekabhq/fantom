@@ -27,7 +27,7 @@ class Encoding {
             .map<String, Referenceable<Header>>(
             (key, value) => MapEntry(
               key,
-              !value.contain('\$ref')
+              !value.containsKey('\$ref')
                   ? Referenceable.value(Header.fromMap(value))
                   : Referenceable.reference(Reference.fromMap(value)),
             ),

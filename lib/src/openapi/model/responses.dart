@@ -18,7 +18,7 @@ class Responses {
     final responses = map.map<String, Referenceable<Response>>(
       (key, value) => MapEntry(
         key,
-        !value.contain('\$ref')
+        !value.containsKey('\$ref')
             ? Referenceable.value(Response.fromMap(value))
             : Referenceable.reference(Reference.fromMap(value)),
       ),
