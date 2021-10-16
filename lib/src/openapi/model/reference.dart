@@ -46,4 +46,18 @@ class Referenceable<T extends Object> {
     required R Function(Reference<T> reference) reference,
   }) =>
       _value != null ? value(_value!) : reference(_reference!);
+
+  static Referenceable<T> fromMap<T extends Object>(
+    Map<String, dynamic> map, {
+    required T Function(Map<String, dynamic> map) builder,
+  }) =>
+      Reference.isReferenceMap(map)
+          ? Referenceable<T>.reference(Reference<T>.fromMap(map))
+          : Referenceable<T>.value(builder(map));
+
+  static Referenceable<T>? fromMapOrNull<T extends Object>(
+    Map<String, dynamic>? map, {
+    required T Function(Map<String, dynamic> map) builder,
+  }) =>
+      map != null ? Referenceable.fromMap<T>(map, builder: builder) : null;
 }
