@@ -42,25 +42,25 @@ class Schema {
 
   // TODO - unit tests are required
   factory Schema.fromMap(Map<String, dynamic> map) => Schema(
-      type: map['type'],
-      format: map['format'],
-      pattern: map['pattern'],
-      defaultValue: map['default'],
-      nullable: map['nullable'],
-      deprecated: map['deprecated'],
-      requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
-      enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
-      items: map['items'] == null
-          ? null
-          : Referenceable.fromMap(
-              map['items'],
-              builder: (m) => Schema.fromMap(m),
-            ),
-      properties: (map['properties'] as Map<String, dynamic>?)?.mapValues(
-        (e) => Referenceable.fromMap(
-          e,
-          builder: (m) => Schema.fromMap(m),
+        type: map['type'],
+        format: map['format'],
+        pattern: map['pattern'],
+        defaultValue: map['default'],
+        nullable: map['nullable'],
+        deprecated: map['deprecated'],
+        requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
+        enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
+        items: map['items'] == null
+            ? null
+            : Referenceable.fromMap(
+                map['items'],
+                builder: (m) => Schema.fromMap(m),
+              ),
+        properties: (map['properties'] as Map<String, dynamic>?)?.mapValues(
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Schema.fromMap(m),
+          ),
         ),
-      ),
-    );
+      );
 }
