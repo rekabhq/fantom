@@ -19,7 +19,7 @@ class Schema {
 
   /// described as [enum] in documentation.
   /// but [enum], is a keyword in Dart.
-  final List<String>? enumerated;
+  final List<Object?>? enumerated;
 
   final Referenceable<Schema>? items;
 
@@ -45,7 +45,7 @@ class Schema {
         : (map['required'] as List).map((item) => item.toString()).toList();
     final enumerated = map['enum'] == null
         ? null
-        : (map['enum'] as List).map((item) => item.toString()).toList();
+        : (map['enum'] as List<dynamic>).cast<Object?>();
 
     final items = map['items'] == null
         ? null
