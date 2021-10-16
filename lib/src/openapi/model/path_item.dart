@@ -38,8 +38,8 @@ class PathItem {
         : List<Referenceable<Parameter>>.from(
             map["parameters"].map<Referenceable<Parameter>>(
               (value) => !value.contain('\$ref')
-                  ? Referenceable.left(Parameter.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(Parameter.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 

@@ -27,8 +27,8 @@ class Operation {
         : List<Referenceable<Parameter>>.from(
             map["parameters"].map<Referenceable<Parameter>>(
               (value) => !value.contain('\$ref')
-                  ? Referenceable.left(Parameter.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(Parameter.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 
@@ -36,10 +36,10 @@ class Operation {
     final requestBody = map["requestBody"] == null
         ? null
         : map["requestBody"].contain('\$ref')
-            ? Referenceable<RequestBody>.left(
+            ? Referenceable<RequestBody>.value(
                 RequestBody.fromMap(map["requestBody"]),
               )
-            : Referenceable<RequestBody>.right(
+            : Referenceable<RequestBody>.reference(
                 Reference.fromMap(map["requestBody"]),
               );
 

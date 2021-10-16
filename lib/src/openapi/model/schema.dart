@@ -50,8 +50,8 @@ class Schema {
     final items = map['items'] == null
         ? null
         : (!map['items'].contains('\$ref'))
-            ? Referenceable<Schema>.left(Schema.fromMap(map['items']))
-            : Referenceable<Schema>.right(Reference.fromMap(map['items']));
+            ? Referenceable<Schema>.value(Schema.fromMap(map['items']))
+            : Referenceable<Schema>.reference(Reference.fromMap(map['items']));
 
     final properties = map['properties'] == null
         ? null
@@ -60,8 +60,8 @@ class Schema {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Schema.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(Schema.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 

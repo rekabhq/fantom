@@ -28,8 +28,8 @@ class Encoding {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Header.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(Header.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 

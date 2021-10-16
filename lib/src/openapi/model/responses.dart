@@ -19,8 +19,8 @@ class Responses {
       (key, value) => MapEntry(
         key,
         !value.contain('\$ref')
-            ? Referenceable.left(Response.fromMap(value))
-            : Referenceable.right(Reference.fromMap(value)),
+            ? Referenceable.value(Response.fromMap(value))
+            : Referenceable.reference(Reference.fromMap(value)),
       ),
     );
 

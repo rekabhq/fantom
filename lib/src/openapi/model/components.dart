@@ -39,8 +39,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Response.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(Response.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 
@@ -52,8 +52,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Parameter.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(Parameter.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 
@@ -65,8 +65,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(RequestBody.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(RequestBody.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 
@@ -78,8 +78,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(Header.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(Header.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 
@@ -91,8 +91,8 @@ class Components {
             (key, value) => MapEntry(
               key,
               !value.contain('\$ref')
-                  ? Referenceable.left(PathItem.fromMap(value))
-                  : Referenceable.right(Reference.fromMap(value)),
+                  ? Referenceable.value(PathItem.fromMap(value))
+                  : Referenceable.reference(Reference.fromMap(value)),
             ),
           );
 
