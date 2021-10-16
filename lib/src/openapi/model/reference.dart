@@ -10,19 +10,40 @@ class Reference<T extends Object> {
   factory Reference.fromMap(Map<String, dynamic> map) {
     return Reference(ref: map['\$ref']);
   }
+
+  static bool isReferenceMap(Map<String, dynamic> map) {
+    return map['\$ref'] is String;
+  }
 }
 
-// typedef Referenceable<T extends Object> = Either<T, Reference<T>>;
+class Referenceable<T extends Object> {
+  final T? _value;
 
-class Referenceable<T extends Object> extends Either<T, Reference<T>> {
-  Referenceable.value(T left) : super.left(left);
-  Referenceable.reference(Reference<T> reference) : super.right(reference);
+  final Reference<T>? _reference;
 
-  // factory ReferenceOr.fromMap(Map<String, dynamic> map) {
-  //   if (map.containsKey('\$ref')) {
-  //     return ReferenceOr.reference(Reference.fromMap(map));
-  //   }else{
-  //     return 
-  //   }
-  // }
+  const Referenceable.value(T value)
+      : _value = value,
+        _reference = null;
+
+  const Referenceable.reference(Reference<T> reference)
+      : _value = null,
+        _reference = reference;
+
+  bool get isValue => _value != null;
+
+  T get value => _value!;
+
+  T? get valueOrNull => _value;
+
+  bool get isRight => _reference != null;
+
+  Reference<T> get reference => _reference!;
+
+  Reference<T>? get referenceOrNull => _reference;
+
+  R match<R extends Object?>({
+    required R Function(T value) value,
+    required R Function(Reference<T> reference) reference,
+  }) =>
+      _value != null ? value(_value!) : reference(_reference!);
 }

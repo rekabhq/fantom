@@ -1,5 +1,4 @@
 part 'components.dart';
-part 'either.dart';
 part 'encoding.dart';
 part 'header.dart';
 part 'media_type.dart';
