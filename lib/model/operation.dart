@@ -21,7 +21,38 @@ class Operation {
   });
 
   factory Operation.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    // Mapping parameters object
+    final parameters = map["parameters"] == null
+        ? null
+        : List<Referenceable<Parameter>>.from(
+            map["parameters"].map<Referenceable<Parameter>>(
+              (value) => !value.contain('\$ref')
+                  ? Referenceable.left(Parameter.fromMap(value))
+                  : Referenceable.right(Reference.fromMap(value)),
+            ),
+          );
+
+    // Mapping requestBody object
+    final requestBody = map["requestBody"] == null
+        ? null
+        : map["requestBody"].contain('\$ref')
+            ? Referenceable<RequestBody>.left(
+                RequestBody.fromMap(map["requestBody"]),
+              )
+            : Referenceable<RequestBody>.right(
+                Reference.fromMap(map["requestBody"]),
+              );
+
+    // Mapping responses object
+    final responses =
+        map['responses'] == null ? null : Responses.fromMap(map['responses']);
+
+    return Operation(
+      parameters: parameters,
+      requestBody: requestBody,
+      responses: responses,
+      deprecated: map['deprecated'],
+      hasSecurity: map['security'] != null,
+    );
   }
 }
