@@ -5,10 +5,10 @@ extension MapMappingExt<K, V> on Map<K, V> {
   /// map only values and preserve
   Map<K, U> mapValues<U>(U Function(V) mapper) => map<K, U>(
         (K key, V value) => MapEntry<K, U>(
-      key,
-      mapper(value),
-    ),
-  );
+          key,
+          mapper(value),
+        ),
+      );
 }
 
 /// extensions for mapping lists
