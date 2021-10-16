@@ -26,7 +26,24 @@ class Header {
   });
 
   factory Header.fromMap(Map<String, dynamic> map) {
-    // TODO: implement method
-    throw UnimplementedError();
+    // Mapping schema object
+    final schema = map['schema'] == null ? null : Schema.fromMap(map['schema']);
+
+    // Mapping content object
+    final content = map['content'] == null
+        ? null
+        : (map['content'] as Map<String, dynamic>).map<String, MediaType>(
+            (key, value) => MapEntry(key, MediaType.fromMap(value)),
+          );
+
+    return Header(
+      required: map['required'],
+      deprecated: map['deprecated'],
+      style: map['style'],
+      explode: map['explode'],
+      allowReserved: map['allowReserved'],
+      schema: schema,
+      content: content,
+    );
   }
 }
