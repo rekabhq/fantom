@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
 // TODO: more tests are requried for operation model
-  group('Operation', () {
+  group('Operation:', () {
     test(
       'should parse operation from find_pet_by_status.yaml without any errors',
       () async {

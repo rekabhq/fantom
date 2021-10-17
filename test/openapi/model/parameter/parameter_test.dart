@@ -6,7 +6,7 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Parameter', () {
+  group('Parameter:', () {
     Map<String, dynamic>? map;
 
     setUpAll(() async {

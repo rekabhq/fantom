@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
 // TODO: more tests are requried for schema model
-  group('RequestBody', () {
+  group('RequestBody:', () {
     test(
       'should parse RequstBody object from request_body.yaml without any errors',
       () async {

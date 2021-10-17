@@ -38,7 +38,7 @@ void main() {
     argResults = null;
   });
 
-  group('GenerateCommand -', () {
+  group('GenerateCommand:', () {
     void insertOptionsForGenerateCommand(List<String> options) {
       argResults = argParser.parse(options);
     }
