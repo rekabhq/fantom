@@ -1,6 +1,8 @@
 part of 'model.dart';
 
 class Schema {
+  final Reference<Schema>? reference;
+
   final String? type;
 
   final String? format;
@@ -19,13 +21,14 @@ class Schema {
   /// but [enum], is a keyword in Dart.
   final List<Object?>? enumerated;
 
-  final Referenceable<Schema>? items;
+  final Schema? items;
 
-  final Map<String, Referenceable<Schema>>? properties;
+  final Map<String, Schema>? properties;
 
   final bool? uniqueItems;
 
   const Schema({
+    required this.reference,
     required this.type,
     required this.format,
     required this.defaultValue,
@@ -39,23 +42,17 @@ class Schema {
 
   // TODO - unit tests are required
   factory Schema.fromMap(Map<String, dynamic> map) => Schema(
+        reference:
+            Reference.isReferenceMap(map) ? Reference.fromMap(map) : null,
         type: map['type'],
         format: map['format'],
         defaultValue: map['default'],
         deprecated: map['deprecated'],
         requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
         enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
-        items: map['items'] == null
-            ? null
-            : Referenceable.fromMap(
-                map['items'],
-                builder: (m) => Schema.fromMap(m),
-              ),
+        items: map['items'] == null ? null : Schema.fromMap(map['items']),
         properties: (map['properties'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
-            e,
-            builder: (m) => Schema.fromMap(m),
-          ),
+          (e) => Schema.fromMap(e),
         ),
         uniqueItems: map['uniqueItems'],
       );
