@@ -1,0 +1,8 @@
+        description: request
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/DummyRequest'
+        required: true
