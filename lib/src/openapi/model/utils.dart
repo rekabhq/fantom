@@ -11,8 +11,8 @@ extension MapMappingExt<K, V> on Map<K, V> {
       );
 }
 
-/// extensions for mapping lists
-extension ListMappingExt<E> on List<E> {
+/// extensions for mapping Iterables
+extension IterableMappingExt<E> on Iterable<E> {
   /// map to list
   List<T> mapToList<T>(T Function(E e) mapping) => map<T>(mapping).toList();
 }
