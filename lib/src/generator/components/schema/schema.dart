@@ -10,6 +10,8 @@ class SchemaGenerator {
 
   String _generate(final String className, final Schema schema) {
     switch (schema.type) {
+      case 'null':
+        throw UnimplementedError();
       case 'string':
         throw UnimplementedError();
       case 'number':
@@ -21,6 +23,11 @@ class SchemaGenerator {
       case 'array':
         throw UnimplementedError();
       case 'object':
+        if (schema.format != null) throw AssertionError();
+        if (schema.defaultValue != null) throw UnimplementedError();
+        if (schema.deprecated != null) throw UnimplementedError();
+        if (schema.items != null) throw AssertionError();
+        if (schema.uniqueItems != null) throw AssertionError();
         throw UnimplementedError();
       default:
         throw UnimplementedError();
