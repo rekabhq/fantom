@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/cli/fantom_config.dart';
+import 'package:fantom/src/openapi/reader/openapi_reader.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
@@ -27,6 +28,7 @@ void main() {
     testPubspecConfig =
         await FantomConfig.fromFile(File('${currentDir.path}/pubspec.yaml'));
     command = GenerateCommand(
+      openApiReader: OpenApiReader(),
       currentDirectory: currentDir,
       defaultModelsOutputPath: '${currentDir.path}/gen/lib/src/models',
       defaultApisOutputPath: '${currentDir.path}/gen/lib/src/apis',
