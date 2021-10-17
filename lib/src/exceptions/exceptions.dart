@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fantom/src/utils/constants.dart';
 import 'package:io/io.dart' as io;
 import 'package:fantom/src/utils/logger.dart';
@@ -91,6 +93,28 @@ class NoFantomConfigFound extends FantomException {
           'No Fantom Config Found in provided directory for fantom configurations\n'
           'config file directory was -> $configFilePath',
           io.ExitCode.noInput.code,
+        );
+}
+
+class UnSupportedOpenApiVersionException extends FantomException {
+  UnSupportedOpenApiVersionException(String? version)
+      : super(
+          'Unsupported openapi version : ${version ?? ''}\n'
+          'the version of openapi file provided is not supported by $kCliName cli\n'
+          'fantom cli supports openapi files with version $kMinOpenapiSupportedVersion and above',
+          io.ExitCode.config.code,
+        );
+}
+
+class NotAnOpenApiFileException extends FantomException {
+  NotAnOpenApiFileException([File? file])
+      : super(
+          'The file provided as an openapi source is not an openapi file\n'
+          'A valid openapi file contains an (openapi) property at the top\n'
+          'which its value indicated the version of openapi used to describe your api\n'
+          'eg:\n'
+          '     openapi: 3.0.0',
+          io.ExitCode.config.code,
         );
 }
 
