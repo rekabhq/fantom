@@ -9,8 +9,6 @@ class Schema {
   /// but [default] is a keyword in Dart.
   final Object? defaultValue;
 
-  final bool? nullable;
-
   final bool? deprecated;
 
   /// described as [required] in openapi documentation
@@ -31,7 +29,6 @@ class Schema {
     required this.type,
     required this.format,
     required this.defaultValue,
-    required this.nullable,
     required this.deprecated,
     required this.requiredItems,
     required this.enumerated,
@@ -45,7 +42,6 @@ class Schema {
         type: map['type'],
         format: map['format'],
         defaultValue: map['default'],
-        nullable: map['nullable'],
         deprecated: map['deprecated'],
         requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
         enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
