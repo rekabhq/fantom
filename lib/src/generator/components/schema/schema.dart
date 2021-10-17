@@ -1,11 +1,9 @@
 import 'package:fantom/src/openapi/model/model.dart';
 
-class SchemaGenerator {
+abstract class SchemaGenerator {
   const SchemaGenerator();
 
-  List<SchemaElement> generate(final Schema schema) {
-    throw UnimplementedError();
-  }
+  List<SchemaElement> generate(Schema schema);
 }
 
 class SchemaElement {
