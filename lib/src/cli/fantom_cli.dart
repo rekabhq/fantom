@@ -2,7 +2,6 @@ import 'package:args/command_runner.dart';
 import 'package:fantom/fantom.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
-import 'package:fantom/src/cli/commands/validate.dart';
 import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';
@@ -13,7 +12,6 @@ class FantomCli extends CommandRunner<int> {
   static FantomCli createDefaultInstance() {
     return FantomCli([
       GenerateCommand.createDefaultInstance(),
-      ValidateCommand(),
     ]);
   }
 
