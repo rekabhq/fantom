@@ -139,7 +139,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   @override
   FutureOr<int> runCommand(GenerateConfig arguments) async {
     // parse an OpenApi model object from openapi map in arguments
-    var progress = Log.progress('Reading openapi file');
+    var progress = Log.progress('🤓 Reading openapi file');
     // ignore: unused_local_variable
     var openapiModel = openApiReader.parseOpenApiModel(arguments.openApi);
     progress.finish(showTiming: true);
