@@ -5,8 +5,6 @@ class Schema {
 
   final String? format;
 
-  final String? pattern;
-
   /// described as [default] in openapi documentation
   /// but [default] is a keyword in Dart.
   final Object? defaultValue;
@@ -27,10 +25,11 @@ class Schema {
 
   final Map<String, Referenceable<Schema>>? properties;
 
+  final bool? uniqueItems;
+
   const Schema({
     required this.type,
     required this.format,
-    required this.pattern,
     required this.defaultValue,
     required this.nullable,
     required this.deprecated,
@@ -38,13 +37,13 @@ class Schema {
     required this.enumerated,
     required this.items,
     required this.properties,
+    required this.uniqueItems,
   });
 
   // TODO - unit tests are required
   factory Schema.fromMap(Map<String, dynamic> map) => Schema(
         type: map['type'],
         format: map['format'],
-        pattern: map['pattern'],
         defaultValue: map['default'],
         nullable: map['nullable'],
         deprecated: map['deprecated'],
@@ -62,5 +61,6 @@ class Schema {
             builder: (m) => Schema.fromMap(m),
           ),
         ),
+        uniqueItems: map['uniqueItems'],
       );
 }
