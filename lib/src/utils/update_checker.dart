@@ -3,9 +3,9 @@
 ///
 /// since bug fix and some changes where needed
 ///
-/// TODO :  create a pull request to this repo and fix the bug
+/// TODO:  create a pull request to this repo and fix the bug
 ///
-/// TODO :  create a pull request to this repo to allow developer to customzie the update log
+/// TODO:  create a pull request to this repo to allow developer to customzie the update log
 ///
 ///
 ///

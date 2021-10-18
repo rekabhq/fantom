@@ -35,7 +35,7 @@ class Referenceable<T extends Object> {
 
   T? get valueOrNull => _value;
 
-  bool get isRight => _reference != null;
+  bool get isReference => _reference != null;
 
   Reference<T> get reference => _reference!;
 

@@ -148,10 +148,10 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     // write files
     if (arguments is GenerateAsStandAlonePackageConfig) {
       Log.debug(arguments);
-      // TODO generate client as a standalone module and return the correct exit code
+      // TODO: generate client as a standalone module and return the correct exit code
     } else if (arguments is GenerateAsPartOfProjectConfig) {
-      // TODO generate client not as a module but part of the project with models and apis in separate packages
-      // TODO and return the correct exit code
+      // TODO: generate client not as a module but part of the project with models and apis in separate packages
+      // TODO: and return the correct exit code
       Log.debug(arguments);
     } else {
       throw Exception(

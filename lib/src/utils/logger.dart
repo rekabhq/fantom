@@ -12,7 +12,7 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:io/ansi.dart' as ansi;
 // ignore_for_file: avoid
 
-// TODO - for some reason when we try to colorize the strings using ansi color libraries like tint and others here
+// *Note*: for some reason when we try to colorize the strings using ansi color libraries like tint and others here
 // it will only result in orange color . WHYYYYYYYYYYYYYYYY?
 
 var shouldLogsBeVerbose = false;
