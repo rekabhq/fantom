@@ -14,4 +14,14 @@ class Reference<T extends Object> {
   static bool isReferenceMap(Map<String, dynamic> map) {
     return map['\$ref'] is String;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Reference &&
+          runtimeType == other.runtimeType &&
+          ref == other.ref;
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ ref.hashCode;
 }

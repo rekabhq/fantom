@@ -1,6 +1,7 @@
 part of 'model.dart';
 
 class Listable<T extends Object> {
+  /// should not be a collection.
   final T? _single;
 
   final List<T>? _list;
@@ -34,6 +35,17 @@ class Listable<T extends Object> {
   factory Listable.fromMap(dynamic json) => json is List<dynamic>
       ? Listable<T>.list(json.cast<T>())
       : Listable<T>.single(json as T);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Listable<T> &&
+          runtimeType == other.runtimeType &&
+          _single == other._single &&
+          listEquals(_list, other._list);
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ _single.hashCode ^ listHash(_list);
 }
 
 extension ListableExt<T extends Object> on Listable<T> {

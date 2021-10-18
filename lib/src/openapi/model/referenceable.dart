@@ -1,6 +1,7 @@
 part of 'model.dart';
 
 class Referenceable<T extends Object> {
+  /// should not be a collection.
   final T? _value;
 
   final Reference<T>? _reference;
@@ -38,4 +39,16 @@ class Referenceable<T extends Object> {
       Reference.isReferenceMap(map)
           ? Referenceable<T>.reference(Reference<T>.fromMap(map))
           : Referenceable<T>.value(builder(map));
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Referenceable<T> &&
+          runtimeType == other.runtimeType &&
+          _value == other._value &&
+          _reference == other._reference;
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ _value.hashCode ^ _reference.hashCode;
 }
