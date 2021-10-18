@@ -1,0 +1,74 @@
+components:
+  requestBodies:
+    UserArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+          examples:
+            simple-list:
+              summary: Simple list example
+              description: Should not get into code examples
+              value:
+                - username: foo
+                - username: bar
+      description: List of user object
+      required: true
+    Client:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Client'
+      description: client model
+      required: true
+    Pet:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Pet'
+      description: Pet object that needs to be added to the store
+      required: true
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'http://petstore.swagger.io/api/oauth/dialog'
+          scopes:
+            'write:pets': modify pets in your account
+            'read:pets': read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+    api_key_query:
+      type: apiKey
+      name: api_key_query
+      in: query
+    http_basic_test:
+      type: http
+      scheme: basic
+    bearer_test:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    http_signature_test:
+      # Test the 'HTTP signature' security scheme.
+      # Each HTTP request is cryptographically signed as specified
+      # in https://datatracker.ietf.org/doc/draft-cavage-http-signatures/
+      type: http
+      scheme: signature
+  schemas:
+    Foo:
+      type: object
+      properties:
+        bar:
+          $ref: '#/components/schemas/Bar'
+    Bar:
+      type: string
+      default: bar

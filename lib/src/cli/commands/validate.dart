@@ -16,7 +16,7 @@ class ValidateCommand extends BaseCommand<ValidateCommandArgs> {
 
   @override
   void defineCliOptions(ArgParser argParser) {
-    //TODO - define options needed
+    //TODO: define options needed
   }
 
   @override
@@ -26,11 +26,11 @@ class ValidateCommand extends BaseCommand<ValidateCommandArgs> {
 
   @override
   FutureOr<int> runCommand(ValidateCommandArgs arguments) async {
-    // TODO implement this class to validate the openapi file
+    // TODO: implement this class to validate the openapi file
     Log.info('reading open api file');
     await 1.secondsDelay();
     Log.fine('file is valid');
-    // TODO - we should return the correct exit code here
+    // TODO: we should return the correct exit code here
     return 0;
   }
 }

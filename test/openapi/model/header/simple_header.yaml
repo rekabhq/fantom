@@ -1,0 +1,14 @@
+description: Status values that need to be considered for filter
+required: true
+deprecated: false
+style: form
+explode: false
+schema:
+  type: array
+  items:
+    type: string
+    enum:
+      - available
+      - pending
+      - sold
+    default: available

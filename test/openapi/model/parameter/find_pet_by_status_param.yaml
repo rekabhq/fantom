@@ -1,0 +1,15 @@
+name: status
+in: query
+description: Status values that need to be considered for filter
+required: true
+style: form
+explode: false
+schema:
+  type: array
+  items:
+    type: string
+    enum:
+      - available
+      - pending
+      - sold
+    default: available
