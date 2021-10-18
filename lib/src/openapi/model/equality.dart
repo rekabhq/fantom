@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 /// checks equality through one level
-bool listEquals<T extends Object>(
+bool listEquals<T extends Object?>(
   final List<T>? list1,
   final List<T>? list2,
 ) {
@@ -18,7 +18,7 @@ bool listEquals<T extends Object>(
 }
 
 /// computes hash code through one level
-int listHash<T extends Object>(
+int listHash<T extends Object?>(
   final List<T>? list,
 ) {
   const int mask = 0x7fffffff;
@@ -39,7 +39,7 @@ int listHash<T extends Object>(
 }
 
 /// checks equality through one level
-bool mapEquals<V extends Object>(
+bool mapEquals<V extends Object?>(
   final Map<String, V>? map1,
   final Map<String, V>? map2,
 ) {
@@ -56,7 +56,7 @@ bool mapEquals<V extends Object>(
 }
 
 /// computes hash code through one level
-int mapHash<V extends Object>(
+int mapHash<V extends Object?>(
   final Map<String, V>? map,
 ) {
   const int mask = 0x7fffffff;
@@ -84,12 +84,12 @@ bool itemEquals(
   if (item1 == null && item2 == null) return true;
   if (item1 == null || item2 == null) return false;
 
-  if (item1 is List<Object> && item2 is List<Object>) {
-    return listEquals<Object>(item1, item2);
+  if (item1 is List<Object?> && item2 is List<Object?>) {
+    return listEquals<Object?>(item1, item2);
   }
 
-  if (item1 is Map<String, Object> && item2 is Map<String, Object>) {
-    return mapEquals<Object>(item1, item2);
+  if (item1 is Map<String, Object?> && item2 is Map<String, Object?>) {
+    return mapEquals<Object?>(item1, item2);
   }
 
   return item1 == item2;
@@ -101,12 +101,12 @@ int itemHash(
 ) {
   if (item == null) return null.hashCode;
 
-  if (item is List<Object>) {
-    return listHash<Object>(item);
+  if (item is List<Object?>) {
+    return listHash<Object?>(item);
   }
 
-  if (item is Map<String, Object>) {
-    return mapHash<Object>(item);
+  if (item is Map<String, Object?>) {
+    return mapHash<Object?>(item);
   }
 
   return item.hashCode;
