@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:version/version.dart';
+
 final kCurrentDirectory = Directory.current;
 
 final kDefaultModelsOutputPath =
@@ -9,7 +11,7 @@ final kDefaultApisOutputPath = '${Directory.current.path}/lib/src/fantom/api';
 
 const kCliName = 'fantom';
 
-const kMinOpenapiSupportedVersion = '3.0.0';
+final kMinOpenapiSupportedVersion = Version(3, 1, 0);
 
 const kPackageName = 'fantom';
 
