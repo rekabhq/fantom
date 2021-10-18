@@ -33,9 +33,6 @@ class SchemaGenerator {
         throw UnimplementedError();
     }
   }
-
-  String _className(final Reference<Schema> reference) =>
-      reference.ref.removeFromStart('#components/schemas/');
 }
 
 extension on String {
@@ -45,4 +42,8 @@ extension on String {
     }
     return substring(start.length);
   }
+}
+
+extension on Reference<Schema> {
+  String get className => ref.removeFromStart('#components/schemas/');
 }
