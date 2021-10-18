@@ -6,7 +6,7 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
 void main() {
-// TODO: more tests are requried for schema model
+  // TODO: more tests are requried for response model
   group('Response', () {
     test(
       'should parse responses object from responses.yaml without any errors',

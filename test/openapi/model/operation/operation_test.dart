@@ -6,7 +6,7 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
 void main() {
-// TODO: more tests are requried for operation model
+  // TODO: more tests are requried for operation model
   group('Operation', () {
     test(
       'should parse operation from find_pet_by_status.yaml without any errors',
