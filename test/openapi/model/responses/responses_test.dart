@@ -17,7 +17,7 @@ void main() {
         // when we parse Responses from map
         var responses = Responses.fromMap(map);
         // then
-        expect(responses.defaultValue , isNotNull);
+        expect(responses.defaultValue, isNotNull);
         expect(
             responses.map!.keys.toSet(), map.keys.toSet()..remove('default'));
       },

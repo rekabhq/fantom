@@ -1,6 +1,7 @@
 part 'components.dart';
 part 'encoding.dart';
 part 'header.dart';
+part 'listable.dart';
 part 'media_type.dart';
 part 'open_api.dart';
 part 'operation.dart';
@@ -8,6 +9,7 @@ part 'parameter.dart';
 part 'path_item.dart';
 part 'paths.dart';
 part 'reference.dart';
+part 'referenceable.dart';
 part 'request_body.dart';
 part 'response.dart';
 part 'responses.dart';
