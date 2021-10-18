@@ -12,4 +12,14 @@ class Paths {
           (e) => PathItem.fromMap(e),
         ),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Paths &&
+          runtimeType == other.runtimeType &&
+          mapEquals(paths, other.paths);
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ mapHash(paths);
 }
