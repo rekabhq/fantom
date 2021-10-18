@@ -24,7 +24,7 @@ void main() {
       swaggerMap!.remove('openapi');
       swaggerMap!['swagger'] = '2.0.0';
       openapiMapWithUnsupportedVersion = openapiMap!.clone();
-      openapiMapWithUnsupportedVersion!['openapi'] = '3.0.0';
+      openapiMapWithUnsupportedVersion!['openapi'] = '2.0.0';
       reader = OpenApiReader();
     });
 
@@ -53,7 +53,7 @@ void main() {
     );
 
     test(
-      'should throw exception because since openapi version is not suppoerted',
+      'should throw exception because openapi version below 3.0.0 is not supported',
       () async {
         //with
         expect(

@@ -22,7 +22,7 @@ void main() {
       () async {
         final openApi = OpenApi.fromMap(map!);
 
-        expect(openApi.openapi, equals('3.0.0'));
+        expect(openApi.version, equals('3.0.0'));
 
         expect(openApi.paths, isA<Paths>());
         expect(openApi.paths?.paths, isNotEmpty);

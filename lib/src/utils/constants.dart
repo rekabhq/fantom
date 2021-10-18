@@ -11,7 +11,7 @@ final kDefaultApisOutputPath = '${Directory.current.path}/lib/src/fantom/api';
 
 const kCliName = 'fantom';
 
-final kMinOpenapiSupportedVersion = Version(3, 1, 0);
+final kMinOpenapiSupportedVersion = Version(3, 0, 0);
 
 const kPackageName = 'fantom';
 
