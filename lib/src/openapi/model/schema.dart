@@ -3,7 +3,6 @@ part of 'model.dart';
 /// supports `3.1` and partially `>=3.0 <3.1`.
 class Schema {
   /// this is only available on versions `>=3.0 <3.1`.
-  @Deprecated('this is not available in openapi `3.1` and above.')
   final bool? nullable;
 
   /// on versions `>=3.0 <3.1` if this is not null then other fields are null.
@@ -64,4 +63,36 @@ class Schema {
         ),
         uniqueItems: map['uniqueItems'],
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Schema &&
+          runtimeType == other.runtimeType &&
+          nullable == other.nullable &&
+          reference == other.reference &&
+          type == other.type &&
+          format == other.format &&
+          itemEquals(defaultValue, other.defaultValue) &&
+          deprecated == other.deprecated &&
+          listEquals(requiredItems, other.requiredItems) &&
+          listEquals(enumerated, other.enumerated) &&
+          items == other.items &&
+          mapEquals(properties, other.properties) &&
+          uniqueItems == other.uniqueItems;
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      nullable.hashCode ^
+      reference.hashCode ^
+      type.hashCode ^
+      format.hashCode ^
+      itemHash(defaultValue) ^
+      deprecated.hashCode ^
+      requiredItems.hashCode ^
+      enumerated.hashCode ^
+      items.hashCode ^
+      mapHash(properties) ^
+      uniqueItems.hashCode;
 }
