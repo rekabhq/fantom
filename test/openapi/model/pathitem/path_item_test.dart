@@ -16,13 +16,13 @@ void main() {
         // when we parse Response from map
         var pathItem = PathItem.fromMap(map);
         // then
-        assert(pathItem.post != null);
-        assert(pathItem.put != null);
-        assert(pathItem.get == null);
-        assert(pathItem.delete == null);
-        assert(pathItem.head == null);
-        assert(pathItem.options == null);
-        assert(pathItem.patch == null);
+        expect(pathItem.post, isNotNull);
+        expect(pathItem.put, isNotNull);
+        expect(pathItem.get, isNull);
+        expect(pathItem.delete, isNull);
+        expect(pathItem.head, isNull);
+        expect(pathItem.options, isNull);
+        expect(pathItem.patch, isNull);
       },
     );
   });
