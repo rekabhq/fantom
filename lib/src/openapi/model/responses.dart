@@ -28,4 +28,16 @@ class Responses {
       map: all,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Responses &&
+          runtimeType == other.runtimeType &&
+          defaultValue == other.defaultValue &&
+          mapEquals(map, other.map);
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ defaultValue.hashCode ^ mapHash(map);
 }
