@@ -1,7 +1,13 @@
 import 'package:fantom/src/openapi/model/model.dart';
 
+/// supports `3.1` and partially `3.0`.
 class SchemaGenerator {
-  const SchemaGenerator();
+  /// weather we should be compatible with `3.0` or not.
+  final bool compatibilityMode;
+
+  const SchemaGenerator({
+    this.compatibilityMode = false,
+  });
 
   List<String> generate(final Map<String, Schema> schemas) =>
       schemas.entries.mapToList(
