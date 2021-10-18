@@ -19,7 +19,6 @@ class Encoding {
     required this.allowReserved,
   });
 
-  // TODO - unit tests are required
   factory Encoding.fromMap(Map<String, dynamic> map) => Encoding(
         contentType: map['contentType'],
         headers: (map['headers'] as Map<String, dynamic>?)?.mapValues(

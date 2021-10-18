@@ -22,7 +22,6 @@ class Components {
     required this.pathItems,
   });
 
-  // TODO - unit tests are required
   factory Components.fromMap(Map<String, dynamic> map) => Components(
         schemas: (map['schemas'] as Map<String, dynamic>?)?.mapValues(
           (e) => Schema.fromMap(e),

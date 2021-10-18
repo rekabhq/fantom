@@ -13,7 +13,6 @@ class OpenApi {
     required this.components,
   });
 
-  // TODO - unit tests are required
   factory OpenApi.fromMap(Map<String, dynamic> map) => OpenApi(
         openapi: map['openapi'],
         paths: map['paths'] == null ? null : Paths.fromMap(map['paths']),

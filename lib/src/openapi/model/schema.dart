@@ -40,7 +40,6 @@ class Schema {
     required this.uniqueItems,
   });
 
-  // TODO - unit tests are required
   factory Schema.fromMap(Map<String, dynamic> map) => Schema(
         reference:
             Reference.isReferenceMap(map) ? Reference.fromMap(map) : null,
