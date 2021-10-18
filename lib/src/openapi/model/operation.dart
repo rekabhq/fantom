@@ -40,7 +40,30 @@ class Operation {
             ? null
             : Responses.fromMap(map['responses']),
         deprecated: map['deprecated'],
-        hasSecurity: map['security'] != null,
+        hasSecurity: map['security'] != null &&
+            (map['security'] as Map<String, dynamic>).isNotEmpty,
         operationId: map['operationId'],
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Operation &&
+          runtimeType == other.runtimeType &&
+          listEquals(parameters, other.parameters) &&
+          requestBody == other.requestBody &&
+          operationId == other.operationId &&
+          responses == other.responses &&
+          deprecated == other.deprecated &&
+          hasSecurity == other.hasSecurity;
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      listHash(parameters) ^
+      requestBody.hashCode ^
+      operationId.hashCode ^
+      responses.hashCode ^
+      deprecated.hashCode ^
+      hasSecurity.hashCode;
 }
