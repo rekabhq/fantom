@@ -36,6 +36,8 @@ class SchemaGenerator {
 }
 
 extension on String {
+  /// assert that string starts with given [start],
+  /// and remove [start] from start of string.
   String removeFromStart(final String start) {
     if (!startsWith(start)) {
       throw AssertionError();
