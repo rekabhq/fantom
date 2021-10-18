@@ -24,7 +24,7 @@ void main() {
       swaggerMap!.remove('openapi');
       swaggerMap!['swagger'] = '2.0.0';
       openapiMapWithUnsupportedVersion = openapiMap!.clone();
-      openapiMapWithUnsupportedVersion!['openapi'] = '2.0.0';
+      openapiMapWithUnsupportedVersion!['openapi'] = '3.0.0';
       reader = OpenApiReader();
     });
 
