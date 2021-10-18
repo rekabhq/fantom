@@ -1,5 +1,6 @@
 part 'components.dart';
 part 'encoding.dart';
+part 'equality.dart';
 part 'header.dart';
 part 'listable.dart';
 part 'media_type.dart';
