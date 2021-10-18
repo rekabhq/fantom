@@ -45,5 +45,6 @@ extension on String {
 }
 
 extension on Reference<Schema> {
+  /// get class name for a schema reference
   String get className => ref.removeFromStart('#components/schemas/');
 }
