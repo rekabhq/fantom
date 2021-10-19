@@ -15,7 +15,7 @@ class Schema extends Equatable {
 
   /// described as [default] in openapi documentation
   /// but [default] is a keyword in Dart.
-  final Object? defaultValue;
+  final Optional<Object?>? defaultValue;
 
   final bool? deprecated;
 
@@ -53,7 +53,8 @@ class Schema extends Equatable {
             Reference.isReferenceMap(map) ? Reference.fromMap(map) : null,
         type: map['type'] == null ? null : Listable.fromMap(map['type']),
         format: map['format'],
-        defaultValue: map['default'],
+        defaultValue:
+            map.containsKey('default') ? Optional(map['default']) : null,
         deprecated: map['deprecated'],
         requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
         enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
