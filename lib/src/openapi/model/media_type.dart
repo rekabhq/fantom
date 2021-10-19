@@ -16,4 +16,16 @@ class MediaType {
           (e) => Encoding.fromMap(e),
         ),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MediaType &&
+          runtimeType == other.runtimeType &&
+          schema == other.schema &&
+          mapEquals(encoding, other.encoding);
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ schema.hashCode ^ mapHash(encoding);
 }

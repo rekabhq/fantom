@@ -25,4 +25,20 @@ class Response {
         ),
         description: map['description'],
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Response &&
+          runtimeType == other.runtimeType &&
+          description == other.description &&
+          mapEquals(headers, other.headers) &&
+          mapEquals(content, other.content);
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      description.hashCode ^
+      mapHash(headers) ^
+      mapHash(content);
 }

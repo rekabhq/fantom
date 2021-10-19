@@ -21,5 +21,23 @@ class OpenApi {
             : Components.fromMap(map['components']),
       );
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OpenApi &&
+          runtimeType == other.runtimeType &&
+          openapi == other.openapi &&
+          paths == other.paths &&
+          components == other.components;
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      openapi.hashCode ^
+      paths.hashCode ^
+      components.hashCode;
+}
+
+extension OpenApiExt on OpenApi {
   Version get version => Version.parse(openapi);
 }
