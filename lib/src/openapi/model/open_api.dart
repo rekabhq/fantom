@@ -36,6 +36,8 @@ class OpenApi {
       openapi.hashCode ^
       paths.hashCode ^
       components.hashCode;
+}
 
+extension OpenApiExt on OpenApi {
   Version get version => Version.parse(openapi);
 }
