@@ -1,3 +1,5 @@
+import 'package:version/version.dart';
+
 part 'components.dart';
 part 'encoding.dart';
 part 'equality.dart';

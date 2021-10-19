@@ -6,7 +6,7 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Reference', () {
+  group('Reference:', () {
     test(
       'should parse Reference object from reference.yaml without any errors',
       () async {

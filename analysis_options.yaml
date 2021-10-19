@@ -11,6 +11,7 @@ analyzer:
   errors:
     unused_import: error
     dead_code: error
+    prefer_final_locals: warning
     use_key_in_widget_constructors: ignore
     invalid_annotation_target: ignore
     prefer_const_constructors: ignore

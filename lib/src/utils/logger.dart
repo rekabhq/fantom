@@ -15,6 +15,8 @@ import 'package:io/ansi.dart' as ansi;
 // *Note*: for some reason when we try to colorize the strings using ansi color libraries like tint and others here
 // it will only result in orange color . WHYYYYYYYYYYYYYYYY?
 
+var shouldLogsBeVerbose = false;
+
 /// Sets default logger mode
 Logger logger = Logger.standard();
 final _ansiPen = AnsiPen();
@@ -40,11 +42,13 @@ class Log {
   }
 
   static void debug(message) {
-    _ansiPen
-      ..rgb(r: 0, g: 1, b: 1, bg: true)
-      ..black();
-    print(_ansiPen(message.toString()));
-    consoleController.stdout.add(utf8.encode(message.toString()));
+    if (shouldLogsBeVerbose) {
+      _ansiPen
+        ..rgb(r: 0, g: 1, b: 1, bg: true)
+        ..black();
+      print(_ansiPen(message.toString()));
+      consoleController.stdout.add(utf8.encode(message.toString()));
+    }
   }
 
   /// Prints [message] with error formatting
