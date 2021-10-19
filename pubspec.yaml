@@ -18,7 +18,6 @@ dependencies:
   tint: ^2.0.0
   yaml: ^3.1.0
   version: ^2.0.0
-  code_builder: any
 
 dev_dependencies:
   lints: ^1.0.0
