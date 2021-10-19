@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Parameter {
+class Parameter extends Equatable {
   final String name;
 
   /// described as [in] in documentation.
@@ -56,32 +56,16 @@ class Parameter {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Parameter &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          location == other.location &&
-          isRequired == other.isRequired &&
-          deprecated == other.deprecated &&
-          allowEmptyValue == other.allowEmptyValue &&
-          style == other.style &&
-          explode == other.explode &&
-          allowReserved == other.allowReserved &&
-          schema == other.schema &&
-          mapEquals(content, other.content);
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      name.hashCode ^
-      location.hashCode ^
-      isRequired.hashCode ^
-      deprecated.hashCode ^
-      allowEmptyValue.hashCode ^
-      style.hashCode ^
-      explode.hashCode ^
-      allowReserved.hashCode ^
-      schema.hashCode ^
-      mapHash(content);
+  List<Object?> get props => [
+        name,
+        location,
+        isRequired,
+        deprecated,
+        allowEmptyValue,
+        allowReserved,
+        style,
+        explode,
+        schema,
+        content,
+      ];
 }

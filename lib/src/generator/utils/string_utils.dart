@@ -79,7 +79,7 @@ extension StringUtils on String {
   List<String> splitLines() => split('\n');
 }
 
-extension StringOtherExt on String {
+extension StringRemovingExt on String {
   /// assert that string starts with given [start],
   /// and remove [start] from start of string.
   String removeFromStart(final String start) {

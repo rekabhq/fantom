@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Encoding {
+class Encoding extends Equatable {
   final String? contentType;
 
   final Map<String, Referenceable<Header>>? headers;
@@ -33,22 +33,11 @@ class Encoding {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Encoding &&
-          runtimeType == other.runtimeType &&
-          contentType == other.contentType &&
-          mapEquals(headers, other.headers) &&
-          style == other.style &&
-          explode == other.explode &&
-          allowReserved == other.allowReserved;
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      contentType.hashCode ^
-      mapHash(headers) ^
-      style.hashCode ^
-      explode.hashCode ^
-      allowReserved.hashCode;
+  List<Object?> get props => [
+        contentType,
+        headers,
+        style,
+        explode,
+        allowReserved,
+      ];
 }

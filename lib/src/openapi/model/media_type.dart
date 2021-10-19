@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class MediaType {
+class MediaType extends Equatable {
   final Schema? schema;
 
   final Map<String, Encoding>? encoding;
@@ -18,14 +18,8 @@ class MediaType {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MediaType &&
-          runtimeType == other.runtimeType &&
-          schema == other.schema &&
-          mapEquals(encoding, other.encoding);
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^ schema.hashCode ^ mapHash(encoding);
+  List<Object?> get props => [
+        schema,
+        encoding,
+      ];
 }

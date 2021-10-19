@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Paths {
+class Paths extends Equatable {
   final Map<String, PathItem> paths;
 
   Paths({
@@ -14,12 +14,7 @@ class Paths {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Paths &&
-          runtimeType == other.runtimeType &&
-          mapEquals(paths, other.paths);
-
-  @override
-  int get hashCode => runtimeType.hashCode ^ mapHash(paths);
+  List<Object?> get props => [
+        paths,
+      ];
 }

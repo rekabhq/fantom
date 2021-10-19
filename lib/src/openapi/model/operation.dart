@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Operation {
+class Operation extends Equatable {
   final List<Referenceable<Parameter>>? parameters;
 
   final Referenceable<RequestBody>? requestBody;
@@ -46,24 +46,12 @@ class Operation {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Operation &&
-          runtimeType == other.runtimeType &&
-          listEquals(parameters, other.parameters) &&
-          requestBody == other.requestBody &&
-          operationId == other.operationId &&
-          responses == other.responses &&
-          deprecated == other.deprecated &&
-          hasSecurity == other.hasSecurity;
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      listHash(parameters) ^
-      requestBody.hashCode ^
-      operationId.hashCode ^
-      responses.hashCode ^
-      deprecated.hashCode ^
-      hasSecurity.hashCode;
+  List<Object?> get props => [
+        parameters,
+        requestBody,
+        responses,
+        deprecated,
+        hasSecurity,
+        operationId,
+      ];
 }

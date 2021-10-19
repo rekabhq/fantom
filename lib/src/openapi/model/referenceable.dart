@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Referenceable<T extends Object> {
+class Referenceable<T extends Object> extends Equatable {
   /// should not be a collection.
   final T? _value;
 
@@ -41,14 +41,8 @@ class Referenceable<T extends Object> {
           : Referenceable<T>.value(builder(map));
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Referenceable<T> &&
-          runtimeType == other.runtimeType &&
-          _value == other._value &&
-          _reference == other._reference;
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^ _value.hashCode ^ _reference.hashCode;
+  List<Object?> get props => [
+        _value,
+        _reference,
+      ];
 }
