@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Header {
+class Header extends Equatable {
   /// described as [required] in openapi documentation
   /// but [required] is a keyword in Dart.
   final bool? isRequired;
@@ -40,26 +40,13 @@ class Header {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Header &&
-          runtimeType == other.runtimeType &&
-          isRequired == other.isRequired &&
-          deprecated == other.deprecated &&
-          style == other.style &&
-          explode == other.explode &&
-          allowReserved == other.allowReserved &&
-          schema == other.schema &&
-          mapEquals(content, other.content);
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      isRequired.hashCode ^
-      deprecated.hashCode ^
-      style.hashCode ^
-      explode.hashCode ^
-      allowReserved.hashCode ^
-      schema.hashCode ^
-      mapHash(content);
+  List<Object?> get props => [
+        isRequired,
+        deprecated,
+        style,
+        explode,
+        allowReserved,
+        schema,
+        content,
+      ];
 }

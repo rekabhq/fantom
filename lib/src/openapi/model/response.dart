@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Response {
+class Response extends Equatable {
   final String? description;
 
   final Map<String, Referenceable<Header>>? headers;
@@ -27,18 +27,9 @@ class Response {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Response &&
-          runtimeType == other.runtimeType &&
-          description == other.description &&
-          mapEquals(headers, other.headers) &&
-          mapEquals(content, other.content);
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      description.hashCode ^
-      mapHash(headers) ^
-      mapHash(content);
+  List<Object?> get props => [
+        headers,
+        content,
+        description,
+      ];
 }

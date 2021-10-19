@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class OpenApi {
+class OpenApi extends Equatable {
   final String openapi;
 
   final Paths? paths;
@@ -22,20 +22,11 @@ class OpenApi {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is OpenApi &&
-          runtimeType == other.runtimeType &&
-          openapi == other.openapi &&
-          paths == other.paths &&
-          components == other.components;
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      openapi.hashCode ^
-      paths.hashCode ^
-      components.hashCode;
+  List<Object?> get props => [
+        openapi,
+        paths,
+        components,
+      ];
 }
 
 extension OpenApiExt on OpenApi {

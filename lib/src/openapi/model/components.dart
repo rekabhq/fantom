@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Components {
+class Components extends Equatable {
   final Map<String, Schema>? schemas;
 
   final Map<String, Referenceable<Response>>? responses;
@@ -60,24 +60,12 @@ class Components {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Components &&
-          runtimeType == other.runtimeType &&
-          mapEquals(schemas, other.schemas) &&
-          mapEquals(responses, other.responses) &&
-          mapEquals(parameters, other.parameters) &&
-          mapEquals(requestBodies, other.requestBodies) &&
-          mapEquals(headers, other.headers) &&
-          mapEquals(pathItems, other.pathItems);
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      mapHash(schemas) ^
-      mapHash(responses) ^
-      mapHash(parameters) ^
-      mapHash(requestBodies) ^
-      mapHash(headers) ^
-      mapHash(pathItems);
+  List<Object?> get props => [
+        schemas,
+        responses,
+        parameters,
+        requestBodies,
+        headers,
+        pathItems,
+      ];
 }

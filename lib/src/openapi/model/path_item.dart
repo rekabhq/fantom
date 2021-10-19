@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class PathItem {
+class PathItem extends Equatable {
   final Operation? get;
 
   final Operation? put;
@@ -50,30 +50,15 @@ class PathItem {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is PathItem &&
-          runtimeType == other.runtimeType &&
-          get == other.get &&
-          put == other.put &&
-          post == other.post &&
-          delete == other.delete &&
-          options == other.options &&
-          head == other.head &&
-          patch == other.patch &&
-          trace == other.trace &&
-          listEquals(parameters, other.parameters);
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      get.hashCode ^
-      put.hashCode ^
-      post.hashCode ^
-      delete.hashCode ^
-      options.hashCode ^
-      head.hashCode ^
-      patch.hashCode ^
-      trace.hashCode ^
-      listHash(parameters);
+  List<Object?> get props => [
+        get,
+        put,
+        post,
+        delete,
+        options,
+        head,
+        patch,
+        trace,
+        parameters,
+      ];
 }

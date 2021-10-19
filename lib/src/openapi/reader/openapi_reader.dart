@@ -4,7 +4,6 @@ import 'package:fantom/src/utils/constants.dart';
 import 'package:version/version.dart';
 
 class OpenApiReader {
-
   static OpenApi parseOpenApiModel(Map<String, dynamic> openapi) {
     _checkVersionOf(openapi);
     return OpenApi.fromMap(openapi);

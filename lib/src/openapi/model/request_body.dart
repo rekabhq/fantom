@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class RequestBody {
+class RequestBody extends Equatable {
   final String? description;
 
   final Map<String, MediaType> content;
@@ -24,18 +24,9 @@ class RequestBody {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RequestBody &&
-          runtimeType == other.runtimeType &&
-          description == other.description &&
-          mapEquals(content, other.content) &&
-          isRequired == other.isRequired;
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      description.hashCode ^
-      mapHash(content) ^
-      isRequired.hashCode;
+  List<Object?> get props => [
+        description,
+        content,
+        isRequired,
+      ];
 }

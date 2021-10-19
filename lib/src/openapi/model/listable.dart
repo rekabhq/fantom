@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Listable<T extends Object> {
+class Listable<T extends Object> extends Equatable {
   /// should not be a collection.
   final T? _single;
 
@@ -37,15 +37,10 @@ class Listable<T extends Object> {
       : Listable<T>.single(json as T);
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Listable<T> &&
-          runtimeType == other.runtimeType &&
-          _single == other._single &&
-          listEquals(_list, other._list);
-
-  @override
-  int get hashCode => runtimeType.hashCode ^ _single.hashCode ^ listHash(_list);
+  List<Object?> get props => [
+        _single,
+        _list,
+      ];
 }
 
 extension ListableExt<T extends Object> on Listable<T> {

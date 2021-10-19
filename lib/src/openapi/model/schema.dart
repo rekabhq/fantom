@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 /// supports `3.1` and partially `>=3.0 <3.1`.
-class Schema {
+class Schema extends Equatable {
   /// this is only available on versions `>=3.0 <3.1`.
   final bool? nullable;
 
@@ -15,7 +15,7 @@ class Schema {
 
   /// described as [default] in openapi documentation
   /// but [default] is a keyword in Dart.
-  final Object? defaultValue;
+  final Optional<Object?>? defaultValue;
 
   final bool? deprecated;
 
@@ -53,7 +53,8 @@ class Schema {
             Reference.isReferenceMap(map) ? Reference.fromMap(map) : null,
         type: map['type'] == null ? null : Listable.fromMap(map['type']),
         format: map['format'],
-        defaultValue: map['default'],
+        defaultValue:
+            map.containsKey('default') ? Optional(map['default']) : null,
         deprecated: map['deprecated'],
         requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
         enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
@@ -65,34 +66,17 @@ class Schema {
       );
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Schema &&
-          runtimeType == other.runtimeType &&
-          nullable == other.nullable &&
-          reference == other.reference &&
-          type == other.type &&
-          format == other.format &&
-          itemEquals(defaultValue, other.defaultValue) &&
-          deprecated == other.deprecated &&
-          listEquals(requiredItems, other.requiredItems) &&
-          listEquals(enumerated, other.enumerated) &&
-          items == other.items &&
-          mapEquals(properties, other.properties) &&
-          uniqueItems == other.uniqueItems;
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      nullable.hashCode ^
-      reference.hashCode ^
-      type.hashCode ^
-      format.hashCode ^
-      itemHash(defaultValue) ^
-      deprecated.hashCode ^
-      requiredItems.hashCode ^
-      enumerated.hashCode ^
-      items.hashCode ^
-      mapHash(properties) ^
-      uniqueItems.hashCode;
+  List<Object?> get props => [
+        nullable,
+        reference,
+        type,
+        format,
+        defaultValue,
+        deprecated,
+        requiredItems,
+        enumerated,
+        items,
+        properties,
+        uniqueItems,
+      ];
 }

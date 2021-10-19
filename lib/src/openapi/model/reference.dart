@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Reference<T extends Object> {
+class Reference<T extends Object> extends Equatable {
   final String ref;
 
   const Reference({
@@ -16,12 +16,7 @@ class Reference<T extends Object> {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Reference &&
-          runtimeType == other.runtimeType &&
-          ref == other.ref;
-
-  @override
-  int get hashCode => runtimeType.hashCode ^ ref.hashCode;
+  List<Object?> get props => [
+        ref,
+      ];
 }

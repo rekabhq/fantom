@@ -1,6 +1,6 @@
 part of 'model.dart';
 
-class Responses {
+class Responses extends Equatable {
   /// described as [default] in documentation.
   /// but [default], is a keyword in Dart.
   final Referenceable<Response>? defaultValue;
@@ -30,14 +30,8 @@ class Responses {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Responses &&
-          runtimeType == other.runtimeType &&
-          defaultValue == other.defaultValue &&
-          mapEquals(map, other.map);
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^ defaultValue.hashCode ^ mapHash(map);
+  List<Object?> get props => [
+        defaultValue,
+        map,
+      ];
 }
