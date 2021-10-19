@@ -1,6 +1,5 @@
 /// copied from `dart_sealed`'s `sealed_writer` library:
 /// https://github.com/6thsolution/dart_sealed/blob/master/sealed_writer/lib/src/utils/string_utils.dart
-
 /// utilities for string iterables
 extension StringIterableUtils on Iterable<String> {
   /// if more than one element add trailing ','
@@ -48,6 +47,8 @@ extension StringIterableUtils on Iterable<String> {
   Iterable<String> _removeLast() => isNotEmpty ? take(length - 1) : this;
 }
 
+/// copied from `dart_sealed`'s `sealed_writer` library:
+/// https://github.com/6thsolution/dart_sealed/blob/master/sealed_writer/lib/src/utils/string_utils.dart
 /// utilities for strings
 extension StringUtils on String {
   /// add braces
@@ -76,4 +77,15 @@ extension StringUtils on String {
 
   /// split lines
   List<String> splitLines() => split('\n');
+}
+
+extension StringOtherExt on String {
+  /// assert that string starts with given [start],
+  /// and remove [start] from start of string.
+  String removeFromStart(final String start) {
+    if (!startsWith(start)) {
+      throw AssertionError();
+    }
+    return substring(start.length);
+  }
 }

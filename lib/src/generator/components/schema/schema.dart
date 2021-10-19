@@ -1,4 +1,5 @@
 import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/generator/utils/string_utils.dart';
 
 /// supports `3.1` and partially `>=3.0 <3.1`.
 class SchemaGenerator {
@@ -11,17 +12,6 @@ class SchemaGenerator {
 
   List<String> generate(final Map<String, Schema> schemas) {
     throw UnimplementedError();
-  }
-}
-
-extension StringExt on String {
-  /// assert that string starts with given [start],
-  /// and remove [start] from start of string.
-  String removeFromStart(final String start) {
-    if (!startsWith(start)) {
-      throw AssertionError();
-    }
-    return substring(start.length);
   }
 }
 
