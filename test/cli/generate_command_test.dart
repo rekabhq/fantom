@@ -20,7 +20,7 @@ void main() {
 
   setUp(() async {
     currentDir = Directory('${kCurrentDirectory.path}/test/cli/testProjectDir');
-    testOpenApiFilePath = '${currentDir.path}/petstore.openapi.yaml';
+    testOpenApiFilePath = 'test/utils/petstore.openapi.yaml';
     testOpenApi = await readJsonOrYamlFile(File(testOpenApiFilePath));
     testFantomConfig = await FantomConfig.fromFile(
         File('${currentDir.path}/fantom-config.yaml'));
@@ -38,7 +38,7 @@ void main() {
     argResults = null;
   });
 
-  group('GenerateCommand -', () {
+  group('GenerateCommand:', () {
     void insertOptionsForGenerateCommand(List<String> options) {
       argResults = argParser.parse(options);
     }

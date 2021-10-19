@@ -6,7 +6,7 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('PathItem', () {
+  group('PathItem:', () {
     test(
       'should parse PathItem object from item_post_put.yaml without any errors',
       () async {

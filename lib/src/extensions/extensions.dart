@@ -9,6 +9,8 @@ extension MapExt<K, V> on Map<K, V> {
       return this[key];
     }
   }
+
+  Map<K, V> clone() => Map.fromEntries(entries);
 }
 
 extension DoubleExt on double {

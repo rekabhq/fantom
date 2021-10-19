@@ -7,6 +7,7 @@ import 'package:fantom/src/cli/commands/base_command.dart';
 import 'package:fantom/src/cli/fantom_config.dart';
 import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/openapi/reader/openapi_reader.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
@@ -134,6 +135,14 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   @override
   FutureOr<int> runCommand(GenerateConfig arguments) async {
+    // parse an OpenApi model object from openapi map in arguments
+    var progress = Log.progress('🤓 Reading openapi file');
+    // ignore: unused_local_variable
+    var openapiModel = OpenApiReader.parseOpenApiModel(arguments.openApi);
+    progress.finish(showTiming: true);
+    // generate models and apis
+    // TODO: generate models and apis
+    // write files
     if (arguments is GenerateAsStandAlonePackageConfig) {
       Log.debug(arguments);
       // TODO: generate client as a standalone module and return the correct exit code
@@ -343,17 +352,19 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   }
 }
 
-class GenerateConfig {}
+class GenerateConfig {
+  final Map<String, dynamic> openApi;
+  GenerateConfig({required this.openApi});
+}
 
 /// this argument is used by generate command to generate the fantom client as a standalone module
 class GenerateAsStandAlonePackageConfig extends GenerateConfig {
-  final Map<String, dynamic> openApi;
   final Directory outputModuleDir;
 
   GenerateAsStandAlonePackageConfig({
-    required this.openApi,
+    required Map<String, dynamic> openApi,
     required this.outputModuleDir,
-  });
+  }) : super(openApi: openApi);
 
   @override
   String toString() {
@@ -369,15 +380,14 @@ class GenerateAsStandAlonePackageConfig extends GenerateConfig {
 /// this argument is used by generate command to generate the fantom client as part of the user's project
 /// where models and apis can be generated in different directories.
 class GenerateAsPartOfProjectConfig extends GenerateConfig {
-  final Map<String, dynamic> openApi;
   final Directory outputModelsDir;
   final Directory outputApisDir;
 
   GenerateAsPartOfProjectConfig({
-    required this.openApi,
+    required Map<String, dynamic> openApi,
     required this.outputModelsDir,
     required this.outputApisDir,
-  });
+  }) : super(openApi: openApi);
 
   @override
   String toString() {

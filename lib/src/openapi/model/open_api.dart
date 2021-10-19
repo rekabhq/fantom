@@ -20,4 +20,6 @@ class OpenApi {
             ? null
             : Components.fromMap(map['components']),
       );
+
+  Version get version => Version.parse(openapi);
 }
