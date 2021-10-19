@@ -106,8 +106,8 @@ class UnSupportedOpenApiVersionException extends FantomException {
         );
 }
 
-class NotAnOpenApiFileException extends FantomException {
-  NotAnOpenApiFileException([File? file])
+class InvalidOpenApiFileException extends FantomException {
+  InvalidOpenApiFileException([File? file])
       : super(
           'The file provided as an openapi source is not an openapi file\n'
           'A valid openapi file contains an (openapi) property at the top\n'

@@ -40,7 +40,6 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 ///
 class GenerateCommand extends BaseCommand<GenerateConfig> {
   GenerateCommand({
-    required this.openApiReader,
     required this.currentDirectory,
     required this.defaultModelsOutputPath,
     required this.defaultApisOutputPath,
@@ -52,7 +51,6 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   final Directory currentDirectory;
   final String defaultModelsOutputPath;
   final String defaultApisOutputPath;
-  final OpenApiReader openApiReader;
 
   static const String optionDir = 'dir';
   static const String optionPackage = 'package';
@@ -65,7 +63,6 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   static const String abbrApiDir = 'a';
 
   static GenerateCommand createDefaultInstance() => GenerateCommand(
-        openApiReader: OpenApiReader(),
         currentDirectory: kCurrentDirectory,
         defaultModelsOutputPath: kDefaultModelsOutputPath,
         defaultApisOutputPath: kDefaultApisOutputPath,
@@ -141,7 +138,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     // parse an OpenApi model object from openapi map in arguments
     var progress = Log.progress('🤓 Reading openapi file');
     // ignore: unused_local_variable
-    var openapiModel = openApiReader.parseOpenApiModel(arguments.openApi);
+    var openapiModel = OpenApiReader.parseOpenApiModel(arguments.openApi);
     progress.finish(showTiming: true);
     // generate models and apis
     // TODO: generate models and apis

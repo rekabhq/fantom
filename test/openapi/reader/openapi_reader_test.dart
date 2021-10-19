@@ -4,8 +4,8 @@
 import 'dart:io';
 
 import 'package:fantom/fantom.dart';
-import 'package:fantom/src/openapi/reader/openapi_reader.dart';
 import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/openapi/reader/openapi_reader.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
@@ -15,9 +15,8 @@ void main() {
     Map<String, dynamic>? openapiMapWithUnsupportedVersion;
     Map<String, dynamic>? swaggerMap;
     Map<String, dynamic>? notAnOpenapiMap = {};
-    late OpenApiReader reader;
 
-    setUp(() async {
+    setUpAll(() async {
       openapiMap =
           await readJsonOrYamlFile(File('test/utils/petstore.openapi.yaml'));
       swaggerMap = openapiMap!.clone();
@@ -25,7 +24,6 @@ void main() {
       swaggerMap!['swagger'] = '2.0.0';
       openapiMapWithUnsupportedVersion = openapiMap!.clone();
       openapiMapWithUnsupportedVersion!['openapi'] = '2.0.0';
-      reader = OpenApiReader();
     });
 
     tearDownAll(() {
@@ -36,7 +34,7 @@ void main() {
       'should read an openapi map and returns the OpenApi model object without errors',
       () async {
         //with
-        var openapiModel = reader.parseOpenApiModel(openapiMap!);
+        var openapiModel = OpenApiReader.parseOpenApiModel(openapiMap!);
         // tests for OpenApi model object are in the corresponsing folder in this project
       },
     );
@@ -46,7 +44,7 @@ void main() {
       () async {
         //with
         expect(
-          () => reader.parseOpenApiModel(swaggerMap!),
+          () => OpenApiReader.parseOpenApiModel(swaggerMap!),
           throwsA(isA<UnSupportedOpenApiVersionException>()),
         );
       },
@@ -57,7 +55,7 @@ void main() {
       () async {
         //with
         expect(
-          () => reader.parseOpenApiModel(openapiMapWithUnsupportedVersion!),
+          () => OpenApiReader.parseOpenApiModel(openapiMapWithUnsupportedVersion!),
           throwsA(isA<UnSupportedOpenApiVersionException>()),
         );
       },
@@ -68,8 +66,8 @@ void main() {
       () async {
         //with
         expect(
-          () => reader.parseOpenApiModel(notAnOpenapiMap),
-          throwsA(isA<NotAnOpenApiFileException>()),
+          () => OpenApiReader.parseOpenApiModel(notAnOpenapiMap),
+          throwsA(isA<InvalidOpenApiFileException>()),
         );
       },
     );
