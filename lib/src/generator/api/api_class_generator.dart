@@ -1,5 +1,6 @@
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/writer/file_writer.dart';
 
 class ApiClassGenerator {
   final OpenApi openApi;
@@ -9,4 +10,21 @@ class ApiClassGenerator {
     required this.openApi,
     required this.apiMethodGenerator,
   });
+
+  GeneratbleFile generate() {
+    return GeneratbleFile(fileContent: '''
+    class FantomApi {
+      Dio dio;
+
+      constructor
+
+
+
+      TODO: use apiMethodGenerator to generate methods of this FantomApi class for each operation from openApi model object
+
+
+
+    }
+    ''');
+  }
 }

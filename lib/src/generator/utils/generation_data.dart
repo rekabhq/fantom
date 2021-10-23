@@ -1,5 +1,5 @@
 import 'package:fantom/src/cli/commands/generate.dart';
-import 'package:fantom/src/writer/file_types.dart';
+import 'package:fantom/src/writer/file_writer.dart';
 
 class GenerationData {
   final GenerateConfig config;

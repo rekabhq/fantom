@@ -7,6 +7,9 @@ void registerComponent(String ref, Component component) =>
 Component? getComponentByRef(String ref) =>
     _globalComponentsCollection.getComponentByRef(ref);
 
+List<Component> allComponents =
+    _globalComponentsCollection.components.values.toList();
+
 final ComponentsCollection _globalComponentsCollection = ComponentsCollection();
 
 class ComponentsCollection {

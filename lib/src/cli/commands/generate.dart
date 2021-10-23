@@ -144,7 +144,8 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     progress.finish(showTiming: true);
     // generate models and apis
     progress = Log.progress('🔥 Generating ... ');
-    var generationData = Generator.generate(openapiModel);
+    var generationData =
+        Generator.createDefault(openapiModel).generate(openapiModel, arguments);
     progress.finish(showTiming: true);
     // write files
     progress = Log.progress('✍ Writing Generated Files');
