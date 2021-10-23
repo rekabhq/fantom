@@ -18,6 +18,9 @@ jobs:
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ matrix.sdk }}
+          version: 2.14.3
+
+      
 
       - name: Install dependencies
         run: dart pub get

@@ -3,8 +3,6 @@ import 'package:fantom/src/openapi/model/model.dart';
 import 'package:version/version.dart';
 
 class ComponentsGenerator {
-  // TODO: name SchemaComponentGenerator makes more sense
-
   final SchemaGenerator schemaGenerator;
 
   ComponentsGenerator({
