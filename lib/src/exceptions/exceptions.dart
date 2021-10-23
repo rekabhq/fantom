@@ -123,7 +123,7 @@ class ComponentAlreadyDefinedException extends FantomException {
   ComponentAlreadyDefinedException(String ref, Component definedComponent)
       : super(
           'Another Component with $ref is already defined'
-          'Defined Component\'s name is ${definedComponent.name}',
+          'Defined Component\'s name is ',
           io.ExitCode.cantCreate.code,
         );
 }
