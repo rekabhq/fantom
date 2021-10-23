@@ -7,10 +7,12 @@ import 'package:fantom/src/cli/commands/base_command.dart';
 import 'package:fantom/src/cli/fantom_config.dart';
 import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/generator/generator.dart';
 import 'package:fantom/src/openapi/reader/openapi_reader.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
+import 'package:fantom/src/writer/file_writer.dart';
 
 /// generates network client module from openapi document
 ///
@@ -141,21 +143,14 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     var openapiModel = OpenApiReader.parseOpenApiModel(arguments.openApi);
     progress.finish(showTiming: true);
     // generate models and apis
-    // TODO: generate models and apis
+    progress = Log.progress('🔥 Generating ... ');
+    var generationData = Generator.generate(openapiModel);
+    progress.finish(showTiming: true);
     // write files
-    if (arguments is GenerateAsStandAlonePackageConfig) {
-      Log.debug(arguments);
-      // TODO: generate client as a standalone module and return the correct exit code
-    } else if (arguments is GenerateAsPartOfProjectConfig) {
-      // TODO: generate client not as a module but part of the project with models and apis in separate packages
-      // TODO: and return the correct exit code
-      Log.debug(arguments);
-    } else {
-      throw Exception(
-        'Unknown arguments type for generate command'
-        'if you\'re seeing this message please open an issue',
-      );
-    }
+    progress = Log.progress('✍ Writing Generated Files');
+    await FileWriter.writeGeneratedFiles(generationData);
+    progress.finish(showTiming: true);
+    Log.fine('👻 ALL GOOD 👻');
     return 0;
   }
 
