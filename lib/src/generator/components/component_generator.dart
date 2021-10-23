@@ -4,7 +4,8 @@ import 'package:version/version.dart';
 
 class ComponentsGenerator {
   // TODO: name SchemaComponentGenerator makes more sense
-  final SchemaGenerator schemaGenerator; //other generators are needed as well
+
+  final SchemaGenerator schemaGenerator;
 
   ComponentsGenerator({
     required this.schemaGenerator,
