@@ -5,10 +5,12 @@ enum DType { object, array, string, number, integer, boolean }
 /// our [Generator] service
 class GeneratedComponent {
   final String fileContent;
+  final String fileName;
   final MetaData metaData;
 
   GeneratedComponent({
     required this.fileContent,
+    required this.fileName,
     required this.metaData,
   });
 }

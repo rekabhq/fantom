@@ -12,7 +12,8 @@ class ApiClassGenerator {
   });
 
   GeneratbleFile generate() {
-    return GeneratbleFile(fileContent: '''
+    return GeneratbleFile(
+      fileContent: '''
     class FantomApi {
       Dio dio;
 
@@ -25,6 +26,8 @@ class ApiClassGenerator {
 
 
     }
-    ''');
+    ''',
+      fileName: 'api.dart',
+    );
   }
 }

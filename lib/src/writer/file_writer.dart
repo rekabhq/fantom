@@ -3,7 +3,9 @@ import 'package:fantom/src/generator/utils/generation_data.dart';
 class GeneratbleFile {
   final String fileContent;
 
-  GeneratbleFile({required this.fileContent});
+  final String fileName;
+
+  GeneratbleFile({required this.fileContent, required this.fileName});
 }
 
 class FileWriter {
