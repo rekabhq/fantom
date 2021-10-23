@@ -4,10 +4,11 @@ abstract class GeneratbleFile {
   String get fileContent;
 }
 
-class DartFile implements GeneratbleFile {
-  final List<Directive> directives;
-  final String body;
-  DartFile({required this.directives, required this.body});
+mixin DartFile implements GeneratbleFile {
+
+  List<Directive> get directives;
+
+  String get body;
 
   @override
   String get fileContent {
