@@ -40,7 +40,12 @@ class Generator {
     var apiClassFile = apiClassGenerator.generate();
     // creating GenerationData object
     var modelsFile = allGeneratedComponents
-        .map((e) => GeneratbleFile(fileContent: e.fileContent))
+        .map(
+          (e) => GeneratbleFile(
+            fileContent: e.fileContent,
+            fileName: e.fileName,
+          ),
+        )
         .toList();
     var generationData = GenerationData(
       config: config,
