@@ -1,27 +1,27 @@
 import 'package:fantom/src/exceptions/exceptions.dart';
 import 'package:fantom/src/generator/components/component/component.dart';
 
-void registerComponent(String ref, Component component) =>
-    _globalComponentsCollection.registerComponent(ref, component);
+void registerGeneratedComponent(String ref, GeneratedComponent component) =>
+    _globalComponentsCollection.registerGeneratedComponent(ref, component);
 
-Component? getComponentByRef(String ref) =>
-    _globalComponentsCollection.getComponentByRef(ref);
+GeneratedComponent? getGeneratedComponentByRef(String ref) =>
+    _globalComponentsCollection.getGeneratedComponentByRef(ref);
 
-List<Component> allComponents =
+List<GeneratedComponent> allGeneratedComponents =
     _globalComponentsCollection.components.values.toList();
 
-final ComponentsCollection _globalComponentsCollection = ComponentsCollection();
+final GeneratedComponentsCollection _globalComponentsCollection = GeneratedComponentsCollection();
 
-class ComponentsCollection {
-  final Map<String, Component> components = {};
+class GeneratedComponentsCollection {
+  final Map<String, GeneratedComponent> components = {};
 
-  void registerComponent(String ref, Component component) {
+  void registerGeneratedComponent(String ref, GeneratedComponent component) {
     if (components.containsKey(ref)) {
-      throw ComponentAlreadyDefinedException(ref, components[ref]!);
+      throw GeneratedComponentAlreadyDefinedException(ref, components[ref]!);
     } else {
       components[ref] = component;
     }
   }
 
-  Component? getComponentByRef(String ref) => components[ref];
+  GeneratedComponent? getGeneratedComponentByRef(String ref) => components[ref];
 }

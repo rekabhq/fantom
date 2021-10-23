@@ -21,7 +21,7 @@ class ComponentsGenerator {
   void generateAndRegisterComponents(OpenApi openApi) {
     // TODO :
     // should generate components from [openApi] using [schemaGenerator] , [requestBodyGenerator] and etc
-    // and registers each of the generated components using global registerComponent() method in order to be used later
+    // and registers each of the generated components using global registerGeneratedComponent() method in order to be used later
     //
   }
 }

@@ -39,7 +39,7 @@ class Generator {
     componentsGenerator.generateAndRegisterComponents(openApi);
     var apiClassFile = apiClassGenerator.generate();
     // creating GenerationData object
-    var modelsFile = allComponents
+    var modelsFile = allGeneratedComponents
         .map((e) => GeneratbleFile(fileContent: e.fileContent))
         .toList();
     var generationData = GenerationData(
