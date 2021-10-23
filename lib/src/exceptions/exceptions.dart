@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fantom/src/generator/components/component/component.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:io/io.dart' as io;
 import 'package:fantom/src/utils/logger.dart';
@@ -115,6 +116,15 @@ class InvalidOpenApiFileException extends FantomException {
           'eg:\n'
           '     openapi: 3.0.0',
           io.ExitCode.config.code,
+        );
+}
+
+class ComponentAlreadyDefinedException extends FantomException {
+  ComponentAlreadyDefinedException(String ref, Component definedComponent)
+      : super(
+          'Another Component with $ref is already defined'
+          'Defined Component\'s name is ${definedComponent.name}',
+          io.ExitCode.cantCreate.code,
         );
 }
 
