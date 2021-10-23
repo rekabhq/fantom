@@ -11,8 +11,8 @@ class ApiClassGenerator {
     required this.apiMethodGenerator,
   });
 
-  GeneratbleFile generate() {
-    return GeneratbleFile(
+  GeneratableFile generate() {
+    return GeneratableFile(
       fileContent: '''
     class FantomApi {
       Dio dio;

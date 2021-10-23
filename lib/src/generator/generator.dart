@@ -41,7 +41,7 @@ class Generator {
     // creating GenerationData object
     var modelsFile = allGeneratedComponents
         .map(
-          (e) => GeneratbleFile(
+          (e) => GeneratableFile(
             fileContent: e.fileContent,
             fileName: e.fileName,
           ),

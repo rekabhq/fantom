@@ -3,8 +3,8 @@ import 'package:fantom/src/writer/file_writer.dart';
 
 class GenerationData {
   final GenerateConfig config;
-  final List<GeneratbleFile> models;
-  final GeneratbleFile apiClass;
+  final List<GeneratableFile> models;
+  final GeneratableFile apiClass;
 
   GenerationData({
     required this.config,
