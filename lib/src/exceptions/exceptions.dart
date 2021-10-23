@@ -120,7 +120,8 @@ class InvalidOpenApiFileException extends FantomException {
 }
 
 class GeneratedComponentAlreadyDefinedException extends FantomException {
-  GeneratedComponentAlreadyDefinedException(String ref, GeneratedComponent definedComponent)
+  GeneratedComponentAlreadyDefinedException(
+      String ref, GeneratedComponent definedComponent)
       : super(
           'Another Component with $ref is already defined'
           'Defined Component\'s name is ',

@@ -55,7 +55,8 @@ void main() {
       () async {
         //with
         expect(
-          () => OpenApiReader.parseOpenApiModel(openapiMapWithUnsupportedVersion!),
+          () => OpenApiReader.parseOpenApiModel(
+              openapiMapWithUnsupportedVersion!),
           throwsA(isA<UnSupportedOpenApiVersionException>()),
         );
       },

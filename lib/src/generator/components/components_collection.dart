@@ -10,7 +10,8 @@ GeneratedComponent? getGeneratedComponentByRef(String ref) =>
 List<GeneratedComponent> allGeneratedComponents =
     _globalComponentsCollection.components.values.toList();
 
-final GeneratedComponentsCollection _globalComponentsCollection = GeneratedComponentsCollection();
+final GeneratedComponentsCollection _globalComponentsCollection =
+    GeneratedComponentsCollection();
 
 class GeneratedComponentsCollection {
   final Map<String, GeneratedComponent> components = {};
