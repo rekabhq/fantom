@@ -5,12 +5,12 @@ import 'package:fantom/src/generator/utils/generation_data.dart';
 
 // ignore_for_file: unused_local_variable
 
-class GeneratbleFile {
+class GeneratableFile {
   final String fileContent;
 
   final String fileName;
 
-  GeneratbleFile({required this.fileContent, required this.fileName});
+  GeneratableFile({required this.fileContent, required this.fileName});
 }
 
 class FileWriter {
@@ -47,7 +47,7 @@ class FileWriter {
   }
 
   static Future _createGeneratableFileIn(
-    GeneratbleFile generatableFile,
+    GeneratableFile generatableFile,
     String path,
   ) async {
     var modelFile = File('$path/${generatableFile.fileName}');

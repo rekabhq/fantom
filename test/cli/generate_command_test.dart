@@ -16,6 +16,7 @@ void main() {
   late Map<String, dynamic> testOpenApi;
   late Directory currentDir;
   late FantomConfig testFantomConfig;
+
   late FantomConfig testPubspecConfig;
 
   setUp(() async {
