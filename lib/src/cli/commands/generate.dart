@@ -56,11 +56,13 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   static const String optionDir = 'dir';
   static const String optionPackage = 'package';
+  static const String optionPackageName = 'package-name';
   static const String optionModelDir = 'model-dir';
   static const String optionApiDir = 'api-dir';
 
   static const String abbrDir = 'd';
   static const String abbrPackage = 'p';
+  static const String abbrPackageName = 'n';
   static const String abbrModelsDir = 'm';
   static const String abbrApiDir = 'a';
 
@@ -80,7 +82,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     argParser.addOption(
       optionPackage,
       abbr: abbrPackage,
-      help: 'path where network module should be generated in',
+      help: 'path where network package should be generated in',
     );
     argParser.addOption(
       optionModelDir,
@@ -91,6 +93,11 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       optionApiDir,
       abbr: abbrApiDir,
       help: 'path where generated apis will be stored in',
+    );
+    argParser.addOption(
+      optionPackageName,
+      abbr: abbrPackageName,
+      help: 'name you want for your generated network package and api-class',
     );
   }
 
@@ -128,7 +135,10 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       } else {
         _warnUser(fantomConfig.outputModelsDir, fantomConfig.outputApiDir);
         return _createGenerateAsStandAlonePackageArgs(
-            openApiMap, fantomConfig.outputPackageDir);
+          openApiMap,
+          fantomConfig.packageName,
+          fantomConfig.outputPackageDir,
+        );
       }
     } else {
       return tryToCreateGenerateArgsWithoutAnyCliInput();
@@ -195,7 +205,10 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     } else {
       _warnUser(fantomConfig.outputModelsDir, fantomConfig.outputApiDir);
       return _createGenerateAsStandAlonePackageArgs(
-          openApiMap, fantomConfig.outputPackageDir);
+        openApiMap,
+        fantomConfig.packageName,
+        fantomConfig.outputPackageDir,
+      );
     }
   }
 
@@ -258,16 +271,18 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   FutureOr<GenerateAsStandAlonePackageConfig>
       _createGenerateAsStandAlonePackageArgs(
     Map<String, dynamic> openApiMap,
-    String? outputModulePath,
+    String? packageName,
+    String? outputPackagePath,
   ) async {
     // warning user
     var outputModuleDirectory = await getDirectoryInPath(
-      path: outputModulePath,
+      path: outputPackagePath,
       directoryPathIsNotValid:
           '($optionPackage | $abbrPackage) module directory path is not provided or not valid',
     );
     return GenerateAsStandAlonePackageConfig(
       openApi: openApiMap,
+      packageName: packageName ?? kDefaultGeneratedPackageName,
       outputModuleDir: outputModuleDirectory,
     );
   }
@@ -356,9 +371,11 @@ class GenerateConfig {
 /// this argument is used by generate command to generate the fantom client as a standalone module
 class GenerateAsStandAlonePackageConfig extends GenerateConfig {
   final Directory outputModuleDir;
+  final String packageName;
 
   GenerateAsStandAlonePackageConfig({
     required Map<String, dynamic> openApi,
+    required this.packageName,
     required this.outputModuleDir,
   }) : super(openApi: openApi);
 
