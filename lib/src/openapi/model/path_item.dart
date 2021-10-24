@@ -62,3 +62,16 @@ class PathItem extends Equatable {
         parameters,
       ];
 }
+
+extension PathItemExt on PathItem {
+  Map<String, Operation?> get operations => {
+        'get': get,
+        'put': put,
+        'post': post,
+        'delete': delete,
+        'options': options,
+        'head': head,
+        'patch': patch,
+        'trace': trace,
+      };
+}
