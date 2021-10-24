@@ -10,11 +10,16 @@ class DefaultValue {
 
 /// information for an enum or constant value
 class EnumerationInfo {
+  /// name of enum
+  ///
+  /// if element is not of object type can be same as element name.
+  final String? name;
+
   /// type of elements
   ///
   /// ex. String?
   ///
-  /// should be same as element type
+  /// should be same as element type.
   final String type;
 
   /// values of enum
@@ -23,6 +28,7 @@ class EnumerationInfo {
   final List<Object?> values;
 
   const EnumerationInfo({
+    required this.name,
     required this.type,
     required this.values,
   });
