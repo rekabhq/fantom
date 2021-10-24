@@ -91,7 +91,7 @@ abstract class DataElement {
 
   /// [NullingDataElement]
   const factory DataElement.nulling({
-    required String name,
+    required String? name,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
     required EnumerationInfo? enumeration,
@@ -99,7 +99,7 @@ abstract class DataElement {
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
-    required String name,
+    required String? name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -108,7 +108,7 @@ abstract class DataElement {
 
   /// [ObjectDataElement]
   const factory DataElement.object({
-    required String name,
+    required String? name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -118,7 +118,7 @@ abstract class DataElement {
 
   /// [ArrayDataElement]
   const factory DataElement.array({
-    required String name,
+    required String? name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -129,7 +129,7 @@ abstract class DataElement {
 
   /// [NumberDataElement]
   const factory DataElement.number({
-    required String name,
+    required String? name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -139,7 +139,7 @@ abstract class DataElement {
 
   /// [StringDataElement]
   const factory DataElement.string({
-    required String name,
+    required String? name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -148,7 +148,7 @@ abstract class DataElement {
 
   /// [MapDataElement]
   const factory DataElement.map({
-    required String name,
+    required String? name,
     required bool isNullable,
     required DefaultValue? defaultValue,
     required EnumerationInfo? enumeration,
