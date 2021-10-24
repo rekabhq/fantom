@@ -253,8 +253,8 @@ class NumberDataElement implements DataElement {
     final base = isFloat == null
         ? 'num'
         : isFloat!
-            ? 'double'
-            : 'int';
+        ? 'double'
+        : 'int';
     return base.nullify(isNullable);
   }
 }
