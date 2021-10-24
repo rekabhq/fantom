@@ -6,7 +6,7 @@ class ApiClassGenerator {
   final OpenApi openApi;
   final ApiMethodGenerator apiMethodGenerator;
 
-  ApiClassGenerator({
+  const ApiClassGenerator({
     required this.openApi,
     required this.apiMethodGenerator,
   });
@@ -24,36 +24,51 @@ class ApiClassGenerator {
   }
 
   String _generateFileContent() {
-    final buffer = StringBuffer();
+    //TODO: maybe we can get this somehow from cli
+    final apiClassName = 'FantomApi';
 
-    return '';
+    final buffer = StringBuffer();
+    buffer
+      ..writeln(_generateImports())
+      ..writeln(_generateClass(apiClassName))
+      ..writeln(_generateConstructor(apiClassName))
+      ..writeln(_generateFields())
+      ..writeln(_generateApiMethods())
+      ..writeln('}');
+
+    return buffer.toString();
   }
 
   String _generateImports() {
+    //TODO(payam): add models import
+
     return """
+    import 'package:dio/dio.dart';
+    """;
+  }
+
+  String _generateClass(String className) {
+    return """
+    class $className {
+
     
     """;
   }
 
-  String _generateClass({String className = 'FantomApi'}) {
+  String _generateConstructor(String className) {
     return """
-    
+    $className({required this.dio});
     """;
   }
 
   String _generateFields() {
     return """
-    
-    """;
-  }
-
-  String _generateConstructor() {
-    return """
-    
+    final Dio dio;
     """;
   }
 
   String _generateApiMethods() {
+    //TODO(payam): complete this method
     return """
     
     """;
