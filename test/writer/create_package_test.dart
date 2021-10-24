@@ -1,12 +1,16 @@
 @Timeout(Duration(minutes: 1))
 import 'dart:io';
 
+import 'package:fantom/src/cli/commands/generate.dart';
+import 'package:fantom/src/generator/utils/generation_data.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:fantom/src/writer/dart_package.dart';
-import 'package:pubspec_yaml/pubspec_yaml.dart';
-import 'package:plain_optional/plain_optional.dart' as o;
+import 'package:fantom/src/writer/file_writer.dart';
+// import 'package:pubspec_yaml/pubspec_yaml.dart';
+// import 'package:plain_optional/plain_optional.dart' as o;
 import 'package:pubspec_yaml/pubspec_yaml.dart' as p;
 import 'package:test/test.dart';
-import 'package:version/version.dart';
+// import 'package:version/version.dart';
 
 void main() {
   group('CreatePackage:', () {
@@ -17,27 +21,47 @@ void main() {
     final exampleDirPath = '$packagePath/example';
     final testDirPath = '$packagePath/test';
     final pubspecPath = '$packagePath/pubspec.yaml';
-    var packageInfo = DartPackageInfo(
-      name: name,
-      generationPath: generationPath,
-      pubspecInfo: PubspecInfo(
-        version: Version(1, 0, 0),
-        description: 'this is a very funny library',
-        environment: {"sdk": ">=2.14.0 <3.0.0"},
-        dependencies: [
-          PackageDependencySpec.hosted(HostedPackageDependencySpec(
-            package: 'dio',
-            version: o.Optional('4.0.1'),
-          )),
+    late FantomPackageInfo packageInfo;
+    late GenerationData generationData;
+
+    setUpAll(() async {
+      generationData = GenerationData(
+        config: GenerateAsStandAlonePackageConfig(
+          openApi: await readJsonOrYamlFile(
+            File('test/openapi/model/openapi/simple_openapi.yaml'),
+          ),
+          packageName: name,
+          outputModuleDir: Directory(generationPath),
+        ),
+        models: [
+          GeneratableFile(
+            fileContent: '''
+class ModelA{
+
+}
+      ''',
+            fileName: 'model_a.dart',
+          )
         ],
-      ),
-    );
+        apiClass: GeneratableFile(
+          fileContent: '''
+class ApiClass{
+
+}
+      ''',
+          fileName: 'api.dart',
+        ),
+      );
+
+      packageInfo = FantomPackageInfo.fromConfig(
+          generationData.config as GenerateAsStandAlonePackageConfig);
+    });
 
     test(
       'should create a dart package from package info',
       () async {
         //when
-        await createDartPackage(packageInfo);
+        await FileWriter.writeGeneratedFiles(generationData);
         // assert existense of these files
         expect(Directory(libDirPath).existsSync(), isTrue);
         expect(File(pubspecPath).existsSync(), isTrue);
@@ -55,6 +79,16 @@ void main() {
             packageInfo.pubspecInfo.description);
         expect(pubspec.name, packageInfo.name);
         expect(pubspec.dependencies, packageInfo.pubspecInfo.dependencies);
+        // assert generated api & model files in lib/
+        var expectedModelFileNames =
+            generationData.models.map((e) => e.fileName).toSet();
+        var actualModelFileNames = Directory(packageInfo.modelsDirPath)
+            .listSync()
+            .map((e) => e.path.split('/').last);
+        expect(actualModelFileNames, expectedModelFileNames);
+        var apiFile = File(
+            '${packageInfo.apisDirPath}/${generationData.apiClass.fileName}');
+        expect(await apiFile.exists(), isTrue);
       },
     );
   });

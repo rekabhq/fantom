@@ -1,20 +1,47 @@
 import 'dart:io';
 
+import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/utils/process_manager.dart';
 import 'package:pubspec_yaml/pubspec_yaml.dart' as p;
 import 'package:plain_optional/plain_optional.dart' as o;
+import 'package:pubspec_yaml/pubspec_yaml.dart';
 import 'package:version/version.dart';
 
-class DartPackageInfo {
+class FantomPackageInfo {
   final String name;
   final String generationPath;
   final PubspecInfo pubspecInfo;
 
-  DartPackageInfo({
+  FantomPackageInfo({
     required this.name,
     required this.generationPath,
     required this.pubspecInfo,
   });
+
+  String get modelsDirPath => '$libDir/models/';
+
+  String get apisDirPath => libDir;
+
+  String get libDir => '$generationPath/$name/lib/';
+
+  factory FantomPackageInfo.fromConfig(
+      GenerateAsStandAlonePackageConfig config) {
+    return FantomPackageInfo(
+      name: config.packageName,
+      generationPath: config.outputModuleDir.path,
+      pubspecInfo: PubspecInfo(
+        version: Version(1, 0, 0),
+        description: 'this is a very funny library',
+        environment: {"sdk": ">=2.14.0 <3.0.0"},
+        dependencies: [
+          PackageDependencySpec.hosted(HostedPackageDependencySpec(
+            package: 'dio',
+            version: o.Optional('4.0.1'),
+          )),
+        ],
+      ),
+    );
+  }
 }
 
 class PubspecInfo {
@@ -40,7 +67,8 @@ class PubspecInfo {
   }
 }
 
-Future createDartPackage(DartPackageInfo packageInfo) async {
+/// creates a dart package and returns the lib directory of it
+Future createDartPackage(FantomPackageInfo packageInfo) async {
   // create path where dart package should be created
   await runFromCmd('mkdir', args: ['-p', (packageInfo.generationPath)]);
   // create a dart package with package-simple template

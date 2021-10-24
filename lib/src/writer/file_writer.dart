@@ -4,6 +4,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/extensions/extensions.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
+import 'package:fantom/src/writer/dart_package.dart';
 
 // ignore_for_file: unused_local_variable
 
@@ -20,7 +21,16 @@ class FileWriter {
 
   static Future writeGeneratedFiles(GenerationData generationData) async {
     if (generationData.config is GenerateAsPartOfProjectConfig) {
-      await _writeGeneratedFilesToProject(generationData);
+      await _writeGeneratedFilesToProject(
+        generationData.models,
+        generationData.apiClass,
+        (generationData.config as GenerateAsPartOfProjectConfig)
+            .outputModelsDir
+            .path,
+        (generationData.config as GenerateAsPartOfProjectConfig)
+            .outputApisDir
+            .path,
+      );
     } else if (generationData.config is GenerateAsStandAlonePackageConfig) {
       await _writeGeneratedFilestToPackage(generationData);
     } else {
@@ -31,22 +41,34 @@ class FileWriter {
     }
   }
 
-  static Future _writeGeneratedFilesToProject(GenerationData data) async {
-    var models = data.models;
-    var apiClass = data.apiClass;
-    var config = data.config as GenerateAsPartOfProjectConfig;
+  static Future _writeGeneratedFilesToProject(
+    List<GeneratableFile> models,
+    GeneratableFile apiClass,
+    String modelsDirPath,
+    String apisDirPath,
+  ) async {
     // writing models to models path
     for (var model in models) {
-      await _createGeneratableFileIn(model, config.outputModelsDir.path);
+      await _createGeneratableFileIn(model, modelsDirPath);
     }
     //writing api class to apis path
-    await _createGeneratableFileIn(apiClass, config.outputApisDir.path);
+    await _createGeneratableFileIn(apiClass, apisDirPath);
   }
 
   static Future _writeGeneratedFilestToPackage(GenerationData data) async {
     var models = data.models;
     var apiClass = data.apiClass;
     var config = data.config as GenerateAsStandAlonePackageConfig;
+    var fantomPackageInfo = FantomPackageInfo.fromConfig(
+      data.config as GenerateAsStandAlonePackageConfig,
+    );
+    await createDartPackage(fantomPackageInfo);
+    await _writeGeneratedFilesToProject(
+      models,
+      apiClass,
+      fantomPackageInfo.modelsDirPath,
+      fantomPackageInfo.apisDirPath,
+    );
   }
 
   static Future _createGeneratableFileIn(
