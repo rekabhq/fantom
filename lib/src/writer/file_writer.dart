@@ -47,7 +47,6 @@ class FileWriter {
     var models = data.models;
     var apiClass = data.apiClass;
     var config = data.config as GenerateAsStandAlonePackageConfig;
-    
   }
 
   static Future _createGeneratableFileIn(
@@ -62,5 +61,4 @@ class FileWriter {
     );
     await modelFile.writeAsString(generatableFile.fileContent);
   }
-
 }
