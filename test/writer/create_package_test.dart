@@ -55,7 +55,6 @@ void main() {
             packageInfo.pubspecInfo.description);
         expect(pubspec.name, packageInfo.name);
         expect(pubspec.dependencies, packageInfo.pubspecInfo.dependencies);
-
       },
     );
   });
