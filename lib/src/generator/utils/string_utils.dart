@@ -84,7 +84,7 @@ extension StringRemovingExt on String {
   /// and remove [start] from start of string.
   String removeFromStart(final String start) {
     if (!startsWith(start)) {
-      throw AssertionError();
+      throw AssertionError('string "$this" should start with "$start"!');
     }
     return substring(start.length);
   }

@@ -33,6 +33,8 @@ class Schema extends Equatable {
 
   final bool? uniqueItems;
 
+  final Schema? additionalProperties;
+
   const Schema({
     required this.nullable,
     required this.reference,
@@ -45,6 +47,7 @@ class Schema extends Equatable {
     required this.items,
     required this.properties,
     required this.uniqueItems,
+    required this.additionalProperties,
   });
 
   factory Schema.fromMap(Map<String, dynamic> map) => Schema(
@@ -63,6 +66,12 @@ class Schema extends Equatable {
           (e) => Schema.fromMap(e),
         ),
         uniqueItems: map['uniqueItems'],
+        additionalProperties: (map['additionalProperties'] == null ||
+                map['additionalProperties'] == false)
+            ? null
+            : map['additionalProperties'] == true
+                ? Schema.fromMap(const {})
+                : Schema.fromMap(map['additionalProperties']),
       );
 
   @override
