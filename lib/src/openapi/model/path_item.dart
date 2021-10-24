@@ -64,14 +64,24 @@ class PathItem extends Equatable {
 }
 
 extension PathItemExt on PathItem {
-  Map<String, Operation?> get operations => {
-        'get': get,
-        'put': put,
-        'post': post,
-        'delete': delete,
-        'options': options,
-        'head': head,
-        'patch': patch,
-        'trace': trace,
-      };
+  Map<String, Operation> get operations {
+    final map = {
+      'get': get,
+      'put': put,
+      'post': post,
+      'delete': delete,
+      'options': options,
+      'head': head,
+      'patch': patch,
+      'trace': trace,
+    }..removeWhere((key, value) => value == null);
+
+    return map as Map<String, Operation>;
+  }
+}
+
+extension PathItemStringExt on String {
+  bool get hasPathParameter => contains('{') && contains('}');
+
+  int get countPathParameter => '{'.allMatches(this).length;
 }
