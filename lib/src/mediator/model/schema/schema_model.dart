@@ -8,6 +8,26 @@ class DefaultValue {
   const DefaultValue(this.value);
 }
 
+/// information for an enum or constant value
+class EnumerationInfo {
+  /// type of elements
+  ///
+  /// ex. String?
+  ///
+  /// should be same as element type
+  final String type;
+
+  /// values of enum
+  ///
+  /// ex. ['hello', 'hi', null]
+  final List<Object?> values;
+
+  const EnumerationInfo({
+    required this.type,
+    required this.values,
+  });
+}
+
 /// dart object property.
 ///
 /// ex. required String? id;
@@ -47,8 +67,15 @@ abstract class DataElement {
   /// if is nullable
   bool get isNullable;
 
+  /// if is deprecated
+  bool get isDeprecated;
+
   /// default value if present
   DefaultValue? get defaultValue;
+
+  /// if present provides enumeration information,
+  /// if not present means no enumeration.
+  EnumerationInfo? get enumeration;
 
   /// type with nullability sign
   ///
@@ -59,21 +86,27 @@ abstract class DataElement {
   /// [NullingDataElement]
   const factory DataElement.nulling({
     required String name,
+    required bool isDeprecated,
     required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
   }) = NullingDataElement;
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
     required String name,
     required bool isNullable,
+    required bool isDeprecated,
     required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
   }) = BooleanDataElement;
 
   /// [ObjectDataElement]
   const factory DataElement.object({
     required String name,
     required bool isNullable,
+    required bool isDeprecated,
     required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
     required List<ObjectProperty> properties,
   }) = ObjectDataElement;
 
@@ -81,7 +114,9 @@ abstract class DataElement {
   const factory DataElement.array({
     required String name,
     required bool isNullable,
+    required bool isDeprecated,
     required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
     required DataElement items,
     required bool isUniqueItems,
   }) = ArrayDataElement;
@@ -90,7 +125,9 @@ abstract class DataElement {
   const factory DataElement.number({
     required String name,
     required bool isNullable,
+    required bool isDeprecated,
     required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
     required bool? isFloat,
   }) = NumberDataElement;
 
@@ -98,7 +135,9 @@ abstract class DataElement {
   const factory DataElement.string({
     required String name,
     required bool isNullable,
+    required bool isDeprecated,
     required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
   }) = StringDataElement;
 
   /// [MapDataElement]
@@ -106,6 +145,8 @@ abstract class DataElement {
     required String name,
     required bool isNullable,
     required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
+    required bool isDeprecated,
     required DataElement items,
   }) = MapDataElement;
 }
@@ -119,11 +160,19 @@ class NullingDataElement implements DataElement {
   final bool isNullable = true;
 
   @override
+  final bool isDeprecated;
+
+  @override
   final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
 
   const NullingDataElement({
     required this.name,
+    required this.isDeprecated,
     required this.defaultValue,
+    required this.enumeration,
   });
 
   @override
@@ -142,12 +191,20 @@ class BooleanDataElement implements DataElement {
   final bool isNullable;
 
   @override
+  final bool isDeprecated;
+
+  @override
   final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
 
   const BooleanDataElement({
     required this.name,
     required this.isNullable,
+    required this.isDeprecated,
     required this.defaultValue,
+    required this.enumeration,
   });
 
   @override
@@ -168,7 +225,13 @@ class ObjectDataElement implements DataElement {
   final bool isNullable;
 
   @override
+  final bool isDeprecated;
+
+  @override
   final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
 
   /// properties
   final List<ObjectProperty> properties;
@@ -176,7 +239,9 @@ class ObjectDataElement implements DataElement {
   const ObjectDataElement({
     required this.name,
     required this.isNullable,
+    required this.isDeprecated,
     required this.defaultValue,
+    required this.enumeration,
     required this.properties,
   });
 
@@ -200,7 +265,13 @@ class ArrayDataElement implements DataElement {
   final bool isNullable;
 
   @override
+  final bool isDeprecated;
+
+  @override
   final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
 
   /// element type
   final DataElement items;
@@ -211,7 +282,9 @@ class ArrayDataElement implements DataElement {
   const ArrayDataElement({
     required this.name,
     required this.isNullable,
+    required this.isDeprecated,
     required this.defaultValue,
+    required this.enumeration,
     required this.items,
     required this.isUniqueItems,
   });
@@ -234,7 +307,13 @@ class NumberDataElement implements DataElement {
   final bool isNullable;
 
   @override
+  final bool isDeprecated;
+
+  @override
   final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
 
   /// if not present means no specific details.
   ///
@@ -244,7 +323,9 @@ class NumberDataElement implements DataElement {
   const NumberDataElement({
     required this.name,
     required this.isNullable,
+    required this.isDeprecated,
     required this.defaultValue,
+    required this.enumeration,
     required this.isFloat,
   });
 
@@ -268,12 +349,20 @@ class StringDataElement implements DataElement {
   final bool isNullable;
 
   @override
+  final bool isDeprecated;
+
+  @override
   final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
 
   const StringDataElement({
     required this.name,
     required this.isNullable,
+    required this.isDeprecated,
     required this.defaultValue,
+    required this.enumeration,
   });
 
   @override
@@ -292,7 +381,13 @@ class MapDataElement implements DataElement {
   final bool isNullable;
 
   @override
+  final bool isDeprecated;
+
+  @override
   final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
 
   /// value element type
   final DataElement items;
@@ -300,7 +395,9 @@ class MapDataElement implements DataElement {
   const MapDataElement({
     required this.name,
     required this.isNullable,
+    required this.isDeprecated,
     required this.defaultValue,
+    required this.enumeration,
     required this.items,
   });
 
