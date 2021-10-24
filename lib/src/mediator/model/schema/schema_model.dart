@@ -11,8 +11,6 @@ class DefaultValue {
 /// information for an enum or constant value
 class EnumerationInfo {
   /// name of enum
-  ///
-  /// if element is not of object type can be same as element name.
   final String? name;
 
   /// type of elements
