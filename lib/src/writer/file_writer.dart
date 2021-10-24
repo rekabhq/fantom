@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:dart_style/dart_style.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
+import 'package:fantom/src/extensions/extensions.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 
 // ignore_for_file: unused_local_variable
@@ -14,6 +16,8 @@ class GeneratableFile {
 }
 
 class FileWriter {
+  static final formatter = DartFormatter();
+
   static Future writeGeneratedFiles(GenerationData generationData) async {
     if (generationData.config is GenerateAsPartOfProjectConfig) {
       await _writeGeneratedFilesToProject(generationData);
@@ -52,6 +56,10 @@ class FileWriter {
   ) async {
     var modelFile = File('$path/${generatableFile.fileName}');
     await modelFile.create(recursive: true);
+    var formattedContent = formatter.tryFormat(
+      generatableFile.fileContent,
+      fileName: generatableFile.fileName,
+    );
     await modelFile.writeAsString(generatableFile.fileContent);
   }
 }
