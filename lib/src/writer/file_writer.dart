@@ -16,13 +16,13 @@ class GeneratableFile {
 }
 
 class FileWriter {
-  static final formatter = DartFormatter();
+  static final _formatter = DartFormatter();
 
   static Future writeGeneratedFiles(GenerationData generationData) async {
     if (generationData.config is GenerateAsPartOfProjectConfig) {
       await _writeGeneratedFilesToProject(generationData);
     } else if (generationData.config is GenerateAsStandAlonePackageConfig) {
-      await _writeGeneratedFilestoPackage(generationData);
+      await _writeGeneratedFilestToPackage(generationData);
     } else {
       throw Exception(
         'Unkonwn GenerateConfig for generate command of cli'
@@ -43,11 +43,11 @@ class FileWriter {
     await _createGeneratableFileIn(apiClass, config.outputApisDir.path);
   }
 
-  static Future _writeGeneratedFilestoPackage(GenerationData data) async {
+  static Future _writeGeneratedFilestToPackage(GenerationData data) async {
     var models = data.models;
     var apiClass = data.apiClass;
     var config = data.config as GenerateAsStandAlonePackageConfig;
-    //TODO: generate api client as a package
+    
   }
 
   static Future _createGeneratableFileIn(
@@ -56,10 +56,11 @@ class FileWriter {
   ) async {
     var modelFile = File('$path/${generatableFile.fileName}');
     await modelFile.create(recursive: true);
-    var formattedContent = formatter.tryFormat(
+    var formattedContent = _formatter.tryFormat(
       generatableFile.fileContent,
       fileName: generatableFile.fileName,
     );
     await modelFile.writeAsString(generatableFile.fileContent);
   }
+
 }
