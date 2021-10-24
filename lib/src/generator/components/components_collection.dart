@@ -1,4 +1,4 @@
-import 'package:fantom/src/exceptions/exceptions.dart';
+import 'package:fantom/src/utils/exceptions/exceptions.dart';
 import 'package:fantom/src/generator/components/component/component.dart';
 
 void registerGeneratedComponent(String ref, GeneratedComponent component) =>

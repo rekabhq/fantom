@@ -1,7 +1,7 @@
 @Timeout(Duration(minutes: 1))
 import 'dart:io';
 
-import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 

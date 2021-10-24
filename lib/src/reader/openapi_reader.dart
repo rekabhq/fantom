@@ -1,5 +1,5 @@
 import 'package:fantom/fantom.dart';
-import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:version/version.dart';
 

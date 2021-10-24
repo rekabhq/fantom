@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
-import 'package:fantom/src/exceptions/exceptions.dart';
-import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/utils/exceptions/exceptions.dart';
+import 'package:fantom/src/utils/extensions/extensions.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:io/io.dart';
 

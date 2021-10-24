@@ -1,5 +1,5 @@
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
-import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 
 class SchemaMediator {

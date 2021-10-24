@@ -1,4 +1,4 @@
-import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/utils/extensions/extensions.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 
 class GeneratableFile {
