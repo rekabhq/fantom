@@ -30,7 +30,7 @@ class ObjectProperty {
 
 /// base data element:
 ///
-/// - [NullDataElement]
+/// - [NullingDataElement]
 /// - [BooleanDataElement]
 /// - [ObjectDataElement]
 /// - [ArrayDataElement]
@@ -56,7 +56,7 @@ abstract class DataElement {
   /// List<String>, List<String?>, List<String?>?
   String get type;
 
-  /// [NullDataElement]
+  /// [NullingDataElement]
   const factory DataElement.nulling({
     required String name,
     required DefaultValue? defaultValue,
