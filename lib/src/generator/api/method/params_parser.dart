@@ -1,4 +1,4 @@
-import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 
 /// should create a metaData object (which is yet to be decided what it is) that explains everything about the parameters
 /// of this method in a way that it can be easily used to generate parameters for our method

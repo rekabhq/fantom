@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:dart_style/dart_style.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
-import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/utils/extensions.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/writer/dart_package.dart';
 

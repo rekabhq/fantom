@@ -1,5 +1,5 @@
 import 'package:fantom/src/generator/components/component/component.dart';
-import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 
 class MethodResponseParser {
   GeneratedComponent parseResponse(Operation operation) {

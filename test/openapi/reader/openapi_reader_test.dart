@@ -4,8 +4,8 @@
 import 'dart:io';
 
 import 'package:fantom/fantom.dart';
-import 'package:fantom/src/extensions/extensions.dart';
-import 'package:fantom/src/openapi/reader/openapi_reader.dart';
+import 'package:fantom/src/utils/extensions.dart';
+import 'package:fantom/src/reader/openapi_reader.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 

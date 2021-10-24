@@ -1,4 +1,4 @@
-import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 
 class ComponentsGenerator {
   //TODO: add schema generator as dependency
