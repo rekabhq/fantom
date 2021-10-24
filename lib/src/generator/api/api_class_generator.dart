@@ -12,22 +12,50 @@ class ApiClassGenerator {
   });
 
   GeneratableFile generate() {
+    final fileContent = _generateFileContent();
+
+    //TODO(payam): analyzer file content of the class
+    //TODO(payam): format the content of the class
+
     return GeneratableFile(
-      fileContent: '''
-    class FantomApi {
-      Dio dio;
-
-      constructor
-
-
-
-      TODO: use apiMethodGenerator to generate methods of this FantomApi class for each operation from openApi model object
-
-
-
-    }
-    ''',
+      fileContent: fileContent,
       fileName: 'api.dart',
     );
+  }
+
+  String _generateFileContent() {
+    final buffer = StringBuffer();
+
+    return '';
+  }
+
+  String _generateImports() {
+    return """
+    
+    """;
+  }
+
+  String _generateClass({String className = 'FantomApi'}) {
+    return """
+    
+    """;
+  }
+
+  String _generateFields() {
+    return """
+    
+    """;
+  }
+
+  String _generateConstructor() {
+    return """
+    
+    """;
+  }
+
+  String _generateApiMethods() {
+    return """
+    
+    """;
   }
 }
