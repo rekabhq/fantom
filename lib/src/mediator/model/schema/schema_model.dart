@@ -253,8 +253,8 @@ class NumberDataElement implements DataElement {
     final base = isFloat == null
         ? 'num'
         : isFloat!
-        ? 'double'
-        : 'int';
+            ? 'double'
+            : 'int';
     return base.nullify(isNullable);
   }
 }
@@ -345,6 +345,36 @@ extension DataElementMatching on DataElement {
       return string(element);
     } else if (element is MapDataElement) {
       return map(element);
+    } else {
+      throw AssertionError();
+    }
+  }
+
+  R matchOrElse<R extends Object?>({
+    R Function(NullingDataElement nulling)? nulling,
+    R Function(BooleanDataElement boolean)? boolean,
+    R Function(ObjectDataElement object)? object,
+    R Function(ArrayDataElement array)? array,
+    R Function(NumberDataElement number)? number,
+    R Function(StringDataElement string)? string,
+    R Function(MapDataElement map)? map,
+    required R Function(DataElement element) orElse,
+  }) {
+    final element = this;
+    if (element is NullingDataElement) {
+      return nulling != null ? nulling(element) : orElse(element);
+    } else if (element is BooleanDataElement) {
+      return boolean != null ? boolean(element) : orElse(element);
+    } else if (element is ObjectDataElement) {
+      return object != null ? object(element) : orElse(element);
+    } else if (element is ArrayDataElement) {
+      return array != null ? array(element) : orElse(element);
+    } else if (element is NumberDataElement) {
+      return number != null ? number(element) : orElse(element);
+    } else if (element is StringDataElement) {
+      return string != null ? string(element) : orElse(element);
+    } else if (element is MapDataElement) {
+      return map != null ? map(element) : orElse(element);
     } else {
       throw AssertionError();
     }
