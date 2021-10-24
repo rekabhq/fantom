@@ -21,14 +21,23 @@ class MethodNameGenerator {
     int counter = 1;
 
     while (history.contains(methodName)) {
-      methodName = '$methodName$counter';
+      if (methodName.endsWith(counter.toString())) {
+        methodName = methodName.substring(
+          0,
+          methodName.length - counter.toString().length,
+        );
+      }
+
       counter++;
+
+      methodName = '$methodName$counter';
     }
 
     return methodName;
   }
 
   String _generatePathName(String pathName, String operationType) {
-    return ReCase('$operationType/$pathName').camelCase;
+    final path = pathName.replaceAll('{', '').replaceAll('}', '');
+    return ReCase('$operationType/$path').camelCase;
   }
 }
