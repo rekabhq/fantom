@@ -2,7 +2,7 @@ import 'package:fantom/src/reader/model/model.dart';
 
 class ComponentsGenerator {
   //TODO: add schema generator as dependency
-  
+
   // final SchemaGenerator schemaGenerator;
 
   ComponentsGenerator();

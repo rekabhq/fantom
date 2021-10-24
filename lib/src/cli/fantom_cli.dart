@@ -3,7 +3,7 @@ import 'package:args/command_runner.dart';
 import 'package:fantom/fantom.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
-import 'package:fantom/src/utils/exceptions/exceptions.dart';
+import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/update_checker.dart';
