@@ -24,6 +24,9 @@ class DefaultValue with EquatableMixin {
         type,
         value,
       ];
+
+  @override
+  String toString() => 'DefaultValue{type: $type, value: $value}';
 }
 
 /// information for an enum or constant value
@@ -55,6 +58,10 @@ class EnumerationInfo with EquatableMixin {
         type,
         values,
       ];
+
+  @override
+  String toString() => 'EnumerationInfo{name: $name, type: $type, '
+      'values: $values}';
 }
 
 /// dart object property.
@@ -82,6 +89,10 @@ class ObjectProperty with EquatableMixin {
         item,
         isRequired,
       ];
+
+  @override
+  String toString() => 'ObjectProperty{name: $name, item: $item, '
+      'isRequired: $isRequired}';
 }
 
 /// base data element:
@@ -244,6 +255,11 @@ class NullingDataElement with EquatableMixin implements DataElement {
         defaultValue,
         enumeration,
       ];
+
+  @override
+  String toString() => 'NullingDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// bool
@@ -284,6 +300,11 @@ class BooleanDataElement with EquatableMixin implements DataElement {
         defaultValue,
         enumeration,
       ];
+
+  @override
+  String toString() => 'BooleanDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// dart object.
@@ -344,6 +365,12 @@ class ObjectDataElement with EquatableMixin implements DataElement {
         properties,
         additionalItems,
       ];
+
+  @override
+  String toString() => 'ObjectDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'properties: $properties, additionalItems: $additionalItems}';
 }
 
 /// List<*> or Set<*>
@@ -394,6 +421,12 @@ class ArrayDataElement with EquatableMixin implements DataElement {
         items,
         isUniqueItems,
       ];
+
+  @override
+  String toString() => 'ArrayDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'items: $items, isUniqueItems: $isUniqueItems}';
 }
 
 /// num, integer or double.
@@ -441,6 +474,12 @@ class NumberDataElement with EquatableMixin implements DataElement {
         enumeration,
         isFloat,
       ];
+
+  @override
+  String toString() => 'NumberDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'isFloat: $isFloat}';
 }
 
 /// String.
@@ -481,6 +520,11 @@ class StringDataElement with EquatableMixin implements DataElement {
         defaultValue,
         enumeration,
       ];
+
+  @override
+  String toString() => 'StringDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated,'
+      ' defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// Map<String, *>
@@ -526,6 +570,12 @@ class MapDataElement with EquatableMixin implements DataElement {
         enumeration,
         items,
       ];
+
+  @override
+  String toString() => 'MapDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'items: $items}';
 }
 
 /// dynamic
@@ -565,6 +615,11 @@ class UntypedDataElement with EquatableMixin implements DataElement {
         defaultValue,
         enumeration,
       ];
+
+  @override
+  String toString() => 'UntypedDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// matching data elements
