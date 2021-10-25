@@ -25,6 +25,7 @@ class SchemaMediator {
       if (name != null) {
         throw UnimplementedError('mixing name and reference is not supported');
       }
+
       // todo: support making nullable
       if (schema.nullable != null ||
           schema.type != null ||
@@ -42,6 +43,7 @@ class SchemaMediator {
           'of schema is not supported',
         );
       }
+
       final referenceName = schema.reference!.name;
       if (!schemas.containsKey(referenceName)) {
         throw AssertionError('bad reference "$referenceName"');
@@ -54,19 +56,23 @@ class SchemaMediator {
       switch (type) {
         case 'null':
           if (isNullable != true) throw AssertionError();
+          final dartType = 'Null';
           return DataElement.nulling(
+            type: dartType,
             name: name,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema),
-            enumeration: _extractEnumerationInfo(schema, name),
+            defaultValue: _extractDefaultValue(schema, dartType),
+            enumeration: _extractEnumerationInfo(schema, dartType, name),
           );
         case 'boolean':
+          final dartType = 'bool'.nullify(isNullable);
           return DataElement.boolean(
+            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema),
-            enumeration: _extractEnumerationInfo(schema, name),
+            defaultValue: _extractDefaultValue(schema, dartType),
+            enumeration: _extractEnumerationInfo(schema, dartType, name),
           );
         case 'object': // map and object
           if ((schema.properties != null && schema.properties!.isNotEmpty) &&
@@ -74,27 +80,35 @@ class SchemaMediator {
             throw UnimplementedError('mixed object-map is not supported');
           }
           if (schema.additionalProperties != null) {
+            // recursive call:
+            final items = _convert(schemas, schema.additionalProperties!);
+            final dartType = 'Map<String, ${items.type}>'.nullify(isNullable);
             return DataElement.map(
+              type: dartType,
               name: name,
               isNullable: isNullable,
               isDeprecated: _extractIsDeprecated(schema),
-              defaultValue: _extractDefaultValue(schema),
-              enumeration: _extractEnumerationInfo(schema, name),
-              // recursive call
-              items: _convert(schemas, schema.additionalProperties!),
+              defaultValue: _extractDefaultValue(schema, dartType),
+              enumeration: _extractEnumerationInfo(schema, dartType, name),
+              items: items,
             );
           } else {
+            if (name == null) {
+              throw UnsupportedError('unnamed object');
+            }
             final requiredItems = (schema.requiredItems ?? []).toSet();
+            final dartType = name.nullify(isNullable);
             return DataElement.object(
+              type: dartType,
               name: name,
               isNullable: isNullable,
               isDeprecated: _extractIsDeprecated(schema),
-              defaultValue: _extractDefaultValue(schema),
-              enumeration: _extractEnumerationInfo(schema, name),
+              defaultValue: _extractDefaultValue(schema, dartType),
+              enumeration: _extractEnumerationInfo(schema, dartType, name),
               properties: schema.properties!.entries
                   .map((entry) => ObjectProperty(
                         name: entry.key,
-                        // recursive call
+                        // recursive call:
                         item: _convert(schemas, entry.value),
                         isRequired: requiredItems.contains(entry.key),
                       ))
@@ -103,41 +117,54 @@ class SchemaMediator {
           }
         case 'array':
           if (schema.items == null) throw UnimplementedError('untyped array');
+          // recursive call:
+          final items = _convert(schemas, schema.items!);
+          final isUniqueItems = schema.uniqueItems == true;
+          final dartTypeBase = isUniqueItems ? 'Set' : 'List';
+          final dartType = '$dartTypeBase<${items.type}>'.nullify(isNullable);
           return DataElement.array(
+            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema),
-            enumeration: _extractEnumerationInfo(schema, name),
-            // recursive call
-            items: _convert(schemas, schema.items!),
+            defaultValue: _extractDefaultValue(schema, dartType),
+            enumeration: _extractEnumerationInfo(schema, dartType, name),
+            items: items,
             isUniqueItems: schema.uniqueItems == true,
           );
         case 'integer':
+          final dartType = 'int'.nullify(isNullable);
           return DataElement.number(
+            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema),
-            enumeration: _extractEnumerationInfo(schema, name),
+            defaultValue: _extractDefaultValue(schema, dartType),
+            enumeration: _extractEnumerationInfo(schema, dartType, name),
             isFloat: false,
           );
         case 'number':
+          final isFloat = schema.format == null ? null : true;
+          final dartTypeBase = isFloat == null ? 'num' : 'double';
+          final dartType = dartTypeBase.nullify(isNullable);
           return DataElement.number(
+            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema),
-            enumeration: _extractEnumerationInfo(schema, name),
-            isFloat: schema.format == null ? null : true,
+            defaultValue: _extractDefaultValue(schema, dartType),
+            enumeration: _extractEnumerationInfo(schema, dartType, name),
+            isFloat: isFloat,
           );
         case 'string':
+          final dartType = 'String'.nullify(isNullable);
           return DataElement.string(
+            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema),
-            enumeration: _extractEnumerationInfo(schema, name),
+            defaultValue: _extractDefaultValue(schema, dartType),
+            enumeration: _extractEnumerationInfo(schema, dartType, name),
           );
         default:
           throw AssertionError('unknown type "$type"');
@@ -176,17 +203,27 @@ class SchemaMediator {
 
   bool _extractIsDeprecated(Schema schema) => schema.deprecated == true;
 
-  DefaultValue? _extractDefaultValue(Schema schema) =>
+  DefaultValue? _extractDefaultValue(
+    Schema schema,
+    String dartType,
+  ) =>
       schema.defaultValue == null
           ? null
-          : DefaultValue(schema.defaultValue!.value);
+          : DefaultValue(
+              type: dartType,
+              value: schema.defaultValue!.value,
+            );
 
-  EnumerationInfo? _extractEnumerationInfo(Schema schema, String? schemaName) =>
+  EnumerationInfo? _extractEnumerationInfo(
+    Schema schema,
+    String dartType,
+    String? schemaName,
+  ) =>
       schema.enumerated == null
           ? null
           : EnumerationInfo(
               name: schemaName == null ? null : '${schemaName}Enum',
-              type: 'Null',
+              type: dartType,
               values: schema.enumerated!,
             );
 }
@@ -204,4 +241,9 @@ class _FullType {
 extension _SchemaReferenceExt on Reference<Schema> {
   /// get schema name for a schema reference
   String get name => ref.removeFromStart('#components/schemas/');
+}
+
+/// Some nullability utilities
+extension _StringTypeNullablityExt on String {
+  String nullify(bool isNullable) => isNullable ? this : '$this?';
 }

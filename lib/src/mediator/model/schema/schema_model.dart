@@ -2,10 +2,20 @@
 
 /// holder for default value
 class DefaultValue {
+  /// type of elements
+  ///
+  /// ex. String?
+  ///
+  /// should be same as element type.
+  final String type;
+
   /// default value
   final Object? value;
 
-  const DefaultValue(this.value);
+  const DefaultValue({
+    required this.type,
+    required this.value,
+  });
 }
 
 /// information for an enum or constant value
@@ -64,6 +74,13 @@ class ObjectProperty {
 abstract class DataElement {
   const DataElement();
 
+  /// type with nullability sign
+  ///
+  /// ex. String, String?,
+  /// List<String>, List<String?>, List<String?>?,
+  /// User, User?,
+  String get type;
+
   /// if is present is used for code generated model name,
   /// and is referenced in schema map.
   String? get name;
@@ -81,14 +98,9 @@ abstract class DataElement {
   /// if not present means no enumeration.
   EnumerationInfo? get enumeration;
 
-  /// type with nullability sign
-  ///
-  /// ex. String, String?,
-  /// List<String>, List<String?>, List<String?>?
-  String get type;
-
   /// [NullingDataElement]
   const factory DataElement.nulling({
+    required String type,
     required String? name,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -97,6 +109,7 @@ abstract class DataElement {
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -106,7 +119,8 @@ abstract class DataElement {
 
   /// [ObjectDataElement]
   const factory DataElement.object({
-    required String? name,
+    required String type,
+    required String name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -116,6 +130,7 @@ abstract class DataElement {
 
   /// [ArrayDataElement]
   const factory DataElement.array({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -127,6 +142,7 @@ abstract class DataElement {
 
   /// [NumberDataElement]
   const factory DataElement.number({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -137,6 +153,7 @@ abstract class DataElement {
 
   /// [StringDataElement]
   const factory DataElement.string({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -146,6 +163,7 @@ abstract class DataElement {
 
   /// [MapDataElement]
   const factory DataElement.map({
+    required String type,
     required String? name,
     required bool isNullable,
     required DefaultValue? defaultValue,
@@ -157,6 +175,9 @@ abstract class DataElement {
 
 /// Null
 class NullingDataElement implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -173,21 +194,19 @@ class NullingDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   const NullingDataElement({
+    required this.type,
     required this.name,
     required this.isDeprecated,
     required this.defaultValue,
     required this.enumeration,
   });
-
-  @override
-  String get type {
-    final base = 'Null';
-    return base;
-  }
 }
 
 /// bool
 class BooleanDataElement implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -204,18 +223,13 @@ class BooleanDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   const BooleanDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
     required this.defaultValue,
     required this.enumeration,
   });
-
-  @override
-  String get type {
-    final base = 'bool';
-    return base.nullify(isNullable);
-  }
 }
 
 /// dart object.
@@ -223,7 +237,11 @@ class BooleanDataElement implements DataElement {
 /// ex. User, Person.
 class ObjectDataElement implements DataElement {
   @override
-  final String? name;
+  final String type;
+
+  /// objects can not be name-less
+  @override
+  final String name;
 
   @override
   final bool isNullable;
@@ -241,6 +259,7 @@ class ObjectDataElement implements DataElement {
   final List<ObjectProperty> properties;
 
   const ObjectDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -248,20 +267,13 @@ class ObjectDataElement implements DataElement {
     required this.enumeration,
     required this.properties,
   });
-
-  @override
-  String get type {
-    if (name == null) {
-      throw AssertionError();
-    } else {
-      final base = name!;
-      return base.nullify(isNullable);
-    }
-  }
 }
 
 /// List<*> or Set<*>
 class ArrayDataElement implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -284,6 +296,7 @@ class ArrayDataElement implements DataElement {
   final bool isUniqueItems;
 
   const ArrayDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -292,18 +305,13 @@ class ArrayDataElement implements DataElement {
     required this.items,
     required this.isUniqueItems,
   });
-
-  @override
-  String get type {
-    final base = isUniqueItems ? 'Set' : 'List';
-    final sub = items.type;
-    final generic = '$base<$sub>';
-    return generic.nullify(isNullable);
-  }
 }
 
 /// num, integer or double.
 class NumberDataElement implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -325,6 +333,7 @@ class NumberDataElement implements DataElement {
   final bool? isFloat;
 
   const NumberDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -332,20 +341,13 @@ class NumberDataElement implements DataElement {
     required this.enumeration,
     required this.isFloat,
   });
-
-  @override
-  String get type {
-    final base = isFloat == null
-        ? 'num'
-        : isFloat!
-            ? 'double'
-            : 'int';
-    return base.nullify(isNullable);
-  }
 }
 
 /// String.
 class StringDataElement implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -362,22 +364,20 @@ class StringDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   const StringDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
     required this.defaultValue,
     required this.enumeration,
   });
-
-  @override
-  String get type {
-    final base = 'String';
-    return base.nullify(isNullable);
-  }
 }
 
 /// Map<String, *>
 class MapDataElement implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -397,6 +397,7 @@ class MapDataElement implements DataElement {
   final DataElement items;
 
   const MapDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -404,20 +405,6 @@ class MapDataElement implements DataElement {
     required this.enumeration,
     required this.items,
   });
-
-  @override
-  String get type {
-    final base = 'Map';
-    final subKey = 'String';
-    final subValue = items.type;
-    final generic = '$base<$subKey, $subValue>';
-    return generic.nullify(isNullable);
-  }
-}
-
-/// Some nullability utilities
-extension StringTypeNullablityExt on String {
-  String nullify(bool isNullable) => isNullable ? this : '$this?';
 }
 
 /// matching data elements
