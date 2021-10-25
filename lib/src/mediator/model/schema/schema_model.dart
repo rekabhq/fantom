@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_void_to_null
 
+import 'package:equatable/equatable.dart';
+
 /// holder for default value
-class DefaultValue {
+class DefaultValue with EquatableMixin {
   /// type of elements
   ///
   /// ex. String?
@@ -16,10 +18,16 @@ class DefaultValue {
     required this.type,
     required this.value,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        value,
+      ];
 }
 
 /// information for an enum or constant value
-class EnumerationInfo {
+class EnumerationInfo with EquatableMixin {
   /// name of enum
   final String? name;
 
@@ -40,12 +48,19 @@ class EnumerationInfo {
     required this.type,
     required this.values,
   });
+
+  @override
+  List<Object?> get props => [
+        name,
+        type,
+        values,
+      ];
 }
 
 /// dart object property.
 ///
 /// ex. required String? id;
-class ObjectProperty {
+class ObjectProperty with EquatableMixin {
   /// property name
   final String name;
 
@@ -60,6 +75,13 @@ class ObjectProperty {
     required this.item,
     required this.isRequired,
   });
+
+  @override
+  List<Object?> get props => [
+        name,
+        item,
+        isRequired,
+      ];
 }
 
 /// base data element:
@@ -186,7 +208,7 @@ abstract class DataElement {
 }
 
 /// Null
-class NullingDataElement implements DataElement {
+class NullingDataElement with EquatableMixin implements DataElement {
   @override
   final String type;
 
@@ -212,10 +234,20 @@ class NullingDataElement implements DataElement {
     required this.defaultValue,
     required this.enumeration,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
 }
 
 /// bool
-class BooleanDataElement implements DataElement {
+class BooleanDataElement with EquatableMixin implements DataElement {
   @override
   final String type;
 
@@ -242,12 +274,22 @@ class BooleanDataElement implements DataElement {
     required this.defaultValue,
     required this.enumeration,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
 }
 
 /// dart object.
 ///
 /// ex. User, Person.
-class ObjectDataElement implements DataElement {
+class ObjectDataElement with EquatableMixin implements DataElement {
   @override
   final String? type;
 
@@ -290,10 +332,22 @@ class ObjectDataElement implements DataElement {
     required this.properties,
     required this.additionalItems,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        properties,
+        additionalItems,
+      ];
 }
 
 /// List<*> or Set<*>
-class ArrayDataElement implements DataElement {
+class ArrayDataElement with EquatableMixin implements DataElement {
   @override
   final String type;
 
@@ -328,10 +382,22 @@ class ArrayDataElement implements DataElement {
     required this.items,
     required this.isUniqueItems,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        items,
+        isUniqueItems,
+      ];
 }
 
 /// num, integer or double.
-class NumberDataElement implements DataElement {
+class NumberDataElement with EquatableMixin implements DataElement {
   @override
   final String type;
 
@@ -364,10 +430,21 @@ class NumberDataElement implements DataElement {
     required this.enumeration,
     required this.isFloat,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        isFloat,
+      ];
 }
 
 /// String.
-class StringDataElement implements DataElement {
+class StringDataElement with EquatableMixin implements DataElement {
   @override
   final String type;
 
@@ -394,10 +471,20 @@ class StringDataElement implements DataElement {
     required this.defaultValue,
     required this.enumeration,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
 }
 
 /// Map<String, *>
-class MapDataElement implements DataElement {
+class MapDataElement with EquatableMixin implements DataElement {
   @override
   final String type;
 
@@ -428,10 +515,21 @@ class MapDataElement implements DataElement {
     required this.enumeration,
     required this.items,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        items,
+      ];
 }
 
 /// dynamic
-class UntypedDataElement implements DataElement {
+class UntypedDataElement with EquatableMixin implements DataElement {
   @override
   final String type;
 
@@ -457,6 +555,16 @@ class UntypedDataElement implements DataElement {
     required this.defaultValue,
     required this.enumeration,
   });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
 }
 
 /// matching data elements
