@@ -128,6 +128,7 @@ abstract class DataElement {
     required DefaultValue? defaultValue,
     required EnumerationInfo? enumeration,
     required List<ObjectProperty> properties,
+    required DataElement? additionalItems,
   }) = ObjectDataElement;
 
   /// [ArrayDataElement]
@@ -173,6 +174,15 @@ abstract class DataElement {
     required bool isDeprecated,
     required DataElement items,
   }) = MapDataElement;
+
+  /// [UntypedDataElement]
+  const factory DataElement.untyped({
+    required String type,
+    required String? name,
+    required bool isDeprecated,
+    required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
+  }) = UntypedDataElement;
 }
 
 /// Null
@@ -258,7 +268,17 @@ class ObjectDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   /// properties
+  ///
+  /// if this is empty then additionalItems is null.
   final List<ObjectProperty> properties;
+
+  /// if present, means we have free-form object.
+  /// this will specify additional items type.
+  /// if not present we have fixed object.
+  ///
+  /// note: empty objects with additional items are
+  /// considered map.
+  final DataElement? additionalItems;
 
   const ObjectDataElement({
     required this.type,
@@ -268,6 +288,7 @@ class ObjectDataElement implements DataElement {
     required this.defaultValue,
     required this.enumeration,
     required this.properties,
+    required this.additionalItems,
   });
 }
 
@@ -409,6 +430,35 @@ class MapDataElement implements DataElement {
   });
 }
 
+/// dynamic
+class UntypedDataElement implements DataElement {
+  @override
+  final String type;
+
+  @override
+  final String? name;
+
+  @override
+  final bool isNullable = true;
+
+  @override
+  final bool isDeprecated;
+
+  @override
+  final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
+
+  const UntypedDataElement({
+    required this.type,
+    required this.name,
+    required this.isDeprecated,
+    required this.defaultValue,
+    required this.enumeration,
+  });
+}
+
 /// matching data elements
 extension DataElementMatching on DataElement {
   R match<R extends Object?>({
@@ -419,6 +469,7 @@ extension DataElementMatching on DataElement {
     required R Function(NumberDataElement number) number,
     required R Function(StringDataElement string) string,
     required R Function(MapDataElement map) map,
+    required R Function(UntypedDataElement untyped) untyped,
   }) {
     final element = this;
     if (element is NullingDataElement) {
@@ -435,6 +486,8 @@ extension DataElementMatching on DataElement {
       return string(element);
     } else if (element is MapDataElement) {
       return map(element);
+    } else if (element is UntypedDataElement) {
+      return untyped(element);
     } else {
       throw AssertionError();
     }
@@ -448,6 +501,7 @@ extension DataElementMatching on DataElement {
     R Function(NumberDataElement number)? number,
     R Function(StringDataElement string)? string,
     R Function(MapDataElement map)? map,
+    R Function(UntypedDataElement untyped)? untyped,
     required R Function(DataElement element) orElse,
   }) {
     final element = this;
@@ -465,6 +519,8 @@ extension DataElementMatching on DataElement {
       return string != null ? string(element) : orElse(element);
     } else if (element is MapDataElement) {
       return map != null ? map(element) : orElse(element);
+    } else if (element is UntypedDataElement) {
+      return untyped != null ? untyped(element) : orElse(element);
     } else {
       throw AssertionError();
     }

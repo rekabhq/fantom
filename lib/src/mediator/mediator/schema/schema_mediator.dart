@@ -104,11 +104,8 @@ class SchemaMediator {
             enumeration: _extractEnumerationInfo(schema, dartType, name),
           );
         case 'object': // map and object
-          if ((schema.properties != null && schema.properties!.isNotEmpty) &&
+          if ((schema.properties == null || schema.properties!.isEmpty) &&
               (schema.additionalProperties != null)) {
-            throw UnimplementedError('mixed object-map is not supported');
-          }
-          if (schema.additionalProperties != null) {
             // recursive call:
             final items = _convert(schemas, schema.additionalProperties!);
             final dartType = 'Map<String, ${items.type}>'.nullify(isNullable);
@@ -139,6 +136,10 @@ class SchemaMediator {
                         isRequired: requiredItems.contains(entry.key),
                       ))
                   .toList(),
+              additionalItems: schema.additionalProperties == null
+                  ? null
+                  // recursive call:
+                  : _convert(schemas, schema.additionalProperties!),
             );
           }
         case 'array':
@@ -192,6 +193,16 @@ class SchemaMediator {
             defaultValue: _extractDefaultValue(schema, dartType),
             enumeration: _extractEnumerationInfo(schema, dartType, name),
           );
+        case 'dynamic':
+          if (isNullable != true) throw AssertionError();
+          final dartType = 'dynamic';
+          return DataElement.untyped(
+            type: dartType,
+            name: name,
+            isDeprecated: _extractIsDeprecated(schema),
+            defaultValue: _extractDefaultValue(schema, dartType),
+            enumeration: _extractEnumerationInfo(schema, dartType, name),
+          );
         default:
           throw AssertionError('unknown type "$type"');
       }
@@ -201,28 +212,39 @@ class SchemaMediator {
   _FullType _extractFullType(Schema schema) {
     final type = schema.type;
     final nullable = schema.nullable;
-    if (type == null) throw UnimplementedError('type-less schema');
-    if (compatibility) {
-      if (type.isList) throw AssertionError();
-      final single = type.single;
-      if (single == 'null') throw AssertionError();
+    if (type == null) {
       return _FullType(
-        type: single,
-        isNullable: nullable == true,
+        type: 'dynamic',
+        isNullable: true,
       );
     } else {
-      if (nullable != null) throw AssertionError();
-      final set = type.list.toSet();
-      if (set.isEmpty) {
-        throw UnimplementedError('type-less schema');
-      } else if (set.length == 1 || (set.length == 2 && set.contains('null'))) {
+      if (compatibility) {
+        if (type.isList) throw AssertionError();
+        final single = type.single;
+        if (single == 'null') throw AssertionError();
         return _FullType(
-          type:
-              set.length == 1 ? set.first : (Set.of(set)..remove('null')).first,
-          isNullable: set.contains('null'),
+          type: single,
+          isNullable: nullable == true,
         );
       } else {
-        throw UnimplementedError('multi-type schema');
+        if (nullable != null) throw AssertionError();
+        final set = type.wrap().toSet();
+        if (set.isEmpty) {
+          return _FullType(
+            type: 'dynamic',
+            isNullable: true,
+          );
+        } else if (set.length == 1 ||
+            (set.length == 2 && set.contains('null'))) {
+          return _FullType(
+            type: set.length == 1
+                ? set.first
+                : (Set.of(set)..remove('null')).first,
+            isNullable: set.contains('null'),
+          );
+        } else {
+          throw UnimplementedError('multi-type schema');
+        }
       }
     }
   }
