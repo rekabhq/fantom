@@ -288,7 +288,7 @@ class _FullType {
 
 extension _SchemaReferenceExt on Reference<Schema> {
   /// get schema name for a schema reference
-  String get name => ref.removeFromStart('#components/schemas/');
+  String get name => ref.removeFromStart('#/components/schemas/');
 }
 
 extension _StringTypeNullablityExt on String {
