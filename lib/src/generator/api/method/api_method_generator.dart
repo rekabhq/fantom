@@ -4,6 +4,7 @@ import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/model/operation_detail.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
+// ignore_for_file: unused_element
 class ApiMethodGenerator {
   final OpenApi openApi;
   final MethodParamsParser methodParamsParser;
