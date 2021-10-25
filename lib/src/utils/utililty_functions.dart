@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fantom/src/exceptions/exceptions.dart';
-import 'package:fantom/src/extensions/extensions.dart';
+import 'package:fantom/src/utils/exceptions.dart';
+import 'package:fantom/src/utils/extensions.dart';
 import 'package:yaml/yaml.dart';
 
 /// checks [path] to file and if a file exists there a it will be returned otherwise

@@ -1,5 +1,5 @@
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
-import 'package:fantom/src/openapi/model/model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/writer/file_writer.dart';
 
 class ApiClassGenerator {
