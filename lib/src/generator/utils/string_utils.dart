@@ -88,4 +88,21 @@ extension StringRemovingExt on String {
     }
     return substring(start.length);
   }
+
+  /// assert and remove from last.
+  String removeFromLast(final String last) {
+    if (!endsWith(last)) {
+      throw AssertionError('string "$this" should last with "$last"!');
+    }
+    return substring(0, length - last.length);
+  }
+
+  /// assert and remove from last.
+  String removeFromLastOrNot(final String last) {
+    if (endsWith(last)) {
+      return substring(0, length - last.length);
+    } else {
+      return this;
+    }
+  }
 }

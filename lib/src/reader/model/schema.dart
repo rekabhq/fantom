@@ -50,6 +50,23 @@ class Schema extends Equatable {
     required this.additionalProperties,
   });
 
+  /// empty schema
+  const Schema.empty()
+      : this(
+          nullable: null,
+          reference: null,
+          type: null,
+          format: null,
+          defaultValue: null,
+          deprecated: null,
+          requiredItems: null,
+          enumerated: null,
+          items: null,
+          properties: null,
+          uniqueItems: null,
+          additionalProperties: null,
+        );
+
   factory Schema.fromMap(Map<String, dynamic> map) => Schema(
         nullable: map['nullable'],
         reference:
