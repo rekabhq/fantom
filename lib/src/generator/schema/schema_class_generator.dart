@@ -50,7 +50,7 @@ class SchemaClassGenerator {
               ',',
             ].joinParts(),
         ].joinLines(),
-        ')} : ',
+        '}) : ',
         // .../...
         [
           for (final property in element.properties)
