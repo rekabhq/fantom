@@ -7,7 +7,7 @@ class DefaultValue {
   /// ex. String?
   ///
   /// should be same as element type.
-  final String type;
+  final String? type;
 
   /// default value
   final Object? value;
@@ -28,7 +28,7 @@ class EnumerationInfo {
   /// ex. String?
   ///
   /// should be same as element type.
-  final String type;
+  final String? type;
 
   /// values of enum
   ///
@@ -79,7 +79,9 @@ abstract class DataElement {
   /// ex. String, String?,
   /// List<String>, List<String?>, List<String?>?,
   /// User, User?,
-  String get type;
+  ///
+  /// it can be null if we have an unnamed object
+  String? get type;
 
   /// if is present is used for code generated model name,
   /// and is referenced in schema map.
@@ -119,8 +121,8 @@ abstract class DataElement {
 
   /// [ObjectDataElement]
   const factory DataElement.object({
-    required String type,
-    required String name,
+    required String? type,
+    required String? name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -237,11 +239,11 @@ class BooleanDataElement implements DataElement {
 /// ex. User, Person.
 class ObjectDataElement implements DataElement {
   @override
-  final String type;
+  final String? type;
 
   /// objects can not be name-less
   @override
-  final String name;
+  final String? name;
 
   @override
   final bool isNullable;

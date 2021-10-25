@@ -1,6 +1,6 @@
+import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
-import 'package:fantom/src/generator/utils/string_utils.dart';
 
 class SchemaMediator {
   final bool compatibility;
@@ -25,30 +25,59 @@ class SchemaMediator {
       if (name != null) {
         throw UnimplementedError('mixing name and reference is not supported');
       }
-
-      // todo: support making nullable
-      if (schema.nullable != null ||
-          schema.type != null ||
-          schema.format != null ||
-          schema.defaultValue != null ||
-          schema.deprecated != null ||
-          schema.requiredItems != null ||
-          schema.enumerated != null ||
-          schema.items != null ||
-          schema.properties != null ||
-          schema.uniqueItems != null ||
-          schema.additionalProperties != null) {
-        throw UnimplementedError(
-          'mixing reference and other properties '
-          'of schema is not supported',
-        );
-      }
-
       final referenceName = schema.reference!.name;
       if (!schemas.containsKey(referenceName)) {
         throw AssertionError('bad reference "$referenceName"');
       }
-      return _convert(schemas, schemas[referenceName]!, referenceName);
+      final referencedSchema = schemas[referenceName]!;
+      if ((schema.nullable == null) &&
+          (schema.type == null) &&
+          (schema.format == null) &&
+          (schema.defaultValue == null) &&
+          (schema.deprecated == null) &&
+          (schema.requiredItems == null) &&
+          (schema.enumerated == null) &&
+          (schema.items == null) &&
+          (schema.properties == null) &&
+          (schema.uniqueItems == null) &&
+          (schema.additionalProperties == null)) {
+        // not mixing reference and schema:
+        return _convert(schemas, referencedSchema, referenceName);
+      } else {
+        // mixing reference and schema:
+        final overriddenSchema = Schema(
+          nullable: (schema.nullable == null)
+              ? referencedSchema.nullable
+              : schema.nullable,
+          reference: referencedSchema.reference,
+          type: (schema.type == null) ? referencedSchema.type : schema.type,
+          format:
+              (schema.format == null) ? referencedSchema.format : schema.format,
+          defaultValue: (schema.defaultValue == null)
+              ? referencedSchema.defaultValue
+              : schema.defaultValue,
+          deprecated: (schema.deprecated == null)
+              ? referencedSchema.deprecated
+              : schema.deprecated,
+          requiredItems: (schema.requiredItems == null)
+              ? referencedSchema.requiredItems
+              : schema.requiredItems,
+          enumerated: (schema.enumerated == null)
+              ? referencedSchema.enumerated
+              : schema.enumerated,
+          items: (schema.items == null) ? referencedSchema.items : schema.items,
+          properties: (schema.properties == null)
+              ? referencedSchema.properties
+              : schema.properties,
+          uniqueItems: (schema.uniqueItems == null)
+              ? referencedSchema.uniqueItems
+              : schema.uniqueItems,
+          additionalProperties: (schema.additionalProperties == null)
+              ? referencedSchema.additionalProperties
+              : schema.additionalProperties,
+        );
+        return _convert(schemas, overriddenSchema);
+      }
     } else {
       final fullType = _extractFullType(schema);
       final type = fullType.type;
@@ -93,11 +122,8 @@ class SchemaMediator {
               items: items,
             );
           } else {
-            if (name == null) {
-              throw UnsupportedError('unnamed object');
-            }
             final requiredItems = (schema.requiredItems ?? []).toSet();
-            final dartType = name.nullify(isNullable);
+            final dartType = name?.nullify(isNullable);
             return DataElement.object(
               type: dartType,
               name: name,
@@ -205,7 +231,7 @@ class SchemaMediator {
 
   DefaultValue? _extractDefaultValue(
     Schema schema,
-    String dartType,
+    String? dartType,
   ) =>
       schema.defaultValue == null
           ? null
@@ -216,7 +242,7 @@ class SchemaMediator {
 
   EnumerationInfo? _extractEnumerationInfo(
     Schema schema,
-    String dartType,
+    String? dartType,
     String? schemaName,
   ) =>
       schema.enumerated == null
@@ -243,7 +269,7 @@ extension _SchemaReferenceExt on Reference<Schema> {
   String get name => ref.removeFromStart('#components/schemas/');
 }
 
-/// Some nullability utilities
 extension _StringTypeNullablityExt on String {
+  /// nullify or not
   String nullify(bool isNullable) => isNullable ? this : '$this?';
 }
