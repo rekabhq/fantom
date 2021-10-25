@@ -104,10 +104,14 @@ class SchemaMediator {
             enumeration: _extractEnumerationInfo(schema, dartType, name),
           );
         case 'object': // map and object
-          if ((schema.properties == null || schema.properties!.isEmpty) &&
-              (schema.additionalProperties != null)) {
+          if (schema.properties == null) {
             // recursive call:
-            final items = _convert(schemas, schema.additionalProperties!);
+            final items = _convert(
+              schemas,
+              // schema with only type of objects is
+              // like schema with additionalProperties of an empty schema.
+              schema.additionalProperties ?? Schema.empty(),
+            );
             final dartType = 'Map<String, ${items.type}>'.nullify(isNullable);
             return DataElement.map(
               type: dartType,
