@@ -69,6 +69,9 @@ class ApiMethodGenerator {
     MapEntry<String, Operation> operation,
     List<Referenceable<Parameter>>? pathParams,
   ) {
+    //TODO: all methods should have an optional parameter named contentType
+
+    //TODO: get information about parameter,body and response
     return """
 
     """;
