@@ -6,11 +6,12 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
 void main() {
+  // todo: very incomplete ...
   group('mediator', () {
     group('schema', () {
       test('sample convert', () async {
         final map = await readJsonOrYamlFile(File(
-          'test/utils/petstore.openapi.yaml',
+          'openapi_files/petstore.openapi.yaml',
         ));
         final openApi = OpenApiReader.parseOpenApiModel(map);
         final mediator = SchemaMediator(compatibility: false);
