@@ -52,9 +52,13 @@ class FantomCli extends CommandRunner<int> {
   Future _checkIfNewVersionOfThisLibraryIsAvailable() async {
     await UpdateChecker(packageName: kCliName, currentVersion: kCurrentVersion)
         .update()
-        .onError((error, stackTrace) =>
-            Log.debug('could not check for package new version'))
-        .timeout(const Duration(seconds: 4), onTimeout: () {/* do nothing */});
+        .onError((error, stackTrace) {
+      Log.debug(error);
+      Log.debug(stackTrace);
+      Log.info('could not check for package new version');
+    }).timeout(const Duration(milliseconds: 1000), onTimeout: () {
+      Log.debug('Timeout. could not check for update');
+    });
   }
 
   void _checkWhetherLogsShouldBeVerbose(ArgResults argResults) {
