@@ -76,7 +76,8 @@ build/
 
 pubspec.lock
 
-# in case someone ran the fantom cli on current project
-# we don't want generate models and apis to be added to fantom sourse code 
+# in case someone ran the fantom cli or its tests on current project
+# we don't want generated models and apis or packages to be added to fantom sourse code 
 lib/src/fantom/*
 test/cli/testProjectDir/gen
+test/writer/packages

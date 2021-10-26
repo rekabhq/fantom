@@ -131,7 +131,7 @@ class GeneratedComponentAlreadyDefinedException extends FantomException {
 
 void handleExceptions(e, stacktrace) {
   if (e is FantomException) {
-    Log.error('❌❌ ${e.message}');
+    Log.error('\n❌❌ ${e.message}');
   } else {
     Log.error(e.toString());
     Log.error(stacktrace.toString());

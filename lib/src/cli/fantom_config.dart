@@ -14,6 +14,7 @@ class FantomConfig {
     this.outputPackageDir,
     this.outputModelsDir,
     this.outputApiDir,
+    this.packageName,
   });
 
   final String path;
@@ -21,6 +22,7 @@ class FantomConfig {
   final String? outputPackageDir;
   final String? outputModelsDir;
   final String? outputApiDir;
+  final String? packageName;
 
   static Future<FantomConfig> fromArgResults(
       String openapiOrConfigFilePath, ArgResults argResults) async {
@@ -31,6 +33,7 @@ class FantomConfig {
     );
     if (await file.isOpenApiFile) {
       String? outputPackagePath;
+      String? outputPackageName;
       String? outputModelsPath;
       String? outputApisPath;
       String? outputDirPath;
@@ -47,9 +50,13 @@ class FantomConfig {
       if (argResults.wasParsed(GenerateCommand.optionApiDir)) {
         outputApisPath = argResults[GenerateCommand.optionApiDir];
       }
+      if (argResults.wasParsed(GenerateCommand.optionPackageName)) {
+        outputPackageName = argResults[GenerateCommand.optionPackageName];
+      }
       return FantomConfig._(
         path: file.path,
         outputPackageDir: outputPackagePath,
+        packageName: outputPackageName,
         outputModelsDir: outputModelsPath,
         outputApiDir: outputApisPath,
         outputDir: outputDirPath,
@@ -81,9 +88,12 @@ class FantomConfig {
     String? outputApisPath =
         fantomConfig.getValue(GenerateCommand.optionApiDir);
     String? outputDirPath = fantomConfig.getValue(GenerateCommand.optionDir);
+    String? outputPackageName =
+        fantomConfig.getValue(GenerateCommand.optionPackageName);
     return FantomConfig._(
       path: path,
       outputPackageDir: outputPackagePath,
+      packageName: outputPackageName,
       outputModelsDir: outputModelsPath,
       outputApiDir: outputApisPath,
       outputDir: outputDirPath,
