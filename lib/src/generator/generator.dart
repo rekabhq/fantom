@@ -5,6 +5,8 @@ import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_collection.dart';
+import 'package:fantom/src/generator/name/method_name_generator.dart';
+import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/writer/file_writer.dart';
@@ -19,6 +21,9 @@ class Generator {
   });
 
   factory Generator.createDefault(OpenApi openApi) {
+    var nameGenerator = NameGenerator(
+      MethodNameGenerator(),
+    );
     return Generator(
       apiClassGenerator: ApiClassGenerator(
         openApi: openApi,
@@ -26,6 +31,7 @@ class Generator {
           openApi: openApi,
           methodParamsParser: MethodParamsParser(),
           methodResponseParser: MethodResponseParser(),
+          nameGenerator: nameGenerator,
         ),
       ),
       componentsGenerator: ComponentsGenerator.createDefault(openApi),

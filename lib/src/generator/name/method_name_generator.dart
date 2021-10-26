@@ -2,7 +2,12 @@ import 'package:fantom/src/generator/model/operation_detail.dart';
 import 'package:recase/recase.dart';
 
 class MethodNameGenerator {
-  String generateName(OperationDetail operationDetail) {
+  final Map<String, OperationDetail> namesHistory;
+
+  MethodNameGenerator([Map<String, OperationDetail>? generatedNamesHistory])
+      : namesHistory = generatedNamesHistory ?? {};
+
+  String _generateName(OperationDetail operationDetail) {
     if (operationDetail.operationId?.isNotEmpty ?? false) {
       return ReCase(operationDetail.operationId!).camelCase;
     } else {
@@ -13,14 +18,11 @@ class MethodNameGenerator {
     }
   }
 
-  String generateUniqueName(
-    OperationDetail operationDetail,
-    List<String> history,
-  ) {
-    String methodName = generateName(operationDetail);
+  String generateUniqueName(OperationDetail operationDetail) {
+    String methodName = _generateName(operationDetail);
     int counter = 1;
 
-    while (history.contains(methodName)) {
+    while (namesHistory.keys.contains(methodName)) {
       if (methodName.endsWith(counter.toString())) {
         methodName = methodName.substring(
           0,
@@ -32,7 +34,7 @@ class MethodNameGenerator {
 
       methodName = '$methodName$counter';
     }
-
+    namesHistory[methodName] = operationDetail;
     return methodName;
   }
 

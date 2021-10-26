@@ -1,7 +1,7 @@
-import 'package:fantom/src/generator/api/method/method_name_generator.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/model/operation_detail.dart';
+import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 // ignore_for_file: unused_element
@@ -9,24 +9,20 @@ class ApiMethodGenerator {
   final OpenApi openApi;
   final MethodParamsParser methodParamsParser;
   final MethodResponseParser methodResponseParser;
+  final NameGenerator nameGenerator;
 
   ApiMethodGenerator({
     required this.openApi,
     required this.methodParamsParser,
     required this.methodResponseParser,
+    required this.nameGenerator,
   });
 
   String generateMethods() {
     if (openApi.paths?.paths.isEmpty ?? true) return '';
 
-    // helper class for generating names
-    final nameGenerator = MethodNameGenerator();
-
     // buffer to store generated data
     final buffer = StringBuffer();
-
-    // this is a container that help ous to generate and store unique names for our methods
-    final methodNameHistory = <OperationDetail, String>{};
 
     // iterating over paths
     for (final path in openApi.paths!.paths.entries) {
@@ -44,12 +40,7 @@ class ApiMethodGenerator {
           operationId: operation.value.operationId,
         );
 
-        final methodName = nameGenerator.generateUniqueName(
-          operationDetail,
-          methodNameHistory.values.toList(),
-        );
-
-        methodNameHistory[operationDetail] = methodName;
+        final methodName = nameGenerator.generateMethodName(operationDetail);
 
         buffer.writeln(
           _generateOperation(

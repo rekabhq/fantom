@@ -1,13 +1,13 @@
 @Timeout(Duration(minutes: 1))
-import 'package:fantom/src/generator/api/method/method_name_generator.dart';
+import 'package:fantom/src/generator/name/method_name_generator.dart';
 import 'package:fantom/src/generator/model/operation_detail.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('MethodNameGenerator.generateName method:', () {
-    late final MethodNameGenerator methodNameGenerator;
+    late MethodNameGenerator methodNameGenerator;
 
-    setUpAll(() => methodNameGenerator = MethodNameGenerator());
+    setUp(() => methodNameGenerator = MethodNameGenerator({}));
 
     test(
       'test generate method name with sample path',
@@ -18,7 +18,7 @@ void main() {
           operationType: 'get',
         );
 
-        final resultName = methodNameGenerator.generateName(detail);
+        final resultName = methodNameGenerator.generateUniqueName(detail);
 
         expect(resultName, equals('getTestPathToFile'));
       },
@@ -33,7 +33,7 @@ void main() {
           operationType: 'get',
         );
 
-        final resultName = methodNameGenerator.generateName(detail);
+        final resultName = methodNameGenerator.generateUniqueName(detail);
 
         expect(resultName, equals('getTestPathToFile'));
       },
@@ -48,7 +48,7 @@ void main() {
           operationType: 'get',
         );
 
-        final resultName = methodNameGenerator.generateName(detail);
+        final resultName = methodNameGenerator.generateUniqueName(detail);
 
         expect(resultName, equals('getTestPathToFileFormat'));
       },
@@ -63,7 +63,7 @@ void main() {
           operationType: 'get',
         );
 
-        final resultName = methodNameGenerator.generateName(detail);
+        final resultName = methodNameGenerator.generateUniqueName(detail);
 
         expect(resultName, equals('getTestPathToFileFormat'));
       },
@@ -76,7 +76,7 @@ void main() {
         final OperationDetail detail = OperationDetail(
             path: path, operationType: 'get', operationId: 'test_path_file');
 
-        final resultName = methodNameGenerator.generateName(detail);
+        final resultName = methodNameGenerator.generateUniqueName(detail);
 
         expect(resultName, equals('testPathFile'));
       },
@@ -99,17 +99,11 @@ void main() {
           operationType: 'get',
         );
 
-        final resultName = methodNameGenerator.generateUniqueName(
-          detail,
-          history,
-        );
+        final resultName = methodNameGenerator.generateUniqueName(detail);
 
         history.add(resultName);
 
-        final resultName2 = methodNameGenerator.generateUniqueName(
-          detail,
-          history,
-        );
+        final resultName2 = methodNameGenerator.generateUniqueName(detail);
 
         expect(resultName2, equals('getTestPathToFile2'));
       },
@@ -128,10 +122,7 @@ void main() {
 
         var resultName = '';
         for (var i = 0; i < 4; i++) {
-          resultName = methodNameGenerator.generateUniqueName(
-            detail,
-            history,
-          );
+          resultName = methodNameGenerator.generateUniqueName(detail);
           history.add(resultName);
         }
 
@@ -153,10 +144,7 @@ void main() {
 
         var resultName = '';
         for (var i = 0; i < 4; i++) {
-          resultName = methodNameGenerator.generateUniqueName(
-            detail,
-            history,
-          );
+          resultName = methodNameGenerator.generateUniqueName(detail);
           history.add(resultName);
         }
 

@@ -1,6 +1,6 @@
 // path - /pet
 // method - POST
-
+//TODO: this file & sample.json should be deleted later on
 abstract class PostPetBody {
   void postPetApplicationJson(String body);
 
