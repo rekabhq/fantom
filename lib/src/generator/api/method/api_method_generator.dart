@@ -96,6 +96,7 @@ class ApiMethodGenerator {
     // );
     // 10. generate evaluated response
     // we should think about this
+    // we should deserialize response.data to Generated response component type
     // return evaluateResponse(response);
     //
 

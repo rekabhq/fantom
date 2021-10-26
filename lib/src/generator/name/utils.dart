@@ -20,3 +20,13 @@ class ParameterDetails {
     required this.methodName,
   });
 }
+
+class RequestBodyDetails {
+  final String methodName;
+  final String contentType;
+
+  const RequestBodyDetails({
+    required this.methodName,
+    required this.contentType,
+  });
+}

@@ -7,13 +7,30 @@ class NameGenerator {
 
   const NameGenerator(this._methodNameGenerator);
 
-  /// generates a unique name for the api end point with the given [operationDetail]
-  String generateMethodName(OperationDetail operationDetail) {
-    return _methodNameGenerator.generateUniqueName(operationDetail);
+  /// generates a unique name for the api end point with the given [details]
+  String generateMethodName(OperationDetail details) {
+    return _methodNameGenerator.generateUniqueName(details);
   }
 
   /// generates a unique name for the Component type that is going to be generated for this parameter
-  String generateParameterName(ParameterDetails parameterDetails) {
-    return '${ReCase(parameterDetails.methodName).pascalCase}${ReCase(parameterDetails.name).pascalCase}';
+  String generateParameterName(ParameterDetails details) {
+    return '${ReCase(details.methodName).pascalCase}${ReCase(details.name).pascalCase}';
+  }
+
+  /// generates a unique name for the Component type that is going to be generated for this parameter
+  String generateRequestBodyName(RequestBodyDetails details) {
+    var bodyType = '';
+    if (details.contentType == 'application/json') {
+      bodyType = 'Json';
+    } else if (details.contentType == 'application/xml') {
+      bodyType = 'Xml';
+    } else if (details.contentType == 'multipart/form-data') {
+      bodyType = 'Multipart';
+    } else if (details.contentType == 'text/plain') {
+      bodyType = 'TextPlain';
+    } else if (details.contentType == 'application/x-www-form-urlencoded') {
+      bodyType = 'FormData';
+    }
+    return '${ReCase(details.methodName).pascalCase}${bodyType}Body';
   }
 }
