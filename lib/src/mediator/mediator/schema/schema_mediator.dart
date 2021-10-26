@@ -1,4 +1,4 @@
-import 'package:fantom/src/generator/utils/string_utils.dart';
+import 'package:fantom/src/mediator/mediator/schema/schema_resolution.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
@@ -80,128 +80,100 @@ class SchemaMediator {
       final isNullable = fullType.isNullable;
       switch (type) {
         case 'null':
-          if (isNullable != true) throw AssertionError();
-          final dartType = 'Null';
           return DataElement.nulling(
-            type: dartType,
             name: name,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema, dartType),
-            enumeration: _extractEnumerationInfo(schema, dartType, name),
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
           );
         case 'boolean':
-          final dartType = 'bool'.nullify(isNullable);
           return DataElement.boolean(
-            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema, dartType),
-            enumeration: _extractEnumerationInfo(schema, dartType, name),
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
           );
         case 'object': // map and object
+          // todo: simplify additionalItems calculation
+          final DataElement? additionalItems;
           if (schema.properties == null) {
             // recursive call:
-            final items = _convert(
+            additionalItems = _convert(
               openApi,
               // schema with only type of objects is
               // like schema with additionalProperties of an empty schema.
               schema.additionalProperties ?? Schema.empty(),
             );
-            final dartType = 'Map<String, ${items.type}>'.nullify(isNullable);
-            return DataElement.map(
-              type: dartType,
-              name: name,
-              isNullable: isNullable,
-              isDeprecated: _extractIsDeprecated(schema),
-              defaultValue: _extractDefaultValue(schema, dartType),
-              enumeration: _extractEnumerationInfo(schema, dartType, name),
-              items: items,
-            );
           } else {
-            final requiredItems = (schema.requiredItems ?? []).toSet();
-            final dartType = name?.nullify(isNullable);
-            return DataElement.object(
-              type: dartType,
-              name: name,
-              isNullable: isNullable,
-              isDeprecated: _extractIsDeprecated(schema),
-              defaultValue: _extractDefaultValue(schema, dartType),
-              enumeration: _extractEnumerationInfo(schema, dartType, name),
-              properties: schema.properties!.entries
-                  .map((entry) => ObjectProperty(
-                        name: entry.key,
-                        // recursive call:
-                        item: _convert(openApi, entry.value),
-                        isRequired: requiredItems.contains(entry.key),
-                      ))
-                  .toList(),
-              additionalItems: schema.additionalProperties == null
-                  ? null
-                  // recursive call:
-                  : _convert(openApi, schema.additionalProperties!),
-            );
+            additionalItems = schema.additionalProperties == null
+                ? null
+                // recursive call:
+                : _convert(
+                    openApi,
+                    schema.additionalProperties!,
+                  );
           }
-        case 'array':
-          if (schema.items == null) throw UnimplementedError('untyped array');
-          // recursive call:
-          final items = _convert(openApi, schema.items!);
-          final isUniqueItems = schema.uniqueItems == true;
-          final dartTypeBase = isUniqueItems ? 'Set' : 'List';
-          final dartType = '$dartTypeBase<${items.type}>'.nullify(isNullable);
-          return DataElement.array(
-            type: dartType,
+          final requiredItems = (schema.requiredItems ?? []).toSet();
+          return DataElement.object(
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema, dartType),
-            enumeration: _extractEnumerationInfo(schema, dartType, name),
-            items: items,
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
+            properties: schema.properties!.entries
+                .map((entry) => ObjectProperty(
+                      name: entry.key,
+                      // recursive call:
+                      item: _convert(openApi, entry.value),
+                      isRequired: requiredItems.contains(entry.key),
+                    ))
+                .toList(),
+            additionalItems: additionalItems,
+          );
+        case 'array':
+          if (schema.items == null) throw UnimplementedError('untyped array');
+          return DataElement.array(
+            name: name,
+            isNullable: isNullable,
+            isDeprecated: _extractIsDeprecated(schema),
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
+            // recursive call:
+            items: _convert(openApi, schema.items!),
             isUniqueItems: schema.uniqueItems == true,
           );
         case 'integer':
-          final dartType = 'int'.nullify(isNullable);
-          return DataElement.number(
-            type: dartType,
+          return DataElement.integer(
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema, dartType),
-            enumeration: _extractEnumerationInfo(schema, dartType, name),
-            isFloat: false,
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
           );
         case 'number':
-          final isFloat = schema.format == null ? null : true;
-          final dartTypeBase = isFloat == null ? 'num' : 'double';
-          final dartType = dartTypeBase.nullify(isNullable);
           return DataElement.number(
-            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema, dartType),
-            enumeration: _extractEnumerationInfo(schema, dartType, name),
-            isFloat: isFloat,
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
+            isFloat: schema.format != null,
           );
         case 'string':
-          final dartType = 'String'.nullify(isNullable);
           return DataElement.string(
-            type: dartType,
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema, dartType),
-            enumeration: _extractEnumerationInfo(schema, dartType, name),
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
           );
         case 'dynamic':
-          if (isNullable != true) throw AssertionError();
-          final dartType = 'dynamic';
           return DataElement.untyped(
-            type: dartType,
             name: name,
             isDeprecated: _extractIsDeprecated(schema),
-            defaultValue: _extractDefaultValue(schema, dartType),
-            enumeration: _extractEnumerationInfo(schema, dartType, name),
+            defaultValue: _extractDefaultValue(schema),
+            enumeration: _extractEnumerationInfo(schema),
           );
         default:
           throw AssertionError('unknown type "$type"');
@@ -253,28 +225,18 @@ class SchemaMediator {
     return schema.deprecated == true;
   }
 
-  DefaultValue? _extractDefaultValue(
-    Schema schema,
-    String? dartType,
-  ) {
+  DefaultValue? _extractDefaultValue(Schema schema) {
     return schema.defaultValue == null
         ? null
         : DefaultValue(
-            type: dartType,
             value: schema.defaultValue!.value,
           );
   }
 
-  EnumerationInfo? _extractEnumerationInfo(
-    Schema schema,
-    String? dartType,
-    String? schemaName,
-  ) {
+  EnumerationInfo? _extractEnumerationInfo(Schema schema) {
     return schema.enumerated == null
         ? null
         : EnumerationInfo(
-            name: schemaName == null ? null : '${schemaName}Enum',
-            type: dartType,
             values: schema.enumerated!,
           );
   }
@@ -287,36 +249,5 @@ class _FullType {
   const _FullType({
     required this.type,
     required this.isNullable,
-  });
-}
-
-extension OpenApiSchemaResolutionExt on OpenApi {
-  SchemaResolutionInfo resolveSchema(final Reference<Schema> reference) {
-    if (reference.ref.startsWith('#/components/schemas/')) {
-      final name = reference.ref.removeFromStart('#/components/schemas/');
-      final schema = components?.schemas?[name];
-      if (schema != null) {
-        return SchemaResolutionInfo(
-          name: name,
-          schema: components!.schemas![name]!,
-        );
-      } else {
-        throw AssertionError('bad reference "${reference.ref}"');
-      }
-    } else {
-      throw UnimplementedError(
-        'unsupported schema reference "${reference.ref}"',
-      );
-    }
-  }
-}
-
-class SchemaResolutionInfo {
-  final String name;
-  final Schema schema;
-
-  const SchemaResolutionInfo({
-    required this.name,
-    required this.schema,
   });
 }
