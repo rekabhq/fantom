@@ -71,7 +71,43 @@ class ApiMethodGenerator {
   ) {
     //TODO: all methods should have an optional parameter named contentType
 
-    //TODO: get information about parameter,body and response
+    //TODO: get information about parameter,body and
+
+    // Steps:
+    // -------
+    // 1. generate method return type
+    // ->"Future"<- methodName(params)
+    // 2. generate method name
+    // Future ->"methodName"<- (params)
+    // 3. generate method parameters
+    // Future methodName ->"(params)"<-
+    // -------
+    // 4. generate parsed path - get paths from params and parse them
+    // final parsedPath = _parsePath(pathParams, path);
+    // 5. generate query parameters
+    // final queryParams = {'id': '123' , 'name': 'John'};
+    // 6. generate header parameters
+    // final headerParams = {'accept': 'json'};
+    // 7. generate body parameters
+    // final bodyParams = _parseBody(bodyParam);
+    // -------
+    // 8. create request option for headers and content type
+    // final option =  Options(
+    //  headers = headerParams,
+    //  contentType = contentType,
+    // );
+    // 9. generate request
+    // final response = await dio.request(
+    //  parsedPath,
+    //  queryParameters: queryParams,
+    //  options: option,
+    //  data: bodyParams,
+    // );
+    // 10. generate evaluated response
+    // we should think about this
+    // return evaluateResponse(response);
+    //
+
     return """
 
     """;
