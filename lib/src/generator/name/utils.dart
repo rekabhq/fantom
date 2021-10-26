@@ -10,3 +10,13 @@ class OperationDetail {
     this.operationId,
   });
 }
+
+class ParameterDetails {
+  final String name;
+  final String methodName;
+
+  const ParameterDetails({
+    required this.name,
+    required this.methodName,
+  });
+}

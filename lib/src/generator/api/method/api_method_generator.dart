@@ -1,6 +1,6 @@
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
-import 'package:fantom/src/generator/model/operation_detail.dart';
+import 'package:fantom/src/generator/name/utils.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 

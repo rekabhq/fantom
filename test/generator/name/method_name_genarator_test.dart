@@ -1,6 +1,6 @@
 @Timeout(Duration(minutes: 1))
 import 'package:fantom/src/generator/name/method_name_generator.dart';
-import 'package:fantom/src/generator/model/operation_detail.dart';
+import 'package:fantom/src/generator/name/utils.dart';
 import 'package:test/test.dart';
 
 void main() {

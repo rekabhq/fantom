@@ -1,6 +1,7 @@
-import 'package:fantom/src/generator/model/operation_detail.dart';
+import 'package:fantom/src/generator/name/utils.dart';
 import 'package:recase/recase.dart';
 
+/// MethodNameGenerator is used to create unique method names for each api route
 class MethodNameGenerator {
   final Map<String, OperationDetail> namesHistory;
 
