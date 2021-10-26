@@ -40,37 +40,6 @@ class EnumerationInfo with EquatableMixin {
   String toString() => 'EnumerationInfo{values: $values}';
 }
 
-/// dart object property.
-///
-/// ex. required String? id;
-class ObjectProperty with EquatableMixin {
-  /// property name
-  final String name;
-
-  /// element type
-  final DataElement item;
-
-  /// if property is required
-  final bool isRequired;
-
-  const ObjectProperty({
-    required this.name,
-    required this.item,
-    required this.isRequired,
-  });
-
-  @override
-  List<Object?> get props => [
-        name,
-        item,
-        isRequired,
-      ];
-
-  @override
-  String toString() => 'ObjectProperty{name: $name, item: $item, '
-      'isRequired: $isRequired}';
-}
-
 /// base data element:
 ///
 /// - [NullingDataElement]
@@ -109,14 +78,6 @@ abstract class DataElement {
   /// it can be null if we have an unnamed object
   String? get type;
 
-  /// [NullingDataElement]
-  const factory DataElement.nulling({
-    required String? name,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
-  }) = NullingDataElement;
-
   /// [BooleanDataElement]
   const factory DataElement.boolean({
     required String? name,
@@ -133,8 +94,8 @@ abstract class DataElement {
     required bool isDeprecated,
     required DefaultValue? defaultValue,
     required EnumerationInfo? enumeration,
-    required List<ObjectProperty> properties,
-    required DataElement? additionalItems,
+    required List<ObjectProperty>? properties,
+    required ObjectAdditionalProperties? additionalProperties,
   }) = ObjectDataElement;
 
   /// [ArrayDataElement]
@@ -185,50 +146,6 @@ abstract class DataElement {
   }) = UntypedDataElement;
 }
 
-/// Null
-class NullingDataElement with EquatableMixin implements DataElement {
-  @override
-  final String? name;
-
-  @override
-  final bool isNullable = true;
-
-  @override
-  final bool isDeprecated;
-
-  @override
-  final DefaultValue? defaultValue;
-
-  @override
-  final EnumerationInfo? enumeration;
-
-  const NullingDataElement({
-    required this.name,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
-  });
-
-  @override
-  String get type {
-    return 'Null';
-  }
-
-  @override
-  List<Object?> get props => [
-        name,
-        isNullable,
-        isDeprecated,
-        defaultValue,
-        enumeration,
-      ];
-
-  @override
-  String toString() => 'NullingDataElement{name: $name, '
-      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
-      'defaultValue: $defaultValue, enumeration: $enumeration}';
-}
-
 /// bool
 class BooleanDataElement with EquatableMixin implements DataElement {
   @override
@@ -274,6 +191,74 @@ class BooleanDataElement with EquatableMixin implements DataElement {
       'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
+/// dart object property.
+///
+/// ex. required String? id;
+class ObjectProperty with EquatableMixin {
+  /// property name
+  final String name;
+
+  /// element type
+  final DataElement item;
+
+  /// if property is required
+  final bool isRequired;
+
+  const ObjectProperty({
+    required this.name,
+    required this.item,
+    required this.isRequired,
+  });
+
+  @override
+  List<Object?> get props => [
+        name,
+        item,
+        isRequired,
+      ];
+
+  @override
+  String toString() => 'ObjectProperty{name: $name, item: $item, '
+      'isRequired: $isRequired}';
+}
+
+/// information about additional properties on [ObjectDataElement].
+class ObjectAdditionalProperties with EquatableMixin {
+  /// if present means we have type information about additional items.
+  final DataElement? items;
+
+  const ObjectAdditionalProperties({
+    required this.items,
+  });
+
+  /// type or null.
+  ///
+  /// without nullability.
+  ///
+  /// ex. Map<String, int>
+  String? get type {
+    final items = this.items;
+    if (items == null) {
+      return null;
+    } else {
+      final sub = items.type;
+      if (sub == null) {
+        return null;
+      } else {
+        return 'Map<String, $sub>';
+      }
+    }
+  }
+
+  @override
+  List<Object?> get props => [
+        items,
+      ];
+
+  @override
+  String toString() => 'ObjectAdditionalProperties{items: $items}';
+}
+
 /// format of object data element
 enum ObjectDataElementFormat {
   /// dart object, like User.
@@ -311,21 +296,10 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   final EnumerationInfo? enumeration;
 
   /// properties
-  ///
-  /// if this is empty then additionalItems is null.
-  ///
-  /// see: [ObjectDataElementFormat].
-  final List<ObjectProperty> properties;
+  final List<ObjectProperty>? _properties;
 
-  /// if present, means we have map or mixed format.
-  /// this will specify additional items type.
-  /// if not present we have fixed object.
-  ///
-  /// note: empty objects with additional items are
-  /// considered map.
-  ///
-  /// see: [ObjectDataElementFormat].
-  final DataElement? additionalItems;
+  /// additionalProperties
+  final ObjectAdditionalProperties? _additionalProperties;
 
   const ObjectDataElement({
     required this.name,
@@ -333,42 +307,66 @@ class ObjectDataElement with EquatableMixin implements DataElement {
     required this.isDeprecated,
     required this.defaultValue,
     required this.enumeration,
-    required this.properties,
-    required this.additionalItems,
-  });
+    required List<ObjectProperty>? properties,
+    required ObjectAdditionalProperties? additionalProperties,
+  })  : _properties = properties,
+        _additionalProperties = additionalProperties;
 
-  @override
-  String? get type {
-    final x = additionalItems;
-    if (x == null || properties.isNotEmpty) {
-      final y = name;
-      if (y == null) {
-        return null;
+  /// properties
+  List<ObjectProperty>? get properties {
+    final ps = _properties;
+    final aps = _additionalProperties;
+    if (aps == null) {
+      if (ps == null) {
+        return [];
       } else {
-        return y + (isNullable ? '?' : '');
+        return ps;
       }
     } else {
-      final sub = x.type;
-      if (sub == null) {
+      if (ps == null) {
         return null;
       } else {
-        return 'Map<String, $sub>' + (isNullable ? '?' : '');
+        return ps;
       }
     }
   }
 
-  /// type of additionalItems map,
-  /// or null if not present or we have unknown types down the line.
-  String? get mapType {
-    final x = additionalItems;
-    if (x == null) {
-      return null;
-    } else {
-      final sub = x.type;
-      if (sub == null) {
+  /// additionalProperties
+  ObjectAdditionalProperties? get additionalProperties {
+    return _additionalProperties;
+  }
+
+  @override
+  String? get type {
+    final ps = _properties;
+    final aps = _additionalProperties;
+    if (aps == null) {
+      final name = this.name;
+      if (name == null) {
         return null;
       } else {
-        return ('Map<String, $sub>' + (isNullable ? '?' : ''));
+        return name + (isNullable ? '?' : '');
+      }
+    } else {
+      if (ps == null) {
+        final items = aps.items;
+        if (items == null) {
+          return null;
+        } else {
+          final sub = items.type;
+          if (sub == null) {
+            return null;
+          } else {
+            return 'Map<String, $sub>' + (isNullable ? '?' : '');
+          }
+        }
+      } else {
+        final name = this.name;
+        if (name == null) {
+          return null;
+        } else {
+          return name + (isNullable ? '?' : '');
+        }
       }
     }
   }
@@ -377,11 +375,17 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   ///
   /// see: [ObjectDataElementFormat].
   ObjectDataElementFormat get format {
-    return (additionalItems == null)
-        ? ObjectDataElementFormat.object
-        : (properties.isEmpty)
-            ? ObjectDataElementFormat.map
-            : ObjectDataElementFormat.mixed;
+    final ps = _properties;
+    final aps = _additionalProperties;
+    if (aps == null) {
+      return ObjectDataElementFormat.object;
+    } else {
+      if (ps == null) {
+        return ObjectDataElementFormat.map;
+      } else {
+        return ObjectDataElementFormat.mixed;
+      }
+    }
   }
 
   @override
@@ -391,15 +395,16 @@ class ObjectDataElement with EquatableMixin implements DataElement {
         isDeprecated,
         defaultValue,
         enumeration,
-        properties,
-        additionalItems,
+        _properties,
+        _additionalProperties,
       ];
 
   @override
   String toString() => 'ObjectDataElement{name: $name, '
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
       'defaultValue: $defaultValue, enumeration: $enumeration, '
-      'properties: $properties, additionalItems: $additionalItems}';
+      '_properties: $_properties, '
+      '_additionalProperties: $_additionalProperties}';
 }
 
 /// List<*> or Set<*>
@@ -653,7 +658,6 @@ class UntypedDataElement with EquatableMixin implements DataElement {
 /// matching data elements
 extension DataElementMatching on DataElement {
   R match<R extends Object?>({
-    required R Function(NullingDataElement nulling) nulling,
     required R Function(BooleanDataElement boolean) boolean,
     required R Function(ObjectDataElement object) object,
     required R Function(ArrayDataElement array) array,
@@ -663,9 +667,7 @@ extension DataElementMatching on DataElement {
     required R Function(UntypedDataElement untyped) untyped,
   }) {
     final element = this;
-    if (element is NullingDataElement) {
-      return nulling(element);
-    } else if (element is BooleanDataElement) {
+    if (element is BooleanDataElement) {
       return boolean(element);
     } else if (element is ObjectDataElement) {
       return object(element);
@@ -685,7 +687,6 @@ extension DataElementMatching on DataElement {
   }
 
   R matchOrElse<R extends Object?>({
-    R Function(NullingDataElement nulling)? nulling,
     R Function(BooleanDataElement boolean)? boolean,
     R Function(ObjectDataElement object)? object,
     R Function(ArrayDataElement array)? array,
@@ -696,9 +697,7 @@ extension DataElementMatching on DataElement {
     required R Function(DataElement element) orElse,
   }) {
     final element = this;
-    if (element is NullingDataElement) {
-      return nulling != null ? nulling(element) : orElse(element);
-    } else if (element is BooleanDataElement) {
+    if (element is BooleanDataElement) {
       return boolean != null ? boolean(element) : orElse(element);
     } else if (element is ObjectDataElement) {
       return object != null ? object(element) : orElse(element);
