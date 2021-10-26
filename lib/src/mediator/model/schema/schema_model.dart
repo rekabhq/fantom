@@ -1,15 +1,36 @@
 // ignore_for_file: prefer_void_to_null
 
+import 'package:equatable/equatable.dart';
+
 /// holder for default value
-class DefaultValue {
+class DefaultValue with EquatableMixin {
+  /// type of elements
+  ///
+  /// ex. String?
+  ///
+  /// should be same as element type.
+  final String? type;
+
   /// default value
   final Object? value;
 
-  const DefaultValue(this.value);
+  const DefaultValue({
+    required this.type,
+    required this.value,
+  });
+
+  @override
+  List<Object?> get props => [
+        type,
+        value,
+      ];
+
+  @override
+  String toString() => 'DefaultValue{type: $type, value: $value}';
 }
 
 /// information for an enum or constant value
-class EnumerationInfo {
+class EnumerationInfo with EquatableMixin {
   /// name of enum
   final String? name;
 
@@ -18,7 +39,7 @@ class EnumerationInfo {
   /// ex. String?
   ///
   /// should be same as element type.
-  final String type;
+  final String? type;
 
   /// values of enum
   ///
@@ -30,12 +51,23 @@ class EnumerationInfo {
     required this.type,
     required this.values,
   });
+
+  @override
+  List<Object?> get props => [
+        name,
+        type,
+        values,
+      ];
+
+  @override
+  String toString() => 'EnumerationInfo{name: $name, type: $type, '
+      'values: $values}';
 }
 
 /// dart object property.
 ///
 /// ex. required String? id;
-class ObjectProperty {
+class ObjectProperty with EquatableMixin {
   /// property name
   final String name;
 
@@ -50,6 +82,17 @@ class ObjectProperty {
     required this.item,
     required this.isRequired,
   });
+
+  @override
+  List<Object?> get props => [
+        name,
+        item,
+        isRequired,
+      ];
+
+  @override
+  String toString() => 'ObjectProperty{name: $name, item: $item, '
+      'isRequired: $isRequired}';
 }
 
 /// base data element:
@@ -63,6 +106,15 @@ class ObjectProperty {
 /// - [MapDataElement]
 abstract class DataElement {
   const DataElement();
+
+  /// type with nullability sign
+  ///
+  /// ex. String, String?,
+  /// List<String>, List<String?>, List<String?>?,
+  /// User, User?,
+  ///
+  /// it can be null if we have an unnamed object
+  String? get type;
 
   /// if is present is used for code generated model name,
   /// and is referenced in schema map.
@@ -81,14 +133,9 @@ abstract class DataElement {
   /// if not present means no enumeration.
   EnumerationInfo? get enumeration;
 
-  /// type with nullability sign
-  ///
-  /// ex. String, String?,
-  /// List<String>, List<String?>, List<String?>?
-  String get type;
-
   /// [NullingDataElement]
   const factory DataElement.nulling({
+    required String type,
     required String? name,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
@@ -97,6 +144,7 @@ abstract class DataElement {
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -106,16 +154,19 @@ abstract class DataElement {
 
   /// [ObjectDataElement]
   const factory DataElement.object({
+    required String? type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
     required EnumerationInfo? enumeration,
     required List<ObjectProperty> properties,
+    required DataElement? additionalItems,
   }) = ObjectDataElement;
 
   /// [ArrayDataElement]
   const factory DataElement.array({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -127,6 +178,7 @@ abstract class DataElement {
 
   /// [NumberDataElement]
   const factory DataElement.number({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -137,6 +189,7 @@ abstract class DataElement {
 
   /// [StringDataElement]
   const factory DataElement.string({
+    required String type,
     required String? name,
     required bool isNullable,
     required bool isDeprecated,
@@ -146,6 +199,7 @@ abstract class DataElement {
 
   /// [MapDataElement]
   const factory DataElement.map({
+    required String type,
     required String? name,
     required bool isNullable,
     required DefaultValue? defaultValue,
@@ -153,10 +207,22 @@ abstract class DataElement {
     required bool isDeprecated,
     required DataElement items,
   }) = MapDataElement;
+
+  /// [UntypedDataElement]
+  const factory DataElement.untyped({
+    required String type,
+    required String? name,
+    required bool isDeprecated,
+    required DefaultValue? defaultValue,
+    required EnumerationInfo? enumeration,
+  }) = UntypedDataElement;
 }
 
 /// Null
-class NullingDataElement implements DataElement {
+class NullingDataElement with EquatableMixin implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -173,6 +239,7 @@ class NullingDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   const NullingDataElement({
+    required this.type,
     required this.name,
     required this.isDeprecated,
     required this.defaultValue,
@@ -180,14 +247,26 @@ class NullingDataElement implements DataElement {
   });
 
   @override
-  String get type {
-    final base = 'Null';
-    return base;
-  }
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
+
+  @override
+  String toString() => 'NullingDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// bool
-class BooleanDataElement implements DataElement {
+class BooleanDataElement with EquatableMixin implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -204,6 +283,7 @@ class BooleanDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   const BooleanDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -212,16 +292,29 @@ class BooleanDataElement implements DataElement {
   });
 
   @override
-  String get type {
-    final base = 'bool';
-    return base.nullify(isNullable);
-  }
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
+
+  @override
+  String toString() => 'BooleanDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// dart object.
 ///
 /// ex. User, Person.
-class ObjectDataElement implements DataElement {
+class ObjectDataElement with EquatableMixin implements DataElement {
+  @override
+  final String? type;
+
+  /// objects can not be name-less
   @override
   final String? name;
 
@@ -238,30 +331,53 @@ class ObjectDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   /// properties
+  ///
+  /// if this is empty then additionalItems is null.
   final List<ObjectProperty> properties;
 
+  /// if present, means we have free-form object.
+  /// this will specify additional items type.
+  /// if not present we have fixed object.
+  ///
+  /// note: empty objects with additional items are
+  /// considered map.
+  final DataElement? additionalItems;
+
   const ObjectDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
     required this.defaultValue,
     required this.enumeration,
     required this.properties,
+    required this.additionalItems,
   });
 
   @override
-  String get type {
-    if (name == null) {
-      throw AssertionError();
-    } else {
-      final base = name!;
-      return base.nullify(isNullable);
-    }
-  }
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        properties,
+        additionalItems,
+      ];
+
+  @override
+  String toString() => 'ObjectDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'properties: $properties, additionalItems: $additionalItems}';
 }
 
 /// List<*> or Set<*>
-class ArrayDataElement implements DataElement {
+class ArrayDataElement with EquatableMixin implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -284,6 +400,7 @@ class ArrayDataElement implements DataElement {
   final bool isUniqueItems;
 
   const ArrayDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -294,16 +411,29 @@ class ArrayDataElement implements DataElement {
   });
 
   @override
-  String get type {
-    final base = isUniqueItems ? 'Set' : 'List';
-    final sub = items.type;
-    final generic = '$base<$sub>';
-    return generic.nullify(isNullable);
-  }
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        items,
+        isUniqueItems,
+      ];
+
+  @override
+  String toString() => 'ArrayDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'items: $items, isUniqueItems: $isUniqueItems}';
 }
 
 /// num, integer or double.
-class NumberDataElement implements DataElement {
+class NumberDataElement with EquatableMixin implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -325,6 +455,7 @@ class NumberDataElement implements DataElement {
   final bool? isFloat;
 
   const NumberDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -334,18 +465,28 @@ class NumberDataElement implements DataElement {
   });
 
   @override
-  String get type {
-    final base = isFloat == null
-        ? 'num'
-        : isFloat!
-            ? 'double'
-            : 'int';
-    return base.nullify(isNullable);
-  }
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        isFloat,
+      ];
+
+  @override
+  String toString() => 'NumberDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'isFloat: $isFloat}';
 }
 
 /// String.
-class StringDataElement implements DataElement {
+class StringDataElement with EquatableMixin implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -362,6 +503,7 @@ class StringDataElement implements DataElement {
   final EnumerationInfo? enumeration;
 
   const StringDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -370,14 +512,26 @@ class StringDataElement implements DataElement {
   });
 
   @override
-  String get type {
-    final base = 'String';
-    return base.nullify(isNullable);
-  }
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
+
+  @override
+  String toString() => 'StringDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated,'
+      ' defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// Map<String, *>
-class MapDataElement implements DataElement {
+class MapDataElement with EquatableMixin implements DataElement {
+  @override
+  final String type;
+
   @override
   final String? name;
 
@@ -397,6 +551,7 @@ class MapDataElement implements DataElement {
   final DataElement items;
 
   const MapDataElement({
+    required this.type,
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
@@ -406,18 +561,65 @@ class MapDataElement implements DataElement {
   });
 
   @override
-  String get type {
-    final base = 'Map';
-    final subKey = 'String';
-    final subValue = items.type;
-    final generic = '$base<$subKey, $subValue>';
-    return generic.nullify(isNullable);
-  }
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+        items,
+      ];
+
+  @override
+  String toString() => 'MapDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'items: $items}';
 }
 
-/// Some nullability utilities
-extension StringTypeNullablityExt on String {
-  String nullify(bool isNullable) => isNullable ? this : '$this?';
+/// dynamic
+class UntypedDataElement with EquatableMixin implements DataElement {
+  @override
+  final String type;
+
+  @override
+  final String? name;
+
+  @override
+  final bool isNullable = true;
+
+  @override
+  final bool isDeprecated;
+
+  @override
+  final DefaultValue? defaultValue;
+
+  @override
+  final EnumerationInfo? enumeration;
+
+  const UntypedDataElement({
+    required this.type,
+    required this.name,
+    required this.isDeprecated,
+    required this.defaultValue,
+    required this.enumeration,
+  });
+
+  @override
+  List<Object?> get props => [
+        type,
+        name,
+        isNullable,
+        isDeprecated,
+        defaultValue,
+        enumeration,
+      ];
+
+  @override
+  String toString() => 'UntypedDataElement{type: $type, name: $name, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
 /// matching data elements
@@ -430,6 +632,7 @@ extension DataElementMatching on DataElement {
     required R Function(NumberDataElement number) number,
     required R Function(StringDataElement string) string,
     required R Function(MapDataElement map) map,
+    required R Function(UntypedDataElement untyped) untyped,
   }) {
     final element = this;
     if (element is NullingDataElement) {
@@ -446,6 +649,8 @@ extension DataElementMatching on DataElement {
       return string(element);
     } else if (element is MapDataElement) {
       return map(element);
+    } else if (element is UntypedDataElement) {
+      return untyped(element);
     } else {
       throw AssertionError();
     }
@@ -459,6 +664,7 @@ extension DataElementMatching on DataElement {
     R Function(NumberDataElement number)? number,
     R Function(StringDataElement string)? string,
     R Function(MapDataElement map)? map,
+    R Function(UntypedDataElement untyped)? untyped,
     required R Function(DataElement element) orElse,
   }) {
     final element = this;
@@ -476,6 +682,8 @@ extension DataElementMatching on DataElement {
       return string != null ? string(element) : orElse(element);
     } else if (element is MapDataElement) {
       return map != null ? map(element) : orElse(element);
+    } else if (element is UntypedDataElement) {
+      return untyped != null ? untyped(element) : orElse(element);
     } else {
       throw AssertionError();
     }
