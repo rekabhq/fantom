@@ -64,8 +64,9 @@ void main() {
         () async {
       // with cli input option (-o) for output directory provided
       var moduleOutputPath = '${currentDir.path}/gen/module';
+      var packageName = 'HavijApi';
       insertOptionsForGenerateCommand(
-          [testOpenApiFilePath, '-p', moduleOutputPath]);
+          [testOpenApiFilePath, '-p', moduleOutputPath, '-n', packageName]);
       // when we create a GenerateConfig as arguments
       var config = await command.createArguments(argResults!);
       // then created GenerateConfig object should be as expected
@@ -73,6 +74,7 @@ void main() {
       config = config as GenerateAsStandAlonePackageConfig;
       expect(config.outputModuleDir.path, moduleOutputPath);
       expect(config.openApi, testOpenApi);
+      expect(config.packageName, packageName);
     });
 
     test(

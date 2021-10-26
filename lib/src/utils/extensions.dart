@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:dart_style/dart_style.dart';
 import 'package:fantom/src/utils/constants.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 
 extension MapExt<K, V> on Map<K, V> {
@@ -94,6 +96,27 @@ extension FileExtensions on File {
       }
     } catch (e, _) {
       return false;
+    }
+  }
+}
+
+extension Formatter on DartFormatter {
+  String tryFormat(
+    String source, {
+    String? fileName,
+    Exception? throwException,
+  }) {
+    try {
+      var formatted = format(source);
+      return formatted;
+    } catch (e, _) {
+      if (fileName != null) {
+        Log.debug('Could not format generated file -> $fileName');
+      }
+      if (throwException != null) {
+        throw throwException;
+      }
+      return source;
     }
   }
 }

@@ -22,5 +22,11 @@ jobs:
       - name: Install dependencies
         run: dart pub get
 
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib/ test/
+
+      - name: Analyze project source
+        run: dart analyze
+
       - name: Run tests
         run: dart test
