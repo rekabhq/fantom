@@ -84,9 +84,9 @@ void main() {
   });
 
   group('MethodNameGenerator.generateUniqueName method:', () {
-    late final MethodNameGenerator methodNameGenerator;
+    late MethodNameGenerator methodNameGenerator;
 
-    setUpAll(() => methodNameGenerator = MethodNameGenerator());
+    setUp(() => methodNameGenerator = MethodNameGenerator());
 
     test(
       'test generateUniqueName method with sample path',
