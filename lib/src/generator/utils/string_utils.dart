@@ -106,3 +106,8 @@ extension StringRemovingExt on String {
     }
   }
 }
+
+extension StringTypeNullablityExt on String {
+  /// nullify or not
+  String nullify(final bool isNullable) => isNullable ? this : '$this?';
+}

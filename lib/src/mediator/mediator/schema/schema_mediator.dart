@@ -10,26 +10,19 @@ class SchemaMediator {
   });
 
   DataElement convert({
-    required final Map<String, Schema>? schemas,
+    required final OpenApi openApi,
     required final Schema schema,
     final String? name,
   }) =>
-      _convert(schemas ?? const {}, schema, name);
+      _convert(openApi, schema, name);
 
   DataElement _convert(
-    final Map<String, Schema> schemas,
+    final OpenApi openApi,
     final Schema schema, [
     final String? name,
   ]) {
     if (schema.reference != null) {
-      if (name != null) {
-        throw UnimplementedError('mixing name and reference is not supported');
-      }
-      final referenceName = schema.reference!.name;
-      if (!schemas.containsKey(referenceName)) {
-        throw AssertionError('bad reference "$referenceName"');
-      }
-      final referencedSchema = schemas[referenceName]!;
+      final resolution = openApi.resolveSchema(schema.reference!);
       if ((schema.nullable == null) &&
           (schema.type == null) &&
           (schema.format == null) &&
@@ -42,41 +35,44 @@ class SchemaMediator {
           (schema.uniqueItems == null) &&
           (schema.additionalProperties == null)) {
         // not mixing reference and schema:
-        return _convert(schemas, referencedSchema, referenceName);
+        // todo: shouldn't we use referenced name ?
+        return _convert(openApi, resolution.schema, name);
       } else {
         // mixing reference and schema:
         final overriddenSchema = Schema(
           nullable: (schema.nullable == null)
-              ? referencedSchema.nullable
+              ? resolution.schema.nullable
               : schema.nullable,
-          reference: referencedSchema.reference,
-          type: (schema.type == null) ? referencedSchema.type : schema.type,
-          format:
-              (schema.format == null) ? referencedSchema.format : schema.format,
+          reference: resolution.schema.reference,
+          type: (schema.type == null) ? resolution.schema.type : schema.type,
+          format: (schema.format == null)
+              ? resolution.schema.format
+              : schema.format,
           defaultValue: (schema.defaultValue == null)
-              ? referencedSchema.defaultValue
+              ? resolution.schema.defaultValue
               : schema.defaultValue,
           deprecated: (schema.deprecated == null)
-              ? referencedSchema.deprecated
+              ? resolution.schema.deprecated
               : schema.deprecated,
           requiredItems: (schema.requiredItems == null)
-              ? referencedSchema.requiredItems
+              ? resolution.schema.requiredItems
               : schema.requiredItems,
           enumerated: (schema.enumerated == null)
-              ? referencedSchema.enumerated
+              ? resolution.schema.enumerated
               : schema.enumerated,
-          items: (schema.items == null) ? referencedSchema.items : schema.items,
+          items:
+              (schema.items == null) ? resolution.schema.items : schema.items,
           properties: (schema.properties == null)
-              ? referencedSchema.properties
+              ? resolution.schema.properties
               : schema.properties,
           uniqueItems: (schema.uniqueItems == null)
-              ? referencedSchema.uniqueItems
+              ? resolution.schema.uniqueItems
               : schema.uniqueItems,
           additionalProperties: (schema.additionalProperties == null)
-              ? referencedSchema.additionalProperties
+              ? resolution.schema.additionalProperties
               : schema.additionalProperties,
         );
-        return _convert(schemas, overriddenSchema);
+        return _convert(openApi, overriddenSchema, name);
       }
     } else {
       final fullType = _extractFullType(schema);
@@ -107,7 +103,7 @@ class SchemaMediator {
           if (schema.properties == null) {
             // recursive call:
             final items = _convert(
-              schemas,
+              openApi,
               // schema with only type of objects is
               // like schema with additionalProperties of an empty schema.
               schema.additionalProperties ?? Schema.empty(),
@@ -136,20 +132,20 @@ class SchemaMediator {
                   .map((entry) => ObjectProperty(
                         name: entry.key,
                         // recursive call:
-                        item: _convert(schemas, entry.value),
+                        item: _convert(openApi, entry.value),
                         isRequired: requiredItems.contains(entry.key),
                       ))
                   .toList(),
               additionalItems: schema.additionalProperties == null
                   ? null
                   // recursive call:
-                  : _convert(schemas, schema.additionalProperties!),
+                  : _convert(openApi, schema.additionalProperties!),
             );
           }
         case 'array':
           if (schema.items == null) throw UnimplementedError('untyped array');
           // recursive call:
-          final items = _convert(schemas, schema.items!);
+          final items = _convert(openApi, schema.items!);
           final isUniqueItems = schema.uniqueItems == true;
           final dartTypeBase = isUniqueItems ? 'Set' : 'List';
           final dartType = '$dartTypeBase<${items.type}>'.nullify(isNullable);
@@ -253,31 +249,35 @@ class SchemaMediator {
     }
   }
 
-  bool _extractIsDeprecated(Schema schema) => schema.deprecated == true;
+  bool _extractIsDeprecated(Schema schema) {
+    return schema.deprecated == true;
+  }
 
   DefaultValue? _extractDefaultValue(
     Schema schema,
     String? dartType,
-  ) =>
-      schema.defaultValue == null
-          ? null
-          : DefaultValue(
-              type: dartType,
-              value: schema.defaultValue!.value,
-            );
+  ) {
+    return schema.defaultValue == null
+        ? null
+        : DefaultValue(
+            type: dartType,
+            value: schema.defaultValue!.value,
+          );
+  }
 
   EnumerationInfo? _extractEnumerationInfo(
     Schema schema,
     String? dartType,
     String? schemaName,
-  ) =>
-      schema.enumerated == null
-          ? null
-          : EnumerationInfo(
-              name: schemaName == null ? null : '${schemaName}Enum',
-              type: dartType,
-              values: schema.enumerated!,
-            );
+  ) {
+    return schema.enumerated == null
+        ? null
+        : EnumerationInfo(
+            name: schemaName == null ? null : '${schemaName}Enum',
+            type: dartType,
+            values: schema.enumerated!,
+          );
+  }
 }
 
 class _FullType {
@@ -290,12 +290,33 @@ class _FullType {
   });
 }
 
-extension _SchemaReferenceExt on Reference<Schema> {
-  /// get schema name for a schema reference
-  String get name => ref.removeFromStart('#/components/schemas/');
+extension OpenApiSchemaResolutionExt on OpenApi {
+  SchemaResolutionInfo resolveSchema(final Reference<Schema> reference) {
+    if (reference.ref.startsWith('#/components/schemas/')) {
+      final name = reference.ref.removeFromStart('#/components/schemas/');
+      final schema = components?.schemas?[name];
+      if (schema != null) {
+        return SchemaResolutionInfo(
+          name: name,
+          schema: components!.schemas![name]!,
+        );
+      } else {
+        throw AssertionError('bad reference "${reference.ref}"');
+      }
+    } else {
+      throw UnimplementedError(
+        'unsupported schema reference "${reference.ref}"',
+      );
+    }
+  }
 }
 
-extension _StringTypeNullablityExt on String {
-  /// nullify or not
-  String nullify(bool isNullable) => isNullable ? this : '$this?';
+class SchemaResolutionInfo {
+  final String name;
+  final Schema schema;
+
+  const SchemaResolutionInfo({
+    required this.name,
+    required this.schema,
+  });
 }
