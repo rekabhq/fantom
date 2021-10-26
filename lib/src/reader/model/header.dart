@@ -13,7 +13,7 @@ class Header extends Equatable {
 
   final bool? allowReserved;
 
-  final Schema? schema;
+  final Referenceable<Schema>? schema;
 
   final Map<String, MediaType>? content;
 
@@ -33,7 +33,12 @@ class Header extends Equatable {
         style: map['style'],
         explode: map['explode'],
         allowReserved: map['allowReserved'],
-        schema: map['schema'] == null ? null : Schema.fromMap(map['schema']),
+        schema: map['schema'] == null
+            ? null
+            : Referenceable.fromMap(
+                map['schema'],
+                builder: (m) => Schema.fromMap(m),
+              ),
         content: (map['content'] as Map<String, dynamic>?)?.mapValues(
           (e) => MediaType.fromMap(e),
         ),

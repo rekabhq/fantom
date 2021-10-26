@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 class Components extends Equatable {
-  final Map<String, Schema>? schemas;
+  final Map<String, Referenceable<Schema>>? schemas;
 
   final Map<String, Referenceable<Response>>? responses;
 
@@ -24,7 +24,10 @@ class Components extends Equatable {
 
   factory Components.fromMap(Map<String, dynamic> map) => Components(
         schemas: (map['schemas'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Schema.fromMap(e),
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Schema.fromMap(m),
+          ),
         ),
         responses: (map['responses'] as Map<String, dynamic>?)?.mapValues(
           (e) => Referenceable.fromMap(

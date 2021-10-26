@@ -4,7 +4,7 @@ import 'package:version/version.dart';
 part 'components.dart';
 part 'encoding.dart';
 part 'header.dart';
-part 'listable.dart';
+part 'boolable.dart';
 part 'media_type.dart';
 part 'open_api.dart';
 part 'operation.dart';
