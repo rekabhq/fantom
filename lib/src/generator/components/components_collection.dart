@@ -2,19 +2,25 @@ import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/generator/components/component/component.dart';
 
 void registerGeneratedComponent(String ref, GeneratedComponent component) =>
-    _globalComponentsCollection.registerGeneratedComponent(ref, component);
+    _globalComponentsRegistery.registerGeneratedComponent(ref, component);
+
+void registerGeneratedComponentWithoutRef(GeneratedComponent component) =>
+    _globalComponentsRegistery.registerGeneratedComponentWithoutRef(component);
 
 GeneratedComponent? getGeneratedComponentByRef(String ref) =>
-    _globalComponentsCollection.getGeneratedComponentByRef(ref);
+    _globalComponentsRegistery.getGeneratedComponentByRef(ref);
 
-List<GeneratedComponent> allGeneratedComponents =
-    _globalComponentsCollection.components.values.toList();
+List<GeneratedComponent> allGeneratedComponents = [
+  ..._globalComponentsRegistery.components.values.toList(),
+  ..._globalComponentsRegistery.unNamedComponents.toList(),
+];
 
-final GeneratedComponentsCollection _globalComponentsCollection =
-    GeneratedComponentsCollection();
+final GeneratedComponentsRegistery _globalComponentsRegistery =
+    GeneratedComponentsRegistery();
 
-class GeneratedComponentsCollection {
+class GeneratedComponentsRegistery {
   final Map<String, GeneratedComponent> components = {};
+  final Set<GeneratedComponent> unNamedComponents = {};
 
   void registerGeneratedComponent(String ref, GeneratedComponent component) {
     if (components.containsKey(ref)) {
@@ -22,6 +28,10 @@ class GeneratedComponentsCollection {
     } else {
       components[ref] = component;
     }
+  }
+
+  void registerGeneratedComponentWithoutRef(GeneratedComponent component) {
+    unNamedComponents.add(component);
   }
 
   GeneratedComponent? getGeneratedComponentByRef(String ref) => components[ref];
