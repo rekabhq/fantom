@@ -14,4 +14,3 @@ class GeneratedComponent {
     required this.dataElement,
   });
 }
-
