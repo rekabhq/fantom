@@ -17,7 +17,7 @@ void main() {
         expect(operation.parameters!.length, map['parameters'].length);
         expect(operation.deprecated, map['deprecated']);
         // expect(operation.operationId, map['operationId']);
-        expect(operation.responses!.map!.keys.length,
+        expect(operation.responses.map!.keys.length,
             map['responses'].keys.length);
       },
     );

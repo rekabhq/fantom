@@ -25,8 +25,8 @@ void main() {
         expect(openApi.openapi, equals('3.0.0'));
 
         expect(openApi.paths, isA<Paths>());
-        expect(openApi.paths?.paths, isNotEmpty);
-        expect(openApi.paths?.paths, contains('/pet'));
+        expect(openApi.paths.paths, isNotEmpty);
+        expect(openApi.paths.paths, contains('/pet'));
 
         expect(openApi.components, isA<Components>());
         expect(openApi.components, isNotNull);
