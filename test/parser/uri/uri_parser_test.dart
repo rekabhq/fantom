@@ -1,10 +1,9 @@
 @Timeout(Duration(minutes: 1))
-
 import 'package:fantom/src/generator/api/method/uri_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('UriParser:', () {
+  group('UriParser.fixBaseUrlAndPath method :', () {
     final uriParser = MethodUriParser();
 
     test(
@@ -27,6 +26,71 @@ void main() {
         var fixedPath2 = fixedUrls2.last;
         print('$fixedBaseUrl2$fixedPath2');
         expect('$fixedBaseUrl2$fixedPath2'.contains('compath'), isFalse);
+      },
+    );
+  });
+
+  group('UriParser.parseUri method :', () {
+    final uriParser = MethodUriParser();
+
+    test(
+      'should put primitive path parameters in uri template using simple style and parse uri correctly',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/user/{id}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [UriParam.primitive('id', 5)],
+          queryParameters: [],
+        );
+        //then
+        expect(uri.toString(), 'https://google.com/user/5');
+      },
+    );
+
+    test(
+      'should put array path parameters in uri template using simple style and parse uri correctly',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/user/{id}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [
+            UriParam.array('id', ['3', '4', '5'], false),
+          ],
+          queryParameters: [],
+        );
+        //then
+        expect(uri.toString(), 'https://google.com/user/3,4,5');
+      },
+    );
+
+    test(
+      'should put object path parameters in uri template using simple style and parse uri correctly',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/user/{id}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [
+            UriParam.object('id', {"role": "admin", "firstName": "Alex"}, false)
+          ],
+          queryParameters: [],
+        );
+        //then
+        expect(
+          uri.toString(),
+          'https://google.com/user/role,admin,firstName,Alex',
+        );
       },
     );
   });
