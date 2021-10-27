@@ -7,6 +7,10 @@ class Header extends Equatable {
 
   final bool? deprecated;
 
+  /// this parameter is going to deprecate in
+  /// the following versions of the Open Api Spec
+  final bool? allowEmptyValue;
+
   final String? style;
 
   final bool? explode;
@@ -20,6 +24,7 @@ class Header extends Equatable {
   const Header({
     required this.isRequired,
     required this.deprecated,
+    required this.allowEmptyValue,
     required this.style,
     required this.explode,
     required this.allowReserved,
@@ -30,6 +35,7 @@ class Header extends Equatable {
   factory Header.fromMap(Map<String, dynamic> map) => Header(
         isRequired: map['required'],
         deprecated: map['deprecated'],
+        allowEmptyValue: map[' allowEmptyValue'],
         style: map['style'],
         explode: map['explode'],
         allowReserved: map['allowReserved'],
@@ -48,6 +54,7 @@ class Header extends Equatable {
   List<Object?> get props => [
         isRequired,
         deprecated,
+        allowEmptyValue,
         style,
         explode,
         allowReserved,
