@@ -160,5 +160,72 @@ void main() {
         );
       },
     );
+
+    test(
+      'should put query parameter in uri template with form style',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/users{?id*}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [],
+          queryParameters: [UriParam.primitive('id', 5)],
+        );
+        //then
+        expect(
+          uri.toString(),
+          'https://google.com/users?id=5',
+        );
+      },
+    );
+
+    test(
+      'should put array type query parameter in uri template with form style',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/users{?id*}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [],
+          queryParameters: [
+            UriParam.array('id', [3, 4, 5], false)
+          ],
+        );
+        //then
+        expect(
+          uri.toString(),
+          'https://google.com/users?id=3&id=4&id=5',
+        );
+      },
+    );
+
+    test(
+      'should put object type query parameter in uri template with form style',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/users{?id*}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [],
+          queryParameters: [
+            UriParam.object('id', {"role": "admin", "age": 14}, false)
+          ],
+        );
+        //then
+        expect(
+          uri.toString(),
+          'https://google.com/users?role=admin&age=14',
+        );
+      },
+    );
   });
 }
