@@ -58,11 +58,16 @@ class ApiMethodGenerator {
   String _generateOperation(
     String methodName,
     MapEntry<String, Operation> operation,
-    List<Referenceable<Parameter>>? pathParams,
+    List<Referenceable<Parameter>>? parentParams,
   ) {
-    //TODO: all methods should have an optional parameter named contentType
+    //TODO: all methods should have an optional parameter called contentType
 
-    //TODO: get information about parameter,body and
+    //TODO: get information about parameter,body and response
+
+    final pathParams = _operationPathParams(
+      operation.value.parameters,
+      parentParams,
+    );
 
     // Steps:
     // -------
@@ -129,5 +134,44 @@ class ApiMethodGenerator {
     return """
 
     """;
+  }
+
+  List<Parameter> _operationPathParams(
+    final List<Referenceable<Parameter>>? parameters,
+    final List<Referenceable<Parameter>>? parentParams,
+  ) {
+    final pureParams = parameters?.map<Parameter>((e) => e.isValue
+            ? e.value
+            : _findReferenceParameter(e.reference, openApi)) ??
+        [];
+
+    final pureParentParams = parameters?.map<Parameter>((e) => e.isValue
+            ? e.value
+            : _findReferenceParameter(e.reference, openApi)) ??
+        [];
+
+    return [
+      ...pureParams,
+      ...pureParentParams,
+    ];
+  }
+
+  // we can make this method as reusable method
+  Parameter _findReferenceParameter(Reference reference, OpenApi openApi) {
+    final referenceSlides = reference.ref.split('/');
+
+    if (referenceSlides[2] != 'parameters') {
+      throw Exception('Invalid reference');
+    }
+
+    final parameter = openApi.components?.parameters?[referenceSlides.last];
+
+    if (parameter == null) {
+      throw Exception('Invalid reference');
+    }
+
+    return parameter.isValue
+        ? parameter.value
+        : _findReferenceParameter(parameter.reference, openApi);
   }
 }
