@@ -11,7 +11,7 @@ class Components extends Equatable {
 
   final Map<String, Referenceable<Header>>? headers;
 
-  final Map<String, Referenceable<PathItem>>? pathItems;
+  // we don't have path items in v3.0.0
 
   const Components({
     required this.schemas,
@@ -19,7 +19,6 @@ class Components extends Equatable {
     required this.parameters,
     required this.requestBodies,
     required this.headers,
-    required this.pathItems,
   });
 
   factory Components.fromMap(Map<String, dynamic> map) => Components(
@@ -54,12 +53,6 @@ class Components extends Equatable {
             builder: (m) => Header.fromMap(m),
           ),
         ),
-        pathItems: (map['pathItems'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
-            e,
-            builder: (m) => PathItem.fromMap(m),
-          ),
-        ),
       );
 
   @override
@@ -69,6 +62,5 @@ class Components extends Equatable {
         parameters,
         requestBodies,
         headers,
-        pathItems,
       ];
 }
