@@ -1,8 +1,6 @@
 part of 'model.dart';
 
 class Response extends Equatable {
-  final String? description;
-
   final Map<String, Referenceable<Header>>? headers;
 
   final Map<String, MediaType>? content;
@@ -10,7 +8,6 @@ class Response extends Equatable {
   const Response({
     required this.headers,
     required this.content,
-    required this.description,
   });
 
   factory Response.fromMap(Map<String, dynamic> map) => Response(
@@ -23,13 +20,11 @@ class Response extends Equatable {
         content: (map['content'] as Map<String, dynamic>?)?.mapValues(
           (e) => MediaType.fromMap(e),
         ),
-        description: map['description'],
       );
 
   @override
   List<Object?> get props => [
         headers,
         content,
-        description,
       ];
 }
