@@ -18,7 +18,6 @@ void main() {
         var requestBody = RequestBody.fromMap(map);
         // then
         expect(requestBody.isRequired, map['required']);
-        expect(requestBody.description, map['description']);
         expect(requestBody.content.keys.toSet(), map['content'].keys.toSet());
       },
     );
