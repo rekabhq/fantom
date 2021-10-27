@@ -10,6 +10,17 @@ class MethodUriParser {
     var fixedUrls = fixBaseUrlAndPath(baseURL, pathURL);
     var baseUrl = fixedUrls.first;
     var path = fixedUrls.last;
+
+    for (var pathParam in pathParameters) {
+      if (pathParam.explode) {
+        final unExplodedHolder = '{' + pathParam.name + '}';
+        final explodedHolder = '{' + pathParam.name + '*}';
+        if (path.split('?').first.contains(unExplodedHolder)) {
+          path = path.replaceAll(unExplodedHolder, explodedHolder);
+        }
+      }
+    }
+
     final baseUri = Uri.parse(baseUrl);
     final pathUriTemplate = UriTemplate(path);
     final serializedPath = pathUriTemplate.expand(
@@ -18,7 +29,7 @@ class MethodUriParser {
     var serializedPathUri = Uri.parse(serializedPath);
     if (queryParameters.isNotEmpty) {
       serializedPathUri = serializedPathUri.replace(
-        queryParameters: queryParameters.toMapOfParams(),
+        queryParameters: _uriQeriesFrom(queryParameters),
       );
     }
     return baseUri.resolveUri(serializedPathUri);
@@ -35,24 +46,36 @@ class MethodUriParser {
       return [baseUrl, path];
     }
   }
+
+  Map<String, Iterable<String>> _uriQeriesFrom(List<UriParam> queryParameters) {
+    var queries = <String, Iterable<String>>{};
+    for (var param in queryParameters) {
+      var key = param.name;
+      var value = param.value;
+      if (value is Map) {
+        for (var entry in value.entries) {
+          var entryKey = entry.key.toString();
+          var entryValue = entry.value.toString();
+          queries[entryKey] = [entryValue];
+        }
+      } else if (value is List) {
+        queries[key] = value.map((e) => e.toString()).toList();
+      } else {
+        queries[key] = [value.toString()];
+      }
+    }
+    return queries;
+  }
 }
 
 class UriParam {
-  UriParam._(String name, dynamic value, bool explode) {
-    if (explode && !name.endsWith('*')) {
-      name = '$name*';
-    }
-    _name = name;
-    _value = value;
-  }
+  UriParam._(this.name, this.value, this.explode);
 
-  late String _name;
+  final String name;
 
-  late dynamic _value;
+  final dynamic value;
 
-  String get name => _name;
-
-  dynamic get value => _value;
+  final bool explode;
 
   factory UriParam.object(
     String name,
