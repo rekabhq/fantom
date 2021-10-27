@@ -10,6 +10,17 @@ class MethodUriParser {
     var fixedUrls = fixBaseUrlAndPath(baseURL, pathURL);
     var baseUrl = fixedUrls.first;
     var path = fixedUrls.last;
+
+    for (var pathParam in pathParameters) {
+      if (pathParam.explode) {
+        final unExplodedHolder = '{' + pathParam.name + '}';
+        final explodedHolder = '{' + pathParam.name + '*}';
+        if (path.contains(unExplodedHolder)) {
+          path = path.replaceAll(unExplodedHolder, explodedHolder);
+        }
+      }
+    }
+
     final baseUri = Uri.parse(baseUrl);
     final pathUriTemplate = UriTemplate(path);
     final serializedPath = pathUriTemplate.expand(
@@ -38,21 +49,13 @@ class MethodUriParser {
 }
 
 class UriParam {
-  UriParam._(String name, dynamic value, bool explode) {
-    if (explode && !name.endsWith('*')) {
-      name = '$name*';
-    }
-    _name = name;
-    _value = value;
-  }
+  UriParam._(this.name, this.value, this.explode);
 
-  late String _name;
+  final String name;
 
-  late dynamic _value;
+  final dynamic value;
 
-  String get name => _name;
-
-  dynamic get value => _value;
+  final bool explode;
 
   factory UriParam.object(
     String name,

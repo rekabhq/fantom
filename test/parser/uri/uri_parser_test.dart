@@ -72,6 +72,26 @@ void main() {
     );
 
     test(
+      'should put array path parameters in uri template using simple style also exploded and parse uri correctly',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/user/{id}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [
+            UriParam.array('id', ['3', '4', '5'], true),
+          ],
+          queryParameters: [],
+        );
+        //then
+        expect(uri.toString(), 'https://google.com/user/3,4,5');
+      },
+    );
+
+    test(
       'should put object path parameters in uri template using simple style and parse uri correctly',
       () {
         //with
@@ -90,6 +110,53 @@ void main() {
         expect(
           uri.toString(),
           'https://google.com/user/role,admin,firstName,Alex',
+        );
+      },
+    );
+
+    test(
+      'should put object path parameters in uri template using simple style also explode and parse uri correctly',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/user/{id*}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [
+            UriParam.object('id', {"role": "admin", "firstName": "Alex"}, false)
+          ],
+          queryParameters: [],
+        );
+        //then
+        expect(
+          uri.toString(),
+          'https://google.com/user/role=admin,firstName=Alex',
+        );
+      },
+    );
+
+    test(
+      'should first override template matcher to be explode'
+      'should put object path parameters in uri template using simple style also explode and parse uri correctly',
+      () {
+        //with
+        var baseURL = 'https://google.com';
+        var pathURL = '/user/{id}';
+        //when
+        var uri = uriParser.parseUri(
+          baseURL: baseURL,
+          pathURL: pathURL,
+          pathParameters: [
+            UriParam.object('id', {"role": "admin", "firstName": "Alex"}, true)
+          ],
+          queryParameters: [],
+        );
+        //then
+        expect(
+          uri.toString(),
+          'https://google.com/user/role=admin,firstName=Alex',
         );
       },
     );
