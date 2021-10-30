@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_void_to_null
-
 import 'package:equatable/equatable.dart';
 
 /// holder for default value
@@ -56,6 +54,14 @@ abstract class DataElement {
   String? get name;
 
   /// if is nullable
+  ///
+  /// note for schema:
+  /// A true value adds "null" to the allowed type specified by the type
+  /// keyword, only if type is explicitly defined within the same Schema Object.
+  /// Other Schema Object constraints retain their defined behavior,
+  /// and therefore may disallow the use of null as a value.
+  /// A false value leaves the specified or default type unmodified.
+  /// The default value is false.
   bool get isNullable;
 
   /// if is deprecated
@@ -93,8 +99,8 @@ abstract class DataElement {
     required bool isDeprecated,
     required DefaultValue? defaultValue,
     required EnumerationInfo? enumeration,
-    required List<ObjectProperty>? properties,
-    required ObjectAdditionalProperties? additionalProperties,
+    required List<ObjectProperty> properties,
+    required DataElement? additionalProperties,
   }) = ObjectDataElement;
 
   /// [ArrayDataElement]
@@ -173,7 +179,7 @@ class BooleanDataElement with EquatableMixin implements DataElement {
 
   @override
   String get type {
-    return 'bool' + (isNullable ? '?' : '');
+    return 'bool'.withNullability(isNullable);
   }
 
   @override
@@ -222,55 +228,28 @@ class ObjectProperty with EquatableMixin {
       'isRequired: $isRequired}';
 }
 
-/// information about additional properties on [ObjectDataElement].
-class ObjectAdditionalProperties with EquatableMixin {
-  /// if present means we have type information about additional items.
-  final DataElement? items;
-
-  const ObjectAdditionalProperties({
-    required this.items,
-  });
-
-  /// type or null.
-  ///
-  /// without nullability.
-  ///
-  /// ex. Map<String, int>
-  String? get type {
-    final items = this.items;
-    if (items == null) {
-      return null;
-    } else {
-      final sub = items.type;
-      if (sub == null) {
-        return null;
-      } else {
-        return 'Map<String, $sub>';
-      }
-    }
-  }
-
-  @override
-  List<Object?> get props => [
-        items,
-      ];
-
-  @override
-  String toString() => 'ObjectAdditionalProperties{items: $items}';
-}
-
 /// format of [ObjectDataElement].
 enum ObjectDataElementFormat {
   /// dart object, like User.
   ///
-  /// may be empty object.
+  /// can or can not accept additional fields.
+  /// should check [ObjectDataElement.isAdditionalPropertiesAllowed].
+  ///
+  /// properties can be empty.
+  /// should check [ObjectDataElement.properties].
   object,
 
   /// Map<String, *>.
+  ///
+  /// must accept additional fields.
+  /// [ObjectDataElement.isAdditionalPropertiesAllowed] is true.
   map,
 
   /// dart object which can have additional fields
   /// like a map.
+  ///
+  /// must accept additional fields.
+  /// [ObjectDataElement.isAdditionalPropertiesAllowed] is true.
   mixed,
 }
 
@@ -278,6 +257,29 @@ enum ObjectDataElementFormat {
 ///
 /// ex. User, Person?.
 /// ex. Map<String, User>, Map<String, String>?.
+///
+/// note for schema:
+/// additionalProperties:
+/// Value can be boolean or object.
+/// Consistent with JSON Schema, additionalProperties defaults to true.
+///
+/// note for json schema:
+/// properties:
+/// The value of "properties" MUST be an object.
+/// Each value of this object MUST be a valid JSON Schema.
+/// Omitting this keyword has the same assertion behavior as an empty object.
+/// additionalProperties:
+/// The value of "additionalProperties" MUST be a valid JSON Schema.
+/// Validation with "additionalProperties" applies only to the child values
+/// of instance names that do not appear in the annotation results of
+/// either "properties" or "patternProperties".
+/// Omitting this keyword has the same assertion behavior as an empty schema.
+///
+/// so for additional properties:
+/// if null then equivalent to true.
+/// if false then no additional is allowed.
+/// if true then equivalent to empty schema.
+/// if schema then should be parsed.
 class ObjectDataElement with EquatableMixin implements DataElement {
   /// objects can not be name-less
   @override
@@ -296,10 +298,12 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   final EnumerationInfo? enumeration;
 
   /// properties
-  final List<ObjectProperty>? _properties;
+  final List<ObjectProperty> properties;
 
   /// additionalProperties
-  final ObjectAdditionalProperties? _additionalProperties;
+  ///
+  /// if is null then means that additional properties is note allowed.
+  final DataElement? additionalProperties;
 
   const ObjectDataElement({
     required this.name,
@@ -307,83 +311,62 @@ class ObjectDataElement with EquatableMixin implements DataElement {
     required this.isDeprecated,
     required this.defaultValue,
     required this.enumeration,
-    required List<ObjectProperty>? properties,
-    required ObjectAdditionalProperties? additionalProperties,
-  })  : _properties = properties,
-        _additionalProperties = additionalProperties;
+    required this.properties,
+    required this.additionalProperties,
+  });
 
-  /// properties
-  List<ObjectProperty>? get properties {
-    final ps = _properties;
-    final aps = _additionalProperties;
-    if (aps == null) {
-      if (ps == null) {
-        return [];
-      } else {
-        return ps;
-      }
-    } else {
-      if (ps == null) {
-        return null;
-      } else {
-        return ps;
-      }
-    }
-  }
-
-  /// additionalProperties
-  ObjectAdditionalProperties? get additionalProperties {
-    return _additionalProperties;
-  }
-
-  @override
-  String? get type {
-    final ps = _properties;
-    final aps = _additionalProperties;
-    if (aps == null) {
-      final name = this.name;
-      if (name == null) {
-        return null;
-      } else {
-        return name + (isNullable ? '?' : '');
-      }
-    } else {
-      if (ps == null) {
-        final items = aps.items;
-        if (items == null) {
-          return null;
-        } else {
-          final sub = items.type;
-          if (sub == null) {
-            return null;
-          } else {
-            return 'Map<String, $sub>' + (isNullable ? '?' : '');
-          }
-        }
-      } else {
-        final name = this.name;
-        if (name == null) {
-          return null;
-        } else {
-          return name + (isNullable ? '?' : '');
-        }
-      }
-    }
-  }
+  /// if is additional properties allowed.
+  bool get isAdditionalPropertiesAllowed => additionalProperties != null;
 
   /// format.
   ///
   /// see: [ObjectDataElementFormat].
   ObjectDataElementFormat get format {
-    final ps = _properties;
-    final aps = _additionalProperties;
-    if (aps == null) {
+    // is null or untyped:
+    if (additionalProperties is UntypedDataElement?) {
       return ObjectDataElementFormat.object;
     } else {
-      if (ps == null) {
+      if (properties.isEmpty) {
         return ObjectDataElementFormat.map;
       } else {
         return ObjectDataElementFormat.mixed;
+      }
+    }
+  }
+
+  @override
+  String? get type {
+    if ((additionalProperties is UntypedDataElement?) ||
+        (properties.isNotEmpty)) {
+      // object and mixed:
+      final name = this.name;
+      if (name == null) {
+        return null;
+      } else {
+        return name.withNullability(isNullable);
+      }
+    } else {
+      // map:
+      final sub = additionalProperties!.type;
+      if (sub == null) {
+        return null;
+      } else {
+        return 'Map<String, $sub>'.withNullability(isNullable);
+      }
+    }
+  }
+
+  /// the type of map used,
+  /// this is more general than [type].
+  String? get mapType {
+    if (additionalProperties == null) {
+      return null;
+    } else {
+      final sub = additionalProperties!.type;
+      if (sub == null) {
+        return null;
+      } else {
+        return 'Map<String, $sub>'.withNullability(isNullable);
       }
     }
   }
@@ -395,19 +378,21 @@ class ObjectDataElement with EquatableMixin implements DataElement {
         isDeprecated,
         defaultValue,
         enumeration,
-        _properties,
-        _additionalProperties,
+        properties,
+        additionalProperties,
       ];
 
   @override
   String toString() => 'ObjectDataElement{name: $name, '
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
       'defaultValue: $defaultValue, enumeration: $enumeration, '
-      '_properties: $_properties, '
-      '_additionalProperties: $_additionalProperties}';
+      'properties: $properties, '
+      'additionalProperties: $additionalProperties}';
 }
 
 /// List<*> or Set<*>
+///
+/// note for schema: items MUST be present if the type is array.
 class ArrayDataElement with EquatableMixin implements DataElement {
   @override
   final String? name;
@@ -447,7 +432,7 @@ class ArrayDataElement with EquatableMixin implements DataElement {
       return null;
     } else {
       final base = isUniqueItems ? 'Set' : 'List';
-      return '$base<$sub>' + (isNullable ? '?' : '');
+      return '$base<$sub>'.withNullability(isNullable);
     }
   }
 
@@ -496,7 +481,7 @@ class IntegerDataElement with EquatableMixin implements DataElement {
 
   @override
   String get type {
-    return 'int' + (isNullable ? '?' : '');
+    return 'int'.withNullability(isNullable);
   }
 
   @override
@@ -546,7 +531,7 @@ class NumberDataElement with EquatableMixin implements DataElement {
   @override
   String get type {
     final base = isFloat ? 'double' : 'num';
-    return base + (isNullable ? '?' : '');
+    return base.withNullability(isNullable);
   }
 
   @override
@@ -623,7 +608,7 @@ class StringDataElement with EquatableMixin implements DataElement {
     } else {
       base = 'String';
     }
-    return base + (isNullable ? '?' : '');
+    return base.withNullability(isNullable);
   }
 
   @override
@@ -774,4 +759,10 @@ extension DataElementCastingExt on DataElement {
   StringDataElement get asStringDataElement => this as StringDataElement;
 
   UntypedDataElement get asUntypedDataElement => this as UntypedDataElement;
+}
+
+/// internal utilities for strings
+extension _StringExt on String {
+  /// add nullability if needed.
+  String withNullability(bool isNullable) => isNullable ? '$this?' : this;
 }

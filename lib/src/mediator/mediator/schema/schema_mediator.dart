@@ -3,8 +3,6 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 class SchemaMediator {
-  static const bool compatibility = true;
-
   const SchemaMediator();
 
   DataElement convert({
@@ -39,58 +37,59 @@ class SchemaMediator {
             enumeration: _extractEnumerationInfo(schemaValue),
           );
         case 'object': // map and object
-          final ObjectAdditionalProperties? additionalProperties;
-          final schemaAdditionalProperties = schemaValue.additionalProperties;
-          if (schemaAdditionalProperties == null) {
-            additionalProperties = ObjectAdditionalProperties(
-              items: null,
-            );
-          } else if (schemaAdditionalProperties.isBoolean) {
-            if (schemaAdditionalProperties.boolean) {
-              additionalProperties = ObjectAdditionalProperties(
-                items: null,
-              );
-            } else {
-              additionalProperties = null;
-            }
-          } else {
-            additionalProperties = ObjectAdditionalProperties(
+          // calculation for additional properties:
+          final aps = schemaValue.additionalProperties;
+          final as = aps == null
+              ? Referenceable.value(Schema.empty())
+              : aps.isBoolean
+                  ? aps.boolean
+                      ? Referenceable.value(Schema.empty())
+                      : null
+                  : aps.value; // aps.isValue == true
+          final additionalProperties = as == null
+              ? null
               // recursive call:
-              items: _convert(
-                openApi,
-                schemaAdditionalProperties.value,
-              ),
-            );
-          }
-          final requiredItems = (schemaValue.requiredItems ?? const []).toSet();
+              : _convert(openApi, as);
+
+          // calculation for required items:
+          final requiredItems = (schemaValue.requiredItems ?? []).toSet();
+
+          // calculation for properties:
+          final ps = schemaValue.properties;
+          final properties = ps == null
+              ? <ObjectProperty>[]
+              : ps.entries
+                  .map(
+                    (entry) => ObjectProperty(
+                      name: entry.key,
+                      // recursive call:
+                      item: _convert(openApi, entry.value),
+                      isRequired: requiredItems.contains(entry.key),
+                    ),
+                  )
+                  .toList();
+
           return DataElement.object(
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
-            properties: schemaValue.properties?.entries
-                .map((entry) => ObjectProperty(
-                      name: entry.key,
-                      // recursive call:
-                      item: _convert(openApi, entry.value),
-                      isRequired: requiredItems.contains(entry.key),
-                    ))
-                .toList(),
+            properties: properties,
             additionalProperties: additionalProperties,
           );
         case 'array':
-          if (schemaValue.items == null) {
-            throw UnimplementedError('untyped array');
-          }
+          // calculation for items:
+          // recursive call:
+          final items = _convert(openApi, schemaValue.items!);
+
           return DataElement.array(
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
-            // recursive call:
-            items: _convert(openApi, schemaValue.items!),
+            items: items,
             isUniqueItems: schemaValue.uniqueItems == true,
           );
         case 'integer':
