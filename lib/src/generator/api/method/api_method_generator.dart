@@ -5,6 +5,7 @@ import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 // ignore_for_file: unused_element
+// ignore_for_file: unused_local_variable
 class ApiMethodGenerator {
   final OpenApi openApi;
   final MethodParamsParser methodParamsParser;
