@@ -19,7 +19,7 @@ class SchemaClassGenerator {
     if (element.name == null) {
       throw UnimplementedError('anonymous objects are not supported');
     }
-    for (final property in element.properties!) {
+    for (final property in element.properties) {
       if (property.item.type == null) {
         throw UnimplementedError('anonymous inner objects are not supported');
       }
@@ -30,7 +30,7 @@ class SchemaClassGenerator {
       'class ${element.name} {',
       // ...
       [
-        for (final property in element.properties!)
+        for (final property in element.properties)
           [
             'final ',
             if (property.isRequired) 'Optional<',
@@ -46,7 +46,7 @@ class SchemaClassGenerator {
         '${element.name} ({',
         // .../...
         [
-          for (final property in element.properties!)
+          for (final property in element.properties)
             [
               'required ',
               if (property.isRequired) 'Optional<',
@@ -60,7 +60,7 @@ class SchemaClassGenerator {
         '}) : ',
         // .../...
         [
-          for (final property in element.properties!)
+          for (final property in element.properties)
             [
               property.name,
               ' = ',
