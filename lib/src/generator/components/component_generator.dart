@@ -1,26 +1,52 @@
+import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components_collection.dart';
+import 'package:fantom/src/generator/schema/schema_class_generator.dart';
+import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
+import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 class ComponentsGenerator {
-  //TODO: add schema generator as dependency
+  ComponentsGenerator({
+    required this.schemaClassGenerator,
+    required this.schemaMediator,
+  });
 
-  // final SchemaGenerator schemaGenerator;
-
-  ComponentsGenerator();
+  final SchemaClassGenerator schemaClassGenerator;
+  final SchemaMediator schemaMediator;
 
   factory ComponentsGenerator.createDefault(OpenApi openApi) {
-    return ComponentsGenerator();
-    // TODO: update this with schemaGenarator and remove commented codes
-    // return ComponentsGenerator(
-    //   schemaGenerator: SchemaGenerator(
-    //     compatibilityMode: openApi.version.compareTo(Version(3, 1, 0)) < 0,
-    //   ), // determine compatibility mode from version
-    // );
+    return ComponentsGenerator(
+      schemaClassGenerator: SchemaClassGenerator(),
+      schemaMediator: SchemaMediator(compatibility: false),
+    );
   }
 
   void generateAndRegisterComponents(OpenApi openApi) {
-    // TODO :
-    // should generate components from [openApi] using [schemaGenerator] , [requestBodyGenerator] and etc
-    // and registers each of the generated components using global registerGeneratedComponent() method in order to be used later
-    //
+    List<Map<String, GeneratedComponent>> allGeneratedComponents = [];
+
+    var schemaComponents = _generateSchemas(openApi.components!.schemas!);
+    allGeneratedComponents.addAll([schemaComponents]);
+    for (var map in allGeneratedComponents) {
+      map.forEach((ref, component) {
+        registerGeneratedComponent(ref, component);
+      });
+    }
+  }
+
+  Map<String, GeneratedComponent> _generateSchemas(
+      Map<String, Schema> schemas) {
+    return schemas.map((ref, schema) {
+      var dataElement =
+          schemaMediator.convert(schemas: schemas, schema: schema);
+      return MapEntry(ref, dataElement);
+    }).map((ref, element) {
+      late GeneratedComponent component;
+      if (element is ObjectDataElement) {
+        component = schemaClassGenerator.generate(element);
+      } else {
+        component = UnGeneratableSchemaComponent(dataElement: element);
+      }
+      return MapEntry(ref, component);
+    });
   }
 }

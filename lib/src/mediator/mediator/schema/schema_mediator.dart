@@ -3,6 +3,7 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 class SchemaMediator {
+  // TODO: compatibility should be removed since we are not supporting openapi 3.1
   final bool compatibility;
 
   const SchemaMediator({
