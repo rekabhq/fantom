@@ -1,8 +1,6 @@
 part of 'model.dart';
 
 class RequestBody extends Equatable {
-  final String? description;
-
   final Map<String, MediaType> content;
 
   /// described as [required] in openapi documentation
@@ -10,13 +8,11 @@ class RequestBody extends Equatable {
   final bool? isRequired;
 
   const RequestBody({
-    required this.description,
     required this.content,
     required this.isRequired,
   });
 
   factory RequestBody.fromMap(Map<String, dynamic> map) => RequestBody(
-        description: map['description'],
         content: (map['content'] as Map<String, dynamic>).mapValues(
           (e) => MediaType.fromMap(e),
         ),
@@ -25,7 +21,6 @@ class RequestBody extends Equatable {
 
   @override
   List<Object?> get props => [
-        description,
         content,
         isRequired,
       ];

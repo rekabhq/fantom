@@ -6,13 +6,13 @@ extension OpenApiSchemaResolutionExt on OpenApi {
     if (reference.ref.startsWith('#/components/schemas/')) {
       final name = reference.ref.removeFromStart('#/components/schemas/');
       final schema = components?.schemas?[name];
-      if (schema != null) {
+      if (schema == null) {
+        throw AssertionError('bad reference "${reference.ref}"');
+      } else {
         return SchemaResolutionInfo(
           name: name,
           schema: components!.schemas![name]!,
         );
-      } else {
-        throw AssertionError('bad reference "${reference.ref}"');
       }
     } else {
       throw UnimplementedError(
@@ -24,7 +24,7 @@ extension OpenApiSchemaResolutionExt on OpenApi {
 
 class SchemaResolutionInfo {
   final String name;
-  final Schema schema;
+  final Referenceable<Schema> schema;
 
   const SchemaResolutionInfo({
     required this.name,

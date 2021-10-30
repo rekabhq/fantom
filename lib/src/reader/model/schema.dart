@@ -1,15 +1,9 @@
 part of 'model.dart';
 
-/// supports `3.1` and partially `>=3.0 <3.1`.
 class Schema extends Equatable {
-  /// this is only available on versions `>=3.0 <3.1`.
   final bool? nullable;
 
-  /// on versions `>=3.0 <3.1` if this is not null then other fields are null.
-  final Reference<Schema>? reference;
-
-  /// on versions `>=3.0 <3.1` this can be null or single value.
-  final Listable<String>? type;
+  final String? type;
 
   final String? format;
 
@@ -27,17 +21,16 @@ class Schema extends Equatable {
   /// but [enum], is a keyword in Dart.
   final List<Object?>? enumerated;
 
-  final Schema? items;
+  final Referenceable<Schema>? items;
 
-  final Map<String, Schema>? properties;
+  final Map<String, Referenceable<Schema>>? properties;
 
   final bool? uniqueItems;
 
-  final Schema? additionalProperties;
+  final Boolable<Referenceable<Schema>>? additionalProperties;
 
   const Schema({
     required this.nullable,
-    required this.reference,
     required this.type,
     required this.format,
     required this.defaultValue,
@@ -51,50 +44,44 @@ class Schema extends Equatable {
   });
 
   /// empty schema
-  const Schema.empty()
-      : this(
-          nullable: null,
-          reference: null,
-          type: null,
-          format: null,
-          defaultValue: null,
-          deprecated: null,
-          requiredItems: null,
-          enumerated: null,
-          items: null,
-          properties: null,
-          uniqueItems: null,
-          additionalProperties: null,
-        );
+  factory Schema.empty() => Schema.fromMap(const {});
 
   factory Schema.fromMap(Map<String, dynamic> map) => Schema(
         nullable: map['nullable'],
-        reference:
-            Reference.isReferenceMap(map) ? Reference.fromMap(map) : null,
-        type: map['type'] == null ? null : Listable.fromMap(map['type']),
+        type: map['type'],
         format: map['format'],
         defaultValue:
             map.containsKey('default') ? Optional(map['default']) : null,
         deprecated: map['deprecated'],
         requiredItems: (map['required'] as List<dynamic>?)?.cast<String>(),
         enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
-        items: map['items'] == null ? null : Schema.fromMap(map['items']),
+        items: map['items'] == null
+            ? null
+            : Referenceable.fromMap(
+                map['items'],
+                builder: (e) => Schema.fromMap(e),
+              ),
         properties: (map['properties'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Schema.fromMap(e),
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (f) => Schema.fromMap(f),
+          ),
         ),
         uniqueItems: map['uniqueItems'],
-        additionalProperties: (map['additionalProperties'] == null ||
-                map['additionalProperties'] == false)
+        additionalProperties: map['additionalProperties'] == null
             ? null
-            : map['additionalProperties'] == true
-                ? Schema.fromMap(const {})
-                : Schema.fromMap(map['additionalProperties']),
+            : Boolable.fromMap(
+                map['additionalProperties'],
+                builder: (e) => Referenceable.fromMap(
+                  e,
+                  builder: (f) => Schema.fromMap(f),
+                ),
+              ),
       );
 
   @override
   List<Object?> get props => [
         nullable,
-        reference,
         type,
         format,
         defaultValue,

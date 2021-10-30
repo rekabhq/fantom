@@ -17,7 +17,7 @@ class ComponentsGenerator {
   factory ComponentsGenerator.createDefault(OpenApi openApi) {
     return ComponentsGenerator(
       schemaClassGenerator: SchemaClassGenerator(),
-      schemaMediator: SchemaMediator(compatibility: false),
+      schemaMediator: SchemaMediator(),
     );
   }
 
@@ -38,7 +38,7 @@ class ComponentsGenerator {
 
   Map<String, GeneratedComponent> _generateSchemas(
     OpenApi openApi,
-    Map<String, Schema> schemas,
+    Map<String, Referenceable<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
       var dataElement =

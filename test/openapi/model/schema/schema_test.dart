@@ -14,9 +14,7 @@ void main() {
         var map = await readJsonOrYamlFile(
             File('test/openapi/model/schema/order.yaml'));
         var orderSchema = Schema.fromMap(map);
-        expect(orderSchema.type, isNotNull);
-        expect(orderSchema.type?.isSingle, isTrue);
-        expect(orderSchema.type?.single, map['type']);
+        expect(orderSchema.type, map['type']);
         expect(orderSchema.properties!.length, map['properties'].length);
         expect(orderSchema.properties!.keys.toSet(),
             map['properties'].keys.toSet());

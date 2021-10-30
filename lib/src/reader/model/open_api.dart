@@ -3,7 +3,8 @@ part of 'model.dart';
 class OpenApi extends Equatable {
   final String openapi;
 
-  final Paths? paths;
+  /// path object is required in v3.0.0
+  final Paths paths;
 
   final Components? components;
 
@@ -15,7 +16,7 @@ class OpenApi extends Equatable {
 
   factory OpenApi.fromMap(Map<String, dynamic> map) => OpenApi(
         openapi: map['openapi'],
-        paths: map['paths'] == null ? null : Paths.fromMap(map['paths']),
+        paths: Paths.fromMap(map['paths']),
         components: map['components'] == null
             ? null
             : Components.fromMap(map['components']),

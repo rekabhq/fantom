@@ -20,13 +20,13 @@ class ApiMethodGenerator {
   });
 
   String generateMethods() {
-    if (openApi.paths?.paths.isEmpty ?? true) return '';
+    if (openApi.paths.paths.isEmpty) return '';
 
     // buffer to store generated data
     final buffer = StringBuffer();
 
     // iterating over paths
-    for (final path in openApi.paths!.paths.entries) {
+    for (final path in openApi.paths.paths.entries) {
       final pathParams = path.value.parameters;
 
       if (path.value.operations.isNotEmpty) {

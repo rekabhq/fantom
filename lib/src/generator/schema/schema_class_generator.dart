@@ -8,14 +8,16 @@ class SchemaClassGenerator {
 
   // todo: default value is not supported
   GeneratedSchemaComponent generate(final ObjectDataElement element) {
+    final format = element.format;
+
     // todo: free form
-    if (element.additionalItems != null) {
-      throw UnimplementedError('free-form objects are not supported');
+    if (format != ObjectDataElementFormat.object) {
+      throw UnimplementedError('"mixed" and "map" objects are not supported');
     }
     if (element.name == null) {
       throw UnimplementedError('anonymous objects are not supported');
     }
-    for (final property in element.properties) {
+    for (final property in element.properties!) {
       if (property.item.type == null) {
         throw UnimplementedError('anonymous inner objects are not supported');
       }
@@ -25,7 +27,7 @@ class SchemaClassGenerator {
       'class ${element.name} {',
       // ...
       [
-        for (final property in element.properties)
+        for (final property in element.properties!)
           [
             'final ',
             if (property.isRequired) 'Optional<',
@@ -41,7 +43,7 @@ class SchemaClassGenerator {
         '${element.name} ({',
         // .../...
         [
-          for (final property in element.properties)
+          for (final property in element.properties!)
             [
               'required ',
               if (property.isRequired) 'Optional<',
@@ -55,7 +57,7 @@ class SchemaClassGenerator {
         '}) : ',
         // .../...
         [
-          for (final property in element.properties)
+          for (final property in element.properties!)
             [
               property.name,
               ' = ',

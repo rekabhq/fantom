@@ -1,13 +1,14 @@
 part of 'model.dart';
 
 class Operation extends Equatable {
+  final String? operationId;
+
   final List<Referenceable<Parameter>>? parameters;
 
   final Referenceable<RequestBody>? requestBody;
 
-  final String? operationId;
-
-  final Responses? responses;
+  // [responses] is required in version 3.0.3
+  final Responses responses;
 
   final bool? deprecated;
 
@@ -36,12 +37,11 @@ class Operation extends Equatable {
                 map['requestBody'],
                 builder: (m) => RequestBody.fromMap(m),
               ),
-        responses: map['responses'] == null
-            ? null
-            : Responses.fromMap(map['responses']),
+        responses: Responses.fromMap(map['responses']),
         deprecated: map['deprecated'],
-        hasSecurity: map['security'] != null &&
-            (map['security'] as Map<String, dynamic>).isNotEmpty,
+        // security property is a list of objects
+        hasSecurity:
+            map['security'] != null && (map['security'] as List).isNotEmpty,
         operationId: map['operationId'],
       );
 

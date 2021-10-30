@@ -22,6 +22,11 @@ class OpenApiReader {
 
   static bool _isOpenApiVersionSupported(String version) {
     final parsedVersion = Version.parse(version);
-    return parsedVersion.compareTo(kMinOpenapiSupportedVersion) >= 0;
+    return _isValidVersion(parsedVersion);
+  }
+
+  static bool _isValidVersion(Version version) {
+    return version.compareTo(kMinOpenapiSupportedVersion) >= 0 &&
+        version.compareTo(kMaxOpenapiSupportedVersion) < 0;
   }
 }
