@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fantom/src/generator/components/component/component.dart';
+import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:io/io.dart' as io;
 import 'package:fantom/src/utils/logger.dart';
