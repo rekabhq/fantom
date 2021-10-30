@@ -18,11 +18,11 @@ class GeneratedComponent {
 }
 
 class GeneratedSchemaComponent extends GeneratedComponent {
-  GeneratedSchemaComponent(
-    this.dataElement,
-    String fileContent,
-    String fileName,
-  ) : super(
+  GeneratedSchemaComponent({
+    required this.dataElement,
+    required String fileContent,
+    required String fileName,
+  }) : super(
           fileContent: fileContent,
           fileName: fileName,
         );
@@ -30,11 +30,13 @@ class GeneratedSchemaComponent extends GeneratedComponent {
   final DataElement dataElement;
 }
 
-class UnGeneratableSchemaComponent extends GeneratedComponent {
-  UnGeneratableSchemaComponent({required this.dataElement})
-      : super(fileContent: '', fileName: '');
-
-  final DataElement dataElement;
+class UnGeneratableSchemaComponent extends GeneratedSchemaComponent {
+  UnGeneratableSchemaComponent({required DataElement dataElement})
+      : super(
+          dataElement: dataElement,
+          fileContent: '',
+          fileName: '',
+        );
 
   static const errorMessage =
       'An UnGeneratableSchemaComponent cannot and should not be '
@@ -54,38 +56,48 @@ class UnGeneratableSchemaComponent extends GeneratedComponent {
 }
 
 class GeneratedParameterComponent extends GeneratedComponent {
-  //TODO: add the meta-data about the generated parameter class here.
-  // note that the meta data should be what we need to know about this generated component
-  // so after we generate a class for a Parameter defined in the components we are going to need
-  // meta-data about what that generated class is what it has. not everything but the things that we
-  // are going to need to use later. the same goes for other sub-classes of [GeneratedComponent]
-  GeneratedParameterComponent(
-    String fileContent,
-    String fileName,
-  ) : super(
+  GeneratedParameterComponent({
+    required this.dataElement,
+    required this.schemaComponent,
+    required String fileContent,
+    required String fileName,
+  }) : super(
           fileContent: fileContent,
           fileName: fileName,
         );
+
+  final DataElement dataElement;
+  final GeneratedSchemaComponent schemaComponent;
 }
 
 class GeneratedRequestBodyComponent extends GeneratedComponent {
   //TODO: add the meta-data about the generated request body class here.
-  GeneratedRequestBodyComponent(
-    String fileContent,
-    String fileName,
-  ) : super(
+  GeneratedRequestBodyComponent({
+    required this.dataElement,
+    required this.schemaComponent,
+    required String fileContent,
+    required String fileName,
+  }) : super(
           fileContent: fileContent,
           fileName: fileName,
         );
+
+  final DataElement dataElement;
+  final GeneratedSchemaComponent schemaComponent;
 }
 
 class GeneratedResponseComponent extends GeneratedComponent {
   //TODO: add the meta-data about the generated response body class here.
-  GeneratedResponseComponent(
-    String fileContent,
-    String fileName,
-  ) : super(
+  GeneratedResponseComponent({
+    required this.dataElement,
+    required this.schemaComponent,
+    required String fileContent,
+    required String fileName,
+  }) : super(
           fileContent: fileContent,
           fileName: fileName,
         );
+
+  final DataElement dataElement;
+  final GeneratedSchemaComponent schemaComponent;
 }
