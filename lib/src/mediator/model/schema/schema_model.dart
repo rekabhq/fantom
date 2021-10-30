@@ -42,13 +42,12 @@ class EnumerationInfo with EquatableMixin {
 
 /// base data element:
 ///
-/// - [NullingDataElement]
 /// - [BooleanDataElement]
 /// - [ObjectDataElement]
 /// - [ArrayDataElement]
 /// - [NumberDataElement]
 /// - [StringDataElement]
-/// - [MapDataElement]
+/// - [UntypedDataElement]
 abstract class DataElement {
   const DataElement();
 
@@ -135,6 +134,7 @@ abstract class DataElement {
     required bool isDeprecated,
     required DefaultValue? defaultValue,
     required EnumerationInfo? enumeration,
+    required StringDataElementFormat format,
   }) = StringDataElement;
 
   /// [UntypedDataElement]
@@ -259,7 +259,7 @@ class ObjectAdditionalProperties with EquatableMixin {
   String toString() => 'ObjectAdditionalProperties{items: $items}';
 }
 
-/// format of object data element
+/// format of [ObjectDataElement].
 enum ObjectDataElementFormat {
   /// dart object, like User.
   ///
@@ -566,6 +566,24 @@ class NumberDataElement with EquatableMixin implements DataElement {
       'format: $isFloat}';
 }
 
+/// format of [StringDataElement].
+enum StringDataElementFormat {
+  /// string
+  plain,
+
+  /// base 64
+  byte,
+
+  /// binary stream or list
+  binary,
+
+  /// date
+  date,
+
+  /// date-time
+  dateTime,
+}
+
 /// String.
 class StringDataElement with EquatableMixin implements DataElement {
   @override
@@ -583,17 +601,29 @@ class StringDataElement with EquatableMixin implements DataElement {
   @override
   final EnumerationInfo? enumeration;
 
+  /// format.
+  ///
+  /// see: [StringDataElementFormat].
+  final StringDataElementFormat format;
+
   const StringDataElement({
     required this.name,
     required this.isNullable,
     required this.isDeprecated,
     required this.defaultValue,
     required this.enumeration,
+    required this.format,
   });
 
   @override
   String get type {
-    return 'String' + (isNullable ? '?' : '');
+    final String base;
+    if (format == StringDataElementFormat.binary) {
+      base = 'Stream<int>';
+    } else {
+      base = 'String';
+    }
+    return base + (isNullable ? '?' : '');
   }
 
   @override
@@ -603,12 +633,14 @@ class StringDataElement with EquatableMixin implements DataElement {
         isDeprecated,
         defaultValue,
         enumeration,
+        format,
       ];
 
   @override
   String toString() => 'StringDataElement{name: $name, '
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
-      'defaultValue: $defaultValue, enumeration: $enumeration}';
+      'defaultValue: $defaultValue, enumeration: $enumeration, '
+      'format: $format}';
 }
 
 /// dynamic
@@ -656,7 +688,7 @@ class UntypedDataElement with EquatableMixin implements DataElement {
 }
 
 /// matching data elements
-extension DataElementMatching on DataElement {
+extension DataElementMatchingExt on DataElement {
   R match<R extends Object?>({
     required R Function(BooleanDataElement boolean) boolean,
     required R Function(ObjectDataElement object) object,
@@ -715,4 +747,31 @@ extension DataElementMatching on DataElement {
       throw AssertionError();
     }
   }
+}
+
+/// casting data elements
+extension DataElementCastingExt on DataElement {
+  bool get isBooleanDataElement => this is BooleanDataElement;
+
+  bool get isObjectDataElement => this is ObjectDataElement;
+
+  bool get isArrayDataElement => this is ArrayDataElement;
+
+  bool get isNumberDataElement => this is NumberDataElement;
+
+  bool get isStringDataElement => this is StringDataElement;
+
+  bool get isUntypedDataElement => this is UntypedDataElement;
+
+  BooleanDataElement get asBooleanDataElement => this as BooleanDataElement;
+
+  ObjectDataElement get asObjectDataElement => this as ObjectDataElement;
+
+  ArrayDataElement get asArrayDataElement => this as ArrayDataElement;
+
+  NumberDataElement get asNumberDataElement => this as NumberDataElement;
+
+  StringDataElement get asStringDataElement => this as StringDataElement;
+
+  UntypedDataElement get asUntypedDataElement => this as UntypedDataElement;
 }

@@ -117,6 +117,7 @@ class SchemaMediator {
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
+            format: StringDataElementFormat.plain,
           );
         case 'dynamic':
           return DataElement.untyped(
