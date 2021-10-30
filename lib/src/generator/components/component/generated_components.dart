@@ -1,4 +1,5 @@
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:io/io.dart';
 
@@ -57,7 +58,7 @@ class UnGeneratableSchemaComponent extends GeneratedSchemaComponent {
 
 class GeneratedParameterComponent extends GeneratedComponent {
   GeneratedParameterComponent({
-    required this.dataElement,
+    required this.source,
     required this.schemaComponent,
     required String fileContent,
     required String fileName,
@@ -66,8 +67,10 @@ class GeneratedParameterComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final DataElement dataElement;
   final GeneratedSchemaComponent schemaComponent;
+  final Parameter source;
+
+  DataElement get dataElement => schemaComponent.dataElement;
 }
 
 class GeneratedRequestBodyComponent extends GeneratedComponent {
