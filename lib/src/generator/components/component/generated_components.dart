@@ -2,6 +2,7 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:io/io.dart';
+import 'package:sealed_writer/sealed_writer.dart';
 
 /// is just a meta-data class that contains the content of the file that is generated for the an openapi component
 /// and also a meta-data about what is in the genrated file so that it can be used later by other sections of
@@ -56,6 +57,21 @@ class UnGeneratableSchemaComponent extends GeneratedSchemaComponent {
       );
 }
 
+class GeneratedContentComponent extends GeneratedComponent {
+  GeneratedContentComponent({
+    required this.manifest,
+    required this.generatedComponents,
+    required String fileContent,
+    required String fileName,
+  }) : super(
+          fileContent: fileContent,
+          fileName: fileName,
+        );
+
+  final Manifest manifest;
+  final List<GeneratedSchemaComponent> generatedComponents;
+}
+
 class GeneratedParameterComponent extends GeneratedComponent {
   GeneratedParameterComponent({
     required this.source,
@@ -74,10 +90,8 @@ class GeneratedParameterComponent extends GeneratedComponent {
 }
 
 class GeneratedRequestBodyComponent extends GeneratedComponent {
-  //TODO: add the meta-data about the generated request body class here.
   GeneratedRequestBodyComponent({
-    required this.dataElement,
-    required this.schemaComponent,
+    required this.contentComponent,
     required String fileContent,
     required String fileName,
   }) : super(
@@ -85,8 +99,7 @@ class GeneratedRequestBodyComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final DataElement dataElement;
-  final GeneratedSchemaComponent schemaComponent;
+  final GeneratedContentComponent contentComponent;
 }
 
 class GeneratedResponseComponent extends GeneratedComponent {

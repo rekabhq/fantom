@@ -49,7 +49,7 @@ class ComponentsGenerator {
       schemaComponents,
       parameterComponents,
     ]);
-    
+
     for (var map in allGeneratedComponents) {
       map.forEach((ref, component) {
         registerGeneratedComponent(ref, component);

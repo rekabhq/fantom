@@ -17,8 +17,8 @@ class RequestBodyClassGenerator {
   final SchemaClassGenerator schemaClassGenerator;
   final OpenApi openApi;
 
-  // TODO: It would be great if we could have a content generator.
-  String generate(
+  // TODO: It would be great if we could have a content generator
+  GeneratedRequestBodyComponent generate(
     String name,
     RequestBody requestBody,
   ) {
@@ -85,7 +85,20 @@ class RequestBodyClassGenerator {
       // TODO: find a way to generate primitive types like String, int and so on
       buffer.writeln(component.fileContent);
     }
-    return buffer.toString();
+    final fileContent = buffer.toString();
+    final fileName = '${typeName.snakeCase}.dart';
+
+    return GeneratedRequestBodyComponent(
+      // TODO: update this if needed
+      fileName: fileName,
+      fileContent: fileContent,
+      contentComponent: GeneratedContentComponent(
+        manifest: source,
+        generatedComponents: generatedComponents,
+        fileContent: fileContent,
+        fileName: fileName,
+      ),
+    );
   }
 
   GeneratedSchemaComponent _createSchemaClassFrom(schema, name) {

@@ -37,7 +37,7 @@ void main() {
         );
 
         var outputFile = File('test/generator/request_body/output.dart');
-        await outputFile.writeAsString(output);
+        await outputFile.writeAsString(output.fileContent);
       },
     );
   });
