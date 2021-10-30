@@ -12,7 +12,9 @@ class SchemaClassGenerator {
 
     // todo: free form
     if (format != ObjectDataElementFormat.object) {
-      throw UnimplementedError('"mixed" and "map" objects are not supported');
+      throw UnimplementedError(
+        '"mixed" and "map" objects are not supported : element name is ${element.name}',
+      );
     }
     if (element.name == null) {
       throw UnimplementedError('anonymous objects are not supported');
