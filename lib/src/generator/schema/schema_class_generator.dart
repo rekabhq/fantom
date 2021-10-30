@@ -1,13 +1,11 @@
-import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
-import 'package:recase/recase.dart';
 
 class SchemaClassGenerator {
   const SchemaClassGenerator();
 
   // todo: default value is not supported
-  GeneratedSchemaComponent generate(final ObjectDataElement element) {
+  String generate(final ObjectDataElement element) {
     final format = element.format;
 
     // todo: free form
@@ -22,8 +20,8 @@ class SchemaClassGenerator {
         throw UnimplementedError('anonymous inner objects are not supported');
       }
     }
-    var fileName = '${ReCase(element.name!).snakeCase}.dart';
-    var fileContent = [
+
+    return [
       'class ${element.name} {',
       // ...
       [
@@ -69,11 +67,5 @@ class SchemaClassGenerator {
       ].joinLines(),
       '}',
     ].joinLines();
-
-    return GeneratedSchemaComponent(
-      dataElement: element,
-      fileContent: fileContent,
-      fileName: fileName,
-    );
   }
 }

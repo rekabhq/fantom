@@ -3,7 +3,6 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 class SchemaMediator {
-  // TODO: compatibility should be removed since we are not supporting openapi 3.1
   static const bool compatibility = true;
 
   const SchemaMediator();
@@ -118,6 +117,7 @@ class SchemaMediator {
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
+            format: StringDataElementFormat.plain,
           );
         case 'dynamic':
           return DataElement.untyped(
