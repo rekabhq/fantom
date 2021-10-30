@@ -42,7 +42,7 @@ class ComponentsGenerator {
   ) {
     return schemas.map((ref, schema) {
       var dataElement =
-          schemaMediator.convert(openApi: openApi, schema: schema);
+          schemaMediator.convert(openApi: openApi, schema: schema, name: ref);
       return MapEntry(ref, dataElement);
     }).map((ref, element) {
       late GeneratedComponent component;

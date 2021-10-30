@@ -20,7 +20,7 @@ class SchemaClassGenerator {
         throw UnimplementedError('anonymous inner objects are not supported');
       }
     }
-    var fileName = ReCase(element.name!).snakeCase;
+    var fileName = '${ReCase(element.name!).snakeCase}.dart';
     var fileContent = [
       'class ${element.name} {',
       // ...
