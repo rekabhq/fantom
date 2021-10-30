@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 class Components extends Equatable {
-  final Map<String, Schema>? schemas;
+  final Map<String, Referenceable<Schema>>? schemas;
 
   final Map<String, Referenceable<Response>>? responses;
 
@@ -11,7 +11,7 @@ class Components extends Equatable {
 
   final Map<String, Referenceable<Header>>? headers;
 
-  final Map<String, Referenceable<PathItem>>? pathItems;
+  // we don't have path items in v3.0.0
 
   const Components({
     required this.schemas,
@@ -19,12 +19,14 @@ class Components extends Equatable {
     required this.parameters,
     required this.requestBodies,
     required this.headers,
-    required this.pathItems,
   });
 
   factory Components.fromMap(Map<String, dynamic> map) => Components(
         schemas: (map['schemas'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Schema.fromMap(e),
+          (e) => Referenceable.fromMap(
+            e,
+            builder: (m) => Schema.fromMap(m),
+          ),
         ),
         responses: (map['responses'] as Map<String, dynamic>?)?.mapValues(
           (e) => Referenceable.fromMap(
@@ -51,12 +53,6 @@ class Components extends Equatable {
             builder: (m) => Header.fromMap(m),
           ),
         ),
-        pathItems: (map['pathItems'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
-            e,
-            builder: (m) => PathItem.fromMap(m),
-          ),
-        ),
       );
 
   @override
@@ -66,6 +62,5 @@ class Components extends Equatable {
         parameters,
         requestBodies,
         headers,
-        pathItems,
       ];
 }

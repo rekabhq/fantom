@@ -29,9 +29,7 @@ void main() {
         expect(header.allowReserved, isNull);
         expect(header.content, isNull);
         expect(header.schema, isNotNull);
-        expect(header.schema?.type, isNotNull);
-        expect(header.schema?.type?.isSingle, isTrue);
-        expect(header.schema?.type?.single, 'array');
+        expect(header.schema!.value.type, 'array');
       },
     );
   });

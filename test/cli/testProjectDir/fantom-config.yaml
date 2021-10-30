@@ -1,5 +1,5 @@
 fantom:
-  openapi: test/utils/petstore2.openapi.yaml
+  openapi: test/utils/petstore.openapi.yaml
   package: test/cli/testProjectDir/gen/module2
   model-dir: test/cli/testProjectDir/gen/models2
   api-dir: test/cli/testProjectDir/gen/apis2

@@ -1,7 +1,6 @@
 part of 'model.dart';
 
 class Referenceable<T extends Object> extends Equatable {
-  /// should not be a collection.
   final T? _value;
 
   final Reference<T>? _reference;
@@ -33,8 +32,8 @@ class Referenceable<T extends Object> extends Equatable {
       _value != null ? value(_value!) : reference(_reference!);
 
   factory Referenceable.fromMap(
-    Map<String, dynamic> map, {
-    required T Function(Map<String, dynamic> map) builder,
+    dynamic map, {
+    required T Function(dynamic json) builder,
   }) =>
       Reference.isReferenceMap(map)
           ? Referenceable<T>.reference(Reference<T>.fromMap(map))

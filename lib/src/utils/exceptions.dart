@@ -102,7 +102,7 @@ class UnSupportedOpenApiVersionException extends FantomException {
       : super(
           'Unsupported openapi version : ${version ?? ''}\n'
           'the version of openapi file provided is not supported by $kCliName cli\n'
-          'fantom cli supports openapi files with version $kMinOpenapiSupportedVersion and above',
+          'fantom cli supports openapi files with version :  >=$kMinOpenapiSupportedVersion <$kMaxOpenapiSupportedVersion',
           io.ExitCode.config.code,
         );
 }

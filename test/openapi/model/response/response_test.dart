@@ -17,7 +17,6 @@ void main() {
         // when we parse Response from map
         var response = Response.fromMap(map);
         // then
-        expect(response.description, response.description);
         expect(response.content?.keys.toSet(), map['content']?.keys.toSet());
         expect(response.headers?.keys.toSet(), map['headers']?.keys.toSet());
       },
