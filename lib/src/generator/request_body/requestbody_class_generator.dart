@@ -17,50 +17,57 @@ class RequestBodyClassGenerator {
   final SchemaClassGenerator schemaClassGenerator;
   final OpenApi openApi;
 
+  // TODO: It would be great if we could have a content generator.
   String generate(
     String name,
     RequestBody requestBody,
   ) {
-    List<GeneratedSchemaComponent> genratedComponents = [];
-    var typeName = '${ReCase(name).pascalCase}RequestBody';
-    var items = List.generate(requestBody.content.entries.length, (index) {
-      var entry = requestBody.content.entries.toList()[index];
-      var subClassTypeName =
-          '${ReCase(name).pascalCase}${ReCase(_getContentTypeShortName(entry.key)).pascalCase}';
-      print(subClassTypeName);
-      var subClassTypeShortName = ReCase(entry.key).camelCase;
-      print(subClassTypeShortName);
-      var mediaType = entry.value;
-      var refOrSchema = mediaType.schema!;
-      late GeneratedSchemaComponent component;
-      if (refOrSchema.isReference) {
-        //TODO schema might be refrenciable in that case we must first retrive schema
-        //and then get our generatedComponent from componentRegistry because it is already registered there
-        throw Exception('WWWWWHATTTTT ???');
-      } else {
-        // our schema object first needs to be generated and registered
-        component = _createSchemaClassFrom(
-          refOrSchema,
-          '${ReCase(name).pascalCase}Body${ReCase(_getContentTypeShortName(entry.key)).pascalCase}'
-              .camelCase,
+    List<GeneratedSchemaComponent> generatedComponents = [];
+    final typeName = '${ReCase(name).pascalCase}RequestBody';
+    final items = List.generate(
+      requestBody.content.entries.length,
+      (index) {
+        final entry = requestBody.content.entries.toList()[index];
+        final subClassTypeName =
+            '${ReCase(name).pascalCase}${ReCase(_getContentTypeShortName(entry.key)).pascalCase}';
+        print(subClassTypeName);
+        final subClassTypeShortName = ReCase(entry.key).camelCase;
+        print(subClassTypeShortName);
+        final mediaType = entry.value;
+        final refOrSchema = mediaType.schema!;
+        late GeneratedSchemaComponent component;
+
+        /// TODO: find your schema
+        /// checkout the _findSchemaElement in parameterClassGenerator class
+        if (refOrSchema.isReference) {
+          //TODO: schema might be referenceable in that case we must first retrive schema
+          //and then get our generatedComponent from componentRegistry because it is already registered there
+          throw Exception('WWWWWHATTTTT ???');
+        } else {
+          // our schema object first needs to be generated and registered
+          component = _createSchemaClassFrom(
+            refOrSchema,
+            '${ReCase(name).pascalCase}Body${ReCase(_getContentTypeShortName(entry.key)).pascalCase}'
+                .camelCase,
+          );
+          generatedComponents.add(component);
+        }
+        return ManifestItem(
+          name: subClassTypeName,
+          shortName: subClassTypeShortName,
+          equality: ManifestEquality.identity,
+          fields: [
+            ManifestField(
+              name: ReCase(entry.key).camelCase,
+              type: ManifestType(
+                name: component.dataElement.type!,
+                isNullable: component.dataElement.isNullable,
+              ),
+            )
+          ],
         );
-        genratedComponents.add(component);
-      }
-      return ManifestItem(
-        name: subClassTypeName,
-        shortName: subClassTypeShortName,
-        equality: ManifestEquality.identity,
-        fields: [
-          ManifestField(
-            name: ReCase(entry.key).camelCase,
-            type: ManifestType(
-              name: component.dataElement.type!,
-              isNullable: component.dataElement.isNullable,
-            ),
-          )
-        ],
-      );
-    });
+      },
+    );
     final source = Manifest(
       name: typeName,
       items: items,
@@ -69,12 +76,13 @@ class RequestBodyClassGenerator {
     );
 
     // final backward = BackwardWriter(source);
-    // var contentBack = backward.write();
+    // final contentBack = backward.write();
     final forward = SourceWriter(source, referToManifest: false);
-    var sealedClassContent = forward.write();
-    var buffer = StringBuffer();
+    final sealedClassContent = forward.write();
+    final buffer = StringBuffer();
     buffer.writeln(sealedClassContent);
-    for (var component in genratedComponents) {
+    for (final component in generatedComponents) {
+      // TODO: find a way to generate primitive types like String, int and so on
       buffer.writeln(component.fileContent);
     }
     return buffer.toString();
