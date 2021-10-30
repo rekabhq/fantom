@@ -68,6 +68,10 @@ class SchemaClassGenerator {
       '}',
     ].joinLines();
 
-    return GeneratedSchemaComponent(element, fileContent, fileName);
+    return GeneratedSchemaComponent(
+      dataElement: element,
+      fileContent: fileContent,
+      fileName: fileName,
+    );
   }
 }
