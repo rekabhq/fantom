@@ -24,7 +24,10 @@ class ComponentsGenerator {
   void generateAndRegisterComponents(OpenApi openApi) {
     List<Map<String, GeneratedComponent>> allGeneratedComponents = [];
 
-    var schemaComponents = _generateSchemas(openApi.components!.schemas!);
+    var schemaComponents = _generateSchemas(
+      openApi,
+      openApi.components!.schemas!,
+    );
     allGeneratedComponents.addAll([schemaComponents]);
     for (var map in allGeneratedComponents) {
       map.forEach((ref, component) {
@@ -34,10 +37,12 @@ class ComponentsGenerator {
   }
 
   Map<String, GeneratedComponent> _generateSchemas(
-      Map<String, Schema> schemas) {
+    OpenApi openApi,
+    Map<String, Schema> schemas,
+  ) {
     return schemas.map((ref, schema) {
       var dataElement =
-          schemaMediator.convert(schemas: schemas, schema: schema);
+          schemaMediator.convert(openApi: openApi, schema: schema);
       return MapEntry(ref, dataElement);
     }).map((ref, element) {
       late GeneratedComponent component;
