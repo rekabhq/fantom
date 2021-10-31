@@ -31,7 +31,6 @@ class ParameterClassGenerator {
           '$nameSeed/${parameter.name}/${parameter.location}/parameter';
 
       final className = name.pascalCase;
-      final fileName = name.snakeCase;
 
       final schema = parameter.schema!;
       final DataElement element = _findSchemaElement(
@@ -40,10 +39,8 @@ class ParameterClassGenerator {
       );
 
       if (element is ObjectDataElement) {
-        final generatedSchema = schemaGenerator.generate(
-          element,
-          orName: className
-        );
+        final generatedSchema =
+            schemaGenerator.generate(element, orName: className);
         return GeneratedParameterComponent(
           source: parameter,
           schemaComponent: generatedSchema,
