@@ -90,6 +90,7 @@ class ComponentsGenerator {
             value.isValue
                 ? value.value
                 : referenceFinder.findParameter(value.reference),
+            key,
           ),
         );
       },

@@ -4,6 +4,7 @@ import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:recase/recase.dart';
 
 class ParameterClassGenerator {
   const ParameterClassGenerator({
@@ -17,6 +18,7 @@ class ParameterClassGenerator {
   GeneratedParameterComponent generate(
     final OpenApi openApi,
     final Parameter parameter,
+    final String nameSeed,
   ) {
     if (parameter.schema != null && parameter.content != null) {
       throw StateError('Parameter can not have both schema and content');
@@ -24,20 +26,23 @@ class ParameterClassGenerator {
       //TODO: complete this section
       throw UnimplementedError('parameter with Content value is not supported');
     } else {
-      //TODO: find a way to name the generated class
-      final name = parameter.name;
+      // user+id+query+parameter = UserIdQueryParameter
+      final name =
+          '$nameSeed/${parameter.name}/${parameter.location}/parameter';
+
+      final className = name.pascalCase;
+      final fileName = name.snakeCase;
 
       final schema = parameter.schema!;
       final DataElement element = _findSchemaElement(
         openApi,
         schema,
-        name,
       );
 
       if (element is ObjectDataElement) {
         final generatedSchema = schemaGenerator.generate(
           element,
-          orName: name,
+          orName: className
         );
         return GeneratedParameterComponent(
           source: parameter,
@@ -58,9 +63,9 @@ class ParameterClassGenerator {
 
   DataElement _findSchemaElement(
     OpenApi openApi,
-    Referenceable<Schema> schema,
-    String name,
-  ) {
+    Referenceable<Schema> schema, {
+    String? name,
+  }) {
     if (schema.isReference) {
       final generatedComponent = getGeneratedComponentByRef(
         schema.reference.ref,
