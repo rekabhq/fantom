@@ -217,9 +217,6 @@ class ObjectProperty with EquatableMixin {
     required this.isRequired,
   });
 
-  /// is not required
-  bool get isNotRequired => !isRequired;
-
   @override
   List<Object?> get props => [
         name,
@@ -771,4 +768,28 @@ extension DataElementCastingExt on DataElement {
 extension _StringExt on String {
   /// add nullability if needed.
   String withNullability(bool isNullable) => isNullable ? '$this?' : this;
+}
+
+/// extensions on [DataElement]
+extension DataElementExt on DataElement {
+  /// is not nullable.
+  bool get isNotNullable => !isNullable;
+
+  /// has default value.
+  bool get hasDefaultValue => defaultValue != null;
+
+  /// has not default value.
+  bool get hasNotDefaultValue => defaultValue == null;
+
+  /// has enum
+  bool get hasEnum => enumeration != null;
+
+  /// has not enum
+  bool get hasNotEnum => enumeration == null;
+}
+
+/// extensions on [ObjectProperty]
+extension ObjectPropertyExt on ObjectProperty {
+  /// is not required.
+  bool get isNotRequired => !isRequired;
 }

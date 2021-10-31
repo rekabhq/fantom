@@ -4,10 +4,10 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
 
 // todo: should be copied.
-class Optional$<T> {
+class Optional<T> {
   final T value;
 
-  const Optional$(this.value);
+  const Optional(this.value);
 }
 
 class SchemaClassGenerator {
@@ -33,12 +33,9 @@ class SchemaClassGenerator {
       if (property.item.type == null) {
         throw UnimplementedError('anonymous inner objects are not supported');
       }
-      // temporarilly disabled
-      // if (property.item.defaultValue != null) {
-      //   throw UnimplementedError('default value is not supported');
-      // }
     }
 
+    // final dvg = SchemaDefaultValueGenerator();
     final output = element.properties.isEmpty
         // empty class:
         ? 'class $name {}'
@@ -65,7 +62,8 @@ class SchemaClassGenerator {
               [
                 for (final property in element.properties)
                   [
-                    if (property.isRequired) 'required ',
+                    if (property.isRequired && property.item.isNotNullable)
+                      'required ',
                     if (property.isNotRequired) 'Optional<',
                     property.item.type!,
                     if (property.isNotRequired) '>?',
