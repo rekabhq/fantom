@@ -217,6 +217,9 @@ class ObjectProperty with EquatableMixin {
     required this.isRequired,
   });
 
+  /// is not required
+  bool get isNotRequired => !isRequired;
+
   @override
   List<Object?> get props => [
         name,

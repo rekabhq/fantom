@@ -3,6 +3,13 @@ import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
 
+// todo: should be copied.
+class Optional$<T> {
+  final T value;
+
+  const Optional$(this.value);
+}
+
 class SchemaClassGenerator {
   const SchemaClassGenerator();
 
@@ -43,9 +50,9 @@ class SchemaClassGenerator {
               for (final property in element.properties)
                 [
                   'final ',
-                  if (!property.isRequired) 'Optional<',
+                  if (property.isNotRequired) 'Optional<',
                   property.item.type!,
-                  if (!property.isRequired) '>?',
+                  if (property.isNotRequired) '>?',
                   ' ',
                   property.name,
                   ';',
@@ -58,10 +65,10 @@ class SchemaClassGenerator {
               [
                 for (final property in element.properties)
                   [
-                    'required ',
-                    if (!property.isRequired) 'Optional<',
+                    if (property.isRequired) 'required ',
+                    if (property.isNotRequired) 'Optional<',
                     property.item.type!,
-                    if (!property.isRequired) '>?',
+                    if (property.isNotRequired) '>?',
                     ' ',
                     property.name,
                     ',',
