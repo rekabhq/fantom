@@ -4,6 +4,7 @@ import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:recase/recase.dart';
 import 'package:sealed_writer/sealed_writer.dart';
 
@@ -84,6 +85,7 @@ class ContentManifestCreator {
     } else {
       late GeneratedSchemaComponent component;
       if (refOrSchema.isReference) {
+        Log.debug(refOrSchema.reference.ref);
         component = getGeneratedComponentByRef(refOrSchema.reference.ref)
             as GeneratedSchemaComponent;
       } else {
