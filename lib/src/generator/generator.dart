@@ -42,7 +42,7 @@ class Generator {
   /// [apiClassGenerator] and [componentsGenerator] then puts all the generated data in a [GenerationData] object
   /// in order to be written into the corresponding directories by the FileWriter class
   GenerationData generate(OpenApi openApi, GenerateConfig config) {
-    componentsGenerator.generateAndRegisterComponents(openApi);
+    componentsGenerator.generateAndRegisterComponents();
     var apiClassFile = apiClassGenerator.generate();
     // creating GenerationData object
     var modelsFile = allGeneratedComponents

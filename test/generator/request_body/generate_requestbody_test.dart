@@ -1,10 +1,9 @@
 @Timeout(Duration(minutes: 1))
 import 'dart:io';
 
+import 'package:fantom/src/generator/components/component_generator.dart';
+import 'package:fantom/src/generator/components/components_collection.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
-import 'package:fantom/src/generator/schema/schema_class_generator.dart';
-import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
-import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 
@@ -15,18 +14,18 @@ void main() {
     late RequestBodyClassGenerator requestBodyClassGenerator;
     late OpenApi openapi;
     setUpAll(() async {
+      print('');
       var openapiMap = await readJsonOrYamlFile(
           File('test/generator/request_body/petstore.openapi.json'));
       openapi = OpenApi.fromMap(openapiMap);
-      final schemaClassgenerator = SchemaClassGenerator();
-      final mediator = SchemaMediator();
-      final contentManifestGenerator = ContentManifestGenerator(
-        openApi: openapi,
-        schemaClassGenerator: schemaClassgenerator,
-        schemaMediator: mediator,
-      );
-      requestBodyClassGenerator = RequestBodyClassGenerator(
-          contentManifestGenerator: contentManifestGenerator);
+      final componentsGenerator = ComponentsGenerator.createDefault(openapi);
+
+      var map =
+          componentsGenerator.generateSchemas(openapi.components!.schemas!);
+      map.forEach((ref, component) {
+        registerGeneratedComponent(ref, component);
+      });
+      requestBodyClassGenerator = componentsGenerator.requestBodyClassGenerator;
     });
 
     test(

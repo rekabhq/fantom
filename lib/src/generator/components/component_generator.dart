@@ -11,12 +11,15 @@ import 'package:fantom/src/reader/model/model.dart';
 
 class ComponentsGenerator {
   ComponentsGenerator({
+    required this.openApi,
     required this.schemaMediator,
     required this.schemaClassGenerator,
     required this.parameterClassGenerator,
     required this.contentManifestGenerator,
     required this.requestBodyClassGenerator,
   });
+
+  final OpenApi openApi;
 
   final SchemaMediator schemaMediator;
 
@@ -40,6 +43,7 @@ class ComponentsGenerator {
       contentManifestGenerator: contentManifestGenerator,
     );
     return ComponentsGenerator(
+      openApi: openApi,
       requestBodyClassGenerator: requestBodyClassGenerator,
       contentManifestGenerator: contentManifestGenerator,
       schemaMediator: schemaMediator,
@@ -52,20 +56,18 @@ class ComponentsGenerator {
     );
   }
 
-  void generateAndRegisterComponents(OpenApi openApi) {
+  void generateAndRegisterComponents() {
     List<Map<String, GeneratedComponent>> allGeneratedComponents = [];
 
     final schemaComponents = (openApi.components?.schemas == null)
         ? <String, GeneratedSchemaComponent>{}
-        : _generateSchemas(
-            openApi,
+        : generateSchemas(
             openApi.components!.schemas!,
           );
 
     final parameterComponents = (openApi.components?.parameters == null)
         ? <String, GeneratedParameterComponent>{}
         : _generateParameters(
-            openApi,
             openApi.components!.parameters!,
           );
 
@@ -81,14 +83,14 @@ class ComponentsGenerator {
     }
   }
 
-  Map<String, GeneratedSchemaComponent> _generateSchemas(
-    OpenApi openApi,
+  Map<String, GeneratedSchemaComponent> generateSchemas(
     Map<String, Referenceable<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
       var dataElement =
           schemaMediator.convert(openApi: openApi, schema: schema, name: ref);
-      return MapEntry(ref, dataElement);
+      //TODO: this should be done when we are reading the openapi file not here. lets talk about this payam, amirreza
+      return MapEntry('#/components/schemas/$ref', dataElement);
     }).map((ref, element) {
       late GeneratedSchemaComponent component;
       if (element is ObjectDataElement) {
@@ -101,7 +103,6 @@ class ComponentsGenerator {
   }
 
   Map<String, GeneratedParameterComponent> _generateParameters(
-    OpenApi openApi,
     Map<String, Referenceable<Parameter>> parameters,
   ) {
     final referenceFinder = ReferenceFinder(openApi: openApi);

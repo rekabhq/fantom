@@ -30,7 +30,9 @@ class RequestBodyClassGenerator {
     final buffer = StringBuffer();
     buffer.writeln(sealedClassContent);
     for (final component in contentManifest.generatedComponents) {
-      buffer.writeln(component.fileContent);
+      if (component is! UnGeneratableSchemaComponent) {
+        buffer.writeln(component.fileContent);
+      }
     }
     final fileContent = buffer.toString();
     final fileName = '${ReCase(typeName).snakeCase}.dart';
