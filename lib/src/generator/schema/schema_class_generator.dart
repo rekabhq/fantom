@@ -1,4 +1,5 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
@@ -15,11 +16,11 @@ class SchemaClassGenerator {
 
   // todo: default value is not supported
   GeneratedSchemaComponent generate(
-    final ObjectDataElement element, {
+    final ObjectDataElement object, {
     @Deprecated('do not use') String? orName,
   }) {
-    final name = element.name ?? orName;
-    final format = element.format;
+    final name = object.name ?? orName;
+    final format = object.format;
 
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
@@ -29,14 +30,14 @@ class SchemaClassGenerator {
         '"mixed" and "map" objects are not supported : name is $name',
       );
     }
-    for (final property in element.properties) {
+    for (final property in object.properties) {
       if (property.item.type == null) {
         throw UnimplementedError('anonymous inner objects are not supported');
       }
     }
 
-    // final dvg = SchemaDefaultValueGenerator();
-    final output = element.properties.isEmpty
+    final dvg = SchemaDefaultValueGenerator();
+    final output = object.properties.isEmpty
         // empty class:
         ? 'class $name {}'
         // non-empty class:
@@ -44,12 +45,16 @@ class SchemaClassGenerator {
             'class $name {',
             // ...
             [
-              for (final property in element.properties)
+              for (final property in object.properties)
                 [
                   'final ',
-                  if (property.isNotRequired) 'Optional<',
+                  if (property.isNotRequired &&
+                      property.item.hasNotDefaultValue)
+                    'Optional<',
                   property.item.type!,
-                  if (property.isNotRequired) '>?',
+                  if (property.isNotRequired &&
+                      property.item.hasNotDefaultValue)
+                    '>?',
                   ' ',
                   property.name,
                   ';',
@@ -57,10 +62,10 @@ class SchemaClassGenerator {
             ].joinLines(),
             // ...
             [
-              '${element.name} ({',
+              '${object.name} ({',
               // .../...
               [
-                for (final property in element.properties)
+                for (final property in object.properties)
                   [
                     if (property.isRequired && property.item.isNotNullable)
                       'required ',
@@ -75,11 +80,18 @@ class SchemaClassGenerator {
               '}) : ',
               // .../...
               [
-                for (final property in element.properties)
+                for (final property in object.properties)
                   [
                     property.name,
                     ' = ',
                     property.name,
+                    if (property.item.hasDefaultValue)
+                      [
+                        ' != null ? ',
+                        property.name,
+                        '.value : ',
+                        dvg.generate(property.item)!,
+                      ].joinParts(),
                     ',',
                   ].joinParts(),
               ].joinLines().replaceFromLastOrNot(',', ';'),
@@ -88,7 +100,7 @@ class SchemaClassGenerator {
           ].joinLines();
 
     return GeneratedSchemaComponent(
-      dataElement: element,
+      dataElement: object,
       fileContent: output,
       fileName: '${ReCase(name).snakeCase}.dart',
     );
