@@ -33,12 +33,7 @@ void main() {
       () async {
         var requestBody = openapi.components!.requestBodies!.values.first.value;
 
-        var output = requestBodyClassGenerator.generate(
-          typeName: 'PetRequestBody',
-          subTypeName: 'Pet',
-          generatedSchemaTypeName: 'PetBody',
-          requestBody: requestBody,
-        );
+        var output = requestBodyClassGenerator.generate(requestBody, 'Pet');
 
         var outputFile = File('test/generator/request_body/output.dart');
         await outputFile.writeAsString(output.fileContent);

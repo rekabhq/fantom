@@ -146,12 +146,10 @@ class ComponentsGenerator {
     return requestBodies.map((ref, requestBody) {
       final actualReference = '#/components/requestBodies/$ref';
       final component = requestBodyClassGenerator.generate(
-        typeName: '${ref}RequestBody',
-        subTypeName: ref,
-        generatedSchemaTypeName: '${ref}Body',
-        requestBody: requestBody.isValue
+        requestBody.isValue
             ? requestBody.value
             : referenceFinder.findRequestBody(requestBody.reference),
+        ref,
       );
       return MapEntry(actualReference, component);
     });

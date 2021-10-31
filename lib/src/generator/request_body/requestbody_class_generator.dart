@@ -11,12 +11,14 @@ class RequestBodyClassGenerator {
 
   final ContentManifestCreator contentManifestGenerator;
 
-  GeneratedRequestBodyComponent generate({
-    required String typeName,
-    required String subTypeName,
-    required String generatedSchemaTypeName,
-    required RequestBody requestBody,
-  }) {
+  GeneratedRequestBodyComponent generate(
+    final RequestBody requestBody,
+    final String seedName,
+  ) {
+    final typeName = '${seedName}RequestBody';
+    final subTypeName = seedName;
+    final generatedSchemaTypeName = '${seedName}Body';
+
     final contentManifest = contentManifestGenerator.generateContentType(
       typeName: typeName,
       subTypeName: subTypeName,
