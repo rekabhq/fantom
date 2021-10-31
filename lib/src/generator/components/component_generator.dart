@@ -47,6 +47,7 @@ class ComponentsGenerator {
     );
 
     final referenceFinder = ReferenceFinder(openApi: openApi);
+
     return ComponentsGenerator(
       openApi: openApi,
       schemaMediator: schemaMediator,
@@ -74,7 +75,6 @@ class ComponentsGenerator {
       registerGeneratedComponent(ref, component);
     });
 
-
     // generate and register all parameters
     final parameterComponents = (openApi.components?.parameters == null)
         ? <String, GeneratedParameterComponent>{}
@@ -85,7 +85,6 @@ class ComponentsGenerator {
     parameterComponents.forEach((ref, component) {
       registerGeneratedComponent(ref, component);
     });
-
 
     // generate and register all request-bodies
     final requestBodyComponents = (openApi.components?.requestBodies == null)
@@ -103,18 +102,22 @@ class ComponentsGenerator {
     Map<String, Referenceable<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
-      var dataElement =
-          schemaMediator.convert(openApi: openApi, schema: schema, name: ref);
       //TODO: this should be done when we are reading the openapi file not here. lets talk about this payam, amirreza
-      return MapEntry('#/components/schemas/$ref', dataElement);
+      return MapEntry(
+        '#/components/schemas/$ref',
+        schemaMediator.convert(
+          openApi: openApi,
+          schema: schema,
+          name: ref,
+        ),
+      );
     }).map((ref, element) {
-      late GeneratedSchemaComponent component;
-      if (element is ObjectDataElement) {
-        component = schemaClassGenerator.generate(element);
-      } else {
-        component = UnGeneratableSchemaComponent(dataElement: element);
-      }
-      return MapEntry(ref, component);
+      return MapEntry(
+        ref,
+        element is ObjectDataElement
+            ? schemaClassGenerator.generate(element)
+            : UnGeneratableSchemaComponent(dataElement: element),
+      );
     });
   }
 
@@ -122,15 +125,15 @@ class ComponentsGenerator {
     Map<String, Referenceable<Parameter>> parameters,
   ) {
     return parameters.map(
-      (key, value) {
+      (ref, value) {
         return MapEntry(
-          key,
+          '#/components/parameters/$ref',
           parameterClassGenerator.generate(
             openApi,
             value.isValue
                 ? value.value
                 : referenceFinder.findParameter(value.reference),
-            key,
+            ref,
           ),
         );
       },
@@ -140,16 +143,15 @@ class ComponentsGenerator {
   Map<String, GeneratedRequestBodyComponent> _generateRequestBodies(
     Map<String, Referenceable<RequestBody>> requestBodies,
   ) {
-    return requestBodies.map((ref, requestBodyReferenceable) {
-      var actualReference = '#/components/requestBodies/$ref';
+    return requestBodies.map((ref, requestBody) {
+      final actualReference = '#/components/requestBodies/$ref';
       final component = requestBodyClassGenerator.generate(
         typeName: '${ref}RequestBody',
         subTypeName: ref,
         generatedSchemaTypeName: '${ref}Body',
-        requestBody: requestBodyReferenceable.isValue
-            ? requestBodyReferenceable.value
-            : referenceFinder
-                .findRequestBody(requestBodyReferenceable.reference),
+        requestBody: requestBody.isValue
+            ? requestBody.value
+            : referenceFinder.findRequestBody(requestBody.reference),
       );
       return MapEntry(actualReference, component);
     });
