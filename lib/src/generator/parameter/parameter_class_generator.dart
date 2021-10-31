@@ -75,13 +75,11 @@ class ParameterClassGenerator {
       final DataElement element = _findSchemaElement(
         openApi,
         schema,
+        name: className,
       );
 
       if (element is ObjectDataElement) {
-        // todo payam:
-        final generatedSchema =
-            // ignore: deprecated_member_use_from_same_package
-            schemaGenerator.generate(element, orName: className);
+        final generatedSchema = schemaGenerator.generate(element);
         return GeneratedParameterComponent.schema(
           source: parameter,
           schemaComponent: generatedSchema,
