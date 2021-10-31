@@ -30,6 +30,9 @@ class ParameterClassGenerator {
 
     if (parameter.schema != null && parameter.content != null) {
       throw StateError('Parameter can not have both schema and content');
+
+      /// parameter value has a content. so we should return a content manifest
+      /// and sealed class
     } else if (parameter.content != null) {
       // UserIdQueryJson
       final subTypeName = '$nameSeed/${parameter.name}/${parameter.location}';
@@ -38,6 +41,7 @@ class ParameterClassGenerator {
       final schemaTypeName =
           '$nameSeed/${parameter.name}/${parameter.location}/body';
 
+      /// creating content manifest base on parameter content values
       final contentManifest = contentManifestGenerator.generateContentType(
         typeName: typeName.pascalCase,
         subTypeName: subTypeName.pascalCase,
@@ -50,17 +54,19 @@ class ParameterClassGenerator {
         referToManifest: false,
       );
 
+      /// create and generate sealed class base on parameter content values
       final sealedClassContent = forward.write();
       final buffer = StringBuffer();
 
       buffer.writeln(sealedClassContent);
 
+      /// add relative classes in end of the file
       for (final component in contentManifest.generatedComponents) {
         buffer.writeln(component.fileContent);
       }
 
       final fileContent = buffer.toString();
-      final fileName = '${ReCase(typeName).snakeCase}.dart';
+      final fileName = '${typeName.snakeCase}.dart';
 
       return GeneratedParameterComponent.content(
         fileName: fileName,
@@ -68,10 +74,14 @@ class ParameterClassGenerator {
         contentManifest: contentManifest,
         source: parameter,
       );
+      // parameter value has a schema. so we should return a schema generated component
     } else {
       final className = typeName.pascalCase;
 
       final schema = parameter.schema!;
+
+      /// if schema is reference, we will find it from component collection
+      /// otherwise we will generate it with schema mediator
       final DataElement element = _findSchemaElement(
         openApi,
         schema,
