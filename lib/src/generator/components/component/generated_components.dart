@@ -58,9 +58,10 @@ class UnGeneratableSchemaComponent extends GeneratedSchemaComponent {
 }
 
 class GeneratedParameterComponent extends GeneratedComponent {
-  GeneratedParameterComponent({
+  GeneratedParameterComponent._({
+    this.schemaComponent,
+    this.contentManifest,
     required this.source,
-    required this.schemaComponent,
     required String fileContent,
     required String fileName,
   }) : super(
@@ -68,10 +69,39 @@ class GeneratedParameterComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final GeneratedSchemaComponent schemaComponent;
+  factory GeneratedParameterComponent.schema({
+    required GeneratedSchemaComponent schemaComponent,
+    required Parameter source,
+    required String fileContent,
+    required String fileName,
+  }) =>
+      GeneratedParameterComponent._(
+        schemaComponent: schemaComponent,
+        source: source,
+        fileContent: fileContent,
+        fileName: fileName,
+      );
+
+  factory GeneratedParameterComponent.content({
+    required GeneratedContentManifest contentManifest,
+    required Parameter source,
+    required String fileContent,
+    required String fileName,
+  }) =>
+      GeneratedParameterComponent._(
+        contentManifest: contentManifest,
+        source: source,
+        fileContent: fileContent,
+        fileName: fileName,
+      );
+
+  final GeneratedSchemaComponent? schemaComponent;
+  final GeneratedContentManifest? contentManifest;
   final Parameter source;
 
-  DataElement get dataElement => schemaComponent.dataElement;
+  bool get isSchema => schemaComponent != null;
+
+  bool get isContent => contentManifest != null;
 }
 
 class GeneratedRequestBodyComponent extends GeneratedComponent {

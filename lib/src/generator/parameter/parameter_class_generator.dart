@@ -41,14 +41,14 @@ class ParameterClassGenerator {
       if (element is ObjectDataElement) {
         final generatedSchema =
             schemaGenerator.generate(element, orName: className);
-        return GeneratedParameterComponent(
+        return GeneratedParameterComponent.schema(
           source: parameter,
           schemaComponent: generatedSchema,
           fileContent: generatedSchema.fileContent,
           fileName: generatedSchema.fileName,
         );
       } else {
-        return GeneratedParameterComponent(
+        return GeneratedParameterComponent.schema(
           source: parameter,
           schemaComponent: UnGeneratableSchemaComponent(dataElement: element),
           fileContent: '',
