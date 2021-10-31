@@ -13,6 +13,7 @@ class ComponentsGenerator {
   ComponentsGenerator({
     required this.openApi,
     required this.schemaMediator,
+    required this.referenceFinder,
     required this.schemaClassGenerator,
     required this.parameterClassGenerator,
     required this.contentManifestGenerator,
@@ -22,6 +23,8 @@ class ComponentsGenerator {
   final OpenApi openApi;
 
   final SchemaMediator schemaMediator;
+
+  final ReferenceFinder referenceFinder;
 
   final SchemaClassGenerator schemaClassGenerator;
 
@@ -42,12 +45,15 @@ class ComponentsGenerator {
     final requestBodyClassGenerator = RequestBodyClassGenerator(
       contentManifestGenerator: contentManifestGenerator,
     );
+
+    final referenceFinder = ReferenceFinder(openApi: openApi);
     return ComponentsGenerator(
       openApi: openApi,
+      schemaMediator: schemaMediator,
+      referenceFinder: referenceFinder,
+      schemaClassGenerator: schemaGenerator,
       requestBodyClassGenerator: requestBodyClassGenerator,
       contentManifestGenerator: contentManifestGenerator,
-      schemaMediator: schemaMediator,
-      schemaClassGenerator: schemaGenerator,
       parameterClassGenerator: ParameterClassGenerator(
         schemaGenerator: schemaGenerator,
         schemaMediator: schemaMediator,
@@ -57,30 +63,40 @@ class ComponentsGenerator {
   }
 
   void generateAndRegisterComponents() {
-    List<Map<String, GeneratedComponent>> allGeneratedComponents = [];
-
+    // generate and register all schemas
     final schemaComponents = (openApi.components?.schemas == null)
         ? <String, GeneratedSchemaComponent>{}
         : generateSchemas(
             openApi.components!.schemas!,
           );
 
+    schemaComponents.forEach((ref, component) {
+      registerGeneratedComponent(ref, component);
+    });
+
+
+    // generate and register all parameters
     final parameterComponents = (openApi.components?.parameters == null)
         ? <String, GeneratedParameterComponent>{}
         : _generateParameters(
             openApi.components!.parameters!,
           );
 
-    allGeneratedComponents.addAll([
-      schemaComponents,
-      parameterComponents,
-    ]);
+    parameterComponents.forEach((ref, component) {
+      registerGeneratedComponent(ref, component);
+    });
 
-    for (var map in allGeneratedComponents) {
-      map.forEach((ref, component) {
-        registerGeneratedComponent(ref, component);
-      });
-    }
+
+    // generate and register all request-bodies
+    final requestBodyComponents = (openApi.components?.requestBodies == null)
+        ? <String, GeneratedRequestBodyComponent>{}
+        : _generateRequestBodies(
+            openApi.components!.requestBodies!,
+          );
+
+    requestBodyComponents.forEach((ref, component) {
+      registerGeneratedComponent(ref, component);
+    });
   }
 
   Map<String, GeneratedSchemaComponent> generateSchemas(
@@ -105,7 +121,6 @@ class ComponentsGenerator {
   Map<String, GeneratedParameterComponent> _generateParameters(
     Map<String, Referenceable<Parameter>> parameters,
   ) {
-    final referenceFinder = ReferenceFinder(openApi: openApi);
     return parameters.map(
       (key, value) {
         return MapEntry(
@@ -120,5 +135,23 @@ class ComponentsGenerator {
         );
       },
     );
+  }
+
+  Map<String, GeneratedRequestBodyComponent> _generateRequestBodies(
+    Map<String, Referenceable<RequestBody>> requestBodies,
+  ) {
+    return requestBodies.map((ref, requestBodyReferenceable) {
+      var actualReference = '#/components/requestBodies/$ref';
+      final component = requestBodyClassGenerator.generate(
+        typeName: '${ref}RequestBody',
+        subTypeName: ref,
+        generatedSchemaTypeName: '${ref}Body',
+        requestBody: requestBodyReferenceable.isValue
+            ? requestBodyReferenceable.value
+            : referenceFinder
+                .findRequestBody(requestBodyReferenceable.reference),
+      );
+      return MapEntry(actualReference, component);
+    });
   }
 }
