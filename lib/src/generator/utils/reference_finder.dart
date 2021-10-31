@@ -1,5 +1,6 @@
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
+import 'package:recase/recase.dart';
 
 class ReferenceFinder {
   ReferenceFinder({required this.openApi});
@@ -81,6 +82,18 @@ class ReferenceFinder {
     }
 
     return response.isValue ? response.value : findResponse(response.reference);
+  }
+
+  String findReferenceName(Reference reference, String type) {
+    _validateReferencePath(reference, type, type.pascalCase);
+
+    final name = reference.ref.removeFromStart('#/components/$type/');
+
+    if (name.isEmpty) {
+      throw AssertionError('$type: $name not found in the component!');
+    }
+
+    return name;
   }
 
   bool _validateReferencePath(
