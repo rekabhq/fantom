@@ -2,7 +2,7 @@
 import 'dart:io';
 
 import 'package:fantom/src/generator/components/component_generator.dart';
-import 'package:fantom/src/generator/components/components_collection.dart';
+import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';

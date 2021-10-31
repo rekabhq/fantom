@@ -4,7 +4,7 @@ import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/components/component_generator.dart';
-import 'package:fantom/src/generator/components/components_collection.dart';
+import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/name/method_name_generator.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';

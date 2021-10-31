@@ -23,6 +23,7 @@ class GeneratedComponentsRegistery {
   final Set<GeneratedComponent> unNamedComponents = {};
 
   void registerGeneratedComponent(String ref, GeneratedComponent component) {
+    _validateReference(ref);
     if (components.containsKey(ref)) {
       throw GeneratedComponentAlreadyDefinedException(ref, components[ref]!);
     } else {
@@ -34,5 +35,16 @@ class GeneratedComponentsRegistery {
     unNamedComponents.add(component);
   }
 
-  GeneratedComponent? getGeneratedComponentByRef(String ref) => components[ref];
+  GeneratedComponent? getGeneratedComponentByRef(String ref) {
+    _validateReference(ref);
+    return components[ref];
+  }
+
+  void _validateReference(String ref) {
+    if (!ref.startsWith('#/components/')) {
+      throw AssertionError(
+        'bad reference "$ref". The reference must be placed in the component section. and start with a #/components/',
+      );
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
-import 'package:fantom/src/generator/components/components_collection.dart';
+import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
