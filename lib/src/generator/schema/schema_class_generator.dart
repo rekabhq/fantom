@@ -27,9 +27,10 @@ class SchemaClassGenerator {
       if (property.item.type == null) {
         throw UnimplementedError('anonymous inner objects are not supported');
       }
-      if (property.item.defaultValue != null) {
-        throw UnimplementedError('default value is not supported');
-      }
+      // temporarilly disabled
+      // if (property.item.defaultValue != null) {
+      //   throw UnimplementedError('default value is not supported');
+      // }
     }
 
     final output = element.properties.isEmpty
