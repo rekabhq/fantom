@@ -932,7 +932,9 @@
               "type": "object",
               "required": [
                 "name",
-                "photoUrls"
+                "photoUrls",
+                "x1",
+                "x2"
               ],
               "properties": {
                 "id": {
@@ -974,6 +976,82 @@
                     "pending",
                     "sold"
                   ]
+                },
+                "x1": {
+                  "nullable": false,
+                  "type": "array",
+                  "xml": {
+                    "name": "x1",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "x2": {
+                  "nullable": true,
+                  "type": "array",
+                  "xml": {
+                    "name": "x2",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "x3": {
+                  "nullable": false,
+                  "type": "array",
+                  "xml": {
+                    "name": "x3",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": [
+                    "a",
+                    "b",
+                    "c"
+                  ]
+                },
+                "x4": {
+                  "nullable": true,
+                  "type": "array",
+                  "xml": {
+                    "name": "x4",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": [
+                    "a",
+                    "b",
+                    "c"
+                  ]
+                },
+                "x5": {
+                  "nullable": false,
+                  "type": "array",
+                  "xml": {
+                    "name": "x5",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "x6": {
+                  "nullable": true,
+                  "type": "array",
+                  "xml": {
+                    "name": "x6",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "type": "string"
+                  }
                 }
               },
               "xml": {
