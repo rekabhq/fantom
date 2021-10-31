@@ -12,8 +12,8 @@ typedef Content = Map<String, MediaType>;
 /// is a ManifestGenerator that creates objects that can be used by ComponentGenerators to generate components
 ///
 /// NOTE: an openapi content object in our sdk is represented by a Map<String, MediaType>
-class ContentManifestGenerator {
-  ContentManifestGenerator({
+class ContentManifestCreator {
+  ContentManifestCreator({
     required this.openApi,
     required this.schemaMediator,
     required this.schemaClassGenerator,

@@ -17,7 +17,7 @@ class ParameterClassGenerator {
 
   final SchemaClassGenerator schemaGenerator;
   final SchemaMediator schemaMediator;
-  final ContentManifestGenerator contentManifestGenerator;
+  final ContentManifestCreator contentManifestGenerator;
 
   GeneratedParameterComponent generate(
     final OpenApi openApi,

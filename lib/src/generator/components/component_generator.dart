@@ -27,14 +27,14 @@ class ComponentsGenerator {
 
   final ParameterClassGenerator parameterClassGenerator;
 
-  final ContentManifestGenerator contentManifestGenerator;
+  final ContentManifestCreator contentManifestGenerator;
 
   final RequestBodyClassGenerator requestBodyClassGenerator;
 
   factory ComponentsGenerator.createDefault(OpenApi openApi) {
     final schemaMediator = SchemaMediator();
     final schemaGenerator = SchemaClassGenerator();
-    final contentManifestGenerator = ContentManifestGenerator(
+    final contentManifestGenerator = ContentManifestCreator(
       openApi: openApi,
       schemaMediator: schemaMediator,
       schemaClassGenerator: schemaGenerator,

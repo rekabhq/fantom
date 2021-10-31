@@ -9,7 +9,7 @@ class RequestBodyClassGenerator {
     required this.contentManifestGenerator,
   });
 
-  final ContentManifestGenerator contentManifestGenerator;
+  final ContentManifestCreator contentManifestGenerator;
 
   GeneratedRequestBodyComponent generate({
     required String typeName,
