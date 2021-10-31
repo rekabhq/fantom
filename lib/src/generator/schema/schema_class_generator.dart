@@ -11,7 +11,7 @@ class SchemaClassGenerator {
     final ObjectDataElement element, {
     @Deprecated('do not use') String? orName,
   }) {
-    final name = element.name;
+    final name = element.name ?? orName;
     final format = element.format;
 
     if (name == null) {
@@ -43,9 +43,9 @@ class SchemaClassGenerator {
               for (final property in element.properties)
                 [
                   'final ',
-                  if (property.isRequired) 'Optional<',
+                  if (!property.isRequired) 'Optional<',
                   property.item.type!,
-                  if (property.isRequired) '>?',
+                  if (!property.isRequired) '>?',
                   ' ',
                   property.name,
                   ';',
@@ -59,9 +59,9 @@ class SchemaClassGenerator {
                 for (final property in element.properties)
                   [
                     'required ',
-                    if (property.isRequired) 'Optional<',
+                    if (!property.isRequired) 'Optional<',
                     property.item.type!,
-                    if (property.isRequired) '>?',
+                    if (!property.isRequired) '>?',
                     ' ',
                     property.name,
                     ',',

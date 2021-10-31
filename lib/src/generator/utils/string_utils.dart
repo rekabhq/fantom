@@ -89,6 +89,15 @@ extension StringRemovingExt on String {
     return substring(start.length);
   }
 
+  /// assert that string starts with given [start],
+  /// and remove [start] from start of string.
+  String removeFromStartOrNot(final String start) {
+    if (!startsWith(start)) {
+      throw AssertionError('string "$this" should start with "$start"!');
+    }
+    return substring(start.length);
+  }
+
   /// assert and remove from last.
   String removeFromLast(final String last) {
     if (!endsWith(last)) {
