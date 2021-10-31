@@ -7,7 +7,10 @@ class SchemaClassGenerator {
   const SchemaClassGenerator();
 
   // todo: default value is not supported
-  GeneratedSchemaComponent generate(final ObjectDataElement element) {
+  GeneratedSchemaComponent generate(
+    final ObjectDataElement element, {
+    @Deprecated('do not use') String? orName,
+  }) {
     final name = element.name;
     final format = element.format;
 
