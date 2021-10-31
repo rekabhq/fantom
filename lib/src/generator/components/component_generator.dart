@@ -1,7 +1,9 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/components/components_collection.dart';
 import 'package:fantom/src/generator/parameter/parameter_class_generator.dart';
+import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
+import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
 import 'package:fantom/src/generator/utils/reference_finder.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
@@ -12,17 +14,34 @@ class ComponentsGenerator {
     required this.schemaMediator,
     required this.schemaClassGenerator,
     required this.parameterClassGenerator,
+    required this.contentManifestGenerator,
+    required this.requestBodyClassGenerator,
   });
 
   final SchemaMediator schemaMediator;
 
   final SchemaClassGenerator schemaClassGenerator;
+
   final ParameterClassGenerator parameterClassGenerator;
+
+  final ContentManifestGenerator contentManifestGenerator;
+
+  final RequestBodyClassGenerator requestBodyClassGenerator;
 
   factory ComponentsGenerator.createDefault(OpenApi openApi) {
     final schemaMediator = SchemaMediator();
     final schemaGenerator = SchemaClassGenerator();
+    final contentManifestGenerator = ContentManifestGenerator(
+      openApi: openApi,
+      schemaMediator: schemaMediator,
+      schemaClassGenerator: schemaGenerator,
+    );
+    final requestBodyClassGenerator = RequestBodyClassGenerator(
+      contentManifestGenerator: contentManifestGenerator,
+    );
     return ComponentsGenerator(
+      requestBodyClassGenerator: requestBodyClassGenerator,
+      contentManifestGenerator: contentManifestGenerator,
       schemaMediator: schemaMediator,
       schemaClassGenerator: schemaGenerator,
       parameterClassGenerator: ParameterClassGenerator(
