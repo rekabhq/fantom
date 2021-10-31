@@ -7,11 +7,8 @@ class SchemaClassGenerator {
   const SchemaClassGenerator();
 
   // todo: default value is not supported
-  GeneratedSchemaComponent generate(
-    final ObjectDataElement element, {
-    final String? orName,
-  }) {
-    final name = element.name ?? orName;
+  GeneratedSchemaComponent generate(final ObjectDataElement element) {
+    final name = element.name;
     final format = element.format;
 
     if (name == null) {
@@ -19,8 +16,7 @@ class SchemaClassGenerator {
     }
     if (format != ObjectDataElementFormat.object) {
       throw UnimplementedError(
-        '"mixed" and "map" objects are not supported '
-        ': element name is ${element.name}',
+        '"mixed" and "map" objects are not supported : name is $name',
       );
     }
     for (final property in element.properties) {

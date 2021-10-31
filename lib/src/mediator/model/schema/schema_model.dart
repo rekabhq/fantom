@@ -44,6 +44,7 @@ class EnumerationInfo with EquatableMixin {
 /// - [ObjectDataElement]
 /// - [ArrayDataElement]
 /// - [NumberDataElement]
+/// - [IntegerDataElement]
 /// - [StringDataElement]
 /// - [UntypedDataElement]
 abstract class DataElement {
@@ -629,6 +630,8 @@ class StringDataElement with EquatableMixin implements DataElement {
 }
 
 /// dynamic
+///
+/// NOTE: type will be `null` not `'dynamic'`.
 class UntypedDataElement with EquatableMixin implements DataElement {
   @override
   final String? name;
@@ -653,8 +656,8 @@ class UntypedDataElement with EquatableMixin implements DataElement {
   });
 
   @override
-  String get type {
-    return 'dynamic';
+  String? get type {
+    return null;
   }
 
   @override
