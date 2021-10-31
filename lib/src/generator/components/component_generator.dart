@@ -55,15 +55,19 @@ class ComponentsGenerator {
   void generateAndRegisterComponents(OpenApi openApi) {
     List<Map<String, GeneratedComponent>> allGeneratedComponents = [];
 
-    final schemaComponents = _generateSchemas(
-      openApi,
-      openApi.components!.schemas!,
-    );
+    final schemaComponents = (openApi.components?.schemas == null)
+        ? <String, GeneratedSchemaComponent>{}
+        : _generateSchemas(
+            openApi,
+            openApi.components!.schemas!,
+          );
 
-    final parameterComponents = _generateParameters(
-      openApi,
-      openApi.components!.parameters!,
-    );
+    final parameterComponents = (openApi.components?.parameters == null)
+        ? <String, GeneratedParameterComponent>{}
+        : _generateParameters(
+            openApi,
+            openApi.components!.parameters!,
+          );
 
     allGeneratedComponents.addAll([
       schemaComponents,
@@ -77,7 +81,7 @@ class ComponentsGenerator {
     }
   }
 
-  Map<String, GeneratedComponent> _generateSchemas(
+  Map<String, GeneratedSchemaComponent> _generateSchemas(
     OpenApi openApi,
     Map<String, Referenceable<Schema>> schemas,
   ) {
@@ -86,7 +90,7 @@ class ComponentsGenerator {
           schemaMediator.convert(openApi: openApi, schema: schema, name: ref);
       return MapEntry(ref, dataElement);
     }).map((ref, element) {
-      late GeneratedComponent component;
+      late GeneratedSchemaComponent component;
       if (element is ObjectDataElement) {
         component = schemaClassGenerator.generate(element);
       } else {
