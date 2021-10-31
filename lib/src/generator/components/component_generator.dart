@@ -47,6 +47,7 @@ class ComponentsGenerator {
       parameterClassGenerator: ParameterClassGenerator(
         schemaGenerator: schemaGenerator,
         schemaMediator: schemaMediator,
+        contentManifestGenerator: contentManifestGenerator,
       ),
     );
   }

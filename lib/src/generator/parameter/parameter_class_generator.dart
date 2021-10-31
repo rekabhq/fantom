@@ -1,36 +1,75 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/components/components_collection.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
+import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:recase/recase.dart';
+import 'package:sealed_writer/sealed_writer.dart';
 
 class ParameterClassGenerator {
   const ParameterClassGenerator({
     required this.schemaGenerator,
     required this.schemaMediator,
+    required this.contentManifestGenerator,
   });
 
   final SchemaClassGenerator schemaGenerator;
   final SchemaMediator schemaMediator;
+  final ContentManifestGenerator contentManifestGenerator;
 
   GeneratedParameterComponent generate(
     final OpenApi openApi,
     final Parameter parameter,
     final String nameSeed,
   ) {
+    // user+id+query+parameter = UserIdQueryParameter
+    final typeName =
+        '$nameSeed/${parameter.name}/${parameter.location}/parameter';
+
     if (parameter.schema != null && parameter.content != null) {
       throw StateError('Parameter can not have both schema and content');
     } else if (parameter.content != null) {
-      //TODO: complete this section
-      throw UnimplementedError('parameter with Content value is not supported');
-    } else {
-      // user+id+query+parameter = UserIdQueryParameter
-      final name =
-          '$nameSeed/${parameter.name}/${parameter.location}/parameter';
+      // UserIdQueryJson
+      final subTypeName = '$nameSeed/${parameter.name}/${parameter.location}';
 
-      final className = name.pascalCase;
+      // UserIdQueryBody
+      final schemaTypeName =
+          '$nameSeed/${parameter.name}/${parameter.location}/body';
+
+      final contentManifest = contentManifestGenerator.generateContentType(
+        typeName: typeName.pascalCase,
+        subTypeName: subTypeName.pascalCase,
+        generatedSchemaTypeName: schemaTypeName.pascalCase,
+        content: parameter.content!,
+      );
+
+      final forward = SourceWriter(
+        contentManifest.manifest,
+        referToManifest: false,
+      );
+
+      final sealedClassContent = forward.write();
+      final buffer = StringBuffer();
+
+      buffer.writeln(sealedClassContent);
+
+      for (final component in contentManifest.generatedComponents) {
+        buffer.writeln(component.fileContent);
+      }
+
+      final fileContent = buffer.toString();
+      final fileName = '${ReCase(typeName).snakeCase}.dart';
+
+      return GeneratedParameterComponent.content(
+        fileName: fileName,
+        fileContent: fileContent,
+        contentManifest: contentManifest,
+        source: parameter,
+      );
+    } else {
+      final className = typeName.pascalCase;
 
       final schema = parameter.schema!;
       final DataElement element = _findSchemaElement(
