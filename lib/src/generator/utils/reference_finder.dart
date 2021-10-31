@@ -6,6 +6,24 @@ class ReferenceFinder {
 
   final OpenApi openApi;
 
+  Schema findSchema(Reference<Schema> reference) {
+    _validateReferencePath(reference, 'schemas', 'Schema');
+
+    if (openApi.components?.schemas == null) {
+      throw AssertionError('Schemas section in component model is empty!');
+    }
+
+    final name = reference.ref.removeFromStart('#/components/schemas/');
+
+    final schema = openApi.components?.schemas![name];
+
+    if (schema == null) {
+      throw AssertionError('Schema: "$name" not found in the components.');
+    }
+
+    return schema.isValue ? schema.value : findSchema(schema.reference);
+  }
+
   Parameter findParameter(Reference<Parameter> reference) {
     _validateReferencePath(reference, 'parameters', 'Parameter');
 
@@ -18,7 +36,7 @@ class ReferenceFinder {
     final parameter = openApi.components?.parameters![name];
 
     if (parameter == null) {
-      throw AssertionError('Parameter "$name" not found in the components.');
+      throw AssertionError('Parameter: "$name" not found in the components.');
     }
 
     return parameter.isValue
@@ -59,7 +77,7 @@ class ReferenceFinder {
     final response = openApi.components?.responses![name];
 
     if (response == null) {
-      throw AssertionError('Request Body: "$name" not found in the component.');
+      throw AssertionError('Response: "$name" not found in the component.');
     }
 
     return response.isValue ? response.value : findResponse(response.reference);
