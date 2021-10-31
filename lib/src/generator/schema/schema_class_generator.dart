@@ -77,8 +77,7 @@ class SchemaClassGenerator {
                     property.name,
                     ',',
                   ].joinParts(),
-              ].joinLines().removeFromLast(','),
-              ';'
+              ].joinLines().replaceFromLastOrNot(',', ';'),
             ].joinLines(),
             '}',
           ].joinLines();
