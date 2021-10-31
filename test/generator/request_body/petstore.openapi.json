@@ -990,6 +990,9 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "text/plain": {
+                        "description": "javascript programmers are not real programmers"
                     }
                 },
                 "description": "Pet Body ",
