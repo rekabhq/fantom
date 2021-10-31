@@ -16,10 +16,10 @@
   "servers": [
     {
       "description": "SwaggerHub API Auto Mocking",
-      "url": "httpss://virtserver.swaggerhub.com/hpoul/Example/1.0.0"
+      "url": "https://virtserver.swaggerhub.com/hpoul/Example/1.0.0"
     },
     {
-      "url": "httpss://petstore.swagger.io/v2"
+      "url": "https://petstore.swagger.io/v2"
     }
   ],
   "tags": [
