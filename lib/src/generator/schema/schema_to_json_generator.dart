@@ -1,10 +1,10 @@
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
-class SchemaClassToJsonGenerator {
-  const SchemaClassToJsonGenerator();
+class SchemaToJsonGenerator {
+  const SchemaToJsonGenerator();
 
-  String generate(final ObjectDataElement object) {
+  String generateForClass(final ObjectDataElement object) {
     final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');

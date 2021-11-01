@@ -1,6 +1,6 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
-import 'package:fantom/src/generator/schema/schema_class_from_json_generator.dart';
-import 'package:fantom/src/generator/schema/schema_class_to_json_generator.dart';
+import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
+import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
@@ -46,8 +46,8 @@ class SchemaClassGenerator {
       'class $name {',
       _fields(object),
       _constructor(object),
-      SchemaClassToJsonGenerator().generate(object),
-      SchemaClassFromJsonGenerator().generate(object),
+      SchemaToJsonGenerator().generateForClass(object),
+      SchemaFromJsonGenerator().generateForClass(object),
       '}',
     ].joinMethods();
   }
