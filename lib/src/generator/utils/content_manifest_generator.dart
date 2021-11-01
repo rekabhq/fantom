@@ -152,5 +152,5 @@ class GeneratedContentManifest {
   });
 
   final Manifest manifest;
-  final List<GeneratedSchemaComponent> generatedComponents;
+  final List<GeneratedComponent> generatedComponents;
 }
