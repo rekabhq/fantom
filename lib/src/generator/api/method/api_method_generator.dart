@@ -2,7 +2,6 @@ import 'package:fantom/src/generator/api/method/body_parser.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
-import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/name/utils.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -160,39 +159,6 @@ class ApiMethodGenerator {
     return """
 
     """;
-  }
-
-  List<GeneratedParameterComponent>? _getPathGeneratedComponent(
-    String nameSeed,
-    final List<Referenceable<Parameter>>? pathParams,
-  ) {
-    if (pathParams?.isEmpty ?? true) return null;
-
-    final components = <GeneratedParameterComponent>[];
-    for (var param in pathParams!) {
-      if (param.isValue) {
-        components.add(
-          methodParamsParser.parameterClassGenerator.generate(
-            openApi,
-            param.value,
-            nameSeed,
-          ),
-        );
-      } else if (param.isReference) {
-        final generatedComponent = getGeneratedComponentByRef(
-          param.reference.ref,
-        );
-
-        if (generatedComponent != null &&
-            generatedComponent is GeneratedParameterComponent) {
-          components.add(generatedComponent);
-        }
-        throw StateError(
-            'Parameter is Type of Reference, but it is not registered into component registry');
-      } else {
-        throw Exception('Unknown parameter type');
-      }
-    }
   }
 
   // we can make this method as reusable method
