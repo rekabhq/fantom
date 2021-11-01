@@ -94,6 +94,13 @@ class ApiMethodGenerator {
             methodName,
           );
 
+    final methodHasParameter =
+        (operationParamComponents?.isNotEmpty ?? false) &&
+            operationBodyComponent != null;
+
+    //TODO: update this with response parser
+    final operationResponsesComponents = null;
+
     // Steps:
     // -------
     // 1. generate method return type
@@ -130,24 +137,53 @@ class ApiMethodGenerator {
     // return evaluateResponse(response);
     //
 
+    final StringBuffer buffer = StringBuffer();
+
+    // TODO: update Future with method response
+    buffer.writeln(_generateMethodSyntax(methodName));
+    if (methodHasParameter) {
+      buffer.writeln('{');
+      if (operationParamComponents != null) {
+        buffer.writeln(_generateParameters(operationParamComponents));
+      }
+      if (operationBodyComponent != null) {
+        buffer.writeln(_generateRequestBody(operationBodyComponent));
+      }
+      buffer.writeln('}');
+    }
+    buffer.writeln(_generateEndMethodSyntax());
+
     return """
 
     """;
   }
 
-  //TODO(payam): update response of this method
+  String _generateMethodSyntax(String methodName) => 'Future $methodName(';
+
+  String _generateEndMethodSyntax() => ') async {';
+
   String _generateParameters(
-    List<Referenceable<Parameter>>? operationParams,
-    List<Referenceable<Parameter>>? pathParams,
+    List<GeneratedParameterComponent> methodParams,
   ) {
-    return """
+    final StringBuffer buffer = StringBuffer();
 
-    """;
+    for (final param in methodParams) {
+      if (param.isSchema) {
+        final type = param.schemaComponent!.dataElement.type;
+        final name = param.source.name;
+        final isRequired = param.source.isRequired == true;
+
+        buffer.writeln('${isRequired ? 'required' : ''} $type $name');
+      } else {
+        // TODO: complete here
+        throw UnimplementedError();
+      }
+    }
+    return buffer.toString();
   }
 
-  //TODO(payam): update response of this method
   String _generateRequestBody(
-    Referenceable<RequestBody>? requestBody,
+    GeneratedRequestBodyComponent requestBody,
   ) {
     return """
 
