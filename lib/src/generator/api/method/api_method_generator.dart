@@ -88,6 +88,13 @@ class ApiMethodGenerator {
             pathParameterComponents: pathParameterComponents,
           );
 
+    final operationBodyComponent = operation.value.requestBody == null
+        ? null
+        : methodBodyParser.parseRequestBody(
+            operation.value.requestBody!,
+            methodName,
+          );
+
     // Steps:
     // -------
     // 1. generate method return type
