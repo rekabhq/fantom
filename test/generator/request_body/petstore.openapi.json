@@ -1016,7 +1016,14 @@
                 "x1",
                 "x2",
                 "y1",
-                "y2"
+                "y2",
+                "aa",
+                "ab",
+                "ac",
+                "ad",
+                "ae",
+                "af",
+                "ag"
               ],
               "properties": {
                 "id": {
@@ -1267,6 +1274,60 @@
                   "items": {
                     "type": "string",
                     "nullable": true
+                  }
+                },
+                "aa": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Obj"
+                  }
+                },
+                "ab": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ObjNullable"
+                  }
+                },
+                "ac": {
+                  "type": "array",
+                  "nullable": true,
+                  "items": {
+                    "$ref": "#/components/schemas/Obj"
+                  }
+                },
+                "ad": {
+                  "type": "array",
+                  "nullable": true,
+                  "items": {
+                    "$ref": "#/components/schemas/ObjNullable"
+                  }
+                },
+                "ae": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Obj"
+                    }
+                  }
+                },
+                "af": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "$ref": "#/components/schemas/Obj"
+                    }
+                  }
+                },
+                "ag": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
                   }
                 }
               },

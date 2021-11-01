@@ -21,15 +21,10 @@ class SchemaClassFromJsonGenerator {
     }
 
     return [
-      [
-        'factory $name.fromJson(Map<String, dynamic> json) => ',
-        _inner(object),
-        ';',
-      ].joinParts(),
-      'static $name fromJson\$(dynamic json) => $name.fromJson(json);',
-      'static $name? fromJson\$Nullable(dynamic json) => '
-          'json == null ? null : $name.fromJson(json);',
-    ].joinMethods();
+      'factory $name.fromJson(Map<String, dynamic> json) => ',
+      _inner(object),
+      ';',
+    ].joinParts();
   }
 
   String _inner(final ObjectDataElement object) {

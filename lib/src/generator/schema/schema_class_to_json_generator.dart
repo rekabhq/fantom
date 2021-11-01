@@ -21,14 +21,10 @@ class SchemaClassToJsonGenerator {
     }
 
     return [
-      [
-        'Map<String, dynamic> toJson() => ',
-        _inner(object),
-        ';',
-      ].joinParts(),
-      'static dynamic toJson\$($name value) => value.toJson();',
-      'static dynamic toJson\$Nullable($name? value) => value?.toJson();',
-    ].joinMethods();
+      'Map<String, dynamic> toJson() => ',
+      _inner(object),
+      ';',
+    ].joinParts();
   }
 
   // safe for empty objects
@@ -70,8 +66,15 @@ class SchemaClassToJsonGenerator {
         }
       },
       array: (array) {
-        // todo
-        return "'array'";
+        if (array.isUniqueItems) {
+          // todo
+          return "'set'";
+        } else {
+          return _wrap(
+            _general(array.items),
+            n,
+          );
+        }
       },
       integer: (integer) {
         return n;
@@ -100,5 +103,14 @@ class SchemaClassToJsonGenerator {
         ].joinParts(),
       logic,
     ].joinParts();
+  }
+
+  String _wrap(final String code, final String arg) {
+    return '((json) => $code)($arg)';
+  }
+
+  String _general(final DataElement element) {
+    // todo
+    return "'${element.type}'";
   }
 }
