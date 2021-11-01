@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
