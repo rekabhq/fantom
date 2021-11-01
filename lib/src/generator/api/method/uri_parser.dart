@@ -37,10 +37,8 @@ class MethodUriParser {
 
   List<String> fixBaseUrlAndPath(String baseUrl, String path) {
     if (baseUrl.endsWith('/') && path.startsWith('/')) {
-      print('both have /');
       return [baseUrl.substring(0, baseUrl.length - 1), path];
     } else if (!baseUrl.endsWith('/') && !path.startsWith('/')) {
-      print('none have /');
       return ['$baseUrl/', path];
     } else {
       return [baseUrl, path];
