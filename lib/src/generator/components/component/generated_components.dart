@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -118,17 +120,16 @@ class GeneratedRequestBodyComponent extends GeneratedComponent {
 }
 
 class GeneratedResponseComponent extends GeneratedComponent {
-  //TODO: add the meta-data about the generated response body class here.
   GeneratedResponseComponent({
-    required this.dataElement,
-    required this.schemaComponent,
     required String fileContent,
     required String fileName,
+    required this.contentManifest,
+    required this.source,
   }) : super(
           fileContent: fileContent,
           fileName: fileName,
         );
 
-  final DataElement dataElement;
-  final GeneratedSchemaComponent schemaComponent;
+  final GeneratedContentManifest contentManifest;
+  final Response source;
 }
