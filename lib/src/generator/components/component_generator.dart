@@ -2,6 +2,7 @@ import 'package:fantom/src/generator/components/component/generated_components.d
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/parameter/parameter_class_generator.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
+import 'package:fantom/src/generator/response/response_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
 import 'package:fantom/src/generator/utils/reference_finder.dart';
@@ -15,9 +16,10 @@ class ComponentsGenerator {
     required this.schemaMediator,
     required this.referenceFinder,
     required this.schemaClassGenerator,
-    required this.parameterClassGenerator,
     required this.contentManifestGenerator,
+    required this.parameterClassGenerator,
     required this.requestBodyClassGenerator,
+    required this.responseClassGenerator,
   });
 
   final OpenApi openApi;
@@ -28,11 +30,13 @@ class ComponentsGenerator {
 
   final SchemaClassGenerator schemaClassGenerator;
 
-  final ParameterClassGenerator parameterClassGenerator;
-
   final ContentManifestCreator contentManifestGenerator;
 
+  final ParameterClassGenerator parameterClassGenerator;
+
   final RequestBodyClassGenerator requestBodyClassGenerator;
+
+  final ResponseClassGenerator responseClassGenerator;
 
   factory ComponentsGenerator.createDefault(OpenApi openApi) {
     final schemaMediator = SchemaMediator();
@@ -53,12 +57,15 @@ class ComponentsGenerator {
       schemaMediator: schemaMediator,
       referenceFinder: referenceFinder,
       schemaClassGenerator: schemaGenerator,
-      requestBodyClassGenerator: requestBodyClassGenerator,
       contentManifestGenerator: contentManifestGenerator,
+      requestBodyClassGenerator: requestBodyClassGenerator,
       parameterClassGenerator: ParameterClassGenerator(
         schemaGenerator: schemaGenerator,
         schemaMediator: schemaMediator,
         contentManifestGenerator: contentManifestGenerator,
+      ),
+      responseClassGenerator: ResponseClassGenerator(
+        contentManifestCreator: contentManifestGenerator,
       ),
     );
   }
@@ -94,6 +101,17 @@ class ComponentsGenerator {
           );
 
     requestBodyComponents.forEach((ref, component) {
+      registerGeneratedComponent(ref, component);
+    });
+
+    // generate and register all responses
+    final responseComponents = (openApi.components?.responses == null)
+        ? <String, GeneratedResponseComponent>{}
+        : _generateResponses(
+            openApi.components!.responses!,
+          );
+
+    responseComponents.forEach((ref, component) {
       registerGeneratedComponent(ref, component);
     });
   }
@@ -149,6 +167,21 @@ class ComponentsGenerator {
         requestBody.isValue
             ? requestBody.value
             : referenceFinder.findRequestBody(requestBody.reference),
+        ref,
+      );
+      return MapEntry(actualReference, component);
+    });
+  }
+
+  Map<String, GeneratedResponseComponent> _generateResponses(
+    Map<String, Referenceable<Response>> responses,
+  ) {
+    return responses.map((ref, response) {
+      final actualReference = '#/components/responses/$ref';
+      final component = responseClassGenerator.generate(
+        response.isValue
+            ? response.value
+            : referenceFinder.findResponse(response.reference),
         ref,
       );
       return MapEntry(actualReference, component);
