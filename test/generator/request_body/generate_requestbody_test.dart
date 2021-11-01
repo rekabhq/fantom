@@ -71,17 +71,6 @@ class Optional<T> {
   const Optional(this.value);
 }
 
-class List$ {
-  const List$._();
-
-  static List<dynamic> toJson(
-    final List<dynamic> json,
-    final dynamic Function(dynamic json) builder,
-  ) {
-    return json.map(builder).toList();
-  }
-}
-
 // ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators
 ''';
 

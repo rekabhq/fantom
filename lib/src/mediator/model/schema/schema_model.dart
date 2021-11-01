@@ -84,6 +84,15 @@ abstract class DataElement {
   /// it can be null if we have an unnamed object
   String? get type;
 
+  /// type without nullability sign
+  ///
+  /// ex. String, NOT String?,
+  /// List<String>, List<String?>, NOT List<String?>?,
+  /// User, NOT User?,
+  ///
+  /// it can be null if we have an unnamed object
+  String? get typeNN;
+
   /// [BooleanDataElement]
   const factory DataElement.boolean({
     required String? name,
@@ -180,7 +189,12 @@ class BooleanDataElement with EquatableMixin implements DataElement {
 
   @override
   String get type {
-    return 'bool'.withNullability(isNullable);
+    return typeNN.withNullability(isNullable);
+  }
+
+  @override
+  String get typeNN {
+    return 'bool';
   }
 
   @override
@@ -337,6 +351,11 @@ class ObjectDataElement with EquatableMixin implements DataElement {
 
   @override
   String? get type {
+    return typeNN?.withNullability(isNullable);
+  }
+
+  @override
+  String? get typeNN {
     if ((additionalProperties is UntypedDataElement?) ||
         (properties.isNotEmpty)) {
       // object and mixed:
@@ -344,7 +363,7 @@ class ObjectDataElement with EquatableMixin implements DataElement {
       if (name == null) {
         return null;
       } else {
-        return name.withNullability(isNullable);
+        return name;
       }
     } else {
       // map:
@@ -352,14 +371,24 @@ class ObjectDataElement with EquatableMixin implements DataElement {
       if (sub == null) {
         return null;
       } else {
-        return 'Map<String, $sub>'.withNullability(isNullable);
+        return 'Map<String, $sub>';
       }
     }
   }
 
   /// the type of map used,
   /// this is more general than [type].
+  ///
+  /// without nullability
   String? get mapType {
+    return mapTypeNN?.withNullability(isNullable);
+  }
+
+  /// the type of map used,
+  /// this is more general than [type].
+  ///
+  /// without nullability
+  String? get mapTypeNN {
     if (additionalProperties == null) {
       return null;
     } else {
@@ -367,7 +396,7 @@ class ObjectDataElement with EquatableMixin implements DataElement {
       if (sub == null) {
         return null;
       } else {
-        return 'Map<String, $sub>'.withNullability(isNullable);
+        return 'Map<String, $sub>';
       }
     }
   }
@@ -428,12 +457,17 @@ class ArrayDataElement with EquatableMixin implements DataElement {
 
   @override
   String? get type {
+    return typeNN?.withNullability(isNullable);
+  }
+
+  @override
+  String? get typeNN {
     final sub = items.type;
     if (sub == null) {
       return null;
     } else {
       final base = isUniqueItems ? 'Set' : 'List';
-      return '$base<$sub>'.withNullability(isNullable);
+      return '$base<$sub>';
     }
   }
 
@@ -482,7 +516,12 @@ class IntegerDataElement with EquatableMixin implements DataElement {
 
   @override
   String get type {
-    return 'int'.withNullability(isNullable);
+    return typeNN.withNullability(isNullable);
+  }
+
+  @override
+  String get typeNN {
+    return 'int';
   }
 
   @override
@@ -531,8 +570,13 @@ class NumberDataElement with EquatableMixin implements DataElement {
 
   @override
   String get type {
+    return typeNN.withNullability(isNullable);
+  }
+
+  @override
+  String get typeNN {
     final base = isFloat ? 'double' : 'num';
-    return base.withNullability(isNullable);
+    return base;
   }
 
   @override
@@ -603,13 +647,18 @@ class StringDataElement with EquatableMixin implements DataElement {
 
   @override
   String get type {
+    return typeNN.withNullability(isNullable);
+  }
+
+  @override
+  String get typeNN {
     final String base;
     if (format == StringDataElementFormat.binary) {
       base = 'Stream<int>';
     } else {
       base = 'String';
     }
-    return base.withNullability(isNullable);
+    return base;
   }
 
   @override
@@ -657,6 +706,11 @@ class UntypedDataElement with EquatableMixin implements DataElement {
 
   @override
   String? get type {
+    return null;
+  }
+
+  @override
+  String? get typeNN {
     return null;
   }
 
