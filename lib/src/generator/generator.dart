@@ -21,20 +21,25 @@ class Generator {
   });
 
   factory Generator.createDefault(OpenApi openApi) {
-    var nameGenerator = NameGenerator(
+    final nameGenerator = NameGenerator(
       MethodNameGenerator(),
     );
+
+    final componentsGenerator = ComponentsGenerator.createDefault(openApi);
     return Generator(
       apiClassGenerator: ApiClassGenerator(
         openApi: openApi,
         apiMethodGenerator: ApiMethodGenerator(
           openApi: openApi,
-          methodParamsParser: MethodParamsParser(),
+          methodParamsParser: MethodParamsParser(
+            parameterClassGenerator:
+                componentsGenerator.parameterClassGenerator,
+          ),
           methodResponseParser: MethodResponseParser(),
           nameGenerator: nameGenerator,
         ),
       ),
-      componentsGenerator: ComponentsGenerator.createDefault(openApi),
+      componentsGenerator: componentsGenerator,
     );
   }
 
