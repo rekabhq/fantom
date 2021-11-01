@@ -70,8 +70,8 @@ class SchemaToJsonGenerator {
             // todo : check if is correct ?
             return [
               '(($typeNN value) => ',
-              'value.map((it) => MapEntry(it.key, ',
-              _logic(object.additionalProperties!, 'it.value'),
+              'value.map((key, it) => MapEntry(key, ',
+              _logic(object.additionalProperties!, 'it'),
               '))',
               ')($fixedName)',
             ].joinParts();
