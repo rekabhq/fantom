@@ -50,4 +50,11 @@ class ResponseClassGenerator {
       source: response,
     );
   }
+
+  dynamic generateResponses(
+    final Responses responses,
+    final String seedName,
+  ) {
+    throw UnimplementedError();
+  }
 }
