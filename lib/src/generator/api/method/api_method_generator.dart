@@ -1,8 +1,11 @@
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
+import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/name/utils.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:recase/recase.dart';
 
 // ignore_for_file: unused_element
 // ignore_for_file: unused_local_variable
@@ -29,6 +32,12 @@ class ApiMethodGenerator {
     for (final path in openApi.paths.paths.entries) {
       final pathParams = path.value.parameters;
 
+      final pathGeneratedComponentParams = _getPathGeneratedComponent(
+        // TODO(payam): test this method
+        path.key.pascalCase,
+        pathParams,
+      );
+
       if (path.value.operations.isNotEmpty) {
         buffer.writeln('//${path.key}');
       }
@@ -47,7 +56,7 @@ class ApiMethodGenerator {
           _generateOperation(
             methodName,
             operation,
-            pathParams,
+            pathGeneratedComponentParams,
           ),
         );
       }
@@ -59,16 +68,19 @@ class ApiMethodGenerator {
   String _generateOperation(
     String methodName,
     MapEntry<String, Operation> operation,
-    List<Referenceable<Parameter>>? parentParams,
+    List<GeneratedParameterComponent>? pathParameterComponents,
   ) {
     //TODO: all methods should have an optional parameter called contentType
 
     //TODO: get information about parameter,body and response
 
-    final pathParams = _operationPathParams(
-      operation.value.parameters,
-      parentParams,
-    );
+    final operationParamComponents = operation.value.parameters == null
+        ? null
+        : methodParamsParser.parseParams(
+            methodName,
+            operation.value.parameters!,
+            pathParameterComponents: pathParameterComponents,
+          );
 
     // Steps:
     // -------
@@ -137,24 +149,37 @@ class ApiMethodGenerator {
     """;
   }
 
-  List<Parameter> _operationPathParams(
-    final List<Referenceable<Parameter>>? parameters,
-    final List<Referenceable<Parameter>>? parentParams,
+  List<GeneratedParameterComponent>? _getPathGeneratedComponent(
+    String nameSeed,
+    final List<Referenceable<Parameter>>? pathParams,
   ) {
-    final pureParams = parameters?.map<Parameter>((e) => e.isValue
-            ? e.value
-            : _findReferenceParameter(e.reference, openApi)) ??
-        [];
+    if (pathParams?.isEmpty ?? true) return null;
 
-    final pureParentParams = parameters?.map<Parameter>((e) => e.isValue
-            ? e.value
-            : _findReferenceParameter(e.reference, openApi)) ??
-        [];
+    final components = <GeneratedParameterComponent>[];
+    for (var param in pathParams!) {
+      if (param.isValue) {
+        components.add(
+          methodParamsParser.parameterClassGenerator.generate(
+            openApi,
+            param.value,
+            nameSeed,
+          ),
+        );
+      } else if (param.isReference) {
+        final generatedComponent = getGeneratedComponentByRef(
+          param.reference.ref,
+        );
 
-    return [
-      ...pureParams,
-      ...pureParentParams,
-    ];
+        if (generatedComponent != null &&
+            generatedComponent is GeneratedParameterComponent) {
+          components.add(generatedComponent);
+        }
+        throw StateError(
+            'Parameter is Type of Reference, but it is not registered into component registry');
+      } else {
+        throw Exception('Unknown parameter type');
+      }
+    }
   }
 
   // we can make this method as reusable method

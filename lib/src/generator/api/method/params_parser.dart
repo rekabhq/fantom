@@ -17,7 +17,7 @@ class MethodParamsParser {
   List<GeneratedParameterComponent> parseParams(
     String nameSeed,
     List<Referenceable<Parameter>> operationParameters, {
-    List<Referenceable<Parameter>>? pathParameters,
+    List<GeneratedParameterComponent>? pathParameterComponents,
   }) {
     final generatedParameters = <GeneratedParameterComponent>[];
 
@@ -33,27 +33,18 @@ class MethodParamsParser {
     }
 
     // convert path parameters to generated components
-    if (pathParameters != null) {
-      for (var item in pathParameters) {
-        final pathComponent = _getGeneratedParameterComponent(nameSeed, item);
-
+    if (pathParameterComponents != null) {
+      for (var item in pathParameterComponents) {
         bool isOverridden = false;
 
         for (var operationComponent in generatedParameters) {
-          if (_isParamOverridden(
-              operationComponent.source, pathComponent.source)) {
+          if (_isParamOverridden(operationComponent.source, item.source)) {
             isOverridden = true;
             break;
           }
         }
 
-        if (!isOverridden) {
-          if (item.isValue) {
-            registerGeneratedComponentWithoutRef(pathComponent);
-          }
-
-          generatedParameters.add(pathComponent);
-        }
+        if (!isOverridden) generatedParameters.add(item);
       }
     }
 
