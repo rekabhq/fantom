@@ -158,7 +158,8 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
         Generator.createDefault(openapiModel).generate(openapiModel, arguments);
     progress.finish(showTiming: true);
     // write files
-    progress = Log.progress('✍ Writing Generated Files');
+    progress = Log.progress('✍  Writing Generated Files');
+    Log.spacer();
     await FileWriter.writeGeneratedFiles(generationData);
     progress.finish(showTiming: true);
     Log.fine('👻 ALL GOOD 👻');
