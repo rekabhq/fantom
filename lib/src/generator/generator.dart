@@ -1,6 +1,7 @@
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/generator/api/api_class_generator.dart';
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
+import 'package:fantom/src/generator/api/method/body_parser.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/components/component_generator.dart';
@@ -34,6 +35,9 @@ class Generator {
           methodParamsParser: MethodParamsParser(
             parameterClassGenerator:
                 componentsGenerator.parameterClassGenerator,
+          ),
+          methodBodyParser: MethodBodyParser(
+            bodyClassGenerator: componentsGenerator.requestBodyClassGenerator,
           ),
           methodResponseParser: MethodResponseParser(),
           nameGenerator: nameGenerator,

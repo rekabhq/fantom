@@ -1,3 +1,4 @@
+import 'package:fantom/src/generator/api/method/body_parser.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
@@ -12,12 +13,14 @@ import 'package:recase/recase.dart';
 class ApiMethodGenerator {
   final OpenApi openApi;
   final MethodParamsParser methodParamsParser;
+  final MethodBodyParser methodBodyParser;
   final MethodResponseParser methodResponseParser;
   final NameGenerator nameGenerator;
 
   ApiMethodGenerator({
     required this.openApi,
     required this.methodParamsParser,
+    required this.methodBodyParser,
     required this.methodResponseParser,
     required this.nameGenerator,
   });
