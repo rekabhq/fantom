@@ -62,8 +62,19 @@ class SchemaToJsonGenerator {
         },
         object: (object) {
           if (object.format == ObjectDataElementFormat.map) {
-            // todo
-            return "'map'";
+            final typeNN = element.typeNN;
+            if (typeNN == null) {
+              throw UnimplementedError('bad typed "map" object');
+            }
+
+            // todo : check if is correct ?
+            return [
+              '(($typeNN value) => ',
+              'value.map((it) => MapEntry(it.key, ',
+              _logic(object.additionalProperties!, 'it.value'),
+              '))',
+              ')($fixedName)',
+            ].joinParts();
           } else {
             return '$fixedName.toJson()';
           }
