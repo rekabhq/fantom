@@ -66,15 +66,19 @@ class SchemaClassToJsonGenerator {
         }
       },
       array: (array) {
-        if (array.isUniqueItems) {
-          // todo
-          return "'set'";
-        } else {
-          return _wrap(
-            _general(array.items),
-            n,
-          );
+        // list and set are equivalent here ...
+        final type = property.item.typeNN;
+        if (type == null) {
+          throw UnimplementedError('bad typed array');
         }
+
+        return [
+          '(($type value) => ',
+          'value.map((it) => ',
+          '1',
+          ').toList()',
+          ')($n)',
+        ].joinParts();
       },
       integer: (integer) {
         return n;
@@ -105,12 +109,8 @@ class SchemaClassToJsonGenerator {
     ].joinParts();
   }
 
-  String _wrap(final String code, final String arg) {
-    return '((json) => $code)($arg)';
-  }
-
+  // we use `value` here
   String _general(final DataElement element) {
-    // todo
-    return "'${element.type}'";
+    return '';
   }
 }
