@@ -131,3 +131,18 @@ class GeneratedResponseComponent extends GeneratedComponent {
   final GeneratedContentManifest contentManifest;
   final Response source;
 }
+
+class GeneratedResponsesComponent extends GeneratedComponent {
+  GeneratedResponsesComponent({
+    required String fileContent,
+    required String fileName,
+    required this.contentManifest,
+    required this.source,
+  }) : super(
+          fileContent: fileContent,
+          fileName: fileName,
+        );
+
+  final GeneratedContentManifest contentManifest;
+  final Responses source;
+}
