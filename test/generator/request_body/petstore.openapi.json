@@ -922,6 +922,78 @@
             "type": "string"
           }
         }
+      },
+      "Obj": {
+        "type": "object",
+        "nullable": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ObjNullable": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ObjDefault": {
+        "type": "object",
+        "nullable": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "default": {
+          "id": 500
+        }
+      },
+      "ObjNullableDefault": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "default": {
+          "id": 500
+        }
+      },
+      "ObjNullableDefaultN": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "default": null
       }
     },
     "requestBodies": {
@@ -933,6 +1005,10 @@
               "required": [
                 "name",
                 "photoUrls",
+                "o1",
+                "o2",
+                "p1",
+                "p2",
                 "x1",
                 "x2",
                 "y1",
@@ -978,6 +1054,58 @@
                     "pending",
                     "sold"
                   ]
+                },
+                "o1": {
+                  "$ref": "#/components/schemas/Obj"
+                },
+                "o2": {
+                  "$ref": "#/components/schemas/ObjNullable"
+                },
+                "o3": {
+                  "$ref": "#/components/schemas/ObjDefault"
+                },
+                "o4": {
+                  "$ref": "#/components/schemas/ObjNullableDefault"
+                },
+                "o4n": {
+                  "$ref": "#/components/schemas/ObjNullableDefaultN"
+                },
+                "o5": {
+                  "$ref": "#/components/schemas/Obj"
+                },
+                "o6": {
+                  "$ref": "#/components/schemas/ObjNullable"
+                },
+                "p1": {
+                  "nullable": false,
+                  "type": "integer"
+                },
+                "p2": {
+                  "nullable": true,
+                  "type": "integer"
+                },
+                "p3": {
+                  "nullable": false,
+                  "type": "integer",
+                  "default": 1000
+                },
+                "p4": {
+                  "nullable": true,
+                  "type": "integer",
+                  "default": 1000
+                },
+                "p4n": {
+                  "nullable": true,
+                  "type": "integer",
+                  "default": null
+                },
+                "p5": {
+                  "nullable": false,
+                  "type": "integer"
+                },
+                "p6": {
+                  "nullable": true,
+                  "type": "integer"
                 },
                 "x1": {
                   "nullable": false,

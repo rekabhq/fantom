@@ -1,30 +1,36 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/schema/schema_class_from_json_generator.dart';
+import 'package:fantom/src/generator/schema/schema_class_to_json_generator.dart';
 import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
 
-// todo: should be copied.
-class Optional<T> {
-  final T value;
-
-  const Optional(this.value);
-}
-
 class SchemaClassGenerator {
   const SchemaClassGenerator();
 
-  // todo: default value is not supported
-  GeneratedSchemaComponent generate(
-    final ObjectDataElement object, {
-    @Deprecated('do not use') String? orName,
-  }) {
-    final name = object.name ?? orName;
-    final format = object.format;
-
+  GeneratedSchemaComponent generate(final ObjectDataElement object) {
+    final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
     }
+
+    return GeneratedSchemaComponent(
+      dataElement: object,
+      fileContent: _generate(object),
+      fileName: _fileName(object),
+    );
+  }
+
+  String _fileName(ObjectDataElement object) {
+    final name = object.name!;
+    return '${ReCase(name).snakeCase}.dart';
+  }
+
+  String _generate(final ObjectDataElement object) {
+    final name = object.name!;
+    final format = object.format;
+
     if (format != ObjectDataElementFormat.object) {
       throw UnimplementedError(
         '"mixed" and "map" objects are not supported : name is $name',
@@ -36,8 +42,7 @@ class SchemaClassGenerator {
       }
     }
 
-    final dvg = SchemaDefaultValueGenerator();
-    final output = object.properties.isEmpty
+    return object.properties.isEmpty
         // empty class:
         ? 'class $name {}'
         // non-empty class:
@@ -48,13 +53,9 @@ class SchemaClassGenerator {
               for (final property in object.properties)
                 [
                   'final ',
-                  if (property.isNotRequired &&
-                      property.item.hasNotDefaultValue)
-                    'Optional<',
+                  if (property.isFieldOptional) 'Optional<',
                   property.item.type!,
-                  if (property.isNotRequired &&
-                      property.item.hasNotDefaultValue)
-                    '>?',
+                  if (property.isFieldOptional) '>?',
                   ' ',
                   property.name,
                   ';',
@@ -92,19 +93,15 @@ class SchemaClassGenerator {
                         ' != null ? ',
                         property.name,
                         '.value : ',
-                        dvg.generate(property.item)!,
+                        SchemaDefaultValueGenerator().generate(property.item)!,
                       ].joinParts(),
                     ',',
                   ].joinParts(),
               ].joinLines().replaceFromLastOrNot(',', ';'),
             ].joinLines(),
+            SchemaClassToJsonGenerator().generate(object),
+            SchemaClassFromJsonGenerator().generate(object),
             '}',
           ].joinLines();
-
-    return GeneratedSchemaComponent(
-      dataElement: object,
-      fileContent: output,
-      fileName: '${ReCase(name).snakeCase}.dart',
-    );
   }
 }

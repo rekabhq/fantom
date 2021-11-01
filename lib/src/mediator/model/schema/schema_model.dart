@@ -792,4 +792,7 @@ extension DataElementExt on DataElement {
 extension ObjectPropertyExt on ObjectProperty {
   /// is not required.
   bool get isNotRequired => !isRequired;
+
+  /// is field optional
+  bool get isFieldOptional => isNotRequired && item.hasNotDefaultValue;
 }

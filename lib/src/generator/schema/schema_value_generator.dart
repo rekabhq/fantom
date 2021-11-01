@@ -69,7 +69,7 @@ class SchemaValueGenerator {
                 .toList()
                 .join(', ');
             // todo: fromJson ?
-            return 'User.fromJson(<String, dynamic>{$joined})';
+            return '$name.fromJson(<String, dynamic>{$joined})';
           }
         },
         array: (array) {
