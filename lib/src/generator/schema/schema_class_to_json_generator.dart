@@ -43,74 +43,61 @@ class SchemaClassToJsonGenerator {
   String _property(final ObjectProperty property) {
     final name = property.name;
     final isOptional = property.isFieldOptional;
-    final isNullable = property.item.isNullable;
-
-    final n = isOptional
-        ? isNullable
-            ? '$name!.value!'
-            : '$name!.value'
-        : isNullable
-            ? '$name!'
-            : name;
-
-    final logic = property.item.match(
-      boolean: (boolean) {
-        return n;
-      },
-      object: (object) {
-        if (object.format == ObjectDataElementFormat.map) {
-          // todo
-          return "'map'";
-        } else {
-          return '$n.toJson()';
-        }
-      },
-      array: (array) {
-        // list and set are equivalent here ...
-        final type = property.item.typeNN;
-        if (type == null) {
-          throw UnimplementedError('bad typed array');
-        }
-
-        return [
-          '(($type value) => ',
-          'value.map((it) => ',
-          '1',
-          ').toList()',
-          ')($n)',
-        ].joinParts();
-      },
-      integer: (integer) {
-        return n;
-      },
-      number: (number) {
-        return n;
-      },
-      string: (string) {
-        return n;
-      },
-      untyped: (untyped) {
-        throw UnimplementedError(
-          'default values for untyped elements are not supported.',
-        );
-      },
-    );
-
+    final fixedName = isOptional ? '$name!.value' : name;
     return [
       if (isOptional) 'if ($name != null) ',
       "'$name' : ",
-      if (isNullable)
-        [
-          name,
-          if (isOptional) '!.value',
-          ' == null ? null : ',
-        ].joinParts(),
-      logic,
+      _logic(property.item, fixedName),
     ].joinParts();
   }
 
-  // we use `value` here
-  String _general(final DataElement element) {
-    return '';
+  String _logic(DataElement element, String name) {
+    final isNullable = element.isNullable;
+    final fixedName = isNullable ? '$name!' : name;
+    return [
+      if (isNullable) '$name == null ? null : ',
+      element.match(
+        boolean: (boolean) {
+          return fixedName;
+        },
+        object: (object) {
+          if (object.format == ObjectDataElementFormat.map) {
+            // todo
+            return "'map'";
+          } else {
+            return '$fixedName.toJson()';
+          }
+        },
+        array: (array) {
+          // list and set are equivalent here ...
+          final typeNN = element.typeNN;
+          if (typeNN == null) {
+            throw UnimplementedError('bad typed array');
+          }
+
+          return [
+            '(($typeNN value) => ',
+            'value.map((it) => ',
+            _logic(array.items, 'it'),
+            ').toList()',
+            ')($fixedName)',
+          ].joinParts();
+        },
+        integer: (integer) {
+          return fixedName;
+        },
+        number: (number) {
+          return fixedName;
+        },
+        string: (string) {
+          return fixedName;
+        },
+        untyped: (untyped) {
+          throw UnimplementedError(
+            'default values for untyped elements are not supported.',
+          );
+        },
+      ),
+    ].joinParts();
   }
 }

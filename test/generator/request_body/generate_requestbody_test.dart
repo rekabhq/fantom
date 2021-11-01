@@ -71,7 +71,7 @@ class Optional<T> {
   const Optional(this.value);
 }
 
-// ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators
+// ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators, prefer_if_null_operators, unnecessary_non_null_assertion
 ''';
 
         content = content.replaceAll('dynamic?', 'dynamic');
