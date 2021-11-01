@@ -62,10 +62,16 @@ class SchemaClassToJsonGenerator {
         return n;
       },
       object: (object) {
-        return '"object"';
+        if (object.format == ObjectDataElementFormat.map) {
+          // todo
+          return "'map'";
+        } else {
+          return '$n.toJson()';
+        }
       },
       array: (array) {
-        return '"array"';
+        // todo
+        return "'array'";
       },
       integer: (integer) {
         return n;

@@ -42,8 +42,15 @@ void main() {
 
         var content = output.fileContent;
 
+        // todo : fix ...
+
         for (final key in openapi.components!.schemas!.keys) {
-          if (key.startsWith('Obj')) {
+          if (key.startsWith('Obj') ||
+              {
+                'Category',
+                'Tag',
+                'User',
+              }.contains(key)) {
             final schema = openapi.components!.schemas![key]!;
             final element = SchemaMediator().convert(
               openApi: openapi,
@@ -62,18 +69,7 @@ class Optional<T> {
   final T value;
 
   const Optional(this.value);
-}        
-        
-class Fake {
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
-
-class Category extends Fake {}
-
-class Tag extends Fake {}
-
-class User extends Fake {}
 
 // ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators
 ''';
