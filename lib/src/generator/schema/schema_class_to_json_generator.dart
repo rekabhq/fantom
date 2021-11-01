@@ -21,12 +21,17 @@ class SchemaClassToJsonGenerator {
     }
 
     return [
-      'Map<String, dynamic> toJson() => ',
-      _inner(object),
-      ';',
-    ].joinParts();
+      [
+        'Map<String, dynamic> toJson() => ',
+        _inner(object),
+        ';',
+      ].joinParts(),
+      'static dynamic toJson\$($name value) => value.toJson();',
+      'static dynamic toJson\$Nullable($name? value) => value?.toJson();',
+    ].joinMethods();
   }
 
+  // safe for empty objects
   String _inner(final ObjectDataElement object) {
     return [
       '<String, dynamic>{',

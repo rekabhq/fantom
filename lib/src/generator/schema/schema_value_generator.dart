@@ -68,7 +68,6 @@ class SchemaValueGenerator {
                 })
                 .toList()
                 .join(', ');
-            // todo: fromJson ?
             return '$name.fromJson(<String, dynamic>{$joined})';
           }
         },

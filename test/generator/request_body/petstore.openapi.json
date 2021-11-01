@@ -923,6 +923,10 @@
           }
         }
       },
+      "ObjEmpty": {
+        "type": "object",
+        "nullable": false
+      },
       "Obj": {
         "type": "object",
         "nullable": false,

@@ -21,13 +21,19 @@ class SchemaClassFromJsonGenerator {
     }
 
     return [
-      'factory $name.fromJson(Map<String, dynamic> json) => ',
-      _inner(object),
-      ';',
-    ].joinParts();
+      [
+        'factory $name.fromJson(Map<String, dynamic> json) => ',
+        _inner(object),
+        ';',
+      ].joinParts(),
+      'static $name fromJson\$(dynamic json) => $name.fromJson(json);',
+      'static $name? fromJson\$Nullable(dynamic json) => '
+          'json == null ? null : $name.fromJson(json);',
+    ].joinMethods();
   }
 
   String _inner(final ObjectDataElement object) {
+    // todo:
     return 'throw 0';
   }
 }

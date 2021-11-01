@@ -42,66 +42,69 @@ class SchemaClassGenerator {
       }
     }
 
-    return object.properties.isEmpty
-        // empty class:
-        ? 'class $name {}'
-        // non-empty class:
-        : [
-            'class $name {',
-            // ...
+    return [
+      'class $name {',
+      _fields(object),
+      _constructor(object),
+      SchemaClassToJsonGenerator().generate(object),
+      SchemaClassFromJsonGenerator().generate(object),
+      '}',
+    ].joinMethods();
+  }
+
+  String _fields(final ObjectDataElement object) {
+    return [
+      for (final property in object.properties)
+        [
+          'final ',
+          if (property.isFieldOptional) 'Optional<',
+          property.item.type!,
+          if (property.isFieldOptional) '>?',
+          ' ',
+          property.name,
+          ';',
+        ].joinParts(),
+    ].joinLines();
+  }
+
+  String _constructor(final ObjectDataElement object) {
+    if (object.properties.isEmpty) {
+      return '${object.name} ();';
+    } else {
+      return [
+        '${object.name} ({',
+        [
+          for (final property in object.properties)
             [
-              for (final property in object.properties)
+              if (property.isRequired && property.item.isNotNullable)
+                'required ',
+              if (property.isNotRequired || property.item.hasDefaultValue)
+                'Optional<',
+              property.item.type!,
+              if (property.isNotRequired || property.item.hasDefaultValue) '>?',
+              ' ',
+              property.name,
+              ',',
+            ].joinParts(),
+        ].joinLines(),
+        '}) : ',
+        [
+          for (final property in object.properties)
+            [
+              property.name,
+              ' = ',
+              property.name,
+              if (property.item.hasDefaultValue)
                 [
-                  'final ',
-                  if (property.isFieldOptional) 'Optional<',
-                  property.item.type!,
-                  if (property.isFieldOptional) '>?',
-                  ' ',
+                  ' != null ? ',
                   property.name,
-                  ';',
+                  '.value : ',
+                  SchemaDefaultValueGenerator().generate(property.item)!,
                 ].joinParts(),
-            ].joinLines(),
-            // ...
-            [
-              '${object.name} ({',
-              // .../...
-              [
-                for (final property in object.properties)
-                  [
-                    if (property.isRequired && property.item.isNotNullable)
-                      'required ',
-                    if (property.isNotRequired || property.item.hasDefaultValue)
-                      'Optional<',
-                    property.item.type!,
-                    if (property.isNotRequired || property.item.hasDefaultValue)
-                      '>?',
-                    ' ',
-                    property.name,
-                    ',',
-                  ].joinParts(),
-              ].joinLines(),
-              '}) : ',
-              // .../...
-              [
-                for (final property in object.properties)
-                  [
-                    property.name,
-                    ' = ',
-                    property.name,
-                    if (property.item.hasDefaultValue)
-                      [
-                        ' != null ? ',
-                        property.name,
-                        '.value : ',
-                        SchemaDefaultValueGenerator().generate(property.item)!,
-                      ].joinParts(),
-                    ',',
-                  ].joinParts(),
-              ].joinLines().replaceFromLastOrNot(',', ';'),
-            ].joinLines(),
-            SchemaClassToJsonGenerator().generate(object),
-            SchemaClassFromJsonGenerator().generate(object),
-            '}',
-          ].joinLines();
+              ',',
+            ].joinParts(),
+        ].joinLines().replaceFromLast(',', ';'),
+      ].joinLines();
+    }
   }
 }
