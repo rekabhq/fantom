@@ -23,7 +23,7 @@ class MethodParamsParser {
 
     // convert operation parameters to generated components
     for (final item in operationParameters) {
-      final paramComponent = _getGeneratedParameterComponent(nameSeed, item);
+      final paramComponent = getGeneratedParameterComponent(nameSeed, item);
 
       if (item.isValue) {
         registerGeneratedComponentWithoutRef(paramComponent);
@@ -55,7 +55,7 @@ class MethodParamsParser {
     return first.name == second.name && first.location == second.location;
   }
 
-  GeneratedParameterComponent _getGeneratedParameterComponent(
+  GeneratedParameterComponent getGeneratedParameterComponent(
     String nameSeed,
     Referenceable<Parameter> parameter,
   ) {

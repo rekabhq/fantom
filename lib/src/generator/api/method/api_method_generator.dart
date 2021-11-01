@@ -32,11 +32,14 @@ class ApiMethodGenerator {
     for (final path in openApi.paths.paths.entries) {
       final pathParams = path.value.parameters;
 
-      final pathGeneratedComponentParams = _getPathGeneratedComponent(
-        // TODO(payam): test this method
-        path.key.pascalCase,
-        pathParams,
-      );
+      final pathGeneratedComponentParams = pathParams
+          ?.map(
+            (param) => methodParamsParser.getGeneratedParameterComponent(
+              path.key.pascalCase,
+              param,
+            ),
+          )
+          .toList();
 
       if (path.value.operations.isNotEmpty) {
         buffer.writeln('//${path.key}');
