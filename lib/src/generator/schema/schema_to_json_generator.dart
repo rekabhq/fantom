@@ -4,6 +4,19 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 class SchemaToJsonGenerator {
   const SchemaToJsonGenerator();
 
+  String generateApplication(final DataElement element) {
+    final type = element.type;
+    if (type == null) {
+      throw UnimplementedError('bad type for element');
+    }
+
+    return [
+      '(($type value) => ',
+      _logic(element, 'value'),
+      ')',
+    ].joinParts();
+  }
+
   String generateForClass(final ObjectDataElement object) {
     final name = object.name;
     if (name == null) {
@@ -67,7 +80,6 @@ class SchemaToJsonGenerator {
               throw UnimplementedError('bad typed "map" object');
             }
 
-            // todo : check if is correct ?
             return [
               '(($typeNN value) => ',
               'value.map((key, it) => MapEntry(key, ',
