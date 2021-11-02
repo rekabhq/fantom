@@ -83,7 +83,7 @@ class GeneratedParameterComponent extends GeneratedComponent {
       );
 
   factory GeneratedParameterComponent.content({
-    required GeneratedContentManifest contentManifest,
+    required ContentManifest contentManifest,
     required Parameter source,
     required String fileContent,
     required String fileName,
@@ -96,7 +96,7 @@ class GeneratedParameterComponent extends GeneratedComponent {
       );
 
   final GeneratedSchemaComponent? schemaComponent;
-  final GeneratedContentManifest? contentManifest;
+  final ContentManifest? contentManifest;
   final Parameter source;
 
   bool get isSchema => schemaComponent != null;
@@ -115,7 +115,7 @@ class GeneratedRequestBodyComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final GeneratedContentManifest contentManifest;
+  final ContentManifest contentManifest;
 
   final RequestBody source;
 }
@@ -131,7 +131,7 @@ class GeneratedResponseComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final GeneratedContentManifest contentManifest;
+  final ContentManifest contentManifest;
   final Response source;
 }
 
@@ -146,6 +146,6 @@ class GeneratedResponsesComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final GeneratedContentManifest contentManifest;
+  final ContentManifest contentManifest;
   final Responses source;
 }

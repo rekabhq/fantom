@@ -125,7 +125,7 @@ class ResponseClassGenerator {
     return GeneratedResponsesComponent(
       fileContent: fileContent,
       fileName: fileName,
-      contentManifest: GeneratedContentManifest(
+      contentManifest: ContentManifest(
         manifest: manifest,
         generatedComponents: generatedComponents,
       ),
