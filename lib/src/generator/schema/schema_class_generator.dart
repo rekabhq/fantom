@@ -83,10 +83,10 @@ class SchemaClassGenerator {
             [
               if (property.isRequired && property.item.isNotNullable)
                 'required ',
-              if (property.isNotRequired || property.item.hasDefaultValue)
+              if (property.isConstructorOptional)
                 'Optional<',
               property.item.type!,
-              if (property.isNotRequired || property.item.hasDefaultValue) '>?',
+              if (property.isConstructorOptional) '>?',
               ' ',
               property.name,
               ',',

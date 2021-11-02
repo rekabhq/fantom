@@ -849,4 +849,7 @@ extension ObjectPropertyExt on ObjectProperty {
 
   /// is field optional
   bool get isFieldOptional => isNotRequired && item.hasNotDefaultValue;
+
+  /// is constructor optional
+  bool get isConstructorOptional => isNotRequired || item.hasDefaultValue;
 }
