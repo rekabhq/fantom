@@ -3,21 +3,21 @@ import 'dart:io';
 
 import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
-import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
+import 'package:fantom/src/generator/response/response_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
+import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
 import 'package:test/test.dart';
 
 void main() {
-  group('RequestBodyClassGenerator: ', () {
-    late RequestBodyClassGenerator requestBodyClassGenerator;
+  group('ResponseClassGenerator.generateResponse method:', () {
+    late ResponseClassGenerator responseClassGenerator;
     late OpenApi openapi;
     setUpAll(() async {
-      print('');
+      //
       var openapiMap =
           await readJsonOrYamlFile(File('openapi_files/petstore.openapi.json'));
       openapi = OpenApi.fromMap(openapiMap);
@@ -28,21 +28,21 @@ void main() {
       map.forEach((ref, component) {
         registerGeneratedComponent(ref, component);
       });
-      requestBodyClassGenerator = componentsGenerator.requestBodyClassGenerator;
+      responseClassGenerator = componentsGenerator.responseClassGenerator;
     });
 
     test(
       'test request_body type generation from map of mediaTypes => contents',
       () async {
-        var requestBody = openapi.components!.requestBodies!.values.first.value;
+        var usersResultResponse =
+            openapi.components!.responses!.values.toList()[2].value;
 
-        var output = requestBodyClassGenerator.generate(requestBody, 'Pet');
+        var output =
+            responseClassGenerator.generateResponse(usersResultResponse, 'UsersResult');
 
-        var outputFile = File('test/generator/request_body/output.dart');
+        var outputFile = File('test/generator/response/output.dart');
 
         var content = output.fileContent;
-
-        // todo : fix ...
 
         for (final key in openapi.components!.schemas!.keys) {
           if (key.startsWith('Obj') ||
@@ -57,11 +57,10 @@ void main() {
               schema: schema,
               name: key,
             );
-            if (element is ObjectDataElement &&
-                element.format == ObjectDataElementFormat.object) {
-              final component = SchemaClassGenerator().generate(element);
-              content += component.fileContent;
-            }
+            final component = SchemaClassGenerator().generate(
+              element as ObjectDataElement,
+            );
+            content += component.fileContent;
           }
         }
 

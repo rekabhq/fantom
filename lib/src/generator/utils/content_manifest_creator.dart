@@ -25,12 +25,15 @@ class ContentManifestCreator {
   final SchemaMediator schemaMediator;
   final SchemaClassGenerator schemaClassGenerator;
 
-  GeneratedContentManifest generateContentType({
+  ContentManifest? generateContentType({
     required String typeName,
     required String subTypeName,
     required String generatedSchemaTypeName,
-    required Content content,
+    required Content? content,
   }) {
+    if (content == null) {
+      return null;
+    }
     final className = ReCase(typeName).pascalCase;
     final items = List.generate(
       content.entries.length,
@@ -59,7 +62,7 @@ class ContentManifestCreator {
       params: [],
       fields: [],
     );
-    return GeneratedContentManifest(
+    return ContentManifest(
       manifest: manifest,
       generatedComponents: _generatedComponents,
     );
@@ -77,7 +80,7 @@ class ContentManifestCreator {
     if (refOrSchema == null) {
       fieldName = 'value';
       typeName = 'dynamic';
-      isNullable = true;
+      isNullable = false;
     } else {
       late GeneratedSchemaComponent component;
       if (refOrSchema.isReference) {
@@ -145,8 +148,8 @@ class ContentManifestCreator {
 }
 
 /// holds the data that can be used by ComponentGenerators to generate components
-class GeneratedContentManifest {
-  GeneratedContentManifest({
+class ContentManifest {
+  ContentManifest({
     required this.manifest,
     required this.generatedComponents,
   });

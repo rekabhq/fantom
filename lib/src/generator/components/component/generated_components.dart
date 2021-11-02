@@ -1,8 +1,30 @@
-import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
+import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:io/io.dart';
+
+abstract class Generatable {
+  bool get isGenerated;
+}
+
+mixin UnGeneratableComponent {
+  static const errorMessage =
+      'An UnGeneratableSchemaComponent cannot and should not be '
+      'generated thus it cannot have a fileName or a fileContent';
+
+  String get fileName => throw FantomException(
+        errorMessage,
+        ExitCode.cantCreate.code,
+      );
+
+  String get fileContent => throw FantomException(
+        errorMessage,
+        ExitCode.cantCreate.code,
+      );
+
+  bool get isGenerated => false;
+}
 
 /// is just a meta-data class that contains the content of the file that is generated for the an openapi component
 /// and also a meta-data about what is in the genrated file so that it can be used later by other sections of
@@ -32,29 +54,14 @@ class GeneratedSchemaComponent extends GeneratedComponent {
   final DataElement dataElement;
 }
 
-class UnGeneratableSchemaComponent extends GeneratedSchemaComponent {
+class UnGeneratableSchemaComponent extends GeneratedSchemaComponent
+    with UnGeneratableComponent {
   UnGeneratableSchemaComponent({required DataElement dataElement})
       : super(
           dataElement: dataElement,
           fileContent: '',
           fileName: '',
         );
-
-  static const errorMessage =
-      'An UnGeneratableSchemaComponent cannot and should not be '
-      'generated thus it cannot have a fileName or a fileContent';
-
-  @override
-  String get fileName => throw FantomException(
-        errorMessage,
-        ExitCode.cantCreate.code,
-      );
-
-  @override
-  String get fileContent => throw FantomException(
-        errorMessage,
-        ExitCode.cantCreate.code,
-      );
 }
 
 class GeneratedParameterComponent extends GeneratedComponent {
@@ -83,7 +90,7 @@ class GeneratedParameterComponent extends GeneratedComponent {
       );
 
   factory GeneratedParameterComponent.content({
-    required GeneratedContentManifest contentManifest,
+    required ContentManifest contentManifest,
     required Parameter source,
     required String fileContent,
     required String fileName,
@@ -96,7 +103,7 @@ class GeneratedParameterComponent extends GeneratedComponent {
       );
 
   final GeneratedSchemaComponent? schemaComponent;
-  final GeneratedContentManifest? contentManifest;
+  final ContentManifest? contentManifest;
   final Parameter source;
 
   bool get isSchema => schemaComponent != null;
@@ -106,7 +113,8 @@ class GeneratedParameterComponent extends GeneratedComponent {
 
 class GeneratedRequestBodyComponent extends GeneratedComponent {
   GeneratedRequestBodyComponent({
-    required this.contentManifest,
+    this.contentManifest,
+    required this.source,
     required String fileContent,
     required String fileName,
   }) : super(
@@ -114,10 +122,24 @@ class GeneratedRequestBodyComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final GeneratedContentManifest contentManifest;
+  final ContentManifest? contentManifest;
+
+  final RequestBody source;
 }
 
-class GeneratedResponseComponent extends GeneratedComponent {
+class UnGeneratableRequestBodyComponent extends GeneratedRequestBodyComponent
+    with UnGeneratableComponent
+    implements Generatable {
+  UnGeneratableRequestBodyComponent(RequestBody source)
+      : super(
+          source: source,
+          fileContent: '',
+          fileName: '',
+        );
+}
+
+class GeneratedResponseComponent extends GeneratedComponent
+    implements Generatable {
   GeneratedResponseComponent({
     required String fileContent,
     required String fileName,
@@ -128,11 +150,27 @@ class GeneratedResponseComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final GeneratedContentManifest contentManifest;
+  final ContentManifest? contentManifest;
   final Response source;
+
+  @override
+  bool get isGenerated => true;
 }
 
-class GeneratedResponsesComponent extends GeneratedComponent {
+class UnGeneratableResponseComponent extends GeneratedResponseComponent
+    with UnGeneratableComponent
+    implements Generatable {
+  UnGeneratableResponseComponent(Response source)
+      : super(
+          source: source,
+          contentManifest: null,
+          fileContent: '',
+          fileName: '',
+        );
+}
+
+class GeneratedResponsesComponent extends GeneratedComponent
+    implements Generatable {
   GeneratedResponsesComponent({
     required String fileContent,
     required String fileName,
@@ -143,6 +181,21 @@ class GeneratedResponsesComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final GeneratedContentManifest contentManifest;
+  final ContentManifest? contentManifest;
   final Responses source;
+
+  @override
+  bool get isGenerated => true;
+}
+
+class UnGeneratableResponsesComponent extends GeneratedResponsesComponent
+    with UnGeneratableComponent
+    implements Generatable {
+  UnGeneratableResponsesComponent(Responses source)
+      : super(
+          source: source,
+          contentManifest: null,
+          fileContent: '',
+          fileName: '',
+        );
 }

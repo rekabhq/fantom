@@ -1,7 +1,8 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
-import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
+import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:recase/recase.dart';
 import 'package:sealed_writer/sealed_writer.dart';
 
@@ -13,7 +14,7 @@ class ResponseClassGenerator {
 
   final ContentManifestCreator contentManifestCreator;
 
-  GeneratedResponseComponent generate(
+  GeneratedResponseComponent generateResponse(
     final Response response,
     final String seedName,
   ) {
@@ -21,16 +22,16 @@ class ResponseClassGenerator {
     final subTypeName = seedName;
     final generatedSchemaTypeName = '${seedName}ResponseBody';
 
-    // TODO: we should support dynamic types
-    // for instance if the content is null
     final contentManifest = contentManifestCreator.generateContentType(
       typeName: typeName,
       subTypeName: subTypeName,
       generatedSchemaTypeName: generatedSchemaTypeName,
-      // TODO: update this to support dynamic types
-      content: response.content!,
+      content: response.content,
     );
 
+    if (contentManifest == null) {
+      return UnGeneratableResponseComponent(response);
+    }
     final forward = SourceWriter(
       contentManifest.manifest,
       referToManifest: false,
@@ -62,7 +63,9 @@ class ResponseClassGenerator {
     List<_ResponsePart> generatedComponents = [];
     // first we get all components for the response parts either by ref or we generate them and map them to our
     // reponse status codes in our responses object
-
+    if (responses.map == null || responses.map?.entries.isEmpty == true) {
+      return UnGeneratableResponsesComponent(responses);
+    }
     Map<String, _ResponsePart> responseParts = responses.map!.map(
       (statusCode, responseOrRef) {
         if (responseOrRef.isReference) {
@@ -71,7 +74,7 @@ class ResponseClassGenerator {
                   as _ResponsePart;
           return MapEntry(statusCode, component);
         } else {
-          var component = generate(responseOrRef.value, seedName);
+          var component = generateResponse(responseOrRef.value, seedName);
           generatedComponents.add(component);
           return MapEntry(statusCode, component);
         }
@@ -81,21 +84,25 @@ class ResponseClassGenerator {
     // last we try to generate our Responses into a generated component
     Map<String, ManifestItem> manifestItems = responseParts.map(
       (statusCode, responsePart) {
+        final manifestField = (responsePart.isGenerated)
+            ? ManifestField(
+                name: ReCase(responsePart.contentManifest!.manifest.name)
+                    .camelCase,
+                type: ManifestType(
+                  name: ReCase(responsePart.contentManifest!.manifest.name)
+                      .pascalCase,
+                  isNullable: false,
+                ),
+              )
+            : ManifestField(
+                name: 'value',
+                type: ManifestType(name: 'dynamic', isNullable: false),
+              );
         var manifestItem = ManifestItem(
           name: ReCase('Status$statusCode').pascalCase,
           shortName: ReCase('Status$statusCode').camelCase,
           equality: ManifestEquality.identity,
-          fields: [
-            ManifestField(
-              name:
-                  ReCase(responsePart.contentManifest.manifest.name).camelCase,
-              type: ManifestType(
-                name: ReCase(responsePart.contentManifest.manifest.name)
-                    .pascalCase,
-                isNullable: false,
-              ),
-            ),
-          ],
+          fields: [manifestField],
         );
         return MapEntry(statusCode, manifestItem);
       },
@@ -113,9 +120,8 @@ class ResponseClassGenerator {
     final buffer = StringBuffer();
     buffer.writeln(sealedClassContent);
     for (final component in generatedComponents) {
-      if (component is! UnGeneratableSchemaComponent) {
-        buffer.write(
-            '// ####################################################################### ');
+      if (component.isGenerated) {
+        buffer.writeln(codeSectionSeparator('Generated Type'));
         buffer.writeln(component.fileContent);
       }
     }
@@ -125,7 +131,7 @@ class ResponseClassGenerator {
     return GeneratedResponsesComponent(
       fileContent: fileContent,
       fileName: fileName,
-      contentManifest: GeneratedContentManifest(
+      contentManifest: ContentManifest(
         manifest: manifest,
         generatedComponents: generatedComponents,
       ),

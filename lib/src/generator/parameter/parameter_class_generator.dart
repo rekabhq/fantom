@@ -1,7 +1,7 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
-import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
+import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -47,7 +47,7 @@ class ParameterClassGenerator {
         subTypeName: subTypeName.pascalCase,
         generatedSchemaTypeName: schemaTypeName.pascalCase,
         content: parameter.content!,
-      );
+      )!;
 
       final forward = SourceWriter(
         contentManifest.manifest,

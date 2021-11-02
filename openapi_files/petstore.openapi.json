@@ -46,6 +46,21 @@
   ],
   "paths": {
     "/pet": {
+      "get": {
+        "tags": [
+          "pet"
+        ],
+        "summary": "Add a new pet to the store",
+        "operationId": "getAllPets",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PetsResult"
+          },
+          "404NotFound": {
+            "$ref": "#/components/responses/404NotFound"
+          }
+        }
+      },
       "post": {
         "tags": [
           "pet"
@@ -1403,6 +1418,62 @@
         },
         "description": "List of user object",
         "required": true
+      }
+    },
+    "responses": {
+      "404NotFound": {
+        "description": "The specified resource was not found."
+      },
+      "ImageResponse": {
+        "description": "A simple Image",
+        "content": {
+          "image/*": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          }
+        }
+      },
+      "UsersResult": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        }
+      },
+      "PetsResult": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Pet"
+              }
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Pet"
+              }
+            }
+          }
+        }
       }
     }
   }
