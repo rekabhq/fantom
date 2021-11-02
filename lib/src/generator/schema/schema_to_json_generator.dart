@@ -75,7 +75,7 @@ class SchemaToJsonGenerator {
         },
         object: (object) {
           if (object.format == ObjectDataElementFormat.map) {
-            final typeNN = element.typeNN;
+            final typeNN = object.typeNN;
             if (typeNN == null) {
               throw UnimplementedError('bad typed "map" object');
             }
@@ -93,7 +93,7 @@ class SchemaToJsonGenerator {
         },
         array: (array) {
           // list and set are equivalent here ...
-          final typeNN = element.typeNN;
+          final typeNN = array.typeNN;
           if (typeNN == null) {
             throw UnimplementedError('bad typed array');
           }
