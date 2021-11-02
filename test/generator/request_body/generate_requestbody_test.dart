@@ -1,15 +1,14 @@
-@Timeout(Duration(minutes: 1))
 import 'dart:io';
 
 import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
+import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
+import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
-
 import 'package:test/test.dart';
 
 void main() {
@@ -73,7 +72,28 @@ class Optional<T> {
 }
 
 // ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators, prefer_if_null_operators, unnecessary_non_null_assertion
+
 ''';
+
+        // todo: fix ...
+        final e = ObjectDataElement(
+          name: 'A',
+          isNullable: true,
+          isDeprecated: false,
+          defaultValue: null,
+          enumeration: null,
+          properties: [],
+          additionalProperties: IntegerDataElement(
+            name: 'B',
+            isNullable: true,
+            defaultValue: null,
+            enumeration: null,
+            isDeprecated: false,
+          ),
+        );
+        content += 'final appToJson = ' +
+            SchemaToJsonGenerator().generateApplication(e) +
+            ';';
 
         await outputFile.writeAsString(content);
       },
