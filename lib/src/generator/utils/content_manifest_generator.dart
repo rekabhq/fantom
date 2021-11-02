@@ -77,7 +77,7 @@ class ContentManifestCreator {
     if (refOrSchema == null) {
       fieldName = 'value';
       typeName = 'dynamic';
-      isNullable = true;
+      isNullable = false;
     } else {
       late GeneratedSchemaComponent component;
       if (refOrSchema.isReference) {
