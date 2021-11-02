@@ -59,6 +59,7 @@ class ApiMethodGenerator {
 
         buffer.writeln(
           _generateOperation(
+            path.key,
             methodName,
             operation,
             pathGeneratedComponentParams,
@@ -71,6 +72,7 @@ class ApiMethodGenerator {
   }
 
   String _generateOperation(
+    String pathUrl,
     String methodName,
     MapEntry<String, Operation> operation,
     List<GeneratedParameterComponent>? pathParameterComponents,
@@ -101,6 +103,8 @@ class ApiMethodGenerator {
     //TODO: update this with response parser
     final operationResponsesComponents = null;
 
+    final StringBuffer buffer = StringBuffer();
+
     // Steps:
     // -------
     // 1. generate method return type
@@ -109,13 +113,57 @@ class ApiMethodGenerator {
     // Future ->"methodName"<- (params)
     // 3. generate method parameters
     // Future methodName ->"(params)"<-
+
+    // TODO: update Future with method response
+    buffer.writeln(_generateMethodSyntax(methodName));
+    if (methodHasParameter) {
+      buffer.writeln('{');
+      if (operationParamComponents != null) {
+        buffer.writeln(_generateParameters(operationParamComponents));
+      }
+      if (operationBodyComponent != null) {
+        buffer.writeln(_generateRequestBody(operationBodyComponent));
+      }
+
+      // TODO: add content type param
+      buffer.writeln('}');
+    }
+    buffer.writeln(_generateEndMethodSyntax());
+
     // -------
     // 4. generate parsed path - get paths from params and parse them
-    // final parsedPath = _parsePath(pathParams, path);
+    // final path = '/user/{id}';
+    buffer.writeln(_generatePathUrl(pathUrl));
+
+    final generatedPathParams = operationParamComponents
+        ?.where((param) => param.source.location == 'path')
+        .toList();
+
+    // path = path.replaceFirst('{id}', '123');
+    if (generatedPathParams?.isNotEmpty ?? false) {
+      buffer.writeln(_generateReplacePathParameters(generatedPathParams));
+    }
+
     // 5. generate query parameters
+    final generatedQueryParams = operationParamComponents
+        ?.where((param) => param.source.location == 'query')
+        .toList();
+
     // final queryParams = {'id': '123' , 'name': 'John'};
+    if (generatedQueryParams?.isNotEmpty ?? false) {
+      buffer.writeln(_generateInitialQueryParameters(generatedQueryParams));
+    }
+
     // 6. generate header parameters
+    final generatedHeaderParams = operationParamComponents
+        ?.where((param) => param.source.location == 'header')
+        .toList();
+
     // final headerParams = {'accept': 'json'};
+    if (generatedHeaderParams?.isNotEmpty ?? false) {
+      buffer.writeln(_generateInitialHeaderParameters(generatedHeaderParams));
+    }
+
     // 7. generate body parameters
     // final bodyParams = _parseBody(bodyParam);
     // -------
@@ -135,27 +183,9 @@ class ApiMethodGenerator {
     // we should think about this
     // we should deserialize response.data to Generated response component type
     // return evaluateResponse(response);
-    //
+    // -------
 
-    final StringBuffer buffer = StringBuffer();
-
-    // TODO: update Future with method response
-    buffer.writeln(_generateMethodSyntax(methodName));
-    if (methodHasParameter) {
-      buffer.writeln('{');
-      if (operationParamComponents != null) {
-        buffer.writeln(_generateParameters(operationParamComponents));
-      }
-      if (operationBodyComponent != null) {
-        buffer.writeln(_generateRequestBody(operationBodyComponent));
-      }
-      buffer.writeln('}');
-    }
-    buffer.writeln(_generateEndMethodSyntax());
-
-    return """
-
-    """;
+    return buffer.toString();
   }
 
   String _generateMethodSyntax(String methodName) => 'Future $methodName(';
@@ -168,26 +198,26 @@ class ApiMethodGenerator {
     final StringBuffer buffer = StringBuffer();
 
     for (final param in methodParams) {
-      if (param.isSchema) {
-        final type = param.schemaComponent!.dataElement.type;
-        final name = param.source.name;
-        final isRequired = param.source.isRequired == true;
+      final type = param.isSchema
+          ? param.schemaComponent!.dataElement.type
+          : param.contentManifest!.manifest.name;
+      final name = param.source.name;
+      final isRequired = param.source.isRequired == true;
 
-        buffer.writeln('${isRequired ? 'required' : ''} $type $name');
-      } else {
-        // TODO: complete here
-        throw UnimplementedError();
-      }
+      buffer.writeln('${isRequired ? 'required' : ''} $type $name,');
     }
+
     return buffer.toString();
   }
 
   String _generateRequestBody(
     GeneratedRequestBodyComponent requestBody,
   ) {
-    return """
-
-    """;
+    final type = requestBody.contentManifest.manifest.name;
+    // TODO: check this in tests for duplicated naming
+    final name = 'body';
+    final isRequired = requestBody.source.isRequired == true;
+    return '${isRequired ? 'required' : ''} $type $name,';
   }
 
   //TODO(payam): update response of this method
@@ -197,22 +227,63 @@ class ApiMethodGenerator {
     """;
   }
 
-  // we can make this method as reusable method
-  Parameter _findReferenceParameter(Reference reference, OpenApi openApi) {
-    final referenceSlides = reference.ref.split('/');
+  String _generatePathUrl(String pathUrl) => 'final path = $pathUrl;';
 
-    if (referenceSlides[2] != 'parameters') {
-      throw Exception('Invalid reference');
+  String _generateReplacePathParameters(
+      List<GeneratedParameterComponent>? generatedPathParams) {
+    if (generatedPathParams?.isEmpty ?? true) return '';
+
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write('path = path');
+
+    for (final param in generatedPathParams!) {
+      final name = param.source.name;
+      buffer.writeln('.replaceFirst(\'{$name}\', $name)');
     }
 
-    final parameter = openApi.components?.parameters?[referenceSlides.last];
+    buffer.writeln(';');
 
-    if (parameter == null) {
-      throw Exception('Invalid reference');
+    return buffer.toString();
+  }
+
+  // final queryParams = {'id': '123' , 'name': 'John'};
+  String _generateInitialQueryParameters(
+    List<GeneratedParameterComponent>? generatedQueryParams,
+  ) {
+    if (generatedQueryParams?.isEmpty ?? true) return '';
+
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write('final queryParams = {');
+
+    for (final param in generatedQueryParams!) {
+      final name = param.source.name;
+      buffer.writeln('\'$name\': $name,');
     }
 
-    return parameter.isValue
-        ? parameter.value
-        : _findReferenceParameter(parameter.reference, openApi);
+    buffer.writeln('};');
+
+    return buffer.toString();
+  }
+
+  // final headerParams = {'accept': 'json'};
+  String _generateInitialHeaderParameters(
+    List<GeneratedParameterComponent>? generatedHeaderParams,
+  ) {
+    if (generatedHeaderParams?.isEmpty ?? true) return '';
+
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write('final headerParams = {');
+
+    for (final param in generatedHeaderParams!) {
+      final name = param.source.name;
+      buffer.writeln('\'$name\': $name,');
+    }
+
+    buffer.writeln('};');
+
+    return buffer.toString();
   }
 }
