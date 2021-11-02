@@ -1475,6 +1475,54 @@
           }
         }
       }
+    },
+    "parameters": {
+      "Status": {
+        "name": "status",
+        "in": "query",
+        "description": "Status values that need to be considered for filter",
+        "required": true,
+        "explode": true,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "available",
+              "pending",
+              "sold"
+            ],
+            "default": "available"
+          }
+        }
+      },
+      "Id": {
+        "name": "id",
+        "in": "path",
+        "description": "ID of pet to use",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "User": {
+        "name": "user",
+        "in": "query",
+        "description": "user object that needs to be added to the store",
+        "required": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 }
