@@ -77,6 +77,7 @@ class Optional<T> {
         content = content.replaceAll('dynamic?', 'dynamic');
 
         await outputFile.writeAsString(content);
+        
       },
     );
   });
