@@ -59,6 +59,7 @@ class Generator {
     var apiClassFile = apiClassGenerator.generate();
     // creating GenerationData object
     var modelsFile = allGeneratedComponents
+        .where((element) => element.isGenerated)
         .map(
           (e) => GeneratableFile(
             fileContent: e.fileContent,

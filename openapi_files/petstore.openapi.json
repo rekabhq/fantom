@@ -56,7 +56,7 @@
           "200": {
             "$ref": "#/components/responses/PetsResult"
           },
-          "404NotFound": {
+          "404": {
             "$ref": "#/components/responses/404NotFound"
           }
         }

@@ -229,7 +229,7 @@ class ApiMethodGenerator {
           : null;
 
       buffer.write('${isRequired ? 'required' : ''} $type $name');
-      
+
       // TODO: test default values
       buffer.writeln(
           defaultValue?.isNotEmpty == true ? '= $defaultValue ,' : ',');

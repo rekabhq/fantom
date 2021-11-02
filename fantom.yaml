@@ -2,5 +2,5 @@ fantom:
   openapi: openapi_files/petstore.openapi.yaml
   package: generated/package
   package-name: my_api_package
-  # model-dir: example/models
-  # api-dir: example/apis
+  # model-dir: generated/package/my_api_package/lib/network/data/models
+  # api-dir: generated/package/my_api_package/lib/network
