@@ -82,4 +82,5 @@ lib/src/fantom/*
 test/cli/testProjectDir/gen
 test/writer/packages
 test/generator/request_body/output.dart
+test/generator/response/output.dart
 generated/

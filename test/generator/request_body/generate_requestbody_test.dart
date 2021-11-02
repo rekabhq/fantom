@@ -74,10 +74,7 @@ class Optional<T> {
 // ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators, prefer_if_null_operators, unnecessary_non_null_assertion
 ''';
 
-        content = content.replaceAll('dynamic?', 'dynamic');
-
         await outputFile.writeAsString(content);
-        
       },
     );
   });
