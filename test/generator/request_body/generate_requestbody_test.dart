@@ -18,8 +18,8 @@ void main() {
     late OpenApi openapi;
     setUpAll(() async {
       print('');
-      var openapiMap = await readJsonOrYamlFile(
-          File('test/generator/request_body/petstore.openapi.json'));
+      var openapiMap =
+          await readJsonOrYamlFile(File('openapi_files/petstore.openapi.json'));
       openapi = OpenApi.fromMap(openapiMap);
       final componentsGenerator = ComponentsGenerator.createDefault(openapi);
 

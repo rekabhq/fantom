@@ -21,7 +21,7 @@ void main() {
 
   setUp(() async {
     currentDir = Directory('${kCurrentDirectory.path}/test/cli/testProjectDir');
-    testOpenApiFilePath = 'test/utils/petstore.openapi.yaml';
+    testOpenApiFilePath = 'openapi_files/petstore.openapi.yaml';
     testOpenApi = await readJsonOrYamlFile(File(testOpenApiFilePath));
     testFantomConfig = await FantomConfig.fromFile(
         File('${currentDir.path}/fantom-config.yaml'));
