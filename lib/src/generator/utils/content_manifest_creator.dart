@@ -25,12 +25,15 @@ class ContentManifestCreator {
   final SchemaMediator schemaMediator;
   final SchemaClassGenerator schemaClassGenerator;
 
-  ContentManifest generateContentType({
+  ContentManifest? generateContentType({
     required String typeName,
     required String subTypeName,
     required String generatedSchemaTypeName,
-    required Content content,
+    required Content? content,
   }) {
+    if (content == null) {
+      return null;
+    }
     final className = ReCase(typeName).pascalCase;
     final items = List.generate(
       content.entries.length,

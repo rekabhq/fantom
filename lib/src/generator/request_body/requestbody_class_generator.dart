@@ -27,6 +27,10 @@ class RequestBodyClassGenerator {
       content: requestBody.content,
     );
 
+    if (contentManifest == null) {
+      return UnGeneratableRequestBodyComponent(requestBody);
+    }
+
     final forward =
         SourceWriter(contentManifest.manifest, referToManifest: false);
     final sealedClassContent = forward.write();

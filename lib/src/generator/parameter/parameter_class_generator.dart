@@ -47,7 +47,7 @@ class ParameterClassGenerator {
         subTypeName: subTypeName.pascalCase,
         generatedSchemaTypeName: schemaTypeName.pascalCase,
         content: parameter.content!,
-      );
+      )!;
 
       final forward = SourceWriter(
         contentManifest.manifest,

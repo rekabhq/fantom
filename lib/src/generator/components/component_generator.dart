@@ -178,7 +178,7 @@ class ComponentsGenerator {
   ) {
     return responses.map((ref, response) {
       final actualReference = '#/components/responses/$ref';
-      final component = responseClassGenerator.generate(
+      final component = responseClassGenerator.generateResponse(
         response.isValue
             ? response.value
             : referenceFinder.findResponse(response.reference),

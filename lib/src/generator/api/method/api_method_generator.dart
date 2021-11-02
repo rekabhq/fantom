@@ -230,7 +230,8 @@ class ApiMethodGenerator {
   String _generateRequestBody(
     GeneratedRequestBodyComponent requestBody,
   ) {
-    final type = requestBody.contentManifest.manifest.name;
+    // TODO(payam): please check if requestBody.isGenerated first because if not contentManifest is null
+    final type = requestBody.contentManifest!.manifest.name;
     // TODO: check this in tests for duplicated naming
     final name = 'body';
     final isRequired = requestBody.source.isRequired == true;
@@ -310,7 +311,8 @@ class ApiMethodGenerator {
   String _generateInitialBody(
     GeneratedRequestBodyComponent operationBodyComponent,
   ) {
-    final type = operationBodyComponent.contentManifest.manifest.name;
+    // TODO(payam): please check if operationBodyComponent.isGenerated first if not contentManifest will be null
+    final type = operationBodyComponent.contentManifest!.manifest.name;
     // TODO: check type if its primitive just return it otherwise return toJson
     final name = 'body';
     return 'final nameJson = $name.toJson();';
