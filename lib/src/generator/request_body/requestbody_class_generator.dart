@@ -37,7 +37,7 @@ class RequestBodyClassGenerator {
     final buffer = StringBuffer();
     buffer.writeln(sealedClassContent);
     for (final component in contentManifest.generatedComponents) {
-      if (component is! UnGeneratableSchemaComponent) {
+      if (component.isGenerated) {
         buffer.writeln(codeSectionSeparator('Generated Type'));
         buffer.writeln(component.fileContent);
       }

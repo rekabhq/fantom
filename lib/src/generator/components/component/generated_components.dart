@@ -11,7 +11,8 @@ abstract class Generatable {
 mixin UnGeneratableComponent {
   static const errorMessage =
       'An UnGeneratableSchemaComponent cannot and should not be '
-      'generated thus it cannot have a fileName or a fileContent';
+      'generated thus it cannot have a fileName or a fileContent.\n'
+      'Please check if component is generated or not using <<isGenerated>> getter method';
 
   String get fileName => throw FantomException(
         errorMessage,
@@ -31,7 +32,7 @@ mixin UnGeneratableComponent {
 /// our [Generator] service
 ///
 /// the [fileContent] & [fileName] is also used by the [FileWriter] service to generate the file
-class GeneratedComponent {
+class GeneratedComponent implements Generatable {
   GeneratedComponent({
     required this.fileContent,
     required this.fileName,
@@ -39,6 +40,9 @@ class GeneratedComponent {
 
   final String fileContent;
   final String fileName;
+
+  @override
+  bool get isGenerated => true;
 }
 
 class GeneratedSchemaComponent extends GeneratedComponent {
@@ -128,8 +132,7 @@ class GeneratedRequestBodyComponent extends GeneratedComponent {
 }
 
 class UnGeneratableRequestBodyComponent extends GeneratedRequestBodyComponent
-    with UnGeneratableComponent
-    implements Generatable {
+    with UnGeneratableComponent {
   UnGeneratableRequestBodyComponent(RequestBody source)
       : super(
           source: source,
@@ -138,8 +141,7 @@ class UnGeneratableRequestBodyComponent extends GeneratedRequestBodyComponent
         );
 }
 
-class GeneratedResponseComponent extends GeneratedComponent
-    implements Generatable {
+class GeneratedResponseComponent extends GeneratedComponent {
   GeneratedResponseComponent({
     required String fileContent,
     required String fileName,
@@ -152,14 +154,10 @@ class GeneratedResponseComponent extends GeneratedComponent
 
   final ContentManifest? contentManifest;
   final Response source;
-
-  @override
-  bool get isGenerated => true;
 }
 
 class UnGeneratableResponseComponent extends GeneratedResponseComponent
-    with UnGeneratableComponent
-    implements Generatable {
+    with UnGeneratableComponent {
   UnGeneratableResponseComponent(Response source)
       : super(
           source: source,
@@ -169,8 +167,7 @@ class UnGeneratableResponseComponent extends GeneratedResponseComponent
         );
 }
 
-class GeneratedResponsesComponent extends GeneratedComponent
-    implements Generatable {
+class GeneratedResponsesComponent extends GeneratedComponent {
   GeneratedResponsesComponent({
     required String fileContent,
     required String fileName,
@@ -183,14 +180,10 @@ class GeneratedResponsesComponent extends GeneratedComponent
 
   final ContentManifest? contentManifest;
   final Responses source;
-
-  @override
-  bool get isGenerated => true;
 }
 
 class UnGeneratableResponsesComponent extends GeneratedResponsesComponent
-    with UnGeneratableComponent
-    implements Generatable {
+    with UnGeneratableComponent {
   UnGeneratableResponsesComponent(Responses source)
       : super(
           source: source,
