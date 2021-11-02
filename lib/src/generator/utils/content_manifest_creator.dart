@@ -40,15 +40,15 @@ class ContentManifestCreator {
       (index) {
         final entry = content.entries.toList()[index];
         final subClassName =
-            '${ReCase(subTypeName).pascalCase}${ReCase(_getContentTypeShortName(entry.key)).pascalCase}';
-        final subClassShortName = ReCase(entry.key).camelCase;
+            '${ReCase(subTypeName).pascalCase}${ReCase(_getContentTypeShortName(_fixName(entry.key))).pascalCase}';
+        final subClassShortName = _fixName(entry.key);
         return ManifestItem(
           name: subClassName,
           shortName: subClassShortName,
           equality: ManifestEquality.identity,
           fields: [
             _createMediaTypeArguments(
-              mediaTypeName: entry.key,
+              mediaTypeName: _fixName(entry.key),
               mediaType: entry.value,
               generatedSchemaTypeName: generatedSchemaTypeName,
             ),
@@ -144,6 +144,10 @@ class ContentManifestCreator {
       name = 'Image';
     }
     return name;
+  }
+
+  String _fixName(String value) {
+    return ReCase(value).camelCase.replaceAll('*', '');
   }
 }
 

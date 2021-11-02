@@ -107,7 +107,7 @@ class ComponentsGenerator {
     // generate and register all responses
     final responseComponents = (openApi.components?.responses == null)
         ? <String, GeneratedResponseComponent>{}
-        : _generateResponses(
+        : generateResponses(
             openApi.components!.responses!,
           );
 
@@ -173,7 +173,7 @@ class ComponentsGenerator {
     });
   }
 
-  Map<String, GeneratedResponseComponent> _generateResponses(
+  Map<String, GeneratedResponseComponent> generateResponses(
     Map<String, Referenceable<Response>> responses,
   ) {
     return responses.map((ref, response) {
