@@ -1,6 +1,7 @@
 import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:recase/recase.dart';
 import 'package:sealed_writer/sealed_writer.dart';
 
@@ -33,6 +34,7 @@ class RequestBodyClassGenerator {
     buffer.writeln(sealedClassContent);
     for (final component in contentManifest.generatedComponents) {
       if (component is! UnGeneratableSchemaComponent) {
+        buffer.writeln(codeSectionSeparator('Generated Type'));
         buffer.writeln(component.fileContent);
       }
     }

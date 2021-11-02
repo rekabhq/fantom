@@ -65,3 +65,11 @@ Future<Map<String, dynamic>> readJsonOrYamlFile(File file) async {
     );
   }
 }
+
+/// creates a separator like below in files to separate different types of code that exists in one file
+/// for the purpose of better readability
+/// ######################################### section ##############################################
+String codeSectionSeparator([String? section]) =>
+    '\n\n// ######################################'
+    '###${section == null ? '' : ' $section '}######'
+    '###################################\n\n';
