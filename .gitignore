@@ -84,4 +84,6 @@ test/writer/packages
 test/generator/request_body/output.dart
 test/generator/request_body/output1.dart
 test/generator/response/output.dart
+test/generator/response/reponse_output.dart
+test/generator/response/reponses_output.dart
 generated/

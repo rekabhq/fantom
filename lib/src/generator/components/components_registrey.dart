@@ -1,5 +1,6 @@
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:meta/meta.dart';
 
 void registerGeneratedComponent(String ref, GeneratedComponent component) =>
     _globalComponentsRegistery.registerGeneratedComponent(ref, component);
@@ -17,6 +18,11 @@ List<GeneratedComponent> allGeneratedComponents = [
 
 final GeneratedComponentsRegistery _globalComponentsRegistery =
     GeneratedComponentsRegistery();
+
+@visibleForTesting
+void clearComponentsRegistry() {
+  _globalComponentsRegistery.clearRegistry();
+}
 
 class GeneratedComponentsRegistery {
   final Map<String, GeneratedComponent> components = {};
@@ -38,6 +44,12 @@ class GeneratedComponentsRegistery {
   GeneratedComponent? getGeneratedComponentByRef(String ref) {
     _validateReference(ref);
     return components[ref];
+  }
+
+  @visibleForTesting
+  void clearRegistry() {
+    components.clear();
+    unNamedComponents.clear();
   }
 
   void _validateReference(String ref) {

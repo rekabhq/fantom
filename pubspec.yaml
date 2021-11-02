@@ -24,6 +24,7 @@ dependencies:
   dart_style: ^2.2.0
   pubspec_yaml: ^3.0.0
   sealed_writer: ^1.13.0
+  meta: ^1.7.0
 
 dev_dependencies:
   lints: ^1.0.0

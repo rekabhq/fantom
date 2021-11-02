@@ -41,6 +41,7 @@ class ResponseClassGenerator {
     buffer.writeln(sealedClassContent);
     for (final component in contentManifest.generatedComponents) {
       if (component.isGenerated) {
+        buffer.writeln(codeSectionSeparator('Generated Type'));
         buffer.writeln(component.fileContent);
       }
     }
@@ -69,6 +70,7 @@ class ResponseClassGenerator {
     Map<String, _ResponsePart> responseParts = responses.map!.map(
       (statusCode, responseOrRef) {
         if (responseOrRef.isReference) {
+          print(responseOrRef.reference.ref);
           var component =
               getGeneratedComponentByRef(responseOrRef.reference.ref)
                   as _ResponsePart;
