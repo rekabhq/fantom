@@ -8,6 +8,7 @@ import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/name/method_name_generator.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
+import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/writer/file_writer.dart';
@@ -43,6 +44,7 @@ class Generator {
             responseClassGenerator: componentsGenerator.responseClassGenerator,
           ),
           nameGenerator: nameGenerator,
+          defaultValueGenerator: SchemaDefaultValueGenerator(),
         ),
       ),
       componentsGenerator: componentsGenerator,

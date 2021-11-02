@@ -15,8 +15,8 @@ class MethodParamsParser {
       parameterClassGenerator.contentManifestGenerator.openApi;
 
   List<GeneratedParameterComponent> parseParams(
-    String nameSeed,
-    List<Referenceable<Parameter>> operationParameters, {
+    List<Referenceable<Parameter>> operationParameters,
+    String nameSeed, {
     List<GeneratedParameterComponent>? pathParameterComponents,
   }) {
     final generatedParameters = <GeneratedParameterComponent>[];

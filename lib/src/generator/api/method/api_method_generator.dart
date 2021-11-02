@@ -4,6 +4,7 @@ import 'package:fantom/src/generator/api/method/response_parser.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/name/utils.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
+import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:recase/recase.dart';
 
@@ -12,6 +13,7 @@ import 'package:recase/recase.dart';
 // TODO: add test for this class
 class ApiMethodGenerator {
   final OpenApi openApi;
+  final SchemaDefaultValueGenerator defaultValueGenerator;
   final MethodParamsParser methodParamsParser;
   final MethodBodyParser methodBodyParser;
   final MethodResponseParser methodResponseParser;
@@ -19,6 +21,7 @@ class ApiMethodGenerator {
 
   ApiMethodGenerator({
     required this.openApi,
+    required this.defaultValueGenerator,
     required this.methodParamsParser,
     required this.methodBodyParser,
     required this.methodResponseParser,
@@ -81,8 +84,8 @@ class ApiMethodGenerator {
     final operationParamComponents = operation.value.parameters == null
         ? null
         : methodParamsParser.parseParams(
-            methodName,
             operation.value.parameters!,
+            methodName,
             pathParameterComponents: pathParameterComponents,
           );
 
@@ -97,8 +100,10 @@ class ApiMethodGenerator {
         (operationParamComponents?.isNotEmpty ?? false) &&
             operationBodyComponent != null;
 
-    //TODO: update this with response parser
-    final operationResponsesComponents = null;
+    final operationResponsesComponents = methodResponseParser.parseResponses(
+      operation.value.responses,
+      methodName,
+    );
 
     final StringBuffer buffer = StringBuffer();
 
@@ -219,7 +224,15 @@ class ApiMethodGenerator {
       final name = param.source.name;
       final isRequired = param.source.isRequired == true;
 
-      buffer.writeln('${isRequired ? 'required' : ''} $type $name,');
+      final defaultValue = param.isSchema
+          ? defaultValueGenerator.generate(param.schemaComponent!.dataElement)
+          : null;
+
+      buffer.write('${isRequired ? 'required' : ''} $type $name');
+      
+      // TODO: test default values
+      buffer.writeln(
+          defaultValue?.isNotEmpty == true ? '= $defaultValue ,' : ',');
     }
 
     return buffer.toString();
