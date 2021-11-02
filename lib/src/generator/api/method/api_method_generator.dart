@@ -9,6 +9,7 @@ import 'package:recase/recase.dart';
 
 // ignore_for_file: unused_element
 // ignore_for_file: unused_local_variable
+// TODO: add test for this class
 class ApiMethodGenerator {
   final OpenApi openApi;
   final MethodParamsParser methodParamsParser;
@@ -77,10 +78,6 @@ class ApiMethodGenerator {
     MapEntry<String, Operation> operation,
     List<GeneratedParameterComponent>? pathParameterComponents,
   ) {
-    //TODO: all methods should have an optional parameter called contentType
-
-    //TODO: get information about parameter,body and response
-
     final operationParamComponents = operation.value.parameters == null
         ? null
         : methodParamsParser.parseParams(
@@ -209,6 +206,7 @@ class ApiMethodGenerator {
 
   String _generateEndMethodSyntax() => '}) async {';
 
+  //TODO: add default values for parameters
   String _generateParameters(
     List<GeneratedParameterComponent> methodParams,
   ) {
@@ -371,7 +369,7 @@ class ApiMethodGenerator {
   String _generateEvaluateResponse() {
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('return response');
+    buffer.write('return response;');
 
     return buffer.toString();
   }

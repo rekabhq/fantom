@@ -39,7 +39,9 @@ class Generator {
           methodBodyParser: MethodBodyParser(
             bodyClassGenerator: componentsGenerator.requestBodyClassGenerator,
           ),
-          methodResponseParser: MethodResponseParser(),
+          methodResponseParser: MethodResponseParser(
+            responseClassGenerator: componentsGenerator.responseClassGenerator,
+          ),
           nameGenerator: nameGenerator,
         ),
       ),
