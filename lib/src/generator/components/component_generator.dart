@@ -4,7 +4,7 @@ import 'package:fantom/src/generator/parameter/parameter_class_generator.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/generator/response/response_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
-import 'package:fantom/src/generator/utils/content_manifest_generator.dart';
+import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/generator/utils/reference_finder.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';

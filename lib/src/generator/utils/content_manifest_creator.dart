@@ -25,7 +25,7 @@ class ContentManifestCreator {
   final SchemaMediator schemaMediator;
   final SchemaClassGenerator schemaClassGenerator;
 
-  GeneratedContentManifest generateContentType({
+  ContentManifest generateContentType({
     required String typeName,
     required String subTypeName,
     required String generatedSchemaTypeName,
@@ -59,7 +59,7 @@ class ContentManifestCreator {
       params: [],
       fields: [],
     );
-    return GeneratedContentManifest(
+    return ContentManifest(
       manifest: manifest,
       generatedComponents: _generatedComponents,
     );
@@ -145,8 +145,8 @@ class ContentManifestCreator {
 }
 
 /// holds the data that can be used by ComponentGenerators to generate components
-class GeneratedContentManifest {
-  GeneratedContentManifest({
+class ContentManifest {
+  ContentManifest({
     required this.manifest,
     required this.generatedComponents,
   });
