@@ -11,7 +11,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('CreatePackage:', () {
-    final name = 'fantom';
+    final name = 'client';
     final generationPath = 'test/writer/packages/';
     final packagePath = '$generationPath/$name';
     final libDirPath = '$packagePath/lib';
@@ -77,12 +77,12 @@ class ApiClass{
         expect(pubspec.name, packageInfo.name);
         expect(pubspec.dependencies, packageInfo.pubspecInfo.dependencies);
         // assert generated api & model files in lib/
-        var expectedModelFileNames =
-            generationData.models.map((e) => e.fileName).toSet();
         var actualModelFileNames = Directory(packageInfo.modelsDirPath)
             .listSync()
             .map((e) => e.path.split('/').last);
-        expect(actualModelFileNames, expectedModelFileNames);
+        for (var model in generationData.models) {
+          expect(actualModelFileNames.contains(model.fileName), isTrue);
+        }
         var apiFile = File(
             '${packageInfo.apisDirPath}/${generationData.apiClass.fileName}');
         expect(await apiFile.exists(), isTrue);
