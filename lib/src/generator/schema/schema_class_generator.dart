@@ -32,6 +32,11 @@ class SchemaClassGenerator {
     final format = object.format;
 
     if (format != ObjectDataElementFormat.object) {
+      // todo: quick fix :D
+      if (name.endsWith('_DNG')) {
+        return 'class $name {}';
+      }
+
       throw UnimplementedError(
         '"mixed" and "map" objects are not supported : name is $name',
       );

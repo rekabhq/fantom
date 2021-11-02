@@ -927,6 +927,31 @@
         "type": "object",
         "nullable": false
       },
+      "ObjMapInt_DNG": {
+        "type": "object",
+        "nullable": false,
+        "additionalProperties": {
+          "type": "integer"
+        }
+      },
+      "ObjMapListObj_DNG": {
+        "type": "object",
+        "nullable": false,
+        "additionalProperties": {
+          "type": "array",
+          "nullable": false,
+          "items": {
+            "$ref": "#/components/schemas/Obj"
+          }
+        }
+      },
+      "ObjMapMapInt_DNG": {
+        "type": "object",
+        "nullable": false,
+        "additionalProperties": {
+          "$ref": "#/components/schemas/ObjMapInt_DNG"
+        }
+      },
       "Obj": {
         "type": "object",
         "nullable": false,
@@ -1023,7 +1048,10 @@
                 "ad",
                 "ae",
                 "af",
-                "ag"
+                "ag",
+                "m1",
+                "m2",
+                "m3"
               ],
               "properties": {
                 "id": {
@@ -1329,6 +1357,15 @@
                       "type": "integer"
                     }
                   }
+                },
+                "m1": {
+                  "$ref": "#/components/schemas/ObjMapInt_DNG"
+                },
+                "m2": {
+                  "$ref": "#/components/schemas/ObjMapListObj_DNG"
+                },
+                "m3": {
+                  "$ref": "#/components/schemas/ObjMapMapInt_DNG"
                 }
               },
               "xml": {

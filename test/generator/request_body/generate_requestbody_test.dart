@@ -57,10 +57,11 @@ void main() {
               schema: schema,
               name: key,
             );
-            final component = SchemaClassGenerator().generate(
-              element as ObjectDataElement,
-            );
-            content += component.fileContent;
+            if (element is ObjectDataElement &&
+                element.format == ObjectDataElementFormat.object) {
+              final component = SchemaClassGenerator().generate(element);
+              content += component.fileContent;
+            }
           }
         }
 
