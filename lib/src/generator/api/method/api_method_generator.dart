@@ -117,17 +117,16 @@ class ApiMethodGenerator {
     // TODO: update Future with method response
     buffer.writeln(_generateMethodSyntax(methodName));
     if (methodHasParameter) {
-      buffer.writeln('{');
       if (operationParamComponents != null) {
         buffer.writeln(_generateParameters(operationParamComponents));
       }
       if (operationBodyComponent != null) {
         buffer.writeln(_generateRequestBody(operationBodyComponent));
       }
-
-      // TODO: add content type param
-      buffer.writeln('}');
     }
+
+    buffer.writeln(_generateContentTypeParameters());
+
     buffer.writeln(_generateEndMethodSyntax());
 
     // -------
@@ -165,32 +164,50 @@ class ApiMethodGenerator {
     }
 
     // 7. generate body parameters
-    // final bodyParams = _parseBody(bodyParam);
+    // final bodyJson = body.toJson();
+    if (operationBodyComponent != null) {
+      buffer.writeln(_generateInitialBody(operationBodyComponent));
+    }
+
     // -------
     // 8. create request option for headers and content type
     // final option =  Options(
-    //  headers = headerParams,
-    //  contentType = contentType,
+    //  method: POSt,
+    //  headers : headerParams,
+    //  contentType : contentType,
     // );
+    buffer.writeln(
+      _generateRequestOptions(
+        operation.key,
+        generatedHeaderParams,
+      ),
+    );
+
     // 9. generate request
     // final response = await dio.request(
     //  parsedPath,
     //  queryParameters: queryParams,
     //  options: option,
-    //  data: bodyParams,
+    //  data: bodyJson,
     // );
+    buffer.writeln(_generateDioRequest());
     // 10. generate evaluated response
     // we should think about this
     // we should deserialize response.data to Generated response component type
     // return evaluateResponse(response);
+    buffer.writeln(_generateEvaluateResponse());
     // -------
+
+    buffer.writeln('}');
 
     return buffer.toString();
   }
 
-  String _generateMethodSyntax(String methodName) => 'Future $methodName(';
+  String _generateContentTypeParameters() => 'String? contentType,';
 
-  String _generateEndMethodSyntax() => ') async {';
+  String _generateMethodSyntax(String methodName) => 'Future $methodName({';
+
+  String _generateEndMethodSyntax() => '}) async {';
 
   String _generateParameters(
     List<GeneratedParameterComponent> methodParams,
@@ -229,6 +246,7 @@ class ApiMethodGenerator {
 
   String _generatePathUrl(String pathUrl) => 'final path = $pathUrl;';
 
+  // path = path.replaceFirst('{id}', '123');
   String _generateReplacePathParameters(
       List<GeneratedParameterComponent>? generatedPathParams) {
     if (generatedPathParams?.isEmpty ?? true) return '';
@@ -283,6 +301,75 @@ class ApiMethodGenerator {
     }
 
     buffer.writeln('};');
+
+    return buffer.toString();
+  }
+
+  // final bodyJson = body.toJson();
+  // TODO: Test this method
+  String _generateInitialBody(
+    GeneratedRequestBodyComponent operationBodyComponent,
+  ) {
+    final type = operationBodyComponent.contentManifest.manifest.name;
+    // TODO: check type if its primitive just return it otherwise return toJson
+    final name = 'body';
+    return 'final nameJson = $name.toJson();';
+  }
+
+  // final option =  Options(
+  //   method: POSt,
+  //   contentType : contentType,
+  //   headers : headerParams,
+  // );
+  String _generateRequestOptions(
+    String method,
+    List<GeneratedParameterComponent>? generatedHeaderParams,
+  ) {
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write('final option = Options(');
+
+    buffer.writeln('method: ${method.constantCase},');
+
+    buffer.writeln('contentType: contentType,');
+
+    if (generatedHeaderParams?.isNotEmpty ?? false) {
+      buffer.writeln('headers: headerParams,');
+    }
+
+    buffer.writeln(');');
+
+    return buffer.toString();
+  }
+
+  // final response = await dio.request(
+  //  path,
+  //  queryParameters: queryParams,
+  //  options: option,
+  //  data: bodyJson,
+  // );
+  String _generateDioRequest() {
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write('final response = await dio.request(path, ');
+
+    buffer.writeln('queryParameters: queryParams,');
+
+    buffer.writeln('options: option,');
+
+    buffer.writeln('data: bodyJson,');
+
+    buffer.writeln(');');
+
+    return buffer.toString();
+  }
+
+  // return evaluateResponse(response);
+  // TODO: complete this method and test it
+  String _generateEvaluateResponse() {
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write('return response');
 
     return buffer.toString();
   }
