@@ -37,8 +37,8 @@ void main() {
         var usersResultResponse =
             openapi.components!.responses!.values.toList()[2].value;
 
-        var output =
-            responseClassGenerator.generateResponse(usersResultResponse, 'UsersResult');
+        var output = responseClassGenerator.generateResponse(
+            usersResultResponse, 'UsersResult');
 
         var outputFile = File('test/generator/response/output.dart');
 
