@@ -1,5 +1,3 @@
-/// todo copy to output
-
 class Optional<T> {
   final T value;
 

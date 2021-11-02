@@ -104,14 +104,9 @@ class SchemaValueGenerator {
           return _primitive(value);
         },
         string: (string) {
-          if (string.format == StringDataElementFormat.plain) {
-            // ex. "'hello'"
-            if (value is! String) throw AssertionError('bad types');
-            return _string(value);
-          } else {
-            // todo: no plain string ?
-            throw UnimplementedError('only plain string type is supported');
-          }
+          // ex. "'hello'"
+          if (value is! String) throw AssertionError('bad types');
+          return _string(value);
         },
         untyped: (untyped) {
           throw UnimplementedError(

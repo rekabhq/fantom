@@ -32,7 +32,7 @@ class SchemaClassGenerator {
     final format = object.format;
 
     if (format != ObjectDataElementFormat.object) {
-      // todo: quick fix :D
+      // todo: remove quick fix :D
       if (name.endsWith('_DNG')) {
         return 'class $name {}';
       }
