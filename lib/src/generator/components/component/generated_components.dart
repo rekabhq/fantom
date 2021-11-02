@@ -107,6 +107,7 @@ class GeneratedParameterComponent extends GeneratedComponent {
 class GeneratedRequestBodyComponent extends GeneratedComponent {
   GeneratedRequestBodyComponent({
     required this.contentManifest,
+    required this.source,
     required String fileContent,
     required String fileName,
   }) : super(
@@ -115,6 +116,8 @@ class GeneratedRequestBodyComponent extends GeneratedComponent {
         );
 
   final GeneratedContentManifest contentManifest;
+
+  final RequestBody source;
 }
 
 class GeneratedResponseComponent extends GeneratedComponent {

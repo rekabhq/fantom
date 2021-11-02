@@ -45,6 +45,7 @@ class RequestBodyClassGenerator {
       fileName: fileName,
       fileContent: fileContent,
       contentManifest: contentManifest,
+      source: requestBody,
     );
   }
 }
