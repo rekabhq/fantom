@@ -135,6 +135,7 @@ class ResponseClassGenerator {
       fileName: fileName,
       contentManifest: ContentManifest(
         manifest: manifest,
+        extensionMethods: '',
         generatedComponents: generatedComponents,
       ),
       source: responses,

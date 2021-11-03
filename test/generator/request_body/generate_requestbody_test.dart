@@ -4,8 +4,8 @@ import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
-import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
-import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
+// import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
+// import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -76,29 +76,29 @@ class Optional<T> {
 
 ''';
 
-        // todo: fix ...
-        final e = ObjectDataElement(
-          name: 'A',
-          isNullable: true,
-          isDeprecated: false,
-          defaultValue: null,
-          enumeration: null,
-          properties: [],
-          additionalProperties: IntegerDataElement(
-            name: 'B',
-            isNullable: true,
-            defaultValue: null,
-            enumeration: null,
-            isDeprecated: false,
-          ),
-        );
-        content += 'final appToJson = ' +
-            SchemaToJsonGenerator().generateApplication(e) +
-            ';';
-        content += '\n\n';
-        content += 'final appFromJson = ' +
-            SchemaFromJsonGenerator().generateApplication(e) +
-            ';';
+        // // todo: fix ...
+        // final e = ObjectDataElement(
+        //   name: 'Aban',
+        //   isNullable: true,
+        //   isDeprecated: false,
+        //   defaultValue: null,
+        //   enumeration: null,
+        //   properties: [],
+        //   additionalProperties: IntegerDataElement(
+        //     name: 'Baba',
+        //     isNullable: true,
+        //     defaultValue: null,
+        //     enumeration: null,
+        //     isDeprecated: false,
+        //   ),
+        // );
+        // content += 'final appToJson = ' +
+        //     SchemaToJsonGenerator().generateApplication(e) +
+        //     ';';
+        // content += '\n\n';
+        // content += 'final appFromJson = ' +
+        //     SchemaFromJsonGenerator().generateApplication(e) +
+        //     ';';
 
         await outputFile.writeAsString(content);
       },

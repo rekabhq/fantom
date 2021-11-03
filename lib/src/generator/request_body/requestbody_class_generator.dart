@@ -42,6 +42,7 @@ class RequestBodyClassGenerator {
         buffer.writeln(component.fileContent);
       }
     }
+    buffer.writeln(contentManifest.extensionMethods);
     final fileContent = buffer.toString();
     final fileName = '${ReCase(typeName).snakeCase}.dart';
 
