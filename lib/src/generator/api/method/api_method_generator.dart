@@ -131,7 +131,10 @@ class ApiMethodGenerator {
 
     buffer.writeln(_generateEndMethodSyntax());
 
-    buffer.writeln(_generateContentTypeValue());
+    buffer.writeln(_generateContentTypeValue(
+      operationBodyComponent != null,
+      operationBodyComponent?.source.isRequired,
+    ));
 
     // -------
     // 4. generate parsed path - get paths from params and parse them
@@ -215,8 +218,8 @@ class ApiMethodGenerator {
 
   String _generateEndMethodSyntax() => '}) async {';
 
-  String _generateContentTypeValue() =>
-      'contentType = contentType ?? dio.options.contentType; ';
+  String _generateContentTypeValue(bool hasBody, [bool? isRequired = false]) =>
+      'contentType =  contentType ${hasBody ? '?? body${isRequired == true ? '' : '?'}.contentType' : ''} ?? dio.options.contentType; ';
 
   //TODO: add default values for parameters
   String _generateParameters(
@@ -232,7 +235,6 @@ class ApiMethodGenerator {
 
       final name = param.source.name;
       final isRequired = param.source.isRequired == true;
-
 
       // TODO: should we use Option<T> ?
       final defaultValue = (param.schemaComponent != null && !isRequired)
