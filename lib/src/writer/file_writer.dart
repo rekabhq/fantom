@@ -7,6 +7,7 @@ import 'package:fantom/src/utils/process_manager.dart';
 import 'package:fantom/src/writer/dart_package.dart';
 import 'package:fantom/src/writer/directive.dart';
 import 'package:fantom/src/writer/neccessary_files.dart';
+import 'package:fantom/src/writer/utility_files.dart';
 
 // ignore_for_file: unused_local_variable
 
@@ -54,6 +55,7 @@ class FileWriter {
     String fantomPackageName,
   ) async {
     // writing models to models path
+    final apiClassImports = <Directive>[];
     final modelsFileContent = StringBuffer();
     for (var model in models) {
       await _createGeneratableFileIn(
@@ -81,6 +83,17 @@ class FileWriter {
       modelsDirPath,
       [],
     );
+    // writing utility files to utils dir
+    for (var utilFile in allUtilityFiles) {
+      await _createGeneratableFileIn(
+        utilFile,
+        '$apisDirPath/utils',
+        [],
+      );
+      apiClassImports.add(
+        Directive.import('utils/${utilFile.fileName}'),
+      );
+    }
     //writing api class to apis path
     late Directive modelsFileImport;
     if (isFantomPackage) {
@@ -98,10 +111,11 @@ class FileWriter {
       }
       modelsFileImport = Directive.import(uri);
     }
+    apiClassImports.add(modelsFileImport);
     await _createGeneratableFileIn(
       apiClass,
       apisDirPath,
-      [modelsFileImport],
+      apiClassImports,
     );
   }
 
