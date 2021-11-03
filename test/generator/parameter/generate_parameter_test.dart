@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/parameter/parameter_class_generator.dart';
@@ -47,6 +48,9 @@ void main() {
             parameter.value,
             'Status',
           );
+
+          expect(generatedParameter, isA<UnGeneratableParameterComponent>());
+
           print('type: ${generatedParameter.runtimeType}');
 
           print('isSchema: ${generatedParameter.isSchema}');
@@ -58,16 +62,13 @@ void main() {
           print(
               'schemaType: ${generatedParameter.schemaComponent?.isGenerated}');
 
-          print('fileName: ${generatedParameter.fileName}');
-          print('fileContent: ${generatedParameter.fileContent}');
-
           print(
               'dataElement: ${generatedParameter.schemaComponent!.dataElement}');
           print(
               'dataElement Type: ${generatedParameter.schemaComponent!.dataElement.type}');
 
           expect(generatedParameter.isSchema, isTrue);
-          expect(generatedParameter.isGenerated, isTrue);
+          expect(generatedParameter.isGenerated, isFalse);
 
           expect(generatedParameter.schemaComponent, isNotNull);
           expect(generatedParameter.schemaComponent?.isGenerated, isFalse);
@@ -104,16 +105,13 @@ void main() {
           print(
               'schemaType: ${generatedParameter.schemaComponent?.isGenerated}');
 
-          print('fileName: ${generatedParameter.fileName}');
-          print('fileContent: ${generatedParameter.fileContent}');
-
           print(
               'dataElement: ${generatedParameter.schemaComponent!.dataElement}');
           print(
               'dataElement Type: ${generatedParameter.schemaComponent!.dataElement.type}');
 
           expect(generatedParameter.isSchema, isTrue);
-          expect(generatedParameter.isGenerated, isTrue);
+          expect(generatedParameter.isGenerated, isFalse);
 
           expect(generatedParameter.schemaComponent, isNotNull);
           expect(generatedParameter.schemaComponent?.isGenerated, isFalse);

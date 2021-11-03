@@ -115,6 +115,19 @@ class GeneratedParameterComponent extends GeneratedComponent {
   bool get isContent => contentManifest != null;
 }
 
+class UnGeneratableParameterComponent extends GeneratedParameterComponent
+    with UnGeneratableComponent {
+  UnGeneratableParameterComponent({
+    required Parameter source,
+    GeneratedSchemaComponent? schemaComponent,
+  }) : super._(
+          source: source,
+          schemaComponent: schemaComponent,
+          fileContent: '',
+          fileName: '',
+        );
+}
+
 class GeneratedRequestBodyComponent extends GeneratedComponent {
   GeneratedRequestBodyComponent({
     this.contentManifest,

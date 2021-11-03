@@ -47,7 +47,11 @@ class ParameterClassGenerator {
         subTypeName: subTypeName.pascalCase,
         generatedSchemaTypeName: schemaTypeName.pascalCase,
         content: parameter.content!,
-      )!;
+      );
+
+      if (contentManifest == null) {
+        return UnGeneratableParameterComponent(source: parameter);
+      }
 
       final forward = SourceWriter(
         contentManifest.manifest,
@@ -97,11 +101,9 @@ class ParameterClassGenerator {
           fileName: generatedSchema.fileName,
         );
       } else {
-        return GeneratedParameterComponent.schema(
+        return UnGeneratableParameterComponent(
           source: parameter,
           schemaComponent: UnGeneratableSchemaComponent(dataElement: element),
-          fileContent: '',
-          fileName: '',
         );
       }
     }
