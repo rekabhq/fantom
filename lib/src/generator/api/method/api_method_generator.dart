@@ -101,10 +101,11 @@ class ApiMethodGenerator {
         (operationParamComponents?.isNotEmpty ?? false) &&
             operationBodyComponent != null;
 
-    final operationResponsesComponents = methodResponseParser.parseResponses(
-      operation.value.responses,
-      methodName,
-    );
+    // TODO: add responses in future
+    // final operationResponsesComponents = methodResponseParser.parseResponses(
+    //   operation.value.responses,
+    //   methodName,
+    // );
 
     final StringBuffer buffer = StringBuffer();
 
