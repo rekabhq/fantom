@@ -45,7 +45,7 @@ class ResponseClassGenerator {
         buffer.writeln(component.fileContent);
       }
     }
-
+    buffer.writeln(contentManifest.extensionMethods);
     final fileContent = buffer.toString();
     final fileName = '${typeName.snakeCase}.dart';
 
