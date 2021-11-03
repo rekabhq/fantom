@@ -341,6 +341,7 @@ class ApiMethodGenerator {
     GeneratedRequestBodyComponent operationBodyComponent,
   ) {
     // TODO(payam): please check if operationBodyComponent.isGenerated first if not contentManifest will be null
+    // ignore: unused_local_variable
     final type =
         operationBodyComponent.contentManifest?.manifest.name ?? 'dynamic';
     // TODO: check type if its primitive just return it otherwise return toJson
