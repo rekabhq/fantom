@@ -233,16 +233,22 @@ class ApiMethodGenerator {
       final name = param.source.name;
       final isRequired = param.source.isRequired == true;
 
-      // TODO: test default value
-      final defaultValue = (param.schemaComponent != null)
+
+      // TODO: should we use Option<T> ?
+      final defaultValue = (param.schemaComponent != null && !isRequired)
           ? defaultValueGenerator.generate(param.schemaComponent!.dataElement)
           : null;
 
-      final isNullable = param.source.isRequired != true &&
-          type != 'dynamic' &&
-          !type.endsWith('?');
+      final isNullable =
+          param.isNullable && type != 'dynamic' && !type.endsWith('?');
 
-      final nullableChar = isNullable ? '?' : '';
+      final nullableChar =
+          isNullable || (!isRequired && defaultValue == null) ? '?' : '';
+
+      print('param name: ${param.source.name}');
+      print(
+          'param default: ${param.schemaComponent?.dataElement.defaultValue}');
+      print('param generated default: $defaultValue');
 
       buffer.write('${isRequired ? 'required' : ''} $type$nullableChar $name');
 

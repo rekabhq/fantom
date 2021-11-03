@@ -113,6 +113,12 @@ class GeneratedParameterComponent extends GeneratedComponent {
   bool get isSchema => schemaComponent != null;
 
   bool get isContent => contentManifest != null;
+
+  bool get isNullable {
+    if (!isSchema) return true;
+
+    return schemaComponent!.dataElement.isNullable;
+  }
 }
 
 class UnGeneratableParameterComponent extends GeneratedParameterComponent
