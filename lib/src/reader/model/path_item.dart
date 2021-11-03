@@ -65,6 +65,8 @@ class PathItem extends Equatable {
 
 extension PathItemExt on PathItem {
   Map<String, Operation> get operations {
+    final resultMap = <String, Operation>{};
+
     final map = {
       'get': get,
       'put': put,
@@ -74,9 +76,15 @@ extension PathItemExt on PathItem {
       'head': head,
       'patch': patch,
       'trace': trace,
-    }..removeWhere((key, value) => value == null);
+    };
 
-    return map as Map<String, Operation>;
+    map.forEach((key, value) {
+      if (value != null) {
+        resultMap[key] = value;
+      }
+    });
+
+    return resultMap;
   }
 }
 
