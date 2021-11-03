@@ -216,7 +216,7 @@ class ApiMethodGenerator {
   String _generateEndMethodSyntax() => '}) async {';
 
   String _generateContentTypeValue() =>
-      'final contentType = contentType ?? dio.options.contentType; ';
+      'contentType = contentType ?? dio.options.contentType; ';
 
   //TODO: add default values for parameters
   String _generateParameters(
@@ -266,7 +266,7 @@ class ApiMethodGenerator {
     """;
   }
 
-  String _generatePathUrl(String pathUrl) => 'String path = $pathUrl;';
+  String _generatePathUrl(String pathUrl) => 'String path = \'$pathUrl\';';
 
   // path = path.replaceFirst('{id}', '123');
   String _generateReplacePathParameters(
