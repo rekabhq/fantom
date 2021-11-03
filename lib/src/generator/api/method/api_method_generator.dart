@@ -234,11 +234,11 @@ class ApiMethodGenerator {
       final isRequired = param.source.isRequired == true;
 
       // TODO: test default value
-      final defaultValue = (param.isSchema && param.schemaComponent != null)
+      final defaultValue = (param.schemaComponent != null)
           ? defaultValueGenerator.generate(param.schemaComponent!.dataElement)
           : null;
 
-      final isNullable = param.source.isRequired == false &&
+      final isNullable = param.source.isRequired != true &&
           type != 'dynamic' &&
           !type.endsWith('?');
 
