@@ -240,7 +240,13 @@ class ApiMethodGenerator {
           ? defaultValueGenerator.generate(param.schemaComponent!.dataElement)
           : null;
 
-      buffer.write('${isRequired ? 'required' : ''} $type $name');
+      final isNullable = param.source.isRequired == false &&
+          type != 'dynamic' &&
+          !type.endsWith('?');
+
+      final nullableChar = isNullable ? '?' : '';
+
+      buffer.write('${isRequired ? 'required' : ''} $type$nullableChar $name');
 
       // TODO: test default values
       buffer.writeln(
@@ -256,9 +262,15 @@ class ApiMethodGenerator {
     // TODO(payam): please check if requestBody.isGenerated first because if not contentManifest is null
     final type = requestBody.contentManifest?.manifest.name ?? 'dynamic';
     // TODO: check this in tests for duplicated naming
+
     final name = 'body';
     final isRequired = requestBody.source.isRequired == true;
-    return '${isRequired ? 'required' : ''} $type $name,';
+
+    final isNullable = !isRequired && type != 'dynamic' && !type.endsWith('?');
+
+    final nullableChar = isNullable ? '?' : '';
+
+    return '${isRequired ? 'required' : ''} $type$nullableChar $name,';
   }
 
   //TODO(payam): update response of this method
@@ -270,6 +282,7 @@ class ApiMethodGenerator {
 
   String _generatePathUrl(String pathUrl) => 'String path = \'$pathUrl\';';
 
+  // TODO: update this with style and explode options
   // path = path.replaceFirst('{id}', '123');
   String _generateReplacePathParameters(
     List<GeneratedParameterComponent>? generatedPathParams,
@@ -282,7 +295,8 @@ class ApiMethodGenerator {
 
     for (final param in generatedPathParams!) {
       final name = param.source.name;
-      buffer.writeln('.replaceFirst(\'{$name}\', $name)');
+      //TODO: how to add objects and list to path?
+      buffer.writeln('.replaceFirst(\'{$name}\', $name.toString())');
     }
 
     buffer.writeln(';');
