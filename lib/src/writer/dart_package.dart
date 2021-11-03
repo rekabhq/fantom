@@ -34,10 +34,18 @@ class FantomPackageInfo {
         description: 'this is a very funny library',
         environment: {"sdk": ">=2.14.0 <3.0.0"},
         dependencies: [
-          PackageDependencySpec.hosted(HostedPackageDependencySpec(
-            package: 'dio',
-            version: o.Optional('4.0.1'),
-          )),
+          PackageDependencySpec.hosted(
+            HostedPackageDependencySpec(
+              package: 'dio',
+              version: o.Optional('4.0.1'),
+            ),
+          ),
+          PackageDependencySpec.hosted(
+            HostedPackageDependencySpec(
+              package: 'uri',
+              version: o.Optional('1.0.0'),
+            ),
+          ),
         ],
       ),
     );

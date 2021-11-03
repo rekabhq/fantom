@@ -8,8 +8,6 @@ import 'package:fantom/src/generator/schema/schema_default_value_generator.dart'
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:recase/recase.dart';
 
-// ignore_for_file: unused_element
-// ignore_for_file: unused_local_variable
 // TODO: add test for this class
 // TODO: create some constants for this class
 class ApiMethodGenerator {
@@ -271,13 +269,6 @@ class ApiMethodGenerator {
     final nullableChar = isNullable ? '?' : '';
 
     return '${isRequired ? 'required' : ''} $type$nullableChar $name,';
-  }
-
-  //TODO(payam): update response of this method
-  String _generateResponses(Responses responses) {
-    return """
-
-    """;
   }
 
   String _generatePathUrl(String pathUrl) => 'String path = \'$pathUrl\';';
