@@ -233,7 +233,6 @@ class ApiMethodGenerator {
       final name = param.source.name;
       final isRequired = param.source.isRequired == true;
 
-
       // TODO: should we use Option<T> ?
       final defaultValue = (param.schemaComponent != null && !isRequired)
           ? defaultValueGenerator.generate(param.schemaComponent!.dataElement)

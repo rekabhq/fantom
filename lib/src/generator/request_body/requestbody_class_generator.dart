@@ -25,6 +25,7 @@ class RequestBodyClassGenerator {
       subTypeName: subTypeName,
       generatedSchemaTypeName: generatedSchemaTypeName,
       content: requestBody.content,
+      generateGetBodyMethod: true,
     );
 
     if (contentManifest == null) {
