@@ -22,8 +22,8 @@ class ContentManifestCreator {
     required this.schemaClassGenerator,
   });
 
-  final List<GeneratedSchemaComponent> _generatedComponents = [];
-  final Map<String, DataElement> _mapOfDataElements = {};
+  List<GeneratedSchemaComponent> _generatedComponents = [];
+  Map<String, DataElement> _mapOfDataElements = {};
   Map<String, ManifestItem> _mapOfManifestItems = {};
   final OpenApi openApi;
   final SchemaMediator schemaMediator;
@@ -35,9 +35,16 @@ class ContentManifestCreator {
     required String generatedSchemaTypeName,
     required Content? content,
   }) {
+    // resseting processed data
+    _generatedComponents = [];
+    _mapOfDataElements = {};
+    _mapOfManifestItems = {};
+
+    // if content is null we cannot create any Type for it
     if (content == null) {
       return null;
     }
+
     final className = ReCase(typeName).pascalCase;
     _mapOfManifestItems = content.map(
       (contentType, mediaType) {
@@ -78,7 +85,9 @@ class ContentManifestCreator {
     String parentClassName,
     Map<String, DataElement> content,
   ) {
+    print(content.keys);
     if (!content.containsKey('application/json')) {
+      print('did not contain');
       return '';
     }
     final buffer = StringBuffer();
@@ -103,10 +112,6 @@ class ContentManifestCreator {
           buffer.writeln(
             'return $parentClassName.${ReCase(manifestItem.shortName).camelCase}($manifestFieldName: jsonDeserializer(json));',
           );
-        } else {
-          final schemaFromGen = SchemaFromJsonGenerator();
-          final application = schemaFromGen.generateApplication(dataElement);
-          buffer.writeln(application);
         }
       }
     }
@@ -126,10 +131,6 @@ class ContentManifestCreator {
           buffer.writeln(
               'final object =  value.asApplicationJson.applicationJson;');
           buffer.writeln('return jsonSerializer(object);');
-        } else {
-          final schemaFromGen = SchemaToJsonGenerator();
-          final application = schemaFromGen.generateApplication(dataElement);
-          buffer.writeln(application);
         }
       }
     }
