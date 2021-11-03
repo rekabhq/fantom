@@ -9,7 +9,6 @@ import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/logger.dart';
 import 'package:recase/recase.dart';
 import 'package:sealed_writer/sealed_writer.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
 typedef Content = Map<String, MediaType>;
 
@@ -119,11 +118,8 @@ class ContentManifestCreator {
     for (var entry in content.entries) {
       var dataElement = entry.value;
       var contentType = entry.key;
-      var manifestItem = _mapOfManifestItems[entry.key];
       if (contentType == 'application/json') {
         if (dataElement.isObjectDataElement) {
-          var manifestField = manifestItem!.fields[0];
-          var manifestFieldName = manifestField.name;
           final schemaToGen = SchemaToJsonGenerator();
           final application = schemaToGen.generateApplication(dataElement);
           buffer.writeln('final jsonSerializer =  $application;');
