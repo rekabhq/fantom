@@ -171,8 +171,8 @@ class ApiMethodGenerator {
 
     // 7. generate body parameters
     // final bodyJson = body.toJson();
-    if (operationBodyComponent != null) {
-      buffer.writeln(_generateInitialBody(operationBodyComponent));
+    if (operationBodyComponent?.contentManifest != null) {
+      buffer.writeln(_generateInitialBody(operationBodyComponent!));
     }
 
     // -------
@@ -354,7 +354,7 @@ class ApiMethodGenerator {
 
     buffer.write('final option = Options(');
 
-    buffer.writeln('method: ${method.constantCase},');
+    buffer.writeln('method: \'${method.constantCase}\',');
 
     buffer.writeln('contentType: contentType,');
 
