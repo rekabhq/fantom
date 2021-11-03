@@ -11,6 +11,7 @@ import 'package:recase/recase.dart';
 // ignore_for_file: unused_element
 // ignore_for_file: unused_local_variable
 // TODO: add test for this class
+// TODO: create some constants for this class
 class ApiMethodGenerator {
   final OpenApi openApi;
   final SchemaDefaultValueGenerator defaultValueGenerator;
@@ -131,6 +132,8 @@ class ApiMethodGenerator {
 
     buffer.writeln(_generateEndMethodSyntax());
 
+    buffer.writeln(_generateContentTypeValue());
+
     // -------
     // 4. generate parsed path - get paths from params and parse them
     // final path = '/user/{id}';
@@ -211,6 +214,9 @@ class ApiMethodGenerator {
 
   String _generateEndMethodSyntax() => '}) async {';
 
+  String _generateContentTypeValue() =>
+      'final contentType = contentType ?? dio.options.contentType; ';
+
   //TODO: add default values for parameters
   String _generateParameters(
     List<GeneratedParameterComponent> methodParams,
@@ -218,13 +224,16 @@ class ApiMethodGenerator {
     final StringBuffer buffer = StringBuffer();
 
     for (final param in methodParams) {
-      final type = param.isSchema
-          ? param.schemaComponent!.dataElement.type
-          : param.contentManifest!.manifest.name;
+      final type = (param.isSchema
+              ? param.schemaComponent?.dataElement.type
+              : param.contentManifest?.manifest.name) ??
+          'dynamic';
+
       final name = param.source.name;
       final isRequired = param.source.isRequired == true;
 
-      final defaultValue = param.isSchema
+      // TODO: test default value
+      final defaultValue = (param.isSchema && param.schemaComponent != null)
           ? defaultValueGenerator.generate(param.schemaComponent!.dataElement)
           : null;
 
@@ -242,7 +251,7 @@ class ApiMethodGenerator {
     GeneratedRequestBodyComponent requestBody,
   ) {
     // TODO(payam): please check if requestBody.isGenerated first because if not contentManifest is null
-    final type = requestBody.contentManifest!.manifest.name;
+    final type = requestBody.contentManifest?.manifest.name ?? 'dynamic';
     // TODO: check this in tests for duplicated naming
     final name = 'body';
     final isRequired = requestBody.source.isRequired == true;
@@ -256,11 +265,12 @@ class ApiMethodGenerator {
     """;
   }
 
-  String _generatePathUrl(String pathUrl) => 'final path = $pathUrl;';
+  String _generatePathUrl(String pathUrl) => 'String path = $pathUrl;';
 
   // path = path.replaceFirst('{id}', '123');
   String _generateReplacePathParameters(
-      List<GeneratedParameterComponent>? generatedPathParams) {
+    List<GeneratedParameterComponent>? generatedPathParams,
+  ) {
     if (generatedPathParams?.isEmpty ?? true) return '';
 
     final StringBuffer buffer = StringBuffer();
@@ -323,7 +333,8 @@ class ApiMethodGenerator {
     GeneratedRequestBodyComponent operationBodyComponent,
   ) {
     // TODO(payam): please check if operationBodyComponent.isGenerated first if not contentManifest will be null
-    final type = operationBodyComponent.contentManifest!.manifest.name;
+    final type =
+        operationBodyComponent.contentManifest?.manifest.name ?? 'dynamic';
     // TODO: check type if its primitive just return it otherwise return toJson
     final name = 'body';
     return 'final nameJson = $name.toJson();';
