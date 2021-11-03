@@ -103,16 +103,14 @@ class ContentManifestCreator {
       var contentType = entry.key;
       var manifestItem = _mapOfManifestItems[entry.key];
       if (contentType == 'application/json') {
-        if (dataElement.isObjectDataElement) {
-          var manifestField = manifestItem!.fields[0];
-          var manifestFieldName = manifestField.name;
-          final schemaFromGen = SchemaFromJsonGenerator();
-          final application = schemaFromGen.generateApplication(dataElement);
-          buffer.writeln('final jsonDeserializer =  $application;');
-          buffer.writeln(
-            'return $parentClassName.${ReCase(manifestItem.shortName).camelCase}($manifestFieldName: jsonDeserializer(json));',
-          );
-        }
+        var manifestField = manifestItem!.fields[0];
+        var manifestFieldName = manifestField.name;
+        final schemaFromGen = SchemaFromJsonGenerator();
+        final application = schemaFromGen.generateApplication(dataElement);
+        buffer.writeln('final jsonDeserializer =  $application;');
+        buffer.writeln(
+          'return $parentClassName.${ReCase(manifestItem.shortName).camelCase}($manifestFieldName: jsonDeserializer(json));',
+        );
       }
     }
     buffer.writeln('  }');
@@ -124,14 +122,12 @@ class ContentManifestCreator {
       var dataElement = entry.value;
       var contentType = entry.key;
       if (contentType == 'application/json') {
-        if (dataElement.isObjectDataElement) {
-          final schemaToGen = SchemaToJsonGenerator();
-          final application = schemaToGen.generateApplication(dataElement);
-          buffer.writeln('final jsonSerializer =  $application;');
-          buffer.writeln(
-              'final object =  value.asApplicationJson.applicationJson;');
-          buffer.writeln('return jsonSerializer(object);');
-        }
+        final schemaToGen = SchemaToJsonGenerator();
+        final application = schemaToGen.generateApplication(dataElement);
+        buffer.writeln('final jsonSerializer =  $application;');
+        buffer.writeln(
+            'final object =  value.asApplicationJson.applicationJson;');
+        buffer.writeln('return jsonSerializer(object);');
       }
     }
     buffer.writeln('  }');
