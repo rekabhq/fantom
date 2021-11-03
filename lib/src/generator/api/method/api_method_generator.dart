@@ -196,7 +196,9 @@ class ApiMethodGenerator {
     //  options: option,
     //  data: bodyJson,
     // );
-    buffer.writeln(_generateDioRequest());
+    buffer.writeln(
+      _generateDioRequest(generatedQueryParams, operationBodyComponent),
+    );
     // 10. generate evaluated response
     // we should think about this
     // we should deserialize response.data to Generated response component type
@@ -373,16 +375,22 @@ class ApiMethodGenerator {
   //  options: option,
   //  data: bodyJson,
   // );
-  String _generateDioRequest() {
+  String _generateDioRequest(
+    List<GeneratedParameterComponent>? generatedQueryParams,
+    GeneratedRequestBodyComponent? operationBodyComponent,
+  ) {
     final StringBuffer buffer = StringBuffer();
 
     buffer.write('final response = await dio.request(path, ');
-
-    buffer.writeln('queryParameters: queryParams,');
+    if (generatedQueryParams?.isNotEmpty ?? false) {
+      buffer.writeln('queryParameters: queryParams,');
+    }
 
     buffer.writeln('options: option,');
 
-    buffer.writeln('data: bodyJson,');
+    if (operationBodyComponent != null) {
+      buffer.writeln('data: bodyJson,');
+    }
 
     buffer.writeln(');');
 
