@@ -68,9 +68,10 @@ class ApiClassGenerator {
   }
 
   String _generateApiMethods() {
-    //TODO(payam): complete this method
     return """
     
+    ${apiMethodGenerator.generateMethods()}
+
     """;
   }
 }
