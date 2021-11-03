@@ -98,7 +98,7 @@ class ApiMethodGenerator {
           );
 
     final methodHasParameter =
-        (operationParamComponents?.isNotEmpty ?? false) &&
+        (operationParamComponents?.isNotEmpty ?? false) ||
             operationBodyComponent != null;
 
     // TODO: add responses in future
@@ -340,7 +340,8 @@ class ApiMethodGenerator {
         operationBodyComponent.contentManifest?.manifest.name ?? 'dynamic';
     // TODO: check type if its primitive just return it otherwise return toJson
     final name = 'body';
-    return 'final nameJson = $name.toJson();';
+    // return 'final bodyJson = $name.toJson();';
+    return 'final bodyJson = $name;';
   }
 
   // final option =  Options(
