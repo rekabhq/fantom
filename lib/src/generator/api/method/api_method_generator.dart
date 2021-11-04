@@ -1,3 +1,4 @@
+import 'package:fantom/src/generator/api/api_constants.dart';
 import 'package:fantom/src/generator/api/method/body_parser.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
@@ -99,11 +100,14 @@ class ApiMethodGenerator {
         (operationParamComponents?.isNotEmpty ?? false) ||
             operationBodyComponent != null;
 
-    // TODO: add responses in future
-    // final operationResponsesComponents = methodResponseParser.parseResponses(
-    //   operation.value.responses,
-    //   methodName,
-    // );
+    final operationResponsesComponents = methodResponseParser.parseResponses(
+      operation.value.responses,
+      methodName,
+    );
+
+    final responseType =
+        operationResponsesComponents.contentManifest?.manifest.name ??
+            dynamicType;
 
     final StringBuffer buffer = StringBuffer();
 
@@ -117,7 +121,9 @@ class ApiMethodGenerator {
     // Future methodName ->"(params)"<-
 
     // TODO: update Future with method response
-    buffer.writeln(_generateMethodSyntax(methodName));
+    buffer.writeln(
+      _generateMethodSyntax(methodName, responseType),
+    );
     if (methodHasParameter) {
       if (operationParamComponents != null) {
         buffer.writeln(_generateParameters(operationParamComponents));
@@ -142,7 +148,7 @@ class ApiMethodGenerator {
     buffer.writeln(_generatePathUrl(pathUrl));
 
     final generatedPathParams = operationParamComponents
-        ?.where((param) => param.source.location == 'path')
+        ?.where((param) => param.source.location == methodPathParam)
         .toList();
 
     // path = path.replaceFirst('{id}', '123');
@@ -152,7 +158,7 @@ class ApiMethodGenerator {
 
     // 5. generate query parameters
     final generatedQueryParams = operationParamComponents
-        ?.where((param) => param.source.location == 'query')
+        ?.where((param) => param.source.location == methodQueryParam)
         .toList();
 
     // final queryParams = {'id': '123' , 'name': 'John'};
@@ -162,7 +168,7 @@ class ApiMethodGenerator {
 
     // 6. generate header parameters
     final generatedHeaderParams = operationParamComponents
-        ?.where((param) => param.source.location == 'header')
+        ?.where((param) => param.source.location == methodHeaderParam)
         .toList();
 
     // final headerParams = {'accept': 'json'};
@@ -212,23 +218,25 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  String _generateContentTypeParameters() => 'String? contentType,';
+  String _generateContentTypeParameters() => 'String? $contentTypeVariable,';
 
-  String _generateMethodSyntax(String methodName) => 'Future $methodName({';
+  String _generateMethodSyntax(String methodName, String returnType) =>
+      'Future $methodName({';
 
   String _generateEndMethodSyntax() => '}) async {';
 
   String _generateContentTypeValue(bool hasBody, [bool? isRequired = false]) {
     final buffer = StringBuffer();
 
-    buffer.write('contentType = contentType ');
+    buffer.write('$contentTypeVariable = $contentTypeVariable ');
 
     if (hasBody) {
-      buffer.write(' ?? body${isRequired == true ? '' : '?'}.contentType ');
+      buffer.write(
+          ' ?? $bodyVarName${isRequired == true ? '' : '?'}.$contentTypeVariable ');
     }
 
     if (!hasBody || isRequired != true) {
-      buffer.write(' ?? dio.options.contentType ');
+      buffer.write(' ?? $dioInstance.$dioOptions.$contentTypeVariable ');
     }
 
     buffer.writeln(';');
@@ -246,7 +254,7 @@ class ApiMethodGenerator {
       final type = (param.isSchema
               ? param.schemaComponent?.dataElement.type
               : param.contentManifest?.manifest.name) ??
-          'dynamic';
+          dynamicType;
 
       final name = param.source.name;
       final isRequired = param.source.isRequired == true;
@@ -256,18 +264,22 @@ class ApiMethodGenerator {
           ? defaultValueGenerator.generate(param.schemaComponent!.dataElement)
           : null;
 
-      final isNullable =
-          param.isNullable && type != 'dynamic' && !type.endsWith('?');
+      final isNullable = param.isNullable &&
+          type != dynamicType &&
+          !type.endsWith(nullableCharacter);
 
-      final nullableChar =
-          isNullable || (!isRequired && defaultValue == null) ? '?' : '';
+      /// should we use '?' or ''
+      final nullableValue = isNullable || (!isRequired && defaultValue == null)
+          ? nullableCharacter
+          : '';
 
       print('param name: ${param.source.name}');
       print(
           'param default: ${param.schemaComponent?.dataElement.defaultValue}');
       print('param generated default: $defaultValue');
 
-      buffer.write('${isRequired ? 'required' : ''} $type$nullableChar $name');
+      buffer
+          .write('${isRequired ? requiredType : ''} $type$nullableValue $name');
 
       // TODO: test default values
       buffer.writeln(
@@ -281,20 +293,21 @@ class ApiMethodGenerator {
     GeneratedRequestBodyComponent requestBody,
   ) {
     // TODO(payam): please check if requestBody.isGenerated first because if not contentManifest is null
-    final type = requestBody.contentManifest?.manifest.name ?? 'dynamic';
+    final type = requestBody.contentManifest?.manifest.name ?? dynamicType;
     // TODO: check this in tests for duplicated naming
 
-    final name = 'body';
     final isRequired = requestBody.source.isRequired == true;
 
-    final isNullable = !isRequired && type != 'dynamic' && !type.endsWith('?');
+    final isNullable =
+        !isRequired && type != dynamicType && !type.endsWith(nullableCharacter);
 
-    final nullableChar = isNullable ? '?' : '';
+    final nullableChar = isNullable ? nullableCharacter : '';
 
-    return '${isRequired ? 'required' : ''} $type$nullableChar $name,';
+    return '${isRequired ? 'required' : ''} $type$nullableChar $bodyVarName,';
   }
 
-  String _generatePathUrl(String pathUrl) => 'String path = \'$pathUrl\';';
+  String _generatePathUrl(String pathUrl) =>
+      'String $pathVarName = \'$pathUrl\';';
 
   // TODO: update this with style and explode options
   // path = path.replaceFirst('{id}', '123');
@@ -305,12 +318,12 @@ class ApiMethodGenerator {
 
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('path = path');
+    buffer.write('$pathVarName = $pathVarName');
 
     for (final param in generatedPathParams!) {
       final name = param.source.name;
       //TODO: how to add objects and list to path?
-      buffer.writeln('.replaceFirst(\'{$name}\', $name.toString())');
+      buffer.writeln('.replaceFirst(\'{$name}\', $name.$toStringMethod)');
     }
 
     buffer.writeln(';');
@@ -326,7 +339,7 @@ class ApiMethodGenerator {
 
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('final queryParams = {');
+    buffer.write('final $queryParamVarName = {');
 
     for (final param in generatedQueryParams!) {
       final name = param.source.name;
@@ -346,7 +359,7 @@ class ApiMethodGenerator {
 
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('final headerParams = {');
+    buffer.write('final $headerParamVarName = {');
 
     for (final param in generatedHeaderParams!) {
       final name = param.source.name;
@@ -358,19 +371,20 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // final bodyJson = body.toJson();
-  // TODO: Test this method
+  // final bodyValue = body.toJson();
   String _generateInitialBody(
     GeneratedRequestBodyComponent operationBodyComponent,
   ) {
-    // TODO(payam): please check if operationBodyComponent.isGenerated first if not contentManifest will be null
-    // ignore: unused_local_variable
     final type =
-        operationBodyComponent.contentManifest?.manifest.name ?? 'dynamic';
-    // TODO: check type if its primitive just return it otherwise return toJson
-    final name = 'body';
-    // return 'final bodyJson = $name.toJson();';
-    return 'final bodyJson = $name;';
+        operationBodyComponent.contentManifest?.manifest.name ?? dynamicType;
+
+    final isRequired = operationBodyComponent.source.isRequired == true;
+
+    final isNullable =
+        !isRequired && type != dynamicType && !type.endsWith(nullableCharacter);
+
+    final nullableChar = isNullable ? nullableCharacter : '';
+    return 'final $bodyValueVarName = $bodyVarName${type == dynamicType ? '' : '$nullableChar.$toBodyMethod'};';
   }
 
   // final option =  Options(
@@ -384,14 +398,14 @@ class ApiMethodGenerator {
   ) {
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('final option = Options(');
+    buffer.write('final $optionsVarName = $dioOptionsType(');
 
-    buffer.writeln('method: \'${method.constantCase}\',');
+    buffer.writeln('$dioOptionMethod: \'${method.constantCase}\',');
 
-    buffer.writeln('contentType: contentType,');
+    buffer.writeln('$contentTypeVariable: $contentTypeVariable,');
 
     if (generatedHeaderParams?.isNotEmpty ?? false) {
-      buffer.writeln('headers: headerParams,');
+      buffer.writeln('$dioOptionHeaders: $headerParamVarName,');
     }
 
     buffer.writeln(');');
@@ -411,15 +425,16 @@ class ApiMethodGenerator {
   ) {
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('final response = await dio.request(path, ');
+    buffer.write(
+        'final $responseVarName = await $dioInstance.request($pathVarName, ');
     if (generatedQueryParams?.isNotEmpty ?? false) {
-      buffer.writeln('queryParameters: queryParams,');
+      buffer.writeln('$dioQueryParams: $queryParamVarName,');
     }
 
-    buffer.writeln('options: option,');
+    buffer.writeln('$dioOptions: $optionsVarName,');
 
     if (operationBodyComponent != null) {
-      buffer.writeln('data: bodyJson,');
+      buffer.writeln('$dioData: $bodyValueVarName,');
     }
 
     buffer.writeln(');');
@@ -432,7 +447,7 @@ class ApiMethodGenerator {
   String _generateEvaluateResponse() {
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('return response;');
+    buffer.write('return $responseVarName;');
 
     return buffer.toString();
   }
