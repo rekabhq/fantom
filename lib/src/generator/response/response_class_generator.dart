@@ -150,10 +150,10 @@ class ResponseClassGenerator {
   ) {
     final buffer = StringBuffer();
     buffer.writeln('\n');
-    buffer.writeln('extension ${className}Extension on $className {');
+    buffer.writeln('extension ${className}Ext on $className {');
     // create from(statusCode, data, contentType) method for the generated Responses type class
     buffer.writeln(
-      '$className from(String statusCode, dynamic data, String contentType,){ ',
+      'static $className from(String? statusCode, dynamic data, String responseType,){ ',
     );
     buffer.writeln("throw Exception('Not Implemented Yet');");
     buffer.writeln('  }');
