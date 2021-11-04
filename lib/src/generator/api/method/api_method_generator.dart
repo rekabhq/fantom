@@ -210,7 +210,7 @@ class ApiMethodGenerator {
     // we should think about this
     // we should deserialize response.data to Generated response component type
     // return evaluateResponse(response);
-    buffer.writeln(_generateEvaluateResponse());
+    buffer.writeln(_generateEvaluateResponse(responseType));
     // -------
 
     buffer.writeln('}');
@@ -221,7 +221,7 @@ class ApiMethodGenerator {
   String _generateContentTypeParameters() => 'String? $contentTypeVariable,';
 
   String _generateMethodSyntax(String methodName, String returnType) =>
-      'Future $methodName({';
+      'Future<$returnType> $methodName({';
 
   String _generateEndMethodSyntax() => '}) async {';
 
@@ -232,7 +232,7 @@ class ApiMethodGenerator {
 
     if (hasBody) {
       buffer.write(
-          ' ?? $bodyVarName${isRequired == true ? '' : '?'}.$contentTypeVariable ');
+          ' ?? $bodyVarName${isRequired == true ? '' : nullableCharacter}.$contentTypeVariable ');
     }
 
     if (!hasBody || isRequired != true) {
@@ -272,11 +272,6 @@ class ApiMethodGenerator {
       final nullableValue = isNullable || (!isRequired && defaultValue == null)
           ? nullableCharacter
           : '';
-
-      print('param name: ${param.source.name}');
-      print(
-          'param default: ${param.schemaComponent?.dataElement.defaultValue}');
-      print('param generated default: $defaultValue');
 
       buffer
           .write('${isRequired ? requiredType : ''} $type$nullableValue $name');
@@ -442,13 +437,18 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // return evaluateResponse(response);
-  // TODO: complete this method and test it
-  String _generateEvaluateResponse() {
-    final StringBuffer buffer = StringBuffer();
-
-    buffer.write('return $responseVarName;');
-
-    return buffer.toString();
+  // TODO(alireza): we should create responseType parse for from method
+  String _generateEvaluateResponse(String responseTypeName) {
+    if (responseTypeName != dynamicType) {
+      return '''
+      return ${responseTypeName}Ext.from(
+        $responseVarName.statusCode?.toString(),
+        $responseVarName.data,
+        $responseVarName.requestOptions.responseType.toString(),
+      );
+      ''';
+    } else {
+      return 'return $responseVarName;';
+    }
   }
 }
