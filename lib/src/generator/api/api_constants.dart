@@ -25,3 +25,5 @@ const optionsVarName = 'options';
 const queryParamVarName = 'queryParams';
 const headerParamVarName = 'headerParams';
 const bodyValueVarName = 'bodyValue';
+
+const toBodyMethod = 'toBody()';

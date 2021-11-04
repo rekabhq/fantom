@@ -346,18 +346,20 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // final bodyJson = body.toJson();
-  // TODO: Test this method
+  // final bodyValue = body.toJson();
   String _generateInitialBody(
     GeneratedRequestBodyComponent operationBodyComponent,
   ) {
-    // TODO(payam): please check if operationBodyComponent.isGenerated first if not contentManifest will be null
-    // ignore: unused_local_variable
     final type =
         operationBodyComponent.contentManifest?.manifest.name ?? dynamicType;
-    // TODO: check type if its primitive just return it otherwise return toJson
-    // return 'final bodyJson = $name.toJson();';
-    return 'final $bodyValueVarName = $bodyVarName;';
+
+    final isRequired = operationBodyComponent.source.isRequired == true;
+
+    final isNullable =
+        !isRequired && type != dynamicType && !type.endsWith(nullableCharacter);
+
+    final nullableChar = isNullable ? nullableCharacter : '';
+    return 'final $bodyValueVarName = $bodyVarName${type == dynamicType ? '' : '$nullableChar.$toBodyMethod'};';
   }
 
   // final option =  Options(
