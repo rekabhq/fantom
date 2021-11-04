@@ -127,6 +127,8 @@ class ResponseClassGenerator {
         buffer.writeln(component.fileContent);
       }
     }
+    buffer.writeln(
+        _generateResponsesExtensionMethods(manifest.name, responseParts));
     final fileContent = buffer.toString();
     final fileName = '${ReCase('${seedName}Responses').snakeCase}.dart';
 
@@ -140,5 +142,21 @@ class ResponseClassGenerator {
       ),
       source: responses,
     );
+  }
+
+  String _generateResponsesExtensionMethods(
+    String className,
+    Map<String, _ResponsePart> responseParts,
+  ) {
+    final buffer = StringBuffer();
+    buffer.writeln('\n');
+    // create from(statusCode, data, contentType) method for the generated Responses type class
+    buffer.writeln(
+      '$className from(String statusCode, dynamic data, String contentType){ ',
+    );
+    buffer.writeln("throw Exception('Not Implemented Yet');");
+    buffer.writeln('}');
+    buffer.writeln('\n');
+    return buffer.toString();
   }
 }
