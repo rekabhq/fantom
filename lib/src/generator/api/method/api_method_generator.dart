@@ -100,11 +100,14 @@ class ApiMethodGenerator {
         (operationParamComponents?.isNotEmpty ?? false) ||
             operationBodyComponent != null;
 
-    // TODO: add responses in future
-    // final operationResponsesComponents = methodResponseParser.parseResponses(
-    //   operation.value.responses,
-    //   methodName,
-    // );
+    final operationResponsesComponents = methodResponseParser.parseResponses(
+      operation.value.responses,
+      methodName,
+    );
+
+    final responseType =
+        operationResponsesComponents.contentManifest?.manifest.name ??
+            dynamicType;
 
     final StringBuffer buffer = StringBuffer();
 
@@ -118,7 +121,9 @@ class ApiMethodGenerator {
     // Future methodName ->"(params)"<-
 
     // TODO: update Future with method response
-    buffer.writeln(_generateMethodSyntax(methodName));
+    buffer.writeln(
+      _generateMethodSyntax(methodName, responseType),
+    );
     if (methodHasParameter) {
       if (operationParamComponents != null) {
         buffer.writeln(_generateParameters(operationParamComponents));
@@ -212,7 +217,8 @@ class ApiMethodGenerator {
 
   String _generateContentTypeParameters() => 'String? $contentTypeVariable,';
 
-  String _generateMethodSyntax(String methodName) => 'Future $methodName({';
+  String _generateMethodSyntax(String methodName, String returnType) =>
+      'Future $methodName({';
 
   String _generateEndMethodSyntax() => '}) async {';
 

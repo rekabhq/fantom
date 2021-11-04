@@ -252,9 +252,6 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties:
-                  type: integer
-                  format: int32
   /store/order:
     post:
       tags:
