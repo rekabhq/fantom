@@ -218,8 +218,23 @@ class ApiMethodGenerator {
 
   String _generateEndMethodSyntax() => '}) async {';
 
-  String _generateContentTypeValue(bool hasBody, [bool? isRequired = false]) =>
-      'contentType =  contentType ${hasBody ? '?? body${isRequired == true ? '' : '?'}.contentType' : ''} ?? dio.options.contentType; ';
+  String _generateContentTypeValue(bool hasBody, [bool? isRequired = false]) {
+    final buffer = StringBuffer();
+
+    buffer.write('contentType = contentType ');
+
+    if (hasBody) {
+      buffer.write(' ?? body${isRequired == true ? '' : '?'}.contentType ');
+    }
+
+    if (!hasBody || isRequired != true) {
+      buffer.write(' ?? dio.options.contentType ');
+    }
+
+    buffer.writeln(';');
+
+    return buffer.toString();
+  }
 
   //TODO: add default values for parameters
   String _generateParameters(
