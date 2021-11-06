@@ -5,22 +5,6 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:meta/meta.dart';
 import 'package:recase/recase.dart';
 
-/// example:
-///
-/// abstract class A {
-///   A._();
-///
-///   static final String x = 'x';
-///   static final String y = 'y';
-///   static final String z = 'z';
-/// }
-///
-/// static final int num_0 = 0;
-/// static final double num_1_5 = 1.5;
-/// static final num num_1 = 1;
-/// static final num num_1_5 = 1.5;
-///
-/// static final User item0 = ...;
 class SchemaEnumGenerator {
   const SchemaEnumGenerator();
 
@@ -99,96 +83,81 @@ class SchemaEnumGenerator {
       throw AssertionError('non-nullable element with null value in enum');
     }
 
-    return element.match(
-      boolean: (boolean) {
-        if (value == null) {
-          return 'value${index}_null';
-        } else {
+    final base = 'value$index';
+    if (value == null) {
+      return base + '_null';
+    } else {
+      return element.match(
+        boolean: (boolean) {
           if (value is! bool) {
             throw AssertionError('bad type for enum value');
           }
 
           if (value) {
-            return 'value${index}_true';
+            return base + '_true';
           } else {
-            return 'value${index}_false';
+            return base + '_false';
           }
-        }
-      },
-      object: (object) {
-        if (value is! Map<String, dynamic>?) {
-          throw AssertionError('bad type for enum value');
-        }
+        },
+        object: (object) {
+          if (value is! Map<String, dynamic>?) {
+            throw AssertionError('bad type for enum value');
+          }
 
-        return 'value$index';
-      },
-      array: (array) {
-        if (value is! List<dynamic>?) {
-          throw AssertionError('bad type for enum value');
-        }
+          return base;
+        },
+        array: (array) {
+          if (value is! List<dynamic>?) {
+            throw AssertionError('bad type for enum value');
+          }
 
-        return 'value$index';
-      },
-      integer: (integer) {
-        if (value == null) {
-          return 'value${index}_null';
-        } else {
+          return base;
+        },
+        integer: (integer) {
           if (value is! int) {
             throw AssertionError('bad type for enum value');
           }
 
-          return 'value${index}_' + _int(value);
-        }
-      },
-      number: (number) {
-        if (number.isFloat) {
-          if (value == null) {
-            return 'value${index}_null';
-          } else {
+          return base + '_' + _int(value);
+        },
+        number: (number) {
+          if (number.isFloat) {
             if (value is! double) {
               throw AssertionError('bad type for enum value');
             }
 
-            return 'value${index}_' + _double(value);
-          }
-        } else {
-          if (value == null) {
-            return 'value${index}_null';
+            return base + '_' + _double(value);
           } else {
             if (value is! num) {
               throw AssertionError('bad type for enum value');
             }
 
             if (value is int) {
-              return 'value${index}_' + _int(value);
+              return base + '_' + _int(value);
             } else if (value is double) {
-              return 'value${index}_' + _double(value);
+              return base + '_' + _double(value);
             } else {
               throw AssertionError();
             }
           }
-        }
-      },
-      string: (string) {
-        final format = string.format;
-        if (format == StringDataElementFormat.binary) {
-          throw UnimplementedError('only plain string is supported');
-        }
+        },
+        string: (string) {
+          final format = string.format;
+          if (format == StringDataElementFormat.binary) {
+            throw UnimplementedError('only plain string is supported');
+          }
 
-        if (value == null) {
-          return 'value${index}_null';
-        } else {
           if (value is! String) {
             throw AssertionError('bad type for enum value');
           }
 
-          return 'value${index}_$value';
-        }
-      },
-      untyped: (untyped) {
-        throw UnimplementedError('untyped data element');
-      },
-    );
+          return base + '_$value';
+        },
+        untyped: (untyped) {
+          throw UnimplementedError('untyped data element');
+        },
+      );
+    }
   }
 
   String _int(int value) {
