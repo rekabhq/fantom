@@ -58,7 +58,7 @@ class ApiClass{
       'should create a dart package from package info',
       () async {
         //when
-        await FileWriter.writeGeneratedFiles(generationData);
+        await FileWriter(generationData).writeGeneratedFiles();
         // assert existense of these files
         expect(Directory(libDirPath).existsSync(), isTrue);
         expect(File(pubspecPath).existsSync(), isTrue);
