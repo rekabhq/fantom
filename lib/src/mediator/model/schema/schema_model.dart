@@ -95,70 +95,71 @@ abstract class DataElement {
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
-    required String? name,
-    required bool isNullable,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required Enumeration? enumeration,
+    String? name,
+    bool isNullable,
+    bool isDeprecated,
+    DefaultValue? defaultValue,
+    Enumeration? enumeration,
   }) = BooleanDataElement;
 
   /// [ObjectDataElement]
   const factory DataElement.object({
-    required String? name,
-    required bool isNullable,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required Enumeration? enumeration,
-    required List<ObjectProperty> properties,
-    required DataElement? additionalProperties,
+    String? name,
+    bool isNullable,
+    bool isDeprecated,
+    DefaultValue? defaultValue,
+    Enumeration? enumeration,
+    List<ObjectProperty> properties,
+    DataElement? additionalProperties,
   }) = ObjectDataElement;
 
   /// [ArrayDataElement]
   const factory DataElement.array({
-    required String? name,
-    required bool isNullable,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required Enumeration? enumeration,
+    String? name,
+    bool isNullable,
+    bool isDeprecated,
+    DefaultValue? defaultValue,
+    Enumeration? enumeration,
     required DataElement items,
-    required bool isUniqueItems,
+    bool isUniqueItems,
   }) = ArrayDataElement;
 
   /// [IntegerDataElement]
   const factory DataElement.integer({
-    required String? name,
-    required bool isNullable,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required Enumeration? enumeration,
+    String? name,
+    bool isNullable,
+    bool isDeprecated,
+    DefaultValue? defaultValue,
+    Enumeration? enumeration,
   }) = IntegerDataElement;
 
   /// [NumberDataElement]
   const factory DataElement.number({
-    required String? name,
-    required bool isNullable,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required Enumeration? enumeration,
-    required bool isFloat,
+    String? name,
+    bool isNullable,
+    bool isDeprecated,
+    DefaultValue? defaultValue,
+    Enumeration? enumeration,
+    bool isFloat,
   }) = NumberDataElement;
 
   /// [StringDataElement]
   const factory DataElement.string({
-    required String? name,
-    required bool isNullable,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required Enumeration? enumeration,
-    required StringDataElementFormat format,
+    String? name,
+    bool isNullable,
+    bool isDeprecated,
+    DefaultValue? defaultValue,
+    Enumeration? enumeration,
+    StringDataElementFormat format,
   }) = StringDataElement;
 
   /// [UntypedDataElement]
   const factory DataElement.untyped({
-    required String? name,
-    required bool isDeprecated,
-    required DefaultValue? defaultValue,
-    required Enumeration? enumeration,
+    String? name,
+    bool isNullable,
+    bool isDeprecated,
+    DefaultValue? defaultValue,
+    Enumeration? enumeration,
   }) = UntypedDataElement;
 }
 
@@ -326,8 +327,8 @@ class ObjectDataElement with EquatableMixin implements DataElement {
     this.isDeprecated = false,
     this.defaultValue,
     this.enumeration,
-     this.properties = const [],
-     this.additionalProperties,
+    this.properties = const [],
+    this.additionalProperties,
   });
 
   /// if is additional properties allowed.
@@ -565,7 +566,7 @@ class NumberDataElement with EquatableMixin implements DataElement {
     this.isDeprecated = false,
     this.defaultValue,
     this.enumeration,
-     this.isFloat = true,
+    this.isFloat = true,
   });
 
   @override
@@ -642,7 +643,7 @@ class StringDataElement with EquatableMixin implements DataElement {
     this.isDeprecated = false,
     this.defaultValue,
     this.enumeration,
-     this.format = StringDataElementFormat.plain,
+    this.format = StringDataElementFormat.plain,
   });
 
   @override
@@ -686,7 +687,7 @@ class UntypedDataElement with EquatableMixin implements DataElement {
   final String? name;
 
   @override
-  final bool isNullable = true;
+  final bool isNullable;
 
   @override
   final bool isDeprecated;
@@ -699,6 +700,7 @@ class UntypedDataElement with EquatableMixin implements DataElement {
 
   const UntypedDataElement({
     this.name,
+    this.isNullable = true,
     this.isDeprecated = false,
     this.defaultValue,
     this.enumeration,

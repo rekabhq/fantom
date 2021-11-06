@@ -24,9 +24,8 @@ class SchemaMediator {
       return _convert(openApi, resolution.schema, resolution.name);
     } else {
       final schemaValue = schema.value;
-      final fullType = _extractFullType(schemaValue);
-      final type = fullType.type;
-      final isNullable = fullType.isNullable;
+      final type = schemaValue.type;
+      final isNullable = schemaValue.nullable == true;
       switch (type) {
         case 'boolean':
           return DataElement.boolean(
@@ -118,9 +117,10 @@ class SchemaMediator {
             enumeration: _extractEnumerationInfo(schemaValue),
             format: StringDataElementFormat.plain,
           );
-        case 'dynamic':
+        case null:
           return DataElement.untyped(
             name: name,
+            isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
@@ -129,15 +129,6 @@ class SchemaMediator {
           throw AssertionError('unknown type "$type"');
       }
     }
-  }
-
-  _FullType _extractFullType(Schema schemaValue) {
-    final type = schemaValue.type;
-    final nullable = schemaValue.nullable;
-    return _FullType(
-      type: type ?? 'dynamic',
-      isNullable: nullable == true,
-    );
   }
 
   bool _extractIsDeprecated(Schema schemaValue) {
@@ -159,14 +150,4 @@ class SchemaMediator {
             values: schemaValue.enumerated!,
           );
   }
-}
-
-class _FullType {
-  final String type;
-  final bool isNullable;
-
-  const _FullType({
-    required this.type,
-    required this.isNullable,
-  });
 }
