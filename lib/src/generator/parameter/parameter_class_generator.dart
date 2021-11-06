@@ -47,6 +47,7 @@ class ParameterClassGenerator {
         subTypeName: subTypeName.pascalCase,
         generatedSchemaTypeName: schemaTypeName.pascalCase,
         content: parameter.content!,
+        generateToUriParamMethod: true,
       );
 
       if (contentManifest == null) {
