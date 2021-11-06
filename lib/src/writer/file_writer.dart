@@ -151,7 +151,6 @@ class FileWriter {
     await modelFile.create(recursive: true);
     final content = StringBuffer();
     for (var directive in directives) {
-      print(directive);
       content.writeln(directive.toString());
     }
     content.writeln(generatableFile.fileContent);
