@@ -10,7 +10,6 @@ import 'package:fantom/src/reader/model/model.dart';
 import 'package:recase/recase.dart';
 
 // TODO: add test for this class
-// TODO: create some constants for this class
 class ApiMethodGenerator {
   final OpenApi openApi;
   final SchemaDefaultValueGenerator defaultValueGenerator;
@@ -120,7 +119,6 @@ class ApiMethodGenerator {
     // 3. generate method parameters
     // Future methodName ->"(params)"<-
 
-    // TODO: update Future with method response
     buffer.writeln(
       _generateMethodSyntax(methodName, responseType),
     );
@@ -244,7 +242,6 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  //TODO: add default values for parameters
   String _generateParameters(
     List<GeneratedParameterComponent> methodParams,
   ) {
@@ -278,18 +275,18 @@ class ApiMethodGenerator {
 
       // TODO: test default values
       buffer.writeln(
-          defaultValue?.isNotEmpty == true ? '= $defaultValue ,' : ',');
+        defaultValue?.isNotEmpty == true ? '= $defaultValue ,' : ',',
+      );
     }
 
     return buffer.toString();
   }
 
+  // TODO: check this in tests for duplicated naming
   String _generateRequestBody(
     GeneratedRequestBodyComponent requestBody,
   ) {
-    // TODO(payam): please check if requestBody.isGenerated first because if not contentManifest is null
     final type = requestBody.contentManifest?.manifest.name ?? dynamicType;
-    // TODO: check this in tests for duplicated naming
 
     final isRequired = requestBody.source.isRequired == true;
 
@@ -317,7 +314,6 @@ class ApiMethodGenerator {
 
     for (final param in generatedPathParams!) {
       final name = param.source.name;
-      //TODO: how to add objects and list to path?
       buffer.writeln('.replaceFirst(\'{$name}\', $name.$toStringMethod)');
     }
 
@@ -437,7 +433,6 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // TODO(alireza): we should create responseType parse for from method
   String _generateEvaluateResponse(String responseTypeName) {
     if (responseTypeName != dynamicType) {
       return '''
