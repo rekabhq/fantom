@@ -87,3 +87,5 @@ test/generator/response/output.dart
 test/generator/response/response_output.dart
 test/generator/response/responses_output.dart
 generated/
+
+openapi_files/.playing.dart

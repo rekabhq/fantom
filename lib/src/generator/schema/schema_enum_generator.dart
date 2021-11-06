@@ -2,6 +2,7 @@ import 'package:fantom/src/generator/components/component/generated_components.d
 import 'package:fantom/src/generator/schema/schema_value_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:meta/meta.dart';
 import 'package:recase/recase.dart';
 
 /// example:
@@ -29,12 +30,13 @@ class SchemaEnumGenerator {
   }) {
     return GeneratedSchemaComponent(
       dataElement: element,
-      fileContent: _generate(element, name),
+      fileContent: generateContent(element, name),
       fileName: _fileName(name),
     );
   }
 
-  String _generate(final DataElement element, final String name) {
+  @visibleForTesting
+  String generateContent(final DataElement element, final String name) {
     final enumeration = element.enumeration;
     if (enumeration == null) {
       throw AssertionError('element ${element.name} does not contain an enum');

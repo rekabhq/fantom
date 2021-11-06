@@ -1,9 +1,10 @@
 import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
 import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
-import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:meta/meta.dart';
 import 'package:recase/recase.dart';
 
 class SchemaClassGenerator {
@@ -17,7 +18,7 @@ class SchemaClassGenerator {
 
     return GeneratedSchemaComponent(
       dataElement: object,
-      fileContent: _generate(object),
+      fileContent: generateContent(object),
       fileName: _fileName(object),
     );
   }
@@ -27,7 +28,8 @@ class SchemaClassGenerator {
     return '${ReCase(name).snakeCase}.dart';
   }
 
-  String _generate(final ObjectDataElement object) {
+  @visibleForTesting
+  String generateContent(final ObjectDataElement object) {
     final name = object.name!;
     final format = object.format;
 
