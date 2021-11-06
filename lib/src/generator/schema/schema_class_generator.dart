@@ -22,7 +22,7 @@ class SchemaClassGenerator {
     );
   }
 
-  String _fileName(ObjectDataElement object) {
+  String _fileName(final ObjectDataElement object) {
     final name = object.name!;
     return '${ReCase(name).snakeCase}.dart';
   }

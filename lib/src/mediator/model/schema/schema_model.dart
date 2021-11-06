@@ -19,13 +19,13 @@ class DefaultValue with EquatableMixin {
 }
 
 /// information for an enum or constant value
-class EnumerationInfo with EquatableMixin {
+class Enumeration with EquatableMixin {
   /// values of enum
   ///
   /// ex. ['hello', 'hi', null]
   final List<Object?> values;
 
-  const EnumerationInfo({
+  const Enumeration({
     required this.values,
   });
 
@@ -35,7 +35,7 @@ class EnumerationInfo with EquatableMixin {
       ];
 
   @override
-  String toString() => 'EnumerationInfo{values: $values}';
+  String toString() => 'Enumeration{values: $values}';
 }
 
 /// base data element:
@@ -73,7 +73,7 @@ abstract class DataElement {
 
   /// if present provides enumeration information,
   /// if not present means no enumeration.
-  EnumerationInfo? get enumeration;
+  Enumeration? get enumeration;
 
   /// type with nullability sign
   ///
@@ -99,7 +99,7 @@ abstract class DataElement {
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
+    required Enumeration? enumeration,
   }) = BooleanDataElement;
 
   /// [ObjectDataElement]
@@ -108,7 +108,7 @@ abstract class DataElement {
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
+    required Enumeration? enumeration,
     required List<ObjectProperty> properties,
     required DataElement? additionalProperties,
   }) = ObjectDataElement;
@@ -119,7 +119,7 @@ abstract class DataElement {
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
+    required Enumeration? enumeration,
     required DataElement items,
     required bool isUniqueItems,
   }) = ArrayDataElement;
@@ -130,7 +130,7 @@ abstract class DataElement {
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
+    required Enumeration? enumeration,
   }) = IntegerDataElement;
 
   /// [NumberDataElement]
@@ -139,7 +139,7 @@ abstract class DataElement {
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
+    required Enumeration? enumeration,
     required bool isFloat,
   }) = NumberDataElement;
 
@@ -149,7 +149,7 @@ abstract class DataElement {
     required bool isNullable,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
+    required Enumeration? enumeration,
     required StringDataElementFormat format,
   }) = StringDataElement;
 
@@ -158,7 +158,7 @@ abstract class DataElement {
     required String? name,
     required bool isDeprecated,
     required DefaultValue? defaultValue,
-    required EnumerationInfo? enumeration,
+    required Enumeration? enumeration,
   }) = UntypedDataElement;
 }
 
@@ -177,7 +177,7 @@ class BooleanDataElement with EquatableMixin implements DataElement {
   final DefaultValue? defaultValue;
 
   @override
-  final EnumerationInfo? enumeration;
+  final Enumeration? enumeration;
 
   const BooleanDataElement({
     required this.name,
@@ -310,7 +310,7 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   final DefaultValue? defaultValue;
 
   @override
-  final EnumerationInfo? enumeration;
+  final Enumeration? enumeration;
 
   /// properties
   final List<ObjectProperty> properties;
@@ -437,7 +437,7 @@ class ArrayDataElement with EquatableMixin implements DataElement {
   final DefaultValue? defaultValue;
 
   @override
-  final EnumerationInfo? enumeration;
+  final Enumeration? enumeration;
 
   /// element type
   final DataElement items;
@@ -504,7 +504,7 @@ class IntegerDataElement with EquatableMixin implements DataElement {
   final DefaultValue? defaultValue;
 
   @override
-  final EnumerationInfo? enumeration;
+  final Enumeration? enumeration;
 
   const IntegerDataElement({
     required this.name,
@@ -554,7 +554,7 @@ class NumberDataElement with EquatableMixin implements DataElement {
   final DefaultValue? defaultValue;
 
   @override
-  final EnumerationInfo? enumeration;
+  final Enumeration? enumeration;
 
   /// is double or num ?
   final bool isFloat;
@@ -629,7 +629,7 @@ class StringDataElement with EquatableMixin implements DataElement {
   final DefaultValue? defaultValue;
 
   @override
-  final EnumerationInfo? enumeration;
+  final Enumeration? enumeration;
 
   /// format.
   ///
@@ -695,7 +695,7 @@ class UntypedDataElement with EquatableMixin implements DataElement {
   final DefaultValue? defaultValue;
 
   @override
-  final EnumerationInfo? enumeration;
+  final Enumeration? enumeration;
 
   const UntypedDataElement({
     required this.name,

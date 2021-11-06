@@ -152,10 +152,10 @@ class SchemaMediator {
           );
   }
 
-  EnumerationInfo? _extractEnumerationInfo(Schema schemaValue) {
+  Enumeration? _extractEnumerationInfo(Schema schemaValue) {
     return schemaValue.enumerated == null
         ? null
-        : EnumerationInfo(
+        : Enumeration(
             values: schemaValue.enumerated!,
           );
   }
