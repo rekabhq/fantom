@@ -6,7 +6,6 @@ import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/utils/process_manager.dart';
 import 'package:fantom/src/writer/dart_package.dart';
 import 'package:fantom/src/writer/directive.dart';
-import 'package:fantom/src/writer/neccessary_files.dart';
 import 'package:fantom/src/writer/utility_files.dart';
 
 // ignore_for_file: unused_local_variable
@@ -56,25 +55,42 @@ class FileWriter {
   ) async {
     // writing models to models path
     final apiClassImports = <Directive>[];
-    final modelsFileContent = StringBuffer();
+    final modelsFileDirectives = <Directive>[];
     for (var model in models) {
       await _createGeneratableFileIn(
         model,
         modelsDirPath,
         [Directive.partOf('models.dart')],
       );
-      modelsFileContent.writeln(Directive.part(model.fileName).toString());
+      modelsFileDirectives.add(Directive.part(model.fileName));
     }
-    for (var neccessaryFile in allNeccessaryFiles) {
-      await _createGeneratableFileIn(
-        neccessaryFile,
-        '$modelsDirPath/extra',
-        [Directive.partOf('../models.dart')],
-      );
-      modelsFileContent.writeln(
-          Directive.part('extra/${neccessaryFile.fileName}').toString());
-    }
+    // for (var neccessaryFile in allNeccessaryFiles) {
+    //   await _createGeneratableFileIn(
+    //     neccessaryFile,
+    //     '$modelsDirPath/extra',
+    //     [Directive.partOf('../models.dart')],
+    //   );
+    //   modelsFileContent.writeln(
+    //       Directive.part('extra/${neccessaryFile.fileName}').toString());
+    // }
 
+    // writing utility files to utils dir
+    for (var utilFile in allUtilityFiles) {
+      await _createGeneratableFileIn(
+        utilFile,
+        '$apisDirPath/utils',
+        [],
+      );
+      apiClassImports.add(Directive.import('utils/${utilFile.fileName}'));
+      modelsFileDirectives.insert(
+          0, Directive.import('../utils/${utilFile.fileName}'));
+    }
+    // create models.dart file
+    final modelsFileContent = StringBuffer();
+    modelsFileContent.writeAll(
+      modelsFileDirectives.map((e) => e.toString()),
+      '\n',
+    );
     await _createGeneratableFileIn(
       GeneratableFile(
         fileContent: modelsFileContent.toString(),
@@ -83,17 +99,6 @@ class FileWriter {
       modelsDirPath,
       [],
     );
-    // writing utility files to utils dir
-    for (var utilFile in allUtilityFiles) {
-      await _createGeneratableFileIn(
-        utilFile,
-        '$apisDirPath/utils',
-        [],
-      );
-      apiClassImports.add(
-        Directive.import('utils/${utilFile.fileName}'),
-      );
-    }
     //writing api class to apis path
     late Directive modelsFileImport;
     if (isFantomPackage) {

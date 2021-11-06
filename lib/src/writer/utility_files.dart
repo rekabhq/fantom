@@ -2,6 +2,16 @@ import 'package:fantom/src/writer/file_writer.dart';
 
 const allUtilityFiles = [
   GeneratableFile(
+    fileName: 'optional.dart',
+    fileContent: r'''
+class Optional<T> {
+  final T value;
+
+  const Optional(this.value);
+}    
+    ''',
+  ),
+  GeneratableFile(
     fileName: 'uri_parser.dart',
     fileContent: r'''
 import 'package:uri/uri.dart';
