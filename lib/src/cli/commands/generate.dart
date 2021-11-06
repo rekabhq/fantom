@@ -160,7 +160,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     // write files
     progress = Log.progress('✍  Writing Generated Files');
     Log.spacer();
-    await FileWriter.writeGeneratedFiles(generationData);
+    await FileWriter(generationData).writeGeneratedFiles();
     progress.finish(showTiming: true);
     Log.fine('👻 ALL GOOD 👻');
     return 0;
