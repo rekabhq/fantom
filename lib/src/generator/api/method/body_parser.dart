@@ -25,8 +25,10 @@ class MethodBodyParser {
     } else if (requestBody.isValue) {
       final generatedBody =
           bodyClassGenerator.generate(requestBody.value, seedName);
-
-      registerGeneratedComponentWithoutRef(generatedBody);
+          
+      if (generatedBody.isGenerated) {
+        registerGeneratedComponentWithoutRef(generatedBody);
+      }
 
       return generatedBody;
     } else {

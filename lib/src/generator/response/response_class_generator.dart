@@ -19,7 +19,7 @@ class ResponseClassGenerator {
     final String seedName,
   ) {
     final typeName = '${seedName}Response';
-    final subTypeName = seedName;
+    final subTypeName = '${seedName}Type';
     final generatedSchemaTypeName = '${seedName}ResponseBody';
 
     final contentManifest = contentManifestCreator.generateContentType(
@@ -70,13 +70,15 @@ class ResponseClassGenerator {
     Map<String, _ResponsePart> responseParts = responses.map!.map(
       (statusCode, responseOrRef) {
         if (responseOrRef.isReference) {
-          print(responseOrRef.reference.ref);
-          var component =
+          final component =
               getGeneratedComponentByRef(responseOrRef.reference.ref)
                   as _ResponsePart;
           return MapEntry(statusCode, component);
         } else {
-          var component = generateResponse(responseOrRef.value, seedName);
+          final component = generateResponse(
+            responseOrRef.value,
+            seedName,
+          );
           generatedComponents.add(component);
           return MapEntry(statusCode, component);
         }
@@ -100,9 +102,9 @@ class ResponseClassGenerator {
                 name: 'value',
                 type: ManifestType(name: 'dynamic', isNullable: false),
               );
-        var manifestItem = ManifestItem(
-          name: ReCase('Status$statusCode').pascalCase,
-          shortName: ReCase('Status$statusCode').camelCase,
+        final manifestItem = ManifestItem(
+          name: ReCase('$seedName$statusCode').pascalCase,
+          shortName: ReCase('$seedName$statusCode').camelCase,
           equality: ManifestEquality.identity,
           fields: [manifestField],
         );
@@ -110,7 +112,7 @@ class ResponseClassGenerator {
       },
     );
 
-    var manifest = Manifest(
+    final manifest = Manifest(
       name: ReCase('${seedName}Responses').pascalCase,
       items: manifestItems.values.toList(),
       params: [],
