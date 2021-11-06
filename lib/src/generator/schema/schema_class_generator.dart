@@ -76,6 +76,7 @@ class SchemaClassGenerator {
     if (object.properties.isEmpty) {
       return '${object.name} ();';
     } else {
+      final sdvg = SchemaDefaultValueGenerator();
       return [
         '${object.name} ({',
         [
@@ -103,7 +104,7 @@ class SchemaClassGenerator {
                   ' != null ? ',
                   property.name,
                   '.value : ',
-                  SchemaDefaultValueGenerator().generate(property.item)!,
+                  sdvg.generate(property.item)!,
                 ].joinParts(),
               ',',
             ].joinParts(),
