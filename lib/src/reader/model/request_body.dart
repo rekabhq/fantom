@@ -24,4 +24,8 @@ class RequestBody extends Equatable {
         content,
         isRequired,
       ];
+
+  @override
+  String toString() => 'RequestBody{content: $content, '
+      'isRequired: $isRequired}';
 }

@@ -9,4 +9,7 @@ class Optional<T extends Object?> extends Equatable {
   List<Object?> get props => [
         value,
       ];
+
+  @override
+  String toString() => 'Optional{$value}';
 }

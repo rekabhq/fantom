@@ -19,4 +19,7 @@ class Reference<T extends Object> extends Equatable {
   List<Object?> get props => [
         ref,
       ];
+
+  @override
+  String toString() => 'Reference{ref: $ref}';
 }

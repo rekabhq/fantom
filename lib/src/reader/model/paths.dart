@@ -17,4 +17,7 @@ class Paths extends Equatable {
   List<Object?> get props => [
         paths,
       ];
+
+  @override
+  String toString() => 'Paths{paths: $paths}';
 }

@@ -44,4 +44,9 @@ class Referenceable<T extends Object> extends Equatable {
         _value,
         _reference,
       ];
+
+  @override
+  String toString() => _value != null
+      ? 'Referenceable.value{$_value}'
+      : 'Referenceable.reference{$_reference}';
 }

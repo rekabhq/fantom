@@ -54,4 +54,10 @@ class Operation extends Equatable {
         hasSecurity,
         operationId,
       ];
+
+  @override
+  String toString() => 'Operation{operationId: $operationId, '
+      'parameters: $parameters, requestBody: $requestBody, '
+      'responses: $responses, deprecated: $deprecated, '
+      'hasSecurity: $hasSecurity}';
 }

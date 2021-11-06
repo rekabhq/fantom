@@ -34,4 +34,8 @@ class Responses extends Equatable {
         defaultValue,
         map,
       ];
+
+  @override
+  String toString() => 'Responses{defaultValue: $defaultValue, '
+      'map: $map}';
 }

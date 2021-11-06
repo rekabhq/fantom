@@ -44,4 +44,9 @@ class Boolable<T extends Object> extends Equatable {
         _value,
         _boolean,
       ];
+
+  @override
+  String toString() => _value != null
+      ? 'Boolable.value{$_value}'
+      : 'Boolable.boolean{$_boolean}';
 }

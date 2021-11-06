@@ -73,4 +73,11 @@ class Parameter extends Equatable {
         schema,
         content,
       ];
+
+  @override
+  String toString() => 'Parameter{name: $name, location: $location, '
+      'isRequired: $isRequired, deprecated: $deprecated, '
+      'allowEmptyValue: $allowEmptyValue, style: $style, '
+      'explode: $explode, allowReserved: $allowReserved, '
+      'schema: $schema, content: $content}';
 }

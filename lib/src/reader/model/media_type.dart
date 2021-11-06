@@ -27,4 +27,7 @@ class MediaType extends Equatable {
         schema,
         encoding,
       ];
+
+  @override
+  String toString() => 'MediaType{schema: $schema, encoding: $encoding}';
 }
