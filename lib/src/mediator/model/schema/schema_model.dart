@@ -180,11 +180,11 @@ class BooleanDataElement with EquatableMixin implements DataElement {
   final Enumeration? enumeration;
 
   const BooleanDataElement({
-    required this.name,
-    required this.isNullable,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
+    this.name,
+    this.isNullable = false,
+    this.isDeprecated = false,
+    this.defaultValue,
+    this.enumeration,
   });
 
   @override
@@ -228,7 +228,7 @@ class ObjectProperty with EquatableMixin {
   const ObjectProperty({
     required this.name,
     required this.item,
-    required this.isRequired,
+    this.isRequired = false,
   });
 
   @override
@@ -321,13 +321,13 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   final DataElement? additionalProperties;
 
   const ObjectDataElement({
-    required this.name,
-    required this.isNullable,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
-    required this.properties,
-    required this.additionalProperties,
+    this.name,
+    this.isNullable = false,
+    this.isDeprecated = false,
+    this.defaultValue,
+    this.enumeration,
+     this.properties = const [],
+     this.additionalProperties,
   });
 
   /// if is additional properties allowed.
@@ -446,13 +446,13 @@ class ArrayDataElement with EquatableMixin implements DataElement {
   final bool isUniqueItems;
 
   const ArrayDataElement({
-    required this.name,
-    required this.isNullable,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
+    this.name,
+    this.isNullable = false,
+    this.isDeprecated = false,
+    this.defaultValue,
+    this.enumeration,
     required this.items,
-    required this.isUniqueItems,
+    this.isUniqueItems = false,
   });
 
   @override
@@ -507,11 +507,11 @@ class IntegerDataElement with EquatableMixin implements DataElement {
   final Enumeration? enumeration;
 
   const IntegerDataElement({
-    required this.name,
-    required this.isNullable,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
+    this.name,
+    this.isNullable = false,
+    this.isDeprecated = false,
+    this.defaultValue,
+    this.enumeration,
   });
 
   @override
@@ -560,12 +560,12 @@ class NumberDataElement with EquatableMixin implements DataElement {
   final bool isFloat;
 
   const NumberDataElement({
-    required this.name,
-    required this.isNullable,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
-    required this.isFloat,
+    this.name,
+    this.isNullable = false,
+    this.isDeprecated = false,
+    this.defaultValue,
+    this.enumeration,
+     this.isFloat = true,
   });
 
   @override
@@ -637,12 +637,12 @@ class StringDataElement with EquatableMixin implements DataElement {
   final StringDataElementFormat format;
 
   const StringDataElement({
-    required this.name,
-    required this.isNullable,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
-    required this.format,
+    this.name,
+    this.isNullable = false,
+    this.isDeprecated = false,
+    this.defaultValue,
+    this.enumeration,
+     this.format = StringDataElementFormat.plain,
   });
 
   @override
@@ -698,10 +698,10 @@ class UntypedDataElement with EquatableMixin implements DataElement {
   final Enumeration? enumeration;
 
   const UntypedDataElement({
-    required this.name,
-    required this.isDeprecated,
-    required this.defaultValue,
-    required this.enumeration,
+    this.name,
+    this.isDeprecated = false,
+    this.defaultValue,
+    this.enumeration,
   });
 
   @override
