@@ -566,7 +566,7 @@ class NumberDataElement with EquatableMixin implements DataElement {
     this.isDeprecated = false,
     this.defaultValue,
     this.enumeration,
-    this.isFloat = true,
+    this.isFloat = false,
   });
 
   @override

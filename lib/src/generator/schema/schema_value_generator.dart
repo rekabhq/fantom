@@ -105,6 +105,11 @@ class SchemaValueGenerator {
         },
         string: (string) {
           // ex. "'hello'"
+          final format = string.format;
+          if (format == StringDataElementFormat.binary) {
+            throw UnimplementedError('only plain string is supported');
+          }
+
           if (value is! String) throw AssertionError('bad types');
           return _string(value);
         },

@@ -117,6 +117,11 @@ class SchemaFromJsonGenerator {
         return fixedName;
       },
       string: (string) {
+        final format = string.format;
+        if (format == StringDataElementFormat.binary) {
+          throw UnimplementedError('only plain string is supported');
+        }
+
         return fixedName;
       },
       untyped: (untyped) {

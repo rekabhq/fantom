@@ -52,25 +52,42 @@ class SchemaEnumGenerator {
     }
 
     final svg = SchemaValueGenerator();
+    final names = _names(element, values);
     return [
       'abstract class $name {',
       '$name._();',
       for (var index = 0; index < values.length; index++)
         [
-          'static final ',
-          type,
-          ' ',
-          _name(element, index, values[index]),
+          'static final $type ',
+          names[index],
           ' = ',
           svg.generate(element, value: values[index]),
           ';',
         ].joinParts(),
+      [
+        'static final List<$type> values = [',
+        names.joinArgsFull(),
+        '];',
+      ].joinParts(),
       '}',
     ].joinLines();
   }
 
   String _fileName(final String name) {
     return '${ReCase(name).snakeCase}.dart';
+  }
+
+  List<String> _names(
+    final DataElement element,
+    final List<Object?> values,
+  ) {
+    Iterable<String> it() sync* {
+      for (var index = 0; index < values.length; index++) {
+        yield _name(element, index, values[index]);
+      }
+    }
+
+    return it().toList();
   }
 
   String _name(
@@ -85,16 +102,16 @@ class SchemaEnumGenerator {
     return element.match(
       boolean: (boolean) {
         if (value == null) {
-          return 'boolNull';
+          return 'value${index}_null';
         } else {
           if (value is! bool) {
             throw AssertionError('bad type for enum value');
           }
 
           if (value) {
-            return 'boolTrue';
+            return 'value${index}_true';
           } else {
-            return 'boolFalse';
+            return 'value${index}_false';
           }
         }
       },
@@ -103,49 +120,49 @@ class SchemaEnumGenerator {
           throw AssertionError('bad type for enum value');
         }
 
-        return 'item$index';
+        return 'value$index';
       },
       array: (array) {
         if (value is! List<dynamic>?) {
           throw AssertionError('bad type for enum value');
         }
 
-        return 'item$index';
+        return 'value$index';
       },
       integer: (integer) {
         if (value == null) {
-          return 'intNull';
+          return 'value${index}_null';
         } else {
           if (value is! int) {
             throw AssertionError('bad type for enum value');
           }
 
-          return 'int_' + _int(value);
+          return 'value${index}_' + _int(value);
         }
       },
       number: (number) {
         if (number.isFloat) {
           if (value == null) {
-            return 'doubleNull';
+            return 'value${index}_null';
           } else {
             if (value is! double) {
               throw AssertionError('bad type for enum value');
             }
 
-            return 'double_' + _double(value);
+            return 'value${index}_' + _double(value);
           }
         } else {
           if (value == null) {
-            return 'numNull';
+            return 'value${index}_null';
           } else {
             if (value is! num) {
               throw AssertionError('bad type for enum value');
             }
 
             if (value is int) {
-              return 'num_' + _int(value);
+              return 'value${index}_' + _int(value);
             } else if (value is double) {
-              return 'num_' + _double(value);
+              return 'value${index}_' + _double(value);
             } else {
               throw AssertionError();
             }
@@ -153,18 +170,19 @@ class SchemaEnumGenerator {
         }
       },
       string: (string) {
+        final format = string.format;
+        if (format == StringDataElementFormat.binary) {
+          throw UnimplementedError('only plain string is supported');
+        }
+
         if (value == null) {
-          return 'stringNull';
+          return 'value${index}_null';
         } else {
           if (value is! String) {
             throw AssertionError('bad type for enum value');
           }
 
-          if (string.isNullable) {
-            return 'string$value';
-          } else {
-            return value;
-          }
+          return 'value${index}_$value';
         }
       },
       untyped: (untyped) {
