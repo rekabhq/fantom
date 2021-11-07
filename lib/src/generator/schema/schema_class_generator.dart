@@ -7,8 +7,14 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
 
 extension SchemaClassGeneratorExt on SchemaClassGenerator {
-  GeneratedSchemaComponent generate(final ObjectDataElement object) {
-    final content = generateClass(object);
+  GeneratedSchemaComponent generate(
+    final ObjectDataElement object, {
+    final String? additionalCode,
+  }) {
+    final content = generateClass(
+      object,
+      additionalCode: additionalCode,
+    );
     return GeneratedSchemaComponent(
       dataElement: object,
       fileContent: content,
@@ -20,7 +26,10 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
 class SchemaClassGenerator {
   const SchemaClassGenerator();
 
-  String generateClass(final ObjectDataElement object) {
+  String generateClass(
+    final ObjectDataElement object, {
+    final String? additionalCode,
+  }) {
     final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
@@ -49,6 +58,7 @@ class SchemaClassGenerator {
       _constructor(object),
       SchemaToJsonGenerator().generateForClass(object),
       SchemaFromJsonGenerator().generateForClass(object),
+      if (additionalCode != null) additionalCode,
       '}',
     ].joinMethods();
   }
