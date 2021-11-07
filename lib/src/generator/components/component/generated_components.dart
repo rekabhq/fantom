@@ -164,6 +164,7 @@ class GeneratedResponseComponent extends GeneratedComponent {
   GeneratedResponseComponent({
     required String fileContent,
     required String fileName,
+    required this.seedName,
     required this.contentManifest,
     required this.source,
   }) : super(
@@ -172,6 +173,7 @@ class GeneratedResponseComponent extends GeneratedComponent {
         );
 
   final ContentManifest? contentManifest;
+  final String seedName;
   final Response source;
 }
 
@@ -181,6 +183,7 @@ class UnGeneratableResponseComponent extends GeneratedResponseComponent
       : super(
           source: source,
           contentManifest: null,
+          seedName: 'no seed name',
           fileContent: '',
           fileName: '',
         );
