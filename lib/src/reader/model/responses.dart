@@ -29,6 +29,17 @@ class Responses extends Equatable {
     );
   }
 
+  Map<String, Referenceable<Response>> get allResponses {
+    final value = <String, Referenceable<Response>>{};
+    if (defaultValue != null) {
+      value['default'] = defaultValue!;
+    }
+    if (map != null) {
+      value.addAll(map!);
+    }
+    return value;
+  }
+
   @override
   List<Object?> get props => [
         defaultValue,

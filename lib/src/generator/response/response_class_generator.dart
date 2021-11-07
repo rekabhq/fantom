@@ -65,14 +65,12 @@ class ResponseClassGenerator {
     List<_ResponsePart> generatedComponents = [];
     // first we get all components for the response parts either by ref or we generate them and map them to our
     // reponse status codes in our responses object
-    if (responses.map == null || responses.map?.entries.isEmpty == true) {
+    if (responses.allResponses.isEmpty ||
+        responses.allResponses.entries.isEmpty) {
       return UnGeneratableResponsesComponent(responses);
     }
-    final allResponses = responses.map!;
-    if (responses.defaultValue != null) {
-      allResponses['default'] = responses.defaultValue!;
-    }
-    Map<String, _ResponsePart> responseParts = allResponses.map(
+
+    Map<String, _ResponsePart> responseParts = responses.allResponses.map(
       (statusCode, responseOrRef) {
         if (responseOrRef.isReference) {
           final component =
@@ -116,6 +114,14 @@ class ResponseClassGenerator {
         return MapEntry(statusCode, manifestItem);
       },
     );
+
+    // check if any of the sub-types of our Responses type has actual usable value
+    final usableValues = manifestItems.values
+        .where((element) => element.fields[0].type.name != 'dynamic');
+    print('usable values -> $usableValues');
+    if (usableValues.isEmpty) {
+      return UnGeneratableResponsesComponent(responses);
+    }
 
     final manifest = Manifest(
       name: ReCase('${seedName}Responses').pascalCase,
