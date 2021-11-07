@@ -28,7 +28,6 @@ class SchemaEnumGenerator {
   String generateEnum(
     final DataElement element, {
     required final String name,
-    final bool noJson = true,
   }) {
     final enumeration = element.enumeration;
     if (enumeration == null) {
