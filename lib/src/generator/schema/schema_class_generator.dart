@@ -11,12 +11,12 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
     final ObjectDataElement object, {
     final String? additionalCode,
     final bool generateJson = true,
-    final bool inline = false,
+    final bool inlineJson = false,
   }) {
     final content = generateClass(
       object,
       additionalCode: additionalCode,
-      inline: inline,
+      inlineJson: inlineJson,
     );
     return GeneratedSchemaComponent(
       dataElement: object,
@@ -33,7 +33,7 @@ class SchemaClassGenerator {
     final ObjectDataElement object, {
     final String? additionalCode,
     final bool generateJson = true,
-    final bool inline = false,
+    final bool inlineJson = false,
   }) {
     final name = object.name;
     if (name == null) {
@@ -65,7 +65,7 @@ class SchemaClassGenerator {
         [
           SchemaToJsonGenerator().generateForClass(
             object,
-            inline: inline,
+            inline: inlineJson,
           ),
           SchemaFromJsonGenerator().generateForClass(object),
         ].joinMethods(),
