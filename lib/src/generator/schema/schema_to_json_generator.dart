@@ -5,7 +5,10 @@ class SchemaToJsonGenerator {
   const SchemaToJsonGenerator();
 
   /// ex. ((User value) => value.toJson())
-  String generateApplication(final DataElement element) {
+  String generateApplication(
+    final DataElement element, {
+    final bool inline = false,
+  }) {
     final type = element.type;
     if (type == null) {
       throw UnimplementedError('bad type for element');
@@ -13,7 +16,7 @@ class SchemaToJsonGenerator {
 
     return [
       '(($type value) => ',
-      _logic(element, 'value'),
+      _logic(element, 'value', inline),
       ')',
     ].joinParts();
   }
@@ -23,6 +26,7 @@ class SchemaToJsonGenerator {
     final DataElement element, {
     final String name = 'toJson',
     final bool isStatic = true,
+    final bool inline = false,
   }) {
     final type = element.type;
     if (type == null) {
@@ -32,13 +36,16 @@ class SchemaToJsonGenerator {
     return [
       if (isStatic) 'static ',
       'dynamic $name($type value) => ',
-      _logic(element, 'value'),
+      _logic(element, 'value', inline),
       ';',
     ].joinParts();
   }
 
   /// ex. Map<String, dynamic> toJson() => ...;
-  String generateForClass(final ObjectDataElement object) {
+  String generateForClass(
+    final ObjectDataElement object, {
+    final bool inline = false,
+  }) {
     final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
@@ -56,36 +63,52 @@ class SchemaToJsonGenerator {
 
     return [
       'Map<String, dynamic> toJson() => ',
-      _inner(object),
+      _inner(object, inline, null),
       ';',
     ].joinParts();
   }
 
   // safe for empty objects
-  String _inner(final ObjectDataElement object) {
+  String _inner(
+    final ObjectDataElement object,
+    final bool inline,
+    final String? prefixCall,
+  ) {
     return [
       '<String, dynamic>{',
       for (final property in object.properties)
         [
-          _property(property),
+          _property(property, inline, prefixCall),
           ',',
         ].joinParts(),
       '}',
     ].joinLines();
   }
 
-  String _property(final ObjectProperty property) {
+  String _property(
+    final ObjectProperty property,
+    final bool inline,
+    final String? prefixCall,
+  ) {
     final name = property.name;
+    final nameCall = [
+      if (prefixCall != null) '$prefixCall.',
+      name,
+    ].joinParts();
     final isOptional = property.isFieldOptional;
-    final fixedName = isOptional ? '$name!.value' : name;
+    final fixedName = isOptional ? '$nameCall!.value' : nameCall;
     return [
-      if (isOptional) 'if ($name != null) ',
+      if (isOptional) 'if ($nameCall != null) ',
       "'$name' : ",
-      _logic(property.item, fixedName),
+      _logic(property.item, fixedName, inline),
     ].joinParts();
   }
 
-  String _logic(DataElement element, String name) {
+  String _logic(
+    final DataElement element,
+    final String name,
+    final bool inline,
+  ) {
     final isNullable = element.isNullable;
     final fixedName = isNullable ? '$name!' : name;
     return [
@@ -104,12 +127,25 @@ class SchemaToJsonGenerator {
             return [
               '(($typeNN value) => ',
               'value.map((key, it) => MapEntry(key, ',
-              _logic(object.additionalProperties!, 'it'),
+              _logic(object.additionalProperties!, 'it', inline),
               '))',
               ')($fixedName)',
             ].joinParts();
           } else {
-            return '$fixedName.toJson()';
+            if (inline) {
+              final typeNN = object.typeNN;
+              if (typeNN == null) {
+                throw UnimplementedError('object with no name');
+              }
+
+              return [
+                '(($typeNN value) => ',
+                _inner(object, inline, 'value'),
+                ')($fixedName)',
+              ].joinParts();
+            } else {
+              return '$fixedName.toJson()';
+            }
           }
         },
         array: (array) {
@@ -122,7 +158,7 @@ class SchemaToJsonGenerator {
           return [
             '(($typeNN value) => ',
             'value.map((it) => ',
-            _logic(array.items, 'it'),
+            _logic(array.items, 'it', inline),
             ').toList()',
             ')($fixedName)',
           ].joinParts();

@@ -10,10 +10,13 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
   GeneratedSchemaComponent generate(
     final ObjectDataElement object, {
     final String? additionalCode,
+    final bool generateJson = true,
+    final bool inline = false,
   }) {
     final content = generateClass(
       object,
       additionalCode: additionalCode,
+      inline: inline,
     );
     return GeneratedSchemaComponent(
       dataElement: object,
@@ -29,6 +32,8 @@ class SchemaClassGenerator {
   String generateClass(
     final ObjectDataElement object, {
     final String? additionalCode,
+    final bool generateJson = true,
+    final bool inline = false,
   }) {
     final name = object.name;
     if (name == null) {
@@ -56,8 +61,14 @@ class SchemaClassGenerator {
       'class $name {',
       _fields(object),
       _constructor(object),
-      SchemaToJsonGenerator().generateForClass(object),
-      SchemaFromJsonGenerator().generateForClass(object),
+      if (generateJson)
+        [
+          SchemaToJsonGenerator().generateForClass(
+            object,
+            inline: inline,
+          ),
+          SchemaFromJsonGenerator().generateForClass(object),
+        ].joinMethods(),
       if (additionalCode != null) additionalCode,
       '}',
     ].joinMethods();
