@@ -50,9 +50,9 @@ class SchemaToJsonGenerator {
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
     }
-    if (object.format != ObjectDataElementFormat.object) {
+    if (object.format == ObjectDataElementFormat.map) {
       throw UnimplementedError(
-        '"mixed" and "map" objects are not supported : name is ${object.name}',
+        'map objects are not supported : name is ${object.name}',
       );
     }
     for (final property in object.properties) {
@@ -74,6 +74,10 @@ class SchemaToJsonGenerator {
     final bool inline,
     final bool prefixCall,
   ) {
+    if (object.format == ObjectDataElementFormat.mixed) {
+      throw UnimplementedError('mixed objects is not supported');
+    }
+
     return [
       '<String, dynamic>{',
       for (final property in object.properties)

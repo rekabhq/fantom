@@ -22,7 +22,8 @@ class SchemaValueGenerator {
         },
         object: (object) {
           if (value is! Map<String, dynamic>) throw AssertionError('bad types');
-          if (object.format == ObjectDataElementFormat.map) {
+          final format = object.format;
+          if (format == ObjectDataElementFormat.map) {
             // ex. <String, int>{'a': 12}
             final additionalProperties = object.additionalProperties!;
             final sub = object.additionalProperties!.type;
@@ -67,6 +68,10 @@ class SchemaValueGenerator {
                 );
               }
 
+              if (format == ObjectDataElementFormat.mixed) {
+                throw UnimplementedError('mixed objects is not supported');
+              }
+
               return [
                 '$name(',
                 for (final key in fixedValues.keys)
@@ -80,13 +85,12 @@ class SchemaValueGenerator {
                     if (propertiesMap[key]!.isConstructorOptional) ')',
                     ',',
                   ].joinParts(),
-                // todo: correct format ?
-                if (object.format == ObjectDataElementFormat.mixed)
-                  [
-                    'additionalProperties: ',
-                    generate(additionalProperties!, value: additionalValues),
-                    ','
-                  ].joinParts(),
+                // if (object.format == ObjectDataElementFormat.mixed)
+                //   [
+                //     'additionalProperties: ',
+                //     generate(additionalProperties!, value: additionalValues),
+                //     ','
+                //   ].joinParts(),
                 ')',
               ].joinParts();
             } else {
