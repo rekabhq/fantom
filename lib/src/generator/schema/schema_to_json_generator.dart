@@ -4,6 +4,7 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 class SchemaToJsonGenerator {
   const SchemaToJsonGenerator();
 
+  /// ex. ((User value) => value.toJson())
   String generateApplication(final DataElement element) {
     final type = element.type;
     if (type == null) {
@@ -17,6 +18,26 @@ class SchemaToJsonGenerator {
     ].joinParts();
   }
 
+  /// ex. static dynamic toJson(User value) => value.toJson();
+  String generateMethod(
+    final DataElement element, {
+    final String name = 'toJson',
+    final bool isStatic = true,
+  }) {
+    final type = element.type;
+    if (type == null) {
+      throw UnimplementedError('bad type for element');
+    }
+
+    return [
+      if (isStatic) 'static ',
+      'dynamic $name($type value) => ',
+      _logic(element, 'value'),
+      ';',
+    ].joinParts();
+  }
+
+  /// ex. Map<String, dynamic> toJson() => ...;
   String generateForClass(final ObjectDataElement object) {
     final name = object.name;
     if (name == null) {

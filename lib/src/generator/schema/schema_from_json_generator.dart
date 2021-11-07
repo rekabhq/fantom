@@ -4,11 +4,31 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 class SchemaFromJsonGenerator {
   const SchemaFromJsonGenerator();
 
+  /// ex. ((dynamic json) => User.fromJson(json))
   String generateApplication(final DataElement element) {
     return [
       '((dynamic json) => ',
       _logic(element, 'json'),
       ')',
+    ].joinParts();
+  }
+
+  /// ex. User fromJson(dynamic json) => User.fromJson(json);
+  String generateMethod(
+    final DataElement element, {
+    final String name = 'fromJson',
+    final bool isStatic = true,
+  }) {
+    final type = element.type;
+    if (type == null) {
+      throw UnimplementedError('bad type for element');
+    }
+
+    return [
+      if (isStatic) 'static ',
+      '$type $name(dynamic json) => ',
+      _logic(element, 'json'),
+      ';',
     ].joinParts();
   }
 

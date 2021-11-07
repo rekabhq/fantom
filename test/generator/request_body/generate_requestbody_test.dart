@@ -76,29 +76,36 @@ class Optional<T> {
 
 ''';
 
-        // // todo: fix ...
+        // // final e = ObjectDataElement(
+        // //   name: 'Aban',
+        // //   isNullable: true,
+        // //   additionalProperties: IntegerDataElement(
+        // //     name: 'Baba',
+        // //     isNullable: true,
+        // //   ),
+        // // );
         // final e = ObjectDataElement(
-        //   name: 'Aban',
-        //   isNullable: true,
-        //   isDeprecated: false,
-        //   defaultValue: null,
-        //   enumeration: null,
-        //   properties: [],
-        //   additionalProperties: IntegerDataElement(
-        //     name: 'Baba',
-        //     isNullable: true,
-        //     defaultValue: null,
-        //     enumeration: null,
-        //     isDeprecated: false,
-        //   ),
+        //   name: 'User',
         // );
         // content += 'final appToJson = ' +
         //     SchemaToJsonGenerator().generateApplication(e) +
         //     ';';
         // content += '\n\n';
+        // content += SchemaToJsonGenerator().generateMethod(
+        //   e,
+        //   name: 'toJsonMethod',
+        //   isStatic: false,
+        // );
+        // content += '\n\n';
         // content += 'final appFromJson = ' +
         //     SchemaFromJsonGenerator().generateApplication(e) +
         //     ';';
+        // content += '\n\n';
+        // content += SchemaFromJsonGenerator().generateMethod(
+        //   e,
+        //   name: 'fromJsonMethod',
+        //   isStatic: false,
+        // );
 
         await outputFile.writeAsString(content);
       },
