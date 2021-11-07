@@ -9,10 +9,15 @@ extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
   GeneratedSchemaComponent generate(
     final DataElement element, {
     required final String name,
+    final bool noJson = true,
   }) {
     return GeneratedSchemaComponent(
       dataElement: element,
-      fileContent: generateEnum(element, name: name),
+      fileContent: generateEnum(
+        element,
+        name: name,
+        noJson: noJson,
+      ),
       fileName: '${ReCase(name).snakeCase}.dart',
     );
   }
@@ -25,6 +30,7 @@ class SchemaEnumGenerator {
   String generateEnum(
     final DataElement element, {
     required final String name,
+    final bool noJson = true,
   }) {
     final enumeration = element.enumeration;
     if (enumeration == null) {
@@ -41,7 +47,9 @@ class SchemaEnumGenerator {
     }
 
     final svg = SchemaValueGenerator();
-    final names = _names(element, values);
+    final names = [
+      for (var index = 0; index < values.length; index++) 'value$index',
+    ];
     return [
       'abstract class $name {',
       '$name._();',
@@ -50,9 +58,27 @@ class SchemaEnumGenerator {
           'static final $type ',
           names[index],
           ' = ',
-          svg.generate(element, value: values[index]),
+          svg.generate(
+            element,
+            value: values[index],
+            noJson: noJson,
+          ),
           ';',
         ].joinParts(),
+      for (var index = 0; index < values.length; index++)
+        if (_canSpecific(element, values[index]))
+          [
+            'static final $type ',
+            values[index] == null
+                ? 'valueNull'
+                : [
+                    'value_',
+                    _specific(element, values[index]),
+                  ].joinParts(),
+            ' = ',
+            names[index],
+            ';',
+          ].joinParts(),
       [
         'static final List<$type> values = [',
         names.joinArgsFull(),
@@ -62,84 +88,67 @@ class SchemaEnumGenerator {
     ].joinLines();
   }
 
-  List<String> _names(
+  /// also check types ...
+  bool _canSpecific(
     final DataElement element,
-    final List<Object?> values,
-  ) {
-    Iterable<String> it() sync* {
-      for (var index = 0; index < values.length; index++) {
-        yield _name(element, index, values[index]);
-      }
-    }
-
-    return it().toList();
-  }
-
-  String _name(
-    final DataElement element,
-    final int index,
     final Object? value,
   ) {
-    if (value == null && element.isNotNullable) {
-      throw AssertionError('non-nullable element with null value in enum');
-    }
-
-    final base = 'value$index';
     if (value == null) {
-      return base + '_null';
+      return true;
+    } else {
+      return element.match(
+        boolean: (boolean) => true,
+        object: (object) => false,
+        array: (array) => false,
+        integer: (integer) => true,
+        number: (number) => true,
+        string: (string) => string.format != StringDataElementFormat.binary,
+        untyped: (untyped) => false,
+      );
+    }
+  }
+
+  String _specific(
+    final DataElement element,
+    final Object? value,
+  ) {
+    if (value == null) {
+      return 'null';
     } else {
       return element.match(
         boolean: (boolean) {
           if (value is! bool) {
             throw AssertionError('bad type for enum value');
           }
-
           if (value) {
-            return base + '_true';
+            return 'true';
           } else {
-            return base + '_false';
+            return 'false';
           }
         },
         object: (object) {
-          if (value is! Map<String, dynamic>?) {
-            throw AssertionError('bad type for enum value');
-          }
-
-          return base;
+          throw AssertionError();
         },
         array: (array) {
-          if (value is! List<dynamic>?) {
-            throw AssertionError('bad type for enum value');
-          }
-
-          return base;
+          throw AssertionError();
         },
         integer: (integer) {
           if (value is! int) {
             throw AssertionError('bad type for enum value');
           }
-
-          return base + '_' + _int(value);
+          return _int(value);
         },
         number: (number) {
           if (number.isFloat) {
             if (value is! double) {
               throw AssertionError('bad type for enum value');
             }
-
-            return base + '_' + _double(value);
+            return _double(value);
           } else {
             if (value is! num) {
               throw AssertionError('bad type for enum value');
             }
-
-            if (value is int) {
-              return base + '_' + _int(value);
-            } else if (value is double) {
-              return base + '_' + _double(value);
-            } else {
-              throw AssertionError();
-            }
+            return _num(value);
           }
         },
         string: (string) {
@@ -147,12 +156,10 @@ class SchemaEnumGenerator {
           if (format == StringDataElementFormat.binary) {
             throw UnimplementedError('only plain string is supported');
           }
-
           if (value is! String) {
             throw AssertionError('bad type for enum value');
           }
-
-          return base + '_$value';
+          return value;
         },
         untyped: (untyped) {
           throw UnimplementedError('untyped data element');
@@ -167,5 +174,15 @@ class SchemaEnumGenerator {
 
   String _double(double value) {
     return '$value'.replaceAll('-', 'N').replaceAll('.', '_');
+  }
+
+  String _num(num value) {
+    if (value is int) {
+      return _int(value);
+    } else if (value is double) {
+      return _double(value);
+    } else {
+      throw AssertionError();
+    }
   }
 }

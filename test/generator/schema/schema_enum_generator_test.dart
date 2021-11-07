@@ -26,9 +26,11 @@ void main() {
             x,
             r'''abstract class MyEnum {
 MyEnum._();
-static final bool value0_true = true;
-static final bool value1_false = false;
-static final List<bool> values = [value0_true, value1_false,];
+static final bool value0 = true;
+static final bool value1 = false;
+static final bool value_true = value0;
+static final bool value_false = value1;
+static final List<bool> values = [value0, value1,];
 }''',
           );
         });
@@ -49,9 +51,11 @@ static final List<bool> values = [value0_true, value1_false,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final bool? value0_null = null;
-static final bool? value1_false = false;
-static final List<bool?> values = [value0_null, value1_false,];
+static final bool? value0 = null;
+static final bool? value1 = false;
+static final bool? valueNull = value0;
+static final bool? value_false = value1;
+static final List<bool?> values = [value0, value1,];
 }''',
           );
         });
@@ -85,8 +89,8 @@ static final List<bool?> values = [value0_null, value1_false,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final User value0 = User.fromJson(<String, dynamic>{'id': 100});
-static final User value1 = User.fromJson(<String, dynamic>{'id': 200});
+static final User value0 = User(id : 100,);
+static final User value1 = User(id : 200,);
 static final List<User> values = [value0, value1,];
 }''',
           );
@@ -118,9 +122,10 @@ static final List<User> values = [value0, value1,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final User? value0_null = null;
-static final User? value1 = User.fromJson(<String, dynamic>{'id': 200});
-static final List<User?> values = [value0_null, value1,];
+static final User? value0 = null;
+static final User? value1 = User(id : 200,);
+static final User? valueNull = value0;
+static final List<User?> values = [value0, value1,];
 }''',
           );
         });
@@ -143,8 +148,8 @@ static final List<User?> values = [value0_null, value1,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final List<int> value0 = <int>[1, 2];
-static final List<int> value1 = <int>[3, 4, 5];
+static final List<int> value0 = <int>[1, 2,];
+static final List<int> value1 = <int>[3, 4, 5,];
 static final List<List<int>> values = [value0, value1,];
 }''',
           );
@@ -168,9 +173,10 @@ static final List<List<int>> values = [value0, value1,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final Set<int>? value0_null = null;
-static final Set<int>? value1 = <int>{3, 4, 5};
-static final List<Set<int>?> values = [value0_null, value1,];
+static final Set<int>? value0 = null;
+static final Set<int>? value1 = <int>{3, 4, 5,};
+static final Set<int>? valueNull = value0;
+static final List<Set<int>?> values = [value0, value1,];
 }''',
           );
         });
@@ -192,9 +198,11 @@ static final List<Set<int>?> values = [value0_null, value1,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final int value0_10 = 10;
-static final int value1_20 = 20;
-static final List<int> values = [value0_10, value1_20,];
+static final int value0 = 10;
+static final int value1 = 20;
+static final int value_10 = value0;
+static final int value_20 = value1;
+static final List<int> values = [value0, value1,];
 }''',
           );
         });
@@ -215,9 +223,11 @@ static final List<int> values = [value0_10, value1_20,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final int? value0_null = null;
-static final int? value1_20 = 20;
-static final List<int?> values = [value0_null, value1_20,];
+static final int? value0 = null;
+static final int? value1 = 20;
+static final int? valueNull = value0;
+static final int? value_20 = value1;
+static final List<int?> values = [value0, value1,];
 }''',
           );
         });
@@ -240,9 +250,11 @@ static final List<int?> values = [value0_null, value1_20,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final double value0_10_12 = 10.12;
-static final double value1_20_56 = 20.56;
-static final List<double> values = [value0_10_12, value1_20_56,];
+static final double value0 = 10.12;
+static final double value1 = 20.56;
+static final double value_10_12 = value0;
+static final double value_20_56 = value1;
+static final List<double> values = [value0, value1,];
 }''',
           );
         });
@@ -265,10 +277,13 @@ static final List<double> values = [value0_10_12, value1_20_56,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final num? value0_null = null;
-static final num? value1_20 = 20;
-static final num? value2_13_506 = 13.506;
-static final List<num?> values = [value0_null, value1_20, value2_13_506,];
+static final num? value0 = null;
+static final num? value1 = 20;
+static final num? value2 = 13.506;
+static final num? valueNull = value0;
+static final num? value_20 = value1;
+static final num? value_13_506 = value2;
+static final List<num?> values = [value0, value1, value2,];
 }''',
           );
         });
@@ -290,9 +305,11 @@ static final List<num?> values = [value0_null, value1_20, value2_13_506,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final String value0_abc = 'abc';
-static final String value1_def = 'def';
-static final List<String> values = [value0_abc, value1_def,];
+static final String value0 = 'abc';
+static final String value1 = 'def';
+static final String value_abc = value0;
+static final String value_def = value1;
+static final List<String> values = [value0, value1,];
 }''',
           );
         });
@@ -313,9 +330,11 @@ static final List<String> values = [value0_abc, value1_def,];
             r'''
 abstract class MyEnum {
 MyEnum._();
-static final String? value0_null = null;
-static final String? value1_def = 'def';
-static final List<String?> values = [value0_null, value1_def,];
+static final String? value0 = null;
+static final String? value1 = 'def';
+static final String? valueNull = value0;
+static final String? value_def = value1;
+static final List<String?> values = [value0, value1,];
 }''',
           );
         });
