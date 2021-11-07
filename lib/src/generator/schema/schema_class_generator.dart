@@ -12,13 +12,11 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
     final String? additionalCode,
     final bool generateJson = true,
     final bool inlineJson = false,
-    final bool defaultValueNoJson = true,
   }) {
     final content = generateClass(
       object,
       additionalCode: additionalCode,
       inlineJson: inlineJson,
-      defaultValueNoJson: defaultValueNoJson,
     );
     return GeneratedSchemaComponent(
       dataElement: object,
@@ -36,12 +34,7 @@ class SchemaClassGenerator {
     final String? additionalCode,
     final bool generateJson = true,
     final bool inlineJson = false,
-    final bool defaultValueNoJson = true,
   }) {
-    if (inlineJson && !defaultValueNoJson) {
-      throw ArgumentError('bad configuration ...');
-    }
-
     final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
@@ -67,7 +60,7 @@ class SchemaClassGenerator {
     return [
       'class $name {',
       _fields(object),
-      _constructor(object, defaultValueNoJson),
+      _constructor(object),
       if (generateJson)
         [
           SchemaToJsonGenerator().generateForClass(
@@ -99,10 +92,7 @@ class SchemaClassGenerator {
     ].joinLines();
   }
 
-  String _constructor(
-    final ObjectDataElement object,
-    final bool noJson,
-  ) {
+  String _constructor(final ObjectDataElement object) {
     if (object.properties.isEmpty) {
       return '${object.name} ();';
     } else {
@@ -134,7 +124,7 @@ class SchemaClassGenerator {
                   ' != null ? ',
                   property.name,
                   '.value : ',
-                  sdvg.generate(property.item, noJson: noJson)!,
+                  sdvg.generate(property.item)!,
                 ].joinParts(),
               ',',
             ].joinParts(),

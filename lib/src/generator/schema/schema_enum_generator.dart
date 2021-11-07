@@ -9,14 +9,12 @@ extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
   GeneratedSchemaComponent generate(
     final DataElement element, {
     required final String name,
-    final bool noJson = true,
   }) {
     return GeneratedSchemaComponent(
       dataElement: element,
       fileContent: generateEnum(
         element,
         name: name,
-        noJson: noJson,
       ),
       fileName: '${ReCase(name).snakeCase}.dart',
     );
@@ -58,11 +56,7 @@ class SchemaEnumGenerator {
           'static final $type ',
           names[index],
           ' = ',
-          svg.generate(
-            element,
-            value: values[index],
-            noJson: noJson,
-          ),
+          svg.generate(element, value: values[index]),
           ';',
         ].joinParts(),
       for (var index = 0; index < values.length; index++)

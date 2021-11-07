@@ -2,12 +2,13 @@ import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
 class SchemaValueGenerator {
+  static const noJson = true;
+
   const SchemaValueGenerator();
 
   String generate(
     final DataElement element, {
     required final Object? value,
-    final bool noJson = true,
   }) {
     if (value == null) {
       if (!element.isNullable) throw AssertionError('bad types');

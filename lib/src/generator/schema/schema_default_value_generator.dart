@@ -7,10 +7,7 @@ class SchemaDefaultValueGenerator {
   /// no checking for types. assuming all is correct.
   ///
   /// return null if
-  String? generate(
-    final DataElement element, {
-    final bool noJson = true,
-  }) {
+  String? generate(final DataElement element) {
     final defaultValue = element.defaultValue;
     if (defaultValue == null) {
       return null;
@@ -18,7 +15,6 @@ class SchemaDefaultValueGenerator {
       return SchemaValueGenerator().generate(
         element,
         value: defaultValue.value,
-        noJson: noJson,
       );
     }
   }
