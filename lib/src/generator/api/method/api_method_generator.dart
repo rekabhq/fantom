@@ -106,7 +106,7 @@ class ApiMethodGenerator {
 
     final responseType =
         operationResponsesComponents.contentManifest?.manifest.name ??
-            dynamicType;
+            dioResponseType;
 
     final StringBuffer buffer = StringBuffer();
 
@@ -434,7 +434,7 @@ class ApiMethodGenerator {
   }
 
   String _generateEvaluateResponse(String responseTypeName) {
-    if (responseTypeName != dynamicType) {
+    if (responseTypeName != dioResponseType) {
       return '''
       return ${responseTypeName}Ext.from(
         $responseVarName.statusCode?.toString(),

@@ -68,7 +68,11 @@ class ResponseClassGenerator {
     if (responses.map == null || responses.map?.entries.isEmpty == true) {
       return UnGeneratableResponsesComponent(responses);
     }
-    Map<String, _ResponsePart> responseParts = responses.map!.map(
+    final allResponses = responses.map!;
+    if (responses.defaultValue != null) {
+      allResponses['default'] = responses.defaultValue!;
+    }
+    Map<String, _ResponsePart> responseParts = allResponses.map(
       (statusCode, responseOrRef) {
         if (responseOrRef.isReference) {
           final component =

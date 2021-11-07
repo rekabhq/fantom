@@ -13,6 +13,7 @@ const dioQueryParams = 'queryParameters';
 const dioData = 'data';
 
 const dynamicType = 'dynamic';
+const dioResponseType = 'Response';
 const nullableCharacter = '?';
 const toStringMethod = 'toString()';
 const requiredType = 'required';
