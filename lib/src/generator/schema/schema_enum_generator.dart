@@ -5,22 +5,27 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:meta/meta.dart';
 import 'package:recase/recase.dart';
 
-class SchemaEnumGenerator {
-  const SchemaEnumGenerator();
-
+extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
   GeneratedSchemaComponent generate(
     final DataElement element, {
     required final String name,
   }) {
     return GeneratedSchemaComponent(
       dataElement: element,
-      fileContent: generateContent(element, name),
-      fileName: _fileName(name),
+      fileContent: generateEnum(element, name: name),
+      fileName: '${ReCase(name).snakeCase}.dart',
     );
   }
+}
+
+class SchemaEnumGenerator {
+  const SchemaEnumGenerator();
 
   @visibleForTesting
-  String generateContent(final DataElement element, final String name) {
+  String generateEnum(
+    final DataElement element, {
+    required final String name,
+  }) {
     final enumeration = element.enumeration;
     if (enumeration == null) {
       throw AssertionError('element ${element.name} does not contain an enum');
@@ -55,10 +60,6 @@ class SchemaEnumGenerator {
       ].joinParts(),
       '}',
     ].joinLines();
-  }
-
-  String _fileName(final String name) {
-    return '${ReCase(name).snakeCase}.dart';
   }
 
   List<String> _names(

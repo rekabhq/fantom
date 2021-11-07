@@ -13,14 +13,14 @@ void main() {
     group('generate', () {
       group('boolean', () {
         test('non-nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.boolean(
               enumeration: Enumeration(values: [
                 true,
                 false,
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -34,7 +34,7 @@ static final List<bool> values = [value0_true, value1_false,];
         });
 
         test('nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.boolean(
               isNullable: true,
               enumeration: Enumeration(values: [
@@ -42,7 +42,7 @@ static final List<bool> values = [value0_true, value1_false,];
                 false,
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -59,7 +59,7 @@ static final List<bool?> values = [value0_null, value1_false,];
 
       group('object', () {
         test('non-nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.object(
               name: 'User',
               properties: [
@@ -78,7 +78,7 @@ static final List<bool?> values = [value0_null, value1_false,];
                 },
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -93,7 +93,7 @@ static final List<User> values = [value0, value1,];
         });
 
         test('nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.object(
               name: 'User',
               isNullable: true,
@@ -111,7 +111,7 @@ static final List<User> values = [value0, value1,];
                 },
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -128,7 +128,7 @@ static final List<User?> values = [value0_null, value1,];
 
       group('array', () {
         test('non-nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.array(
               items: DataElement.integer(),
               enumeration: Enumeration(values: [
@@ -136,7 +136,7 @@ static final List<User?> values = [value0_null, value1,];
                 [3, 4, 5],
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -151,7 +151,7 @@ static final List<List<int>> values = [value0, value1,];
         });
 
         test('nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.array(
               isNullable: true,
               isUniqueItems: true,
@@ -161,7 +161,7 @@ static final List<List<int>> values = [value0, value1,];
                 [3, 4, 5],
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -178,14 +178,14 @@ static final List<Set<int>?> values = [value0_null, value1,];
 
       group('integer', () {
         test('non-nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.integer(
               enumeration: Enumeration(values: [
                 10,
                 20,
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -200,7 +200,7 @@ static final List<int> values = [value0_10, value1_20,];
         });
 
         test('nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.integer(
               isNullable: true,
               enumeration: Enumeration(values: [
@@ -208,7 +208,7 @@ static final List<int> values = [value0_10, value1_20,];
                 20,
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -225,7 +225,7 @@ static final List<int?> values = [value0_null, value1_20,];
 
       group('number', () {
         test('non-nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.number(
               isFloat: true,
               enumeration: Enumeration(values: [
@@ -233,7 +233,7 @@ static final List<int?> values = [value0_null, value1_20,];
                 20.56,
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -248,7 +248,7 @@ static final List<double> values = [value0_10_12, value1_20_56,];
         });
 
         test('nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.number(
               isFloat: false,
               isNullable: true,
@@ -258,7 +258,7 @@ static final List<double> values = [value0_10_12, value1_20_56,];
                 13.506,
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -276,14 +276,14 @@ static final List<num?> values = [value0_null, value1_20, value2_13_506,];
 
       group('string', () {
         test('non-nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.string(
               enumeration: Enumeration(values: [
                 'abc',
                 'def',
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,
@@ -298,7 +298,7 @@ static final List<String> values = [value0_abc, value1_def,];
         });
 
         test('nullable', () {
-          final x = seg.generateContent(
+          final x = seg.generateEnum(
             DataElement.string(
               isNullable: true,
               enumeration: Enumeration(values: [
@@ -306,7 +306,7 @@ static final List<String> values = [value0_abc, value1_def,];
                 'def',
               ]),
             ),
-            'MyEnum',
+            name: 'MyEnum',
           );
           expect(
             x,

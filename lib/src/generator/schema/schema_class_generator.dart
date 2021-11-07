@@ -4,33 +4,27 @@ import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
 import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
-import 'package:meta/meta.dart';
 import 'package:recase/recase.dart';
+
+extension SchemaClassGeneratorExt on SchemaClassGenerator {
+  GeneratedSchemaComponent generate(final ObjectDataElement object) {
+    final content = generateClass(object);
+    return GeneratedSchemaComponent(
+      dataElement: object,
+      fileContent: content,
+      fileName: '${ReCase(object.name!).snakeCase}.dart',
+    );
+  }
+}
 
 class SchemaClassGenerator {
   const SchemaClassGenerator();
 
-  GeneratedSchemaComponent generate(final ObjectDataElement object) {
+  String generateClass(final ObjectDataElement object) {
     final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
     }
-
-    return GeneratedSchemaComponent(
-      dataElement: object,
-      fileContent: generateContent(object),
-      fileName: _fileName(object),
-    );
-  }
-
-  String _fileName(final ObjectDataElement object) {
-    final name = object.name!;
-    return '${ReCase(name).snakeCase}.dart';
-  }
-
-  @visibleForTesting
-  String generateContent(final ObjectDataElement object) {
-    final name = object.name!;
     final format = object.format;
 
     if (format != ObjectDataElementFormat.object) {
