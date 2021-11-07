@@ -43,12 +43,11 @@ class ParameterClassGenerator {
 
       /// creating content manifest base on parameter content values
       final contentManifest = contentManifestGenerator.generateContentType(
-        typeName: typeName.pascalCase,
-        subTypeName: subTypeName.pascalCase,
-        generatedSchemaTypeName: schemaTypeName.pascalCase,
-        content: parameter.content!,
-        generateToUriParamMethod: true,
-      );
+          typeName: typeName.pascalCase,
+          subTypeName: subTypeName.pascalCase,
+          generatedSchemaTypeName: schemaTypeName.pascalCase,
+          content: parameter.content!,
+          contentOwner: ContentOwner.parameter);
 
       if (contentManifest == null) {
         return UnGeneratableParameterComponent(source: parameter);
