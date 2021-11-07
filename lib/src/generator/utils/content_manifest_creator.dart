@@ -216,8 +216,34 @@ class ContentManifestCreator {
     if (generateToBodyMethod) {
       buffer.writeln('dynamic toBody() {');
       // todo(alireza): use sealed classes isA & isB to findout the contentType and then use the corresponding method to
-      // create the body
-      buffer.writeln("return  '';");
+      for (var contentType in content.keys) {
+        final seed = ReCase(_fixName(contentType)).pascalCase;
+        final checkerName = 'is$seed'; // like isApplicationJson
+        final asName = 'as$seed'; // like asApplicationJson
+        final valueName = seed.camelCase;
+        buffer.writeln('if ($checkerName) {');
+        buffer.writeln("final value = $asName.$valueName;");
+        final dataElement = content[contentType]!;
+        if (contentType == 'application/json') {
+          final schemaToJson = SchemaToJsonGenerator();
+          schemaToJson.generateApplication(dataElement);
+          final application = schemaToJson.generateApplication(dataElement);
+          buffer.writeln('final jsonDeserializer =  $application;');
+          buffer.writeln('return jsonDeserializer(value);');
+        } else if (contentType == 'application/xml') {
+          //TODO(alireza): implement
+          buffer.writeln('return value.toString();');
+        } else if (contentType == 'multipart/form-data') {
+          //TODO(alireza): implement
+          buffer.writeln('throw UnimplementedError();');
+        } else if (contentType == 'text/plain') {
+          //TODO(alireza): implement
+          buffer.writeln('throw UnimplementedError();');
+        }
+        buffer.writeln('}');
+      }
+      buffer.writeln(
+          "throw Exception('could not convert $parentClassName to an object that can be used as request-body by dio');");
       buffer.writeln('}');
     }
 

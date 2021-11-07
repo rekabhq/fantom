@@ -118,7 +118,6 @@ class ResponseClassGenerator {
     // check if any of the sub-types of our Responses type has actual usable value
     final usableValues = manifestItems.values
         .where((element) => element.fields[0].type.name != 'dynamic');
-    print('usable values -> $usableValues');
     if (usableValues.isEmpty) {
       return UnGeneratableResponsesComponent(responses);
     }
