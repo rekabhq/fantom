@@ -63,7 +63,7 @@ class SchemaToJsonGenerator {
 
     return [
       'Map<String, dynamic> toJson() => ',
-      _inner(object, inline, null),
+      _inner(object, inline, false),
       ';',
     ].joinParts();
   }
@@ -72,7 +72,7 @@ class SchemaToJsonGenerator {
   String _inner(
     final ObjectDataElement object,
     final bool inline,
-    final String? prefixCall,
+    final bool prefixCall,
   ) {
     return [
       '<String, dynamic>{',
@@ -88,11 +88,11 @@ class SchemaToJsonGenerator {
   String _property(
     final ObjectProperty property,
     final bool inline,
-    final String? prefixCall,
+    final bool prefixCall,
   ) {
     final name = property.name;
     final nameCall = [
-      if (prefixCall != null) '$prefixCall.',
+      if (prefixCall) 'value.',
       name,
     ].joinParts();
     final isOptional = property.isFieldOptional;
@@ -135,12 +135,14 @@ class SchemaToJsonGenerator {
             if (inline) {
               final typeNN = object.typeNN;
               if (typeNN == null) {
-                throw UnimplementedError('object with no name');
+                throw UnimplementedError(
+                  'anonymous inner objects are not supported',
+                );
               }
 
               return [
                 '(($typeNN value) => ',
-                _inner(object, inline, 'value'),
+                _inner(object, inline, true),
                 ')($fixedName)',
               ].joinParts();
             } else {

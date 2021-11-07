@@ -1,3 +1,4 @@
+import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
 class SchemaValueGenerator {
@@ -6,6 +7,7 @@ class SchemaValueGenerator {
   String generate(
     final DataElement element, {
     required final Object? value,
+    final bool noJson = true,
   }) {
     if (value == null) {
       if (!element.isNullable) throw AssertionError('bad types');
@@ -34,7 +36,7 @@ class SchemaValueGenerator {
                       generate(additionalProperties, value: e.value);
                 })
                 .toList()
-                .join(', ');
+                .joinArgsFull();
             return '<String, $sub>{$joined}';
           } else {
             // ex. User.fromJson(<String, int>{'name': 'john'})
@@ -42,33 +44,74 @@ class SchemaValueGenerator {
             final additionalProperties = object.additionalProperties;
             final name = object.name;
             if (name == null) {
-              throw UnimplementedError('anonymous objects are not supported');
+              throw UnimplementedError(
+                'anonymous objects are not supported',
+              );
             }
-            final properties = Map.fromEntries(
+
+            final propertiesMap = Map.fromEntries(
               object.properties.map((e) => MapEntry(e.name, e)).toList(),
             );
-            final joined = value.entries
-                .map((e) {
-                  final DataElement item;
-                  if (properties.containsKey(e.key)) {
-                    item = properties[e.key]!.item;
-                  } else {
-                    if (additionalProperties == null) {
-                      throw AssertionError(
-                        'non-additive object with additional fields',
-                      );
+            if (noJson) {
+              final fixedValues = Map.of(value)
+                // remove all fixed properties
+                ..removeWhere((key, _) => !propertiesMap.containsKey(key));
+              final additionalValues = Map.of(value)
+                // include all fixed properties
+                ..removeWhere((key, _) => propertiesMap.containsKey(key));
+
+              if (additionalValues.isNotEmpty && additionalProperties == null) {
+                throw AssertionError(
+                  'non-additive object with additional fields',
+                );
+              }
+
+              return [
+                '$name(',
+                for (final key in fixedValues.keys)
+                  [
+                    '$key : ',
+                    if (propertiesMap[key]!.isConstructorOptional) 'Optional(',
+                    generate(
+                      propertiesMap[key]!.item,
+                      value: fixedValues[key],
+                    ),
+                    if (propertiesMap[key]!.isConstructorOptional) ')',
+                    ',',
+                  ].joinParts(),
+                // todo: correct format ?
+                if (object.format == ObjectDataElementFormat.mixed)
+                  [
+                    'additionalProperties: ',
+                    generate(additionalProperties!, value: additionalValues),
+                    ','
+                  ].joinParts(),
+                ')',
+              ].joinParts();
+            } else {
+              final joined = value.entries
+                  .map((e) {
+                    final DataElement item;
+                    if (propertiesMap.containsKey(e.key)) {
+                      item = propertiesMap[e.key]!.item;
                     } else {
-                      item = additionalProperties;
+                      if (additionalProperties == null) {
+                        throw AssertionError(
+                          'non-additive object with additional fields',
+                        );
+                      } else {
+                        item = additionalProperties;
+                      }
                     }
-                  }
-                  return _string(e.key) +
-                      ': ' +
-                      // recursive call:
-                      generate(item, value: e.value);
-                })
-                .toList()
-                .join(', ');
-            return '$name.fromJson(<String, dynamic>{$joined})';
+                    return _string(e.key) +
+                        ': ' +
+                        // recursive call:
+                        generate(item, value: e.value);
+                  })
+                  .toList()
+                  .joinArgsFull();
+              return '$name.fromJson(<String, dynamic>{$joined})';
+            }
           }
         },
         array: (array) {
@@ -85,7 +128,7 @@ class SchemaValueGenerator {
               // recursive call:
               .map((e) => generate(array.items, value: e))
               .toList()
-              .join(', ');
+              .joinArgsFull();
           return '<$sub>' + (array.isUniqueItems ? '{$joined}' : '[$joined]');
         },
         integer: (integer) {

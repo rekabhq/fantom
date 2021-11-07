@@ -12,11 +12,13 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
     final String? additionalCode,
     final bool generateJson = true,
     final bool inlineJson = false,
+    final bool defaultValueNoJson = true,
   }) {
     final content = generateClass(
       object,
       additionalCode: additionalCode,
       inlineJson: inlineJson,
+      defaultValueNoJson: defaultValueNoJson,
     );
     return GeneratedSchemaComponent(
       dataElement: object,
@@ -34,7 +36,12 @@ class SchemaClassGenerator {
     final String? additionalCode,
     final bool generateJson = true,
     final bool inlineJson = false,
+    final bool defaultValueNoJson = true,
   }) {
+    if (inlineJson && !defaultValueNoJson) {
+      throw ArgumentError('bad configuration ...');
+    }
+
     final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
@@ -60,14 +67,17 @@ class SchemaClassGenerator {
     return [
       'class $name {',
       _fields(object),
-      _constructor(object),
+      _constructor(object, defaultValueNoJson),
       if (generateJson)
         [
           SchemaToJsonGenerator().generateForClass(
             object,
             inline: inlineJson,
           ),
-          SchemaFromJsonGenerator().generateForClass(object),
+          SchemaFromJsonGenerator().generateForClass(
+            object,
+            inline: inlineJson,
+          ),
         ].joinMethods(),
       if (additionalCode != null) additionalCode,
       '}',
@@ -89,7 +99,10 @@ class SchemaClassGenerator {
     ].joinLines();
   }
 
-  String _constructor(final ObjectDataElement object) {
+  String _constructor(
+    final ObjectDataElement object,
+    final bool noJson,
+  ) {
     if (object.properties.isEmpty) {
       return '${object.name} ();';
     } else {
@@ -121,7 +134,7 @@ class SchemaClassGenerator {
                   ' != null ? ',
                   property.name,
                   '.value : ',
-                  sdvg.generate(property.item)!,
+                  sdvg.generate(property.item, noJson: noJson)!,
                 ].joinParts(),
               ',',
             ].joinParts(),

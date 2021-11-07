@@ -5,10 +5,13 @@ class SchemaFromJsonGenerator {
   const SchemaFromJsonGenerator();
 
   /// ex. ((dynamic json) => User.fromJson(json))
-  String generateApplication(final DataElement element) {
+  String generateApplication(
+    final DataElement element, {
+    final bool inline = false,
+  }) {
     return [
       '((dynamic json) => ',
-      _logic(element, 'json'),
+      _logic(element, 'json', inline),
       ')',
     ].joinParts();
   }
@@ -18,6 +21,7 @@ class SchemaFromJsonGenerator {
     final DataElement element, {
     final String name = 'fromJson',
     final bool isStatic = true,
+    final bool inline = false,
   }) {
     final type = element.type;
     if (type == null) {
@@ -27,12 +31,15 @@ class SchemaFromJsonGenerator {
     return [
       if (isStatic) 'static ',
       '$type $name(dynamic json) => ',
-      _logic(element, 'json'),
+      _logic(element, 'json', inline),
       ';',
     ].joinParts();
   }
 
-  String generateForClass(final ObjectDataElement object) {
+  String generateForClass(
+    final ObjectDataElement object, {
+    final bool inline = false,
+  }) {
     final name = object.name;
     if (name == null) {
       throw UnimplementedError('anonymous objects are not supported');
@@ -50,38 +57,48 @@ class SchemaFromJsonGenerator {
 
     return [
       'factory $name.fromJson(Map<String, dynamic> json) => ',
-      _inner(object),
+      _inner(object, inline),
       ';',
     ].joinParts();
   }
 
-  String _inner(final ObjectDataElement object) {
+  String _inner(
+    final ObjectDataElement object,
+    final bool inline,
+  ) {
     final name = object.name!;
 
     return [
       '$name(',
       for (final property in object.properties)
         [
-          _property(property),
+          _property(property, inline),
           ',',
         ].joinParts(),
       ')'
     ].joinLines();
   }
 
-  String _property(final ObjectProperty property) {
+  String _property(
+    final ObjectProperty property,
+    final bool inline,
+  ) {
     final name = property.name;
     final isOptional = property.isConstructorOptional;
     final fixedName = "json['$name']";
     return [
       '$name: ',
       if (isOptional) "json.containsKey('$name') ? Optional(",
-      _logic(property.item, fixedName),
+      _logic(property.item, fixedName, inline),
       if (isOptional) ') : null'
     ].joinParts();
   }
 
-  String _logic(DataElement element, String name) {
+  String _logic(
+    final DataElement element,
+    final String name,
+    final bool inline,
+  ) {
     final isNullable = element.isNullable;
     final fixedName = isNullable ? '$name!' : name;
 
@@ -100,19 +117,27 @@ class SchemaFromJsonGenerator {
             '((Map<String, dynamic> json) => ',
             'json.map<String, $sub>((key, it) => ',
             'MapEntry(key, ',
-            _logic(object.additionalProperties!, 'it'),
+            _logic(object.additionalProperties!, 'it', inline),
             '))',
             ')($fixedName)',
           ].joinParts();
         } else {
-          final className = object.name;
-          if (className == null) {
+          final typeNN = object.typeNN;
+          if (typeNN == null) {
             throw UnimplementedError(
               'anonymous inner objects are not supported',
             );
           }
 
-          return '$className.fromJson($fixedName)';
+          if (inline) {
+            return [
+              '((Map<String, dynamic> json) => ',
+              _inner(object, inline),
+              ')($fixedName)',
+            ].joinParts();
+          } else {
+            return '$typeNN.fromJson($fixedName)';
+          }
         }
       },
       array: (array) {
@@ -124,7 +149,7 @@ class SchemaFromJsonGenerator {
         return [
           '((List<dynamic> json) => ',
           'json.map<$sub>((it) => ',
-          _logic(array.items, 'it'),
+          _logic(array.items, 'it', inline),
           ')',
           array.isUniqueItems ? '.toSet()' : '.toList()',
           ')($fixedName)',
