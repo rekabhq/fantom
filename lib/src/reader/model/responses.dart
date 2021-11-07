@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 class Responses extends Equatable {
-  /// described as [default] in documentation.
+  /// described as [default] in openapi specification.
   /// but [default], is a keyword in Dart.
   final Referenceable<Response>? defaultValue;
 
