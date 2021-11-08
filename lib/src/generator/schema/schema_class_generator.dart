@@ -21,7 +21,7 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
     return GeneratedSchemaComponent(
       dataElement: object,
       fileContent: content,
-      fileName: '${ReCase(object.name!).snakeCase}.dart',
+      fileName: '${ReCase(object.name).snakeCase}.dart',
     );
   }
 }
@@ -36,14 +36,11 @@ class SchemaClassGenerator {
     final bool inlineJson = false,
   }) {
     final name = object.name;
-    if (name == null) {
-      throw UnimplementedError('anonymous objects are not supported');
-    }
     final format = object.format;
 
     if (format == ObjectDataElementFormat.map) {
       // todo: remove quick fix :D
-      if (name.endsWith('_DNG')) {
+      if (name.contains('_DNG')) {
         return 'class $name {}';
       }
 

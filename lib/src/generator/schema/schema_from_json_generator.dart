@@ -41,9 +41,6 @@ class SchemaFromJsonGenerator {
     final bool inline = false,
   }) {
     final name = object.name;
-    if (name == null) {
-      throw UnimplementedError('anonymous objects are not supported');
-    }
     if (object.format == ObjectDataElementFormat.map) {
       throw UnimplementedError(
         'map objects are not supported : name is ${object.name}',
@@ -71,8 +68,7 @@ class SchemaFromJsonGenerator {
       throw UnimplementedError('mixed objects is not supported');
     }
 
-    final name = object.name!;
-
+    final name = object.name;
     return [
       '$name(',
       for (final property in object.properties)

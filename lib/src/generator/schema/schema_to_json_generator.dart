@@ -46,10 +46,6 @@ class SchemaToJsonGenerator {
     final ObjectDataElement object, {
     final bool inline = false,
   }) {
-    final name = object.name;
-    if (name == null) {
-      throw UnimplementedError('anonymous objects are not supported');
-    }
     if (object.format == ObjectDataElementFormat.map) {
       throw UnimplementedError(
         'map objects are not supported : name is ${object.name}',

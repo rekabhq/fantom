@@ -45,11 +45,6 @@ class SchemaValueGenerator {
             // note: we have handled `null` value so no need for `User?`
             final additionalProperties = object.additionalProperties;
             final name = object.name;
-            if (name == null) {
-              throw UnimplementedError(
-                'anonymous objects are not supported',
-              );
-            }
 
             final propertiesMap = Map.fromEntries(
               object.properties.map((e) => MapEntry(e.name, e)).toList(),
