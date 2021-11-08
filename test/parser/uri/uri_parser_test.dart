@@ -286,17 +286,15 @@ void main() {
       'should put primitive path parameters in uri template using simple style and parse uri correctly',
       () {
         //with
-        var baseURL = 'https://google.com';
         var pathURL = '/user/{id}';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
-          pathParameters: [UriParam.primitive('id', 5)],
+          pathParameters: [UriParam.primitive('id', 5, 'simple')],
           queryParameters: [],
         );
         //then
-        expect(uri.toString(), 'https://google.com/user/5');
+        expect(uri.toString(), '/user/5');
       },
     );
 
@@ -304,19 +302,17 @@ void main() {
       'should put array path parameters in uri template using simple style and parse uri correctly',
       () {
         //with
-        var baseURL = 'https://google.com';
         var pathURL = '/user/{id}';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [
-            UriParam.array('id', ['3', '4', '5'], false),
+            UriParam.array('id', ['3', '4', '5'], 'simple', false),
           ],
           queryParameters: [],
         );
         //then
-        expect(uri.toString(), 'https://google.com/user/3,4,5');
+        expect(uri.toString(), '/user/3,4,5');
       },
     );
 
@@ -324,19 +320,17 @@ void main() {
       'should put array path parameters in uri template using simple style also exploded and parse uri correctly',
       () {
         //with
-        var baseURL = 'https://google.com';
         var pathURL = '/user/{id}';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [
-            UriParam.array('id', ['3', '4', '5'], true),
+            UriParam.array('id', ['3', '4', '5'], 'simple', true),
           ],
           queryParameters: [],
         );
         //then
-        expect(uri.toString(), 'https://google.com/user/3,4,5');
+        expect(uri.toString(), '/user/3,4,5');
       },
     );
 
@@ -344,21 +338,20 @@ void main() {
       'should put object path parameters in uri template using simple style and parse uri correctly',
       () {
         //with
-        var baseURL = 'https://google.com';
         var pathURL = '/user/{id}';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [
-            UriParam.object('id', {"role": "admin", "firstName": "Alex"}, false)
+            UriParam.object(
+                'id', {"role": "admin", "firstName": "Alex"}, 'simple', false)
           ],
           queryParameters: [],
         );
         //then
         expect(
           uri.toString(),
-          'https://google.com/user/role,admin,firstName,Alex',
+          '/user/role,admin,firstName,Alex',
         );
       },
     );
@@ -367,21 +360,20 @@ void main() {
       'should put object path parameters in uri template using simple style also explode and parse uri correctly',
       () {
         //with
-        var baseURL = 'https://google.com';
         var pathURL = '/user/{id*}';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [
-            UriParam.object('id', {"role": "admin", "firstName": "Alex"}, false)
+            UriParam.object(
+                'id', {"role": "admin", "firstName": "Alex"}, 'simple', false)
           ],
           queryParameters: [],
         );
         //then
         expect(
           uri.toString(),
-          'https://google.com/user/role=admin,firstName=Alex',
+          '/user/role=admin,firstName=Alex',
         );
       },
     );
@@ -391,21 +383,24 @@ void main() {
       'should put object path parameters in uri template using simple style also explode and parse uri correctly',
       () {
         //with
-        var baseURL = 'https://google.com';
         var pathURL = '/user/{id}';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [
-            UriParam.object('id', {"role": "admin", "firstName": "Alex"}, true)
+            UriParam.object(
+              'id',
+              {"role": "admin", "firstName": "Alex"},
+              'simple',
+              true,
+            )
           ],
           queryParameters: [],
         );
         //then
         expect(
           uri.toString(),
-          'https://google.com/user/role=admin,firstName=Alex',
+          '/user/role=admin,firstName=Alex',
         );
       },
     );
@@ -414,19 +409,17 @@ void main() {
       'should put query parameter in uri template with form style',
       () {
         //with
-        var baseURL = 'https://google.com';
-        var pathURL = '/users{?id*}';
+        var pathURL = '/users';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [],
-          queryParameters: [UriParam.primitive('id', 5)],
+          queryParameters: [UriParam.primitive('id', 5, 'form')],
         );
         //then
         expect(
           uri.toString(),
-          'https://google.com/users?id=5',
+          '/users?id=5',
         );
       },
     );
@@ -435,21 +428,19 @@ void main() {
       'should put array type query parameter in uri template with form style',
       () {
         //with
-        var baseURL = 'https://google.com';
-        var pathURL = '/users{?id*}';
+        var pathURL = '/users';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [],
           queryParameters: [
-            UriParam.array('id', [3, 4, 5], false)
+            UriParam.array('id', [3, 4, 5], 'form', true)
           ],
         );
         //then
         expect(
           uri.toString(),
-          'https://google.com/users?id=3&id=4&id=5',
+          '/users?id=3&id=4&id=5',
         );
       },
     );
@@ -458,21 +449,19 @@ void main() {
       'should put object type query parameter in uri template with form style',
       () {
         //with
-        var baseURL = 'https://google.com';
-        var pathURL = '/users{?id*}';
+        var pathURL = '/users';
         //when
         var uri = uriParser.parseUri(
-          baseURL: baseURL,
           pathURL: pathURL,
           pathParameters: [],
           queryParameters: [
-            UriParam.object('id', {"role": "admin", "age": 14}, false)
+            UriParam.object('id', {"role": "admin", "age": 14}, 'form', true)
           ],
         );
         //then
         expect(
           uri.toString(),
-          'https://google.com/users?role=admin&age=14',
+          '/users?role=admin&age=14',
         );
       },
     );

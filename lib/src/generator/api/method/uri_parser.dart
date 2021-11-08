@@ -1,38 +1,58 @@
 import 'package:uri/uri.dart';
 
 class MethodUriParser {
-  Uri parseUri({
-    required String baseURL,
+  String parseUri({
     required String pathURL,
-    required List<UriParam> pathParameters,
-    required List<UriParam> queryParameters,
+    required List<UriParam>? pathParameters,
+    required List<UriParam>? queryParameters,
   }) {
-    var fixedUrls = fixBaseUrlAndPath(baseURL, pathURL);
-    var baseUrl = fixedUrls.first;
-    var path = fixedUrls.last;
+    var templatePath = pathURL.toString();
 
-    for (var pathParam in pathParameters) {
-      if (pathParam.explode) {
-        final unExplodedHolder = '{' + pathParam.name + '}';
-        final explodedHolder = '{' + pathParam.name + '*}';
-        if (path.split('?').first.contains(unExplodedHolder)) {
-          path = path.replaceAll(unExplodedHolder, explodedHolder);
-        }
+    if (pathParameters != null) {
+      for (final pathParam in pathParameters) {
+        final char = pathParam.initChar;
+        final explodeChar = pathParam.explode ? '*' : '';
+        final parameterTemplate = '{$char${pathParam.name}$explodeChar}';
+
+        templatePath = templatePath.replaceAll(
+          '{${pathParam.name}}',
+          parameterTemplate,
+        );
       }
+      print('Template Path after param: $templatePath');
     }
 
-    final baseUri = Uri.parse(baseUrl);
-    final pathUriTemplate = UriTemplate(path);
-    final serializedPath = pathUriTemplate.expand(
-      pathParameters.toMapOfParams(),
-    );
-    var serializedPathUri = Uri.parse(serializedPath);
-    if (queryParameters.isNotEmpty) {
-      serializedPathUri = serializedPathUri.replace(
-        queryParameters: _uriQeriesFrom(queryParameters),
-      );
+    // {?id*,numbers*}
+    if (queryParameters != null && queryParameters.isNotEmpty) {
+      // initialize query string
+      templatePath += '{?';
+
+      for (var queryParam in queryParameters) {
+        final explodeChar = queryParam.explode ? '*' : '';
+        // add query parameter to the end of the path
+        templatePath += '${queryParam.name}$explodeChar,';
+      }
+      // remove last comma `,` character
+      templatePath = templatePath.substring(0, templatePath.length - 1);
+
+      templatePath += '}';
+
+      print('Template Path after query: $templatePath');
     }
-    return baseUri.resolveUri(serializedPathUri);
+
+    print('template Path final: $templatePath');
+
+    final uriTemplate = UriTemplate(templatePath);
+
+    final templateVariables = <String, dynamic>{
+      if (pathParameters?.isNotEmpty ?? false)
+        ...pathParameters!.toMapOfParams(),
+      if (queryParameters?.isNotEmpty ?? false)
+        ...queryParameters!.toMapOfParams(),
+    };
+
+    // TODO: find a way to handle spaceDelimited and pipeDelimited
+    return uriTemplate.expand(templateVariables);
   }
 
   List<String> fixBaseUrlAndPath(String baseUrl, String path) {
@@ -44,38 +64,10 @@ class MethodUriParser {
       return [baseUrl, path];
     }
   }
-
-  Map<String, Iterable<String>> _uriQeriesFrom(List<UriParam> queryParameters) {
-    var queries = <String, Iterable<String>>{};
-    for (var param in queryParameters) {
-      var key = param.name;
-      var value = param.value;
-      if (value is Map) {
-        for (var entry in value.entries) {
-          var entryKey = entry.key.toString();
-          var entryValue = entry.value.toString();
-          queries[entryKey] = [entryValue];
-        }
-      } else if (value is List) {
-        queries[key] = value.map((e) => e.toString()).toList();
-      } else {
-        queries[key] = [value.toString()];
-      }
-    }
-    return queries;
-  }
 }
 
 class UriParam {
   UriParam._(this.name, this.value, this.style, this.explode);
-
-  final String name;
-
-  final dynamic value;
-
-  final bool explode;
-
-  final String style;
 
   factory UriParam.object(
     String name,
@@ -101,6 +93,33 @@ class UriParam {
     String style,
   ) {
     return UriParam._(name, value, style, false);
+  }
+
+  final String name;
+
+  final dynamic value;
+
+  final bool explode;
+
+  final String style;
+
+  String get initChar {
+    switch (style) {
+      case 'simple':
+        return '';
+      case 'label':
+        return '.';
+      case 'matrix':
+        return ';';
+      case 'form':
+        return '?';
+      case 'spaceDelimited':
+        return '?';
+      case 'pipeDelimited':
+        return '?';
+      default:
+        return '';
+    }
   }
 }
 
