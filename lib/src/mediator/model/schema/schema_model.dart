@@ -52,7 +52,7 @@ abstract class DataElement {
 
   /// if is present is used for code generated model name,
   /// and is referenced in schema map.
-  String? get name;
+  String get name;
 
   /// if is nullable
   ///
@@ -95,7 +95,7 @@ abstract class DataElement {
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
-    String? name,
+    required String name,
     bool isNullable,
     bool isDeprecated,
     DefaultValue? defaultValue,
@@ -104,7 +104,7 @@ abstract class DataElement {
 
   /// [ObjectDataElement]
   const factory DataElement.object({
-    String? name,
+    required String name,
     bool isNullable,
     bool isDeprecated,
     DefaultValue? defaultValue,
@@ -115,7 +115,7 @@ abstract class DataElement {
 
   /// [ArrayDataElement]
   const factory DataElement.array({
-    String? name,
+    required String name,
     bool isNullable,
     bool isDeprecated,
     DefaultValue? defaultValue,
@@ -126,7 +126,7 @@ abstract class DataElement {
 
   /// [IntegerDataElement]
   const factory DataElement.integer({
-    String? name,
+    required String name,
     bool isNullable,
     bool isDeprecated,
     DefaultValue? defaultValue,
@@ -135,7 +135,7 @@ abstract class DataElement {
 
   /// [NumberDataElement]
   const factory DataElement.number({
-    String? name,
+    required String name,
     bool isNullable,
     bool isDeprecated,
     DefaultValue? defaultValue,
@@ -145,7 +145,7 @@ abstract class DataElement {
 
   /// [StringDataElement]
   const factory DataElement.string({
-    String? name,
+    required String name,
     bool isNullable,
     bool isDeprecated,
     DefaultValue? defaultValue,
@@ -155,7 +155,7 @@ abstract class DataElement {
 
   /// [UntypedDataElement]
   const factory DataElement.untyped({
-    String? name,
+    required String name,
     bool isNullable,
     bool isDeprecated,
     DefaultValue? defaultValue,
@@ -166,7 +166,7 @@ abstract class DataElement {
 /// bool
 class BooleanDataElement with EquatableMixin implements DataElement {
   @override
-  final String? name;
+  final String name;
 
   @override
   final bool isNullable;
@@ -181,7 +181,7 @@ class BooleanDataElement with EquatableMixin implements DataElement {
   final Enumeration? enumeration;
 
   const BooleanDataElement({
-    this.name,
+    required this.name,
     this.isNullable = false,
     this.isDeprecated = false,
     this.defaultValue,
@@ -299,7 +299,7 @@ enum ObjectDataElementFormat {
 class ObjectDataElement with EquatableMixin implements DataElement {
   /// objects can not be name-less
   @override
-  final String? name;
+  final String name;
 
   @override
   final bool isNullable;
@@ -322,7 +322,7 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   final DataElement? additionalProperties;
 
   const ObjectDataElement({
-    this.name,
+    required this.name,
     this.isNullable = false,
     this.isDeprecated = false,
     this.defaultValue,
@@ -359,13 +359,7 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   String? get typeNN {
     if ((additionalProperties is UntypedDataElement?) ||
         (properties.isNotEmpty)) {
-      // object and mixed:
-      final name = this.name;
-      if (name == null) {
-        return null;
-      } else {
-        return name;
-      }
+      return name;
     } else {
       // map:
       final sub = additionalProperties!.type;
@@ -426,7 +420,7 @@ class ObjectDataElement with EquatableMixin implements DataElement {
 /// note for schema: items MUST be present if the type is array.
 class ArrayDataElement with EquatableMixin implements DataElement {
   @override
-  final String? name;
+  final String name;
 
   @override
   final bool isNullable;
@@ -447,7 +441,7 @@ class ArrayDataElement with EquatableMixin implements DataElement {
   final bool isUniqueItems;
 
   const ArrayDataElement({
-    this.name,
+    required this.name,
     this.isNullable = false,
     this.isDeprecated = false,
     this.defaultValue,
@@ -493,7 +487,7 @@ class ArrayDataElement with EquatableMixin implements DataElement {
 /// int.
 class IntegerDataElement with EquatableMixin implements DataElement {
   @override
-  final String? name;
+  final String name;
 
   @override
   final bool isNullable;
@@ -508,7 +502,7 @@ class IntegerDataElement with EquatableMixin implements DataElement {
   final Enumeration? enumeration;
 
   const IntegerDataElement({
-    this.name,
+    required this.name,
     this.isNullable = false,
     this.isDeprecated = false,
     this.defaultValue,
@@ -543,7 +537,7 @@ class IntegerDataElement with EquatableMixin implements DataElement {
 /// num, double.
 class NumberDataElement with EquatableMixin implements DataElement {
   @override
-  final String? name;
+  final String name;
 
   @override
   final bool isNullable;
@@ -561,7 +555,7 @@ class NumberDataElement with EquatableMixin implements DataElement {
   final bool isFloat;
 
   const NumberDataElement({
-    this.name,
+    required this.name,
     this.isNullable = false,
     this.isDeprecated = false,
     this.defaultValue,
@@ -618,7 +612,7 @@ enum StringDataElementFormat {
 /// String.
 class StringDataElement with EquatableMixin implements DataElement {
   @override
-  final String? name;
+  final String name;
 
   @override
   final bool isNullable;
@@ -638,7 +632,7 @@ class StringDataElement with EquatableMixin implements DataElement {
   final StringDataElementFormat format;
 
   const StringDataElement({
-    this.name,
+    required this.name,
     this.isNullable = false,
     this.isDeprecated = false,
     this.defaultValue,
@@ -684,7 +678,7 @@ class StringDataElement with EquatableMixin implements DataElement {
 /// NOTE: type will be `null` not `'dynamic'`.
 class UntypedDataElement with EquatableMixin implements DataElement {
   @override
-  final String? name;
+  final String name;
 
   @override
   final bool isNullable;
@@ -699,7 +693,7 @@ class UntypedDataElement with EquatableMixin implements DataElement {
   final Enumeration? enumeration;
 
   const UntypedDataElement({
-    this.name,
+    required this.name,
     this.isNullable = true,
     this.isDeprecated = false,
     this.defaultValue,
@@ -849,9 +843,9 @@ extension ObjectPropertyExt on ObjectProperty {
   /// is not required.
   bool get isNotRequired => !isRequired;
 
-  /// is field optional
+  /// is field optional.
   bool get isFieldOptional => isNotRequired && item.hasNotDefaultValue;
 
-  /// is constructor optional
+  /// is constructor optional.
   bool get isConstructorOptional => isNotRequired || item.hasDefaultValue;
 }
