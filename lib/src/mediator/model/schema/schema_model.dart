@@ -82,7 +82,7 @@ abstract class DataElement {
   /// User, User?,
   ///
   /// it can be `dynamic` if we have an untyped object.
-  /// we won't produce `dynamic?`.
+  /// may produce `dynamic?`.
   String get type;
 
   /// type without nullability sign
@@ -692,8 +692,7 @@ class UntypedDataElement with EquatableMixin implements DataElement {
 
   @override
   String get type {
-    // dynamic is nullable in dart ...
-    return 'dynamic';
+    return typeNN.withNullability(isNullable);
   }
 
   @override
@@ -839,4 +838,7 @@ extension ObjectPropertyExt on ObjectProperty {
 
   /// is constructor optional.
   bool get isConstructorOptional => isNotRequired || item.hasDefaultValue;
+
+  /// is constructor required.
+  bool get isConstructorRequired => isRequired && item.isNotNullable;
 }

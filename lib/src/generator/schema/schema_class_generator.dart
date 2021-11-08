@@ -55,12 +55,6 @@ class SchemaClassGenerator {
       );
     }
 
-    for (final property in object.properties) {
-      if (property.item.type == null) {
-        throw UnimplementedError('anonymous inner objects are not supported');
-      }
-    }
-
     return [
       'class $name {',
       _fields(object),
@@ -87,7 +81,7 @@ class SchemaClassGenerator {
         [
           'final ',
           if (property.isFieldOptional) 'Optional<',
-          property.item.type!,
+          property.item.type,
           if (property.isFieldOptional) '>?',
           ' ',
           property.name,
@@ -106,10 +100,9 @@ class SchemaClassGenerator {
         [
           for (final property in object.properties)
             [
-              if (property.isRequired && property.item.isNotNullable)
-                'required ',
+              if (property.isConstructorRequired) 'required ',
               if (property.isConstructorOptional) 'Optional<',
-              property.item.type!,
+              property.item.type,
               if (property.isConstructorOptional) '>?',
               ' ',
               property.name,
