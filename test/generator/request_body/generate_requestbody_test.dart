@@ -60,7 +60,7 @@ void main() {
               name: key,
             );
             if (element is ObjectDataElement &&
-                element.format == ObjectDataElementFormat.object) {
+                element.format != ObjectDataElementFormat.map) {
               final component = SchemaClassGenerator().generate(element);
               content += component.fileContent;
             }
