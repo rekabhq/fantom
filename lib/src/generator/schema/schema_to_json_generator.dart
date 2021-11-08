@@ -98,71 +98,72 @@ class SchemaToJsonGenerator {
   ) {
     final isNullable = element.isNullable;
     final fixedName = isNullable ? '$name!' : name;
-    return [
-      if (isNullable) '$name == null ? null : ',
-      element.match(
-        boolean: (boolean) {
-          return fixedName;
-        },
-        object: (object) {
-          if (object.format == ObjectDataElementFormat.map) {
+    final code = element.match(
+      boolean: (boolean) {
+        return fixedName;
+      },
+      object: (object) {
+        if (object.format == ObjectDataElementFormat.map) {
+          final typeNN = object.typeNN;
+          return [
+            '(($typeNN value) => ',
+            'value.map((key, it) => MapEntry(key, ',
+            _logic(object.additionalProperties!, 'it', inline),
+            '))',
+            ')($fixedName)',
+          ].joinParts();
+        } else {
+          if (inline) {
             final typeNN = object.typeNN;
             return [
               '(($typeNN value) => ',
-              'value.map((key, it) => MapEntry(key, ',
-              _logic(object.additionalProperties!, 'it', inline),
-              '))',
+              _inner(object, inline, true),
               ')($fixedName)',
             ].joinParts();
           } else {
-            if (inline) {
-              final typeNN = object.typeNN;
-              return [
-                '(($typeNN value) => ',
-                _inner(object, inline, true),
-                ')($fixedName)',
-              ].joinParts();
-            } else {
-              return '$fixedName.toJson()';
-            }
+            return '$fixedName.toJson()';
           }
-        },
-        array: (array) {
-          // list and set are equivalent here ...
-          final typeNN = array.typeNN;
-          return [
-            '(($typeNN value) => ',
-            'value.map((it) => ',
-            _logic(array.items, 'it', inline),
-            ').toList()',
-            ')($fixedName)',
-          ].joinParts();
-        },
-        integer: (integer) {
-          return fixedName;
-        },
-        number: (number) {
-          return fixedName;
-        },
-        string: (string) {
-          final format = string.format;
-          switch (format) {
-            case StringDataElementFormat.plain:
-              return fixedName;
-            case StringDataElementFormat.byte:
-              return fixedName;
-            case StringDataElementFormat.binary:
-              return fixedName;
-            case StringDataElementFormat.date:
-              return '$fixedName.toIso8601String()';
-            case StringDataElementFormat.dateTime:
-              return '$fixedName.toIso8601String()';
-          }
-        },
-        untyped: (untyped) {
-          return fixedName;
-        },
-      ),
+        }
+      },
+      array: (array) {
+        // list and set are equivalent here ...
+        final typeNN = array.typeNN;
+        return [
+          '(($typeNN value) => ',
+          'value.map((it) => ',
+          _logic(array.items, 'it', inline),
+          ').toList()',
+          ')($fixedName)',
+        ].joinParts();
+      },
+      integer: (integer) {
+        return fixedName;
+      },
+      number: (number) {
+        return fixedName;
+      },
+      string: (string) {
+        switch (string.format) {
+          case StringDataElementFormat.plain:
+            return fixedName;
+          case StringDataElementFormat.byte:
+            return fixedName;
+          case StringDataElementFormat.binary:
+            return fixedName;
+          case StringDataElementFormat.date:
+            return '$fixedName.toIso8601String()';
+          case StringDataElementFormat.dateTime:
+            return '$fixedName.toIso8601String()';
+        }
+      },
+      untyped: (untyped) {
+        return fixedName;
+      },
+    );
+
+    return [
+      if (isNullable) '$name == null ? null : ',
+      code,
     ].joinParts();
   }
 }
