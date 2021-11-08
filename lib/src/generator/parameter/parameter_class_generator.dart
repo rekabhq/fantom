@@ -93,10 +93,7 @@ class ParameterClassGenerator {
         schema,
         name: className,
       );
-      print('${element.type} - ${element.name}');
       if (element is ObjectDataElement) {
-        print('this is element');
-        print(element);
         final generatedSchema = schemaGenerator.generate(element);
         return GeneratedParameterComponent.schema(
           source: parameter,
@@ -105,7 +102,6 @@ class ParameterClassGenerator {
           fileName: generatedSchema.fileName,
         );
       } else {
-        print('this parameter is ungeneratble');
         return UnGeneratableParameterComponent(
           source: parameter,
           schemaComponent: UnGeneratableSchemaComponent(dataElement: element),
@@ -123,7 +119,6 @@ class ParameterClassGenerator {
       final generatedComponent = getGeneratedComponentByRef(
         schema.reference.ref,
       );
-      print('generated component is not null');
 
       if (generatedComponent is GeneratedSchemaComponent) {
         return generatedComponent.dataElement;
