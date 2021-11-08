@@ -10,6 +10,10 @@ import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
+// import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
+// import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
+// import 'package:fantom/src/generator/utils/string_utils.dart';
+
 void main() {
   group('RequestBodyClassGenerator: ', () {
     late RequestBodyClassGenerator requestBodyClassGenerator;
@@ -81,6 +85,7 @@ class Optional<T> {
         //     ObjectProperty(
         //       name: 'id',
         //       item: IntegerDataElement(
+        //         name: 'SugarId',
         //         defaultValue: DefaultValue(value: 50),
         //       ),
         //       isRequired: false,
@@ -88,6 +93,7 @@ class Optional<T> {
         //     ObjectProperty(
         //       name: 'amount',
         //       item: NumberDataElement(
+        //         name: 'SugarAmount',
         //         isFloat: true,
         //         isNullable: true,
         //       ),
@@ -119,13 +125,16 @@ class Optional<T> {
         //     ObjectProperty(
         //       name: 'id',
         //       item: IntegerDataElement(
+        //         name: 'LollipopId',
         //         defaultValue: DefaultValue(value: 100),
         //       ),
         //       isRequired: false,
         //     ),
         //     ObjectProperty(
         //       name: 'count',
-        //       item: IntegerDataElement(),
+        //       item: IntegerDataElement(
+        //         name: 'LollipopCount',
+        //       ),
         //       isRequired: false,
         //     ),
         //     ObjectProperty(
