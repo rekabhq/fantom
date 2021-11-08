@@ -19,6 +19,7 @@ const toStringMethod = 'toString()';
 const requiredType = 'required';
 
 const contentTypeVariable = 'contentType';
+const responseContentTypeVariable = 'responseContentType';
 const responseVarName = 'response';
 const bodyVarName = 'body';
 const pathVarName = 'path';

@@ -165,37 +165,42 @@ class ResponseClassGenerator {
     buffer.writeln('extension ${className}Ext on $className {');
     // create from(statusCode, data, contentType) method for the generated Responses type class
     buffer.writeln(
-      'static $className from(String? statusCode, dynamic data, String contentType,){ ',
+      'static $className from(Response response, String? responseContentType,){ ',
     );
+    buffer.writeln(
+        "final contentType = responseContentType ?? response.headers.value('content-type');");
+    buffer.writeln('final statusCode = response.statusCode?.toString();');
+    buffer.writeln('final data = response.data;');
     for (var entry in responseParts.entries) {
       final statusCodeValue = entry.key;
       final responsePart = entry.value;
       final responseClassName = responsePart.contentManifest?.manifest.name;
 
-      if (statusCodeValue != 'default') {
-        if (responseClassName != null) {
-          final methodName =
-              ReCase('${responsePart.seedName}$statusCodeValue').camelCase;
-          final argName = ReCase(responseClassName).camelCase;
-          buffer.writeln("if(statusCode == '$statusCodeValue'){");
-          buffer.writeln(
-              'final response =  ${responseClassName}Ext.fromContentType(contentType, data);');
-          buffer.writeln('return $className.$methodName($argName: response);');
-          buffer.writeln('}');
-        } else {
-          buffer.writeln('// ResponsePart ${responsePart.contentManifest}');
-        }
-      }
-    }
-    if (responseParts.containsKey('default')) {
-      final defaultResponseClassName =
-          responseParts['default']?.contentManifest?.manifest.name;
-      if (defaultResponseClassName != null) {
+      // if (statusCodeValue != 'default') {
+      if (responseClassName != null) {
+        final methodName =
+            ReCase('${responsePart.seedName}$statusCodeValue').camelCase;
+        final argName = ReCase(responseClassName).camelCase;
+        buffer.writeln("if(statusCode == '$statusCodeValue'){");
         buffer.writeln(
-            'final response =  ${defaultResponseClassName}Ext.fromContentType(contentType, data);');
-        buffer.writeln('');
+            'final responseObject =  ${responseClassName}Ext.fromContentType(contentType, data);');
+        buffer.writeln(
+            'return $className.$methodName($argName: responseObject);');
+        buffer.writeln('}');
+      } else {
+        buffer.writeln('// ResponsePart ${responsePart.contentManifest}');
       }
     }
+    // }
+    // if (responseParts.containsKey('default')) {
+    //   final defaultResponseClassName =
+    //       responseParts['default']?.contentManifest?.manifest.name;
+    //   if (defaultResponseClassName != null) {
+    //     buffer.writeln(
+    //         'final responseObject =  ${defaultResponseClassName}Ext.fromContentType(contentType, data);');
+    //       buffer.writeln('return $className.$methodName($argName: responseObject);');
+    //   }
+    // }
     buffer.writeln(
       "throw Exception('could not find a match to deserialize a $className from)\\n'\n'\\n\$statusCode & \$contentType & \\n \$data');",
     );
