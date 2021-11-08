@@ -1,8 +1,257 @@
 @Timeout(Duration(minutes: 1))
 import 'package:fantom/src/generator/api/method/uri_parser.dart';
 import 'package:test/test.dart';
+import 'package:uri/uri.dart';
 
 void main() {
+  group('UriTemplate.expand method :', () {
+    test(
+      'Test Uri Template - simple path parameter',
+      () async {
+        final path = '/users/{id}';
+        final explodedPath = '/users/{id*}';
+
+        final template = UriTemplate(path);
+        expect(template.expand({'id': 5}), '/users/5');
+        expect(
+          template.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users/3,4,5',
+        );
+        expect(
+          template.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users/role,admin,firstName,Alex',
+        );
+
+        final explodeTemplate = UriTemplate(explodedPath);
+
+        expect(explodeTemplate.expand({'id': 5}), '/users/5');
+        expect(
+          explodeTemplate.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users/3,4,5',
+        );
+        expect(
+          explodeTemplate.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users/role=admin,firstName=Alex',
+        );
+      },
+    );
+    test(
+      'Test Uri Template - Label path parameter',
+      () async {
+        final path = '/users/{.id}';
+        final explodedPath = '/users/{.id*}';
+
+        final template = UriTemplate(path);
+        expect(template.expand({'id': 5}), '/users/.5');
+        expect(
+          template.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users/.3,4,5',
+        );
+        expect(
+          template.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users/.role,admin,firstName,Alex',
+        );
+
+        final explodeTemplate = UriTemplate(explodedPath);
+
+        expect(explodeTemplate.expand({'id': 5}), '/users/.5');
+        expect(
+          explodeTemplate.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users/.3.4.5',
+        );
+        expect(
+          explodeTemplate.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users/.role=admin.firstName=Alex',
+        );
+      },
+    );
+    test(
+      'Test Uri Template - Matrix path parameter',
+      () async {
+        final path = '/users/{;id}';
+        final explodedPath = '/users/{;id*}';
+
+        final template = UriTemplate(path);
+        expect(template.expand({'id': 5}), '/users/;id=5');
+        expect(
+          template.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users/;id=3,4,5',
+        );
+        expect(
+          template.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users/;id=role,admin,firstName,Alex',
+        );
+
+        final explodeTemplate = UriTemplate(explodedPath);
+
+        expect(explodeTemplate.expand({'id': 5}), '/users/;id=5');
+        expect(
+          explodeTemplate.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users/;id=3;id=4;id=5',
+        );
+        expect(
+          explodeTemplate.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users/;role=admin;firstName=Alex',
+        );
+      },
+    );
+    test(
+      'Test Uri Template - simple header parameter',
+      () async {
+        final path = '{id}';
+        final explodedPath = '{id*}';
+
+        final template = UriTemplate(path);
+        expect(template.expand({'id': 5}), '5');
+        expect(
+          template.expand({
+            'id': [3, 4, 5]
+          }),
+          '3,4,5',
+        );
+        expect(
+          template.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          'role,admin,firstName,Alex',
+        );
+
+        final explodeTemplate = UriTemplate(explodedPath);
+
+        expect(explodeTemplate.expand({'id': 5}), '5');
+        expect(
+          explodeTemplate.expand({
+            'id': [3, 4, 5]
+          }),
+          '3,4,5',
+        );
+        expect(
+          explodeTemplate.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          'role=admin,firstName=Alex',
+        );
+      },
+    );
+    test(
+      'Test Uri Template - form query parameter',
+      () async {
+        final path = '/users{?id}';
+        final explodedPath = '/users{?id*}';
+
+        final template = UriTemplate(path);
+        expect(template.expand({'id': 5}), '/users?id=5');
+        expect(
+          template.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users?id=3,4,5',
+        );
+        expect(
+          template.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users?id=role,admin,firstName,Alex',
+        );
+
+        final explodeTemplate = UriTemplate(explodedPath);
+
+        expect(explodeTemplate.expand({'id': 5}), '/users?id=5');
+        expect(
+          explodeTemplate.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users?id=3&id=4&id=5',
+        );
+        expect(
+          explodeTemplate.expand({
+            'id': {"role": "admin", "firstName": "Alex"}
+          }),
+          '/users?role=admin&firstName=Alex',
+        );
+      },
+    );
+
+    test(
+      'Test Uri Template - spaceDelimited query parameter',
+      () async {
+        // we only can use space delimited when we have list
+
+        final path = '/users{?id,numbers}';
+        final explodedPath = '/users{?id*,numbers*}';
+
+        final template = UriTemplate(path);
+        expect(
+          template.expand({
+            'id': [3, 4, 5],
+            'numbers': [1, 2, 3]
+          }).replaceAll(',', '%20'),
+          '/users?id=3%204%205&numbers=1%202%203',
+        );
+
+        final explodeTemplate = UriTemplate(explodedPath);
+
+        expect(
+          explodeTemplate.expand({
+            'id': [3, 4, 5],
+            'numbers': [1, 2, 3]
+          }),
+          '/users?id=3&id=4&id=5&numbers=1&numbers=2&numbers=3',
+        );
+      },
+    );
+    test(
+      'Test Uri Template - pipeDelimited query parameter',
+      () async {
+        // we only can use space delimited when we have list
+
+        final path = '/users{?id}';
+        final explodedPath = '/users{?id*}';
+
+        final template = UriTemplate(path);
+        expect(
+          template.expand({
+            'id': [3, 4, 5]
+          }).replaceAll(',', '|'),
+          '/users?id=3|4|5',
+        );
+
+        final explodeTemplate = UriTemplate(explodedPath);
+
+        expect(
+          explodeTemplate.expand({
+            'id': [3, 4, 5]
+          }),
+          '/users?id=3&id=4&id=5',
+        );
+      },
+    );
+  });
+
   group('UriParser.fixBaseUrlAndPath method :', () {
     final uriParser = MethodUriParser();
 
