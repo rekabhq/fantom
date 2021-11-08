@@ -10,10 +10,6 @@ class SchemaToJsonGenerator {
     final bool inline = false,
   }) {
     final type = element.type;
-    if (type == null) {
-      throw UnimplementedError('bad type for element');
-    }
-
     return [
       '(($type value) => ',
       _logic(element, 'value', inline),

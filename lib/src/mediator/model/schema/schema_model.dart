@@ -665,6 +665,8 @@ class StringDataElement with EquatableMixin implements DataElement {
 
 /// dynamic
 ///
+/// it's type is Object or Object?
+///
 /// it means any possible json value ... (?)
 class UntypedDataElement with EquatableMixin implements DataElement {
   @override
@@ -697,7 +699,7 @@ class UntypedDataElement with EquatableMixin implements DataElement {
 
   @override
   String get typeNN {
-    return 'dynamic';
+    return 'Object';
   }
 
   @override
