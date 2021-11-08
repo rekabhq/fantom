@@ -340,7 +340,8 @@ class ContentManifestCreator {
       schema: schema,
       name: name,
     );
-    if (dataElement is ObjectDataElement) {
+    if (dataElement is ObjectDataElement &&
+        dataElement.format != ObjectDataElementFormat.map) {
       var component = schemaClassGenerator.generate(dataElement);
       return component;
     } else {
