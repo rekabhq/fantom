@@ -15,6 +15,7 @@ void main() {
         test('non-nullable', () {
           final x = seg.generateEnum(
             DataElement.boolean(
+              name: 'myName',
               enumeration: Enumeration(values: [
                 true,
                 false,
@@ -39,6 +40,7 @@ static final List<bool> values = [value0, value1,];
           final x = seg.generateEnum(
             DataElement.boolean(
               isNullable: true,
+              name: 'myName',
               enumeration: Enumeration(values: [
                 null,
                 false,
@@ -69,7 +71,9 @@ static final List<bool?> values = [value0, value1,];
               properties: [
                 ObjectProperty(
                   name: 'id',
-                  item: DataElement.integer(),
+                  item: DataElement.integer(
+                    name: 'UserId',
+                  ),
                   isRequired: true,
                 ),
               ],
@@ -104,7 +108,9 @@ static final List<User> values = [value0, value1,];
               properties: [
                 ObjectProperty(
                   name: 'id',
-                  item: DataElement.integer(),
+                  item: DataElement.integer(
+                    name: 'UserId',
+                  ),
                   isRequired: true,
                 ),
               ],
@@ -135,7 +141,10 @@ static final List<User?> values = [value0, value1,];
         test('non-nullable', () {
           final x = seg.generateEnum(
             DataElement.array(
-              items: DataElement.integer(),
+              items: DataElement.integer(
+                name: 'myNameItems',
+              ),
+              name: 'myName',
               enumeration: Enumeration(values: [
                 [1, 2],
                 [3, 4, 5],
@@ -160,7 +169,10 @@ static final List<List<int>> values = [value0, value1,];
             DataElement.array(
               isNullable: true,
               isUniqueItems: true,
-              items: DataElement.integer(),
+              items: DataElement.integer(
+                name: 'myNameItems',
+              ),
+              name: 'myName',
               enumeration: Enumeration(values: [
                 null,
                 [3, 4, 5],
@@ -186,6 +198,7 @@ static final List<Set<int>?> values = [value0, value1,];
         test('non-nullable', () {
           final x = seg.generateEnum(
             DataElement.integer(
+              name: 'myName',
               enumeration: Enumeration(values: [
                 10,
                 20,
@@ -211,6 +224,7 @@ static final List<int> values = [value0, value1,];
           final x = seg.generateEnum(
             DataElement.integer(
               isNullable: true,
+              name: 'myName',
               enumeration: Enumeration(values: [
                 null,
                 20,
@@ -238,6 +252,7 @@ static final List<int?> values = [value0, value1,];
           final x = seg.generateEnum(
             DataElement.number(
               isFloat: true,
+              name: 'myName',
               enumeration: Enumeration(values: [
                 10.12,
                 20.56,
@@ -264,6 +279,7 @@ static final List<double> values = [value0, value1,];
             DataElement.number(
               isFloat: false,
               isNullable: true,
+              name: 'myName',
               enumeration: Enumeration(values: [
                 null,
                 20,
@@ -293,6 +309,7 @@ static final List<num?> values = [value0, value1, value2,];
         test('non-nullable', () {
           final x = seg.generateEnum(
             DataElement.string(
+              name: 'myName',
               enumeration: Enumeration(values: [
                 'abc',
                 'def',
@@ -318,6 +335,7 @@ static final List<String> values = [value0, value1,];
           final x = seg.generateEnum(
             DataElement.string(
               isNullable: true,
+              name: 'myName',
               enumeration: Enumeration(values: [
                 null,
                 'def',
