@@ -67,7 +67,7 @@ class MethodUriParser {
 }
 
 class UriParam {
-  UriParam._(this.name, this.value, this.explode);
+  UriParam._(this.name, this.value, this.style, this.explode);
 
   final String name;
 
@@ -75,50 +75,62 @@ class UriParam {
 
   final bool explode;
 
+  final String style;
+
   factory UriParam.object(
     String name,
     Map<String, dynamic> value,
+    String style,
     bool explode,
   ) {
-    return UriParam._(name, value, explode);
+    return UriParam._(name, value, style, explode);
   }
 
-  factory UriParam.array(String name, List<dynamic> value, bool explode) {
-    return UriParam._(name, value, explode);
+  factory UriParam.array(
+    String name,
+    List<dynamic> value,
+    String style,
+    bool explode,
+  ) {
+    return UriParam._(name, value, style, explode);
   }
 
-  factory UriParam.primitive(String name, dynamic value) {
-    return UriParam._(name, value, false);
+  factory UriParam.primitive(
+    String name,
+    dynamic value,
+    String style,
+  ) {
+    return UriParam._(name, value, style, false);
   }
 }
 
 extension UriParamNumberExt on num {
-  UriParam toUriParam(String name, bool explode) {
-    return UriParam.primitive(name, this);
+  UriParam toUriParam(String name, String style, bool explode) {
+    return UriParam.primitive(name, this, style);
   }
 }
 
 extension UriParamStringExt on String {
-  UriParam toUriParam(String name, bool explode) {
-    return UriParam.primitive(name, this);
+  UriParam toUriParam(String name, String style, bool explode) {
+    return UriParam.primitive(name, this, style);
   }
 }
 
 extension UriParamBoolExt on bool {
-  UriParam toUriParam(String name, bool explode) {
-    return UriParam.primitive(name, this);
+  UriParam toUriParam(String name, String style, bool explode) {
+    return UriParam.primitive(name, this, style);
   }
 }
 
 extension UriParamListExt on List {
-  UriParam toUriParam(String name, bool explode) {
-    return UriParam.array(name, this, explode);
+  UriParam toUriParam(String name, String style, bool explode) {
+    return UriParam.array(name, this, style, explode);
   }
 }
 
 extension UriParamMapExt on Map<String, dynamic> {
-  UriParam toUriParam(String name, bool explode) {
-    return UriParam.object(name, this, explode);
+  UriParam toUriParam(String name, String style, bool explode) {
+    return UriParam.object(name, this, style, explode);
   }
 }
 
