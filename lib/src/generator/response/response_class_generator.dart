@@ -102,8 +102,8 @@ class ResponseClassGenerator {
                 ),
               )
             : ManifestField(
-                name: 'value',
-                type: ManifestType(name: 'dynamic', isNullable: false),
+                name: 'response',
+                type: ManifestType(name: 'Response', isNullable: false),
               );
         final manifestItem = ManifestItem(
           name: ReCase('$seedName$statusCode').pascalCase,
@@ -116,8 +116,10 @@ class ResponseClassGenerator {
     );
 
     // check if any of the sub-types of our Responses type has actual usable value
-    final usableValues = manifestItems.values
-        .where((element) => element.fields[0].type.name != 'dynamic');
+    final usableValues = manifestItems.values.where((element) {
+      final fieldTypeName = element.fields[0].type.name;
+      return fieldTypeName != 'dynamic' && fieldTypeName != 'Response';
+    });
     if (usableValues.isEmpty) {
       return UnGeneratableResponsesComponent(responses);
     }
@@ -139,8 +141,8 @@ class ResponseClassGenerator {
         buffer.writeln(component.fileContent);
       }
     }
-    buffer.writeln(
-        _generateResponsesExtensionMethods(manifest.name, responseParts));
+    buffer.writeln(_generateResponsesExtensionMethods(
+        manifest.name, responseParts, manifestItems));
     final fileContent = buffer.toString();
     final fileName = '${ReCase('${seedName}Responses').snakeCase}.dart';
 
@@ -159,6 +161,7 @@ class ResponseClassGenerator {
   String _generateResponsesExtensionMethods(
     String className,
     Map<String, _ResponsePart> responseParts,
+    Map<String, ManifestItem> manifestItems,
   ) {
     final buffer = StringBuffer();
     buffer.writeln('\n');
@@ -169,17 +172,16 @@ class ResponseClassGenerator {
     );
     buffer.writeln(
         "final contentType = responseContentType ?? response.headers.value('content-type');");
-    buffer.writeln('final statusCode = response.statusCode?.toString();');
+    buffer.writeln(
+        "final statusCode = response.statusCode?.toString() ?? 'default';");
     buffer.writeln('final data = response.data;');
     for (var entry in responseParts.entries) {
       final statusCodeValue = entry.key;
       final responsePart = entry.value;
       final responseClassName = responsePart.contentManifest?.manifest.name;
 
-      // if (statusCodeValue != 'default') {
+      final methodName = manifestItems[entry.key]!.shortName;
       if (responseClassName != null) {
-        final methodName =
-            ReCase('${responsePart.seedName}$statusCodeValue').camelCase;
         final argName = ReCase(responseClassName).camelCase;
         buffer.writeln("if(statusCode == '$statusCodeValue'){");
         buffer.writeln(
@@ -188,19 +190,11 @@ class ResponseClassGenerator {
             'return $className.$methodName($argName: responseObject);');
         buffer.writeln('}');
       } else {
-        buffer.writeln('// ResponsePart ${responsePart.contentManifest}');
+        buffer.writeln("if(statusCode == '$statusCodeValue'){");
+        buffer.writeln('return $className.$methodName(response: response);');
+        buffer.writeln('}');
       }
     }
-    // }
-    // if (responseParts.containsKey('default')) {
-    //   final defaultResponseClassName =
-    //       responseParts['default']?.contentManifest?.manifest.name;
-    //   if (defaultResponseClassName != null) {
-    //     buffer.writeln(
-    //         'final responseObject =  ${defaultResponseClassName}Ext.fromContentType(contentType, data);');
-    //       buffer.writeln('return $className.$methodName($argName: responseObject);');
-    //   }
-    // }
     buffer.writeln(
       "throw Exception('could not find a match to deserialize a $className from)\\n'\n'\\n\$statusCode & \$contentType & \\n \$data');",
     );
