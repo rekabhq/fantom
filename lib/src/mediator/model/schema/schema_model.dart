@@ -81,8 +81,9 @@ abstract class DataElement {
   /// List<String>, List<String?>, List<String?>?,
   /// User, User?,
   ///
-  /// it can be null if we have an unnamed object
-  String? get type;
+  /// it can be `dynamic` if we have an untyped object.
+  /// we won't produce `dynamic?`.
+  String get type;
 
   /// type without nullability sign
   ///
@@ -90,8 +91,8 @@ abstract class DataElement {
   /// List<String>, List<String?>, NOT List<String?>?,
   /// User, NOT User?,
   ///
-  /// it can be null if we have an unnamed object
-  String? get typeNN;
+  /// it can be `dynamic` if we have an untyped object.
+  String get typeNN;
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
@@ -351,23 +352,20 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   }
 
   @override
-  String? get type {
-    return typeNN?.withNullability(isNullable);
+  String get type {
+    return typeNN.withNullability(isNullable);
   }
 
   @override
-  String? get typeNN {
+  String get typeNN {
     if ((additionalProperties is UntypedDataElement?) ||
         (properties.isNotEmpty)) {
+      // mixed and object:
       return name;
     } else {
       // map:
       final sub = additionalProperties!.type;
-      if (sub == null) {
-        return null;
-      } else {
-        return 'Map<String, $sub>';
-      }
+      return 'Map<String, $sub>';
     }
   }
 
@@ -375,24 +373,20 @@ class ObjectDataElement with EquatableMixin implements DataElement {
   /// this is more general than [type].
   ///
   /// without nullability
-  String? get mapType {
-    return mapTypeNN?.withNullability(isNullable);
+  String? get mapTypeOrNull {
+    return mapTypeNNOrNull?.withNullability(isNullable);
   }
 
   /// the type of map used,
   /// this is more general than [type].
   ///
   /// without nullability
-  String? get mapTypeNN {
+  String? get mapTypeNNOrNull {
     if (additionalProperties == null) {
       return null;
     } else {
       final sub = additionalProperties!.type;
-      if (sub == null) {
-        return null;
-      } else {
-        return 'Map<String, $sub>';
-      }
+      return 'Map<String, $sub>';
     }
   }
 
@@ -451,19 +445,15 @@ class ArrayDataElement with EquatableMixin implements DataElement {
   });
 
   @override
-  String? get type {
-    return typeNN?.withNullability(isNullable);
+  String get type {
+    return typeNN.withNullability(isNullable);
   }
 
   @override
-  String? get typeNN {
+  String get typeNN {
     final sub = items.type;
-    if (sub == null) {
-      return null;
-    } else {
-      final base = isUniqueItems ? 'Set' : 'List';
-      return '$base<$sub>';
-    }
+    final base = isUniqueItems ? 'Set' : 'List';
+    return '$base<$sub>';
   }
 
   @override
@@ -675,7 +665,7 @@ class StringDataElement with EquatableMixin implements DataElement {
 
 /// dynamic
 ///
-/// NOTE: type will be `null` not `'dynamic'`.
+/// it means any possible json value ... (?)
 class UntypedDataElement with EquatableMixin implements DataElement {
   @override
   final String name;
@@ -701,13 +691,14 @@ class UntypedDataElement with EquatableMixin implements DataElement {
   });
 
   @override
-  String? get type {
-    return null;
+  String get type {
+    // dynamic is nullable in dart ...
+    return 'dynamic';
   }
 
   @override
-  String? get typeNN {
-    return null;
+  String get typeNN {
+    return 'dynamic';
   }
 
   @override
