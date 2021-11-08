@@ -83,12 +83,14 @@ class ComponentsGenerator {
     });
 
     // generate and register all parameters
+    print(openApi.components?.parameters?.length);
     final parameterComponents = (openApi.components?.parameters == null)
         ? <String, GeneratedParameterComponent>{}
         : _generateParameters(
             openApi.components!.parameters!,
           );
 
+    print(parameterComponents.length);
     parameterComponents.forEach((ref, component) {
       registerGeneratedComponent(ref, component);
     });

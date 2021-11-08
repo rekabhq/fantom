@@ -43,11 +43,12 @@ class ParameterClassGenerator {
 
       /// creating content manifest base on parameter content values
       final contentManifest = contentManifestGenerator.generateContentType(
-          typeName: typeName.pascalCase,
-          subTypeName: subTypeName.pascalCase,
-          generatedSchemaTypeName: schemaTypeName.pascalCase,
-          content: parameter.content!,
-          contentOwner: ContentOwner.parameter);
+        typeName: typeName.pascalCase,
+        subTypeName: subTypeName.pascalCase,
+        generatedSchemaTypeName: schemaTypeName.pascalCase,
+        content: parameter.content!,
+        contentOwner: ContentOwner.parameter,
+      );
 
       if (contentManifest == null) {
         return UnGeneratableParameterComponent(source: parameter);
@@ -68,6 +69,7 @@ class ParameterClassGenerator {
       for (final component in contentManifest.generatedComponents) {
         buffer.writeln(component.fileContent);
       }
+      buffer.writeln(contentManifest.extensionMethods);
 
       final fileContent = buffer.toString();
       final fileName = '${typeName.snakeCase}.dart';
@@ -91,8 +93,10 @@ class ParameterClassGenerator {
         schema,
         name: className,
       );
-
+      print('${element.type} - ${element.name}');
       if (element is ObjectDataElement) {
+        print('this is element');
+        print(element);
         final generatedSchema = schemaGenerator.generate(element);
         return GeneratedParameterComponent.schema(
           source: parameter,
@@ -101,6 +105,7 @@ class ParameterClassGenerator {
           fileName: generatedSchema.fileName,
         );
       } else {
+        print('this parameter is ungeneratble');
         return UnGeneratableParameterComponent(
           source: parameter,
           schemaComponent: UnGeneratableSchemaComponent(dataElement: element),
@@ -118,6 +123,7 @@ class ParameterClassGenerator {
       final generatedComponent = getGeneratedComponentByRef(
         schema.reference.ref,
       );
+      print('generated component is not null');
 
       if (generatedComponent is GeneratedSchemaComponent) {
         return generatedComponent.dataElement;

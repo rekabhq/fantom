@@ -273,15 +273,13 @@ class ContentManifestCreator {
             buffer.writeln(
                 'return UriParam.primitive(name, paramValue, explode);');
           }
-        } else if (contentType == 'multipart/form-data') {
-          //TODO(alireza): parameters are either in path or head they can't be multipart
-          buffer.writeln('throw UnimplementedError();');
         } else if (contentType == 'text/plain') {
           buffer.writeln('return UriPara.primitive(name, value);');
         }
         buffer.writeln('}');
       }
-
+      buffer.writeln(
+          "throw Exception('fantom cannot create a UriParam from type -> \${runtimeType}');");
       buffer.writeln('}');
     }
     buffer.writeln('}');

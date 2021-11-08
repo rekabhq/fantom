@@ -387,11 +387,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
+                  "type": "object"
                 }
               }
             }
@@ -1519,6 +1515,40 @@
             },
             "name": {
               "type": "string"
+            }
+          }
+        }
+      },
+      "What": {
+        "name": "what",
+        "in": "query",
+        "description": "user object that needs to be added to the store",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "age": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
