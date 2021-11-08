@@ -6,21 +6,29 @@ class SchemaMediator {
   const SchemaMediator();
 
   DataElement convert({
+    /// this is used to resolve references
     required final OpenApi openApi,
+
+    /// schema object as referenceable.
+    /// if it is a value wrap it using `Referenceable.value()`.
     required final Referenceable<Schema> schema,
-    final String? name,
+
+    /// this will be schemas map key,
+    /// or a generated name according to context.
+    required final String name,
   }) =>
       _convert(openApi, schema, name);
 
   DataElement _convert(
     final OpenApi openApi,
-    final Referenceable<Schema> schema, [
-    final String? name,
-  ]) {
+    final Referenceable<Schema> schema,
+    final String name,
+  ) {
     if (schema.isReference) {
       var schemaReference = schema.reference;
       final resolution = openApi.resolveSchema(schemaReference);
-      // todo: shouldn't we use `name` ?
+      // we are completely ignoring reference original data,
+      // such as it's name ...
       return _convert(openApi, resolution.schema, resolution.name);
     } else {
       final schemaValue = schema.value;
@@ -48,7 +56,12 @@ class SchemaMediator {
           final additionalProperties = as == null
               ? null
               // recursive call:
-              : _convert(openApi, as);
+              : _convert(
+                  openApi,
+                  as,
+                  // concatenate `$Items` to the end
+                  '$name\$',
+                );
 
           // calculation for required items:
           final requiredItems = (schemaValue.requiredItems ?? []).toSet();
@@ -62,7 +75,12 @@ class SchemaMediator {
                     (entry) => ObjectProperty(
                       name: entry.key,
                       // recursive call:
-                      item: _convert(openApi, entry.value),
+                      item: _convert(
+                        openApi,
+                        entry.value,
+                        // concatenate (`$` + `property name`) to the end
+                        '$name\$${entry.key}',
+                      ),
                       isRequired: requiredItems.contains(entry.key),
                     ),
                   )
@@ -80,7 +98,12 @@ class SchemaMediator {
         case 'array':
           // calculation for items:
           // recursive call:
-          final items = _convert(openApi, schemaValue.items!);
+          final items = _convert(
+            openApi,
+            schemaValue.items!,
+            // concatenate `$` to the end
+            '$name\$',
+          );
 
           return DataElement.array(
             name: name,

@@ -117,7 +117,7 @@ class ParameterClassGenerator {
   DataElement _findSchemaElement(
     OpenApi openApi,
     Referenceable<Schema> schema, {
-    String? name,
+    required String name,
   }) {
     if (schema.isReference) {
       final generatedComponent = getGeneratedComponentByRef(
