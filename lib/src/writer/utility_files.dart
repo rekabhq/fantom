@@ -16,7 +16,6 @@ class Optional<T> {
     fileContent: r'''
 import 'package:uri/uri.dart';
 
-
 class MethodUriParser {
   Uri parseUri({
     required String baseURL,
@@ -109,7 +108,37 @@ class UriParam {
   }
 }
 
-extension UriParamListExt on List<UriParam> {
+extension UriParamNumberExt on num {
+  UriParam toUriParam(String name, bool explode) {
+    return UriParam.primitive(name, this);
+  }
+}
+
+extension UriParamStringExt on String {
+  UriParam toUriParam(String name, bool explode) {
+    return UriParam.primitive(name, this);
+  }
+}
+
+extension UriParamBoolExt on bool {
+  UriParam toUriParam(String name, bool explode) {
+    return UriParam.primitive(name, this);
+  }
+}
+
+extension UriParamListExt on List {
+  UriParam toUriParam(String name, bool explode) {
+    return UriParam.array(name, this, explode);
+  }
+}
+
+extension UriParamMapExt on Map<String, dynamic> {
+  UriParam toUriParam(String name, bool explode) {
+    return UriParam.object(name, this, explode);
+  }
+}
+
+extension UriListExt on List<UriParam> {
   Map<String, dynamic> toMapOfParams() {
     var map = <String, dynamic>{};
     for (var param in this) {
