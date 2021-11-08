@@ -133,6 +133,8 @@ class ApiMethodGenerator {
 
     buffer.writeln(_generateContentTypeParameters());
 
+    buffer.writeln(_generateResponseContentTypeParameters());
+
     buffer.writeln(_generateEndMethodSyntax());
 
     buffer.writeln(_generateContentTypeValue(
@@ -217,6 +219,9 @@ class ApiMethodGenerator {
   }
 
   String _generateContentTypeParameters() => 'String? $contentTypeVariable,';
+
+  String _generateResponseContentTypeParameters() =>
+      'String? $responseContentTypeVariable,';
 
   String _generateMethodSyntax(String methodName, String returnType) =>
       'Future<$returnType> $methodName({';
@@ -436,9 +441,8 @@ class ApiMethodGenerator {
     if (responseTypeName != dioResponseType) {
       return '''
       return ${responseTypeName}Ext.from(
-        $responseVarName.statusCode?.toString(),
-        $responseVarName.data,
-        $responseVarName.requestOptions.responseType.toString(),
+        $responseVarName,
+        $responseContentTypeVariable,
       );
       ''';
     } else {
