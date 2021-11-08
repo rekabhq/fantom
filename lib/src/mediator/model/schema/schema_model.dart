@@ -637,13 +637,18 @@ class StringDataElement with EquatableMixin implements DataElement {
 
   @override
   String get typeNN {
-    final String base;
-    if (format == StringDataElementFormat.binary) {
-      base = 'Stream<int>';
-    } else {
-      base = 'String';
+    switch (format) {
+      case StringDataElementFormat.plain:
+        return 'String';
+      case StringDataElementFormat.byte:
+        return 'String';
+      case StringDataElementFormat.binary:
+        return 'MultipartFile';
+      case StringDataElementFormat.date:
+        return 'DateTime';
+      case StringDataElementFormat.dateTime:
+        return 'DateTime';
     }
-    return base;
   }
 
   @override
