@@ -282,7 +282,6 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // TODO: check this in tests for duplicated naming
   String _generateRequestBody(
     GeneratedRequestBodyComponent requestBody,
   ) {
