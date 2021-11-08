@@ -39,10 +39,6 @@ class SchemaEnumGenerator {
       throw AssertionError('element ${element.name} with empty enum');
     }
     final type = element.type;
-    if (type == null) {
-      throw UnimplementedError('bad typed element');
-    }
-
     final svg = SchemaValueGenerator();
     final names = [
       for (var index = 0; index < values.length; index++) 'value$index',

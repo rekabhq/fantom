@@ -24,10 +24,6 @@ class SchemaFromJsonGenerator {
     final bool inline = false,
   }) {
     final type = element.type;
-    if (type == null) {
-      throw UnimplementedError('bad type for element');
-    }
-
     return [
       if (isStatic) 'static ',
       '$type $name(dynamic json) => ',
@@ -45,11 +41,6 @@ class SchemaFromJsonGenerator {
       throw UnimplementedError(
         'map objects are not supported : name is ${object.name}',
       );
-    }
-    for (final property in object.properties) {
-      if (property.item.type == null) {
-        throw UnimplementedError('anonymous inner objects are not supported');
-      }
     }
 
     return [
@@ -110,10 +101,6 @@ class SchemaFromJsonGenerator {
       object: (object) {
         if (object.format == ObjectDataElementFormat.map) {
           final sub = object.additionalProperties!.type;
-          if (sub == null) {
-            throw UnimplementedError('bad typed map');
-          }
-
           return [
             '((Map<String, dynamic> json) => ',
             'json.map<String, $sub>((key, it) => ',
@@ -124,12 +111,6 @@ class SchemaFromJsonGenerator {
           ].joinParts();
         } else {
           final typeNN = object.typeNN;
-          if (typeNN == null) {
-            throw UnimplementedError(
-              'anonymous inner objects are not supported',
-            );
-          }
-
           if (inline) {
             return [
               '((Map<String, dynamic> json) => ',
@@ -143,10 +124,6 @@ class SchemaFromJsonGenerator {
       },
       array: (array) {
         final sub = array.items.type;
-        if (sub == null) {
-          throw UnimplementedError('bad typed array');
-        }
-
         return [
           '((List<dynamic> json) => ',
           'json.map<$sub>((it) => ',
@@ -163,17 +140,21 @@ class SchemaFromJsonGenerator {
         return fixedName;
       },
       string: (string) {
-        final format = string.format;
-        if (format == StringDataElementFormat.binary) {
-          throw UnimplementedError('only plain string is supported');
+        switch (string.format) {
+          case StringDataElementFormat.plain:
+            return fixedName;
+          case StringDataElementFormat.byte:
+            return fixedName;
+          case StringDataElementFormat.binary:
+            return fixedName;
+          case StringDataElementFormat.date:
+            return 'DateTime.parse($fixedName)';
+          case StringDataElementFormat.dateTime:
+            return 'DateTime.parse($fixedName)';
         }
-
-        return fixedName;
       },
       untyped: (untyped) {
-        throw UnimplementedError(
-          'default values for untyped elements are not supported.',
-        );
+        return fixedName;
       },
     );
 

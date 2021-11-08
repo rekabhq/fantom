@@ -10,10 +10,6 @@ class SchemaToJsonGenerator {
     final bool inline = false,
   }) {
     final type = element.type;
-    if (type == null) {
-      throw UnimplementedError('bad type for element');
-    }
-
     return [
       '(($type value) => ',
       _logic(element, 'value', inline),
@@ -29,10 +25,6 @@ class SchemaToJsonGenerator {
     final bool inline = false,
   }) {
     final type = element.type;
-    if (type == null) {
-      throw UnimplementedError('bad type for element');
-    }
-
     return [
       if (isStatic) 'static ',
       'dynamic $name($type value) => ',
@@ -50,11 +42,6 @@ class SchemaToJsonGenerator {
       throw UnimplementedError(
         'map objects are not supported : name is ${object.name}',
       );
-    }
-    for (final property in object.properties) {
-      if (property.item.type == null) {
-        throw UnimplementedError('anonymous inner objects are not supported');
-      }
     }
 
     return [
@@ -111,80 +98,72 @@ class SchemaToJsonGenerator {
   ) {
     final isNullable = element.isNullable;
     final fixedName = isNullable ? '$name!' : name;
-    return [
-      if (isNullable) '$name == null ? null : ',
-      element.match(
-        boolean: (boolean) {
-          return fixedName;
-        },
-        object: (object) {
-          if (object.format == ObjectDataElementFormat.map) {
+    final code = element.match(
+      boolean: (boolean) {
+        return fixedName;
+      },
+      object: (object) {
+        if (object.format == ObjectDataElementFormat.map) {
+          final typeNN = object.typeNN;
+          return [
+            '(($typeNN value) => ',
+            'value.map((key, it) => MapEntry(key, ',
+            _logic(object.additionalProperties!, 'it', inline),
+            '))',
+            ')($fixedName)',
+          ].joinParts();
+        } else {
+          if (inline) {
             final typeNN = object.typeNN;
-            if (typeNN == null) {
-              throw UnimplementedError('bad typed "map" object');
-            }
-
             return [
               '(($typeNN value) => ',
-              'value.map((key, it) => MapEntry(key, ',
-              _logic(object.additionalProperties!, 'it', inline),
-              '))',
+              _inner(object, inline, true),
               ')($fixedName)',
             ].joinParts();
           } else {
-            if (inline) {
-              final typeNN = object.typeNN;
-              if (typeNN == null) {
-                throw UnimplementedError(
-                  'anonymous inner objects are not supported',
-                );
-              }
-
-              return [
-                '(($typeNN value) => ',
-                _inner(object, inline, true),
-                ')($fixedName)',
-              ].joinParts();
-            } else {
-              return '$fixedName.toJson()';
-            }
+            return '$fixedName.toJson()';
           }
-        },
-        array: (array) {
-          // list and set are equivalent here ...
-          final typeNN = array.typeNN;
-          if (typeNN == null) {
-            throw UnimplementedError('bad typed array');
-          }
+        }
+      },
+      array: (array) {
+        // list and set are equivalent here ...
+        final typeNN = array.typeNN;
+        return [
+          '(($typeNN value) => ',
+          'value.map((it) => ',
+          _logic(array.items, 'it', inline),
+          ').toList()',
+          ')($fixedName)',
+        ].joinParts();
+      },
+      integer: (integer) {
+        return fixedName;
+      },
+      number: (number) {
+        return fixedName;
+      },
+      string: (string) {
+        switch (string.format) {
+          case StringDataElementFormat.plain:
+            return fixedName;
+          case StringDataElementFormat.byte:
+            return fixedName;
+          case StringDataElementFormat.binary:
+            return fixedName;
+          case StringDataElementFormat.date:
+            return '$fixedName.toIso8601String()';
+          case StringDataElementFormat.dateTime:
+            return '$fixedName.toIso8601String()';
+        }
+      },
+      untyped: (untyped) {
+        return fixedName;
+      },
+    );
 
-          return [
-            '(($typeNN value) => ',
-            'value.map((it) => ',
-            _logic(array.items, 'it', inline),
-            ').toList()',
-            ')($fixedName)',
-          ].joinParts();
-        },
-        integer: (integer) {
-          return fixedName;
-        },
-        number: (number) {
-          return fixedName;
-        },
-        string: (string) {
-          final format = string.format;
-          if (format == StringDataElementFormat.binary) {
-            throw UnimplementedError('only plain string is supported');
-          }
-
-          return fixedName;
-        },
-        untyped: (untyped) {
-          throw UnimplementedError(
-            'default values for untyped elements are not supported.',
-          );
-        },
-      ),
+    return [
+      if (isNullable) '$name == null ? null : ',
+      code,
     ].joinParts();
   }
 }

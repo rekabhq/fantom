@@ -6,8 +6,8 @@ class SchemaDefaultValueGenerator {
 
   /// no checking for types. assuming all is correct.
   ///
-  /// return null if
-  String? generate(final DataElement element) {
+  /// return null if no default value
+  String? generateOrNull(final DataElement element) {
     final defaultValue = element.defaultValue;
     if (defaultValue == null) {
       return null;
