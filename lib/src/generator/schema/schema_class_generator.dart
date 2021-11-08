@@ -121,7 +121,7 @@ class SchemaClassGenerator {
                   ' != null ? ',
                   property.name,
                   '.value : ',
-                  sdvg.generate(property.item)!,
+                  sdvg.generateOrNull(property.item)!,
                 ].joinParts(),
               ',',
             ].joinParts(),
