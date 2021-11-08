@@ -41,16 +41,23 @@ class SchemaClassGenerator {
     }
     final format = object.format;
 
-    if (format != ObjectDataElementFormat.object) {
+    if (format == ObjectDataElementFormat.map) {
       // todo: remove quick fix :D
       if (name.endsWith('_DNG')) {
         return 'class $name {}';
       }
 
-      throw UnimplementedError(
-        '"mixed" and "map" objects are not supported : name is $name',
+      throw AssertionError(
+        'map objects should not be generated : name is $name',
       );
     }
+
+    if (format == ObjectDataElementFormat.mixed) {
+      throw UnimplementedError(
+        'mixed objects are not supported : name is $name',
+      );
+    }
+
     for (final property in object.properties) {
       if (property.item.type == null) {
         throw UnimplementedError('anonymous inner objects are not supported');
