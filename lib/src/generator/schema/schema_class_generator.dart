@@ -18,6 +18,7 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
     final content = generateClass(
       object,
       additionalCode: additionalCode,
+      generateJson: generateJson,
       inlineJson: inlineJson,
       generateEquatable: generateEquatable,
       generateToString: generateToString,
