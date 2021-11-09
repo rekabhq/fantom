@@ -46,7 +46,7 @@ class ApiMethodGenerator {
           )
           .toList();
 
-      //
+      // generating doc comments for paths
       if (path.value.operations.isNotEmpty) {
         final pathValue = '"${path.key}"';
         final pathLength = pathValue.length;
