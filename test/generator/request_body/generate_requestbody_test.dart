@@ -42,7 +42,12 @@ void main() {
 
         var outputFile = File('test/generator/request_body/output.dart');
 
-        var content = output.fileContent;
+        var content = '''
+import 'package:equatable/equatable.dart';
+
+''';
+
+        content += output.fileContent;
 
         // todo : fix ...
 
@@ -68,7 +73,6 @@ void main() {
         }
 
         content += r'''
-import 'package:equatable/equatable.dart';
 
 class Optional<T extends Object?> extends Equatable {
   final T value;
