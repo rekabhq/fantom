@@ -38,6 +38,80 @@ class Enumeration with EquatableMixin {
   String toString() => 'Enumeration{values: $values}';
 }
 
+/// dart object property.
+///
+/// ex. required String? id;
+class ObjectProperty with EquatableMixin {
+  /// property name
+  final String name;
+
+  /// element type
+  final DataElement item;
+
+  /// if property is required
+  final bool isRequired;
+
+  const ObjectProperty({
+    required this.name,
+    required this.item,
+    this.isRequired = false,
+  });
+
+  @override
+  List<Object?> get props => [
+        name,
+        item,
+        isRequired,
+      ];
+
+  @override
+  String toString() => 'ObjectProperty{name: $name, item: $item, '
+      'isRequired: $isRequired}';
+}
+
+/// format of [ObjectDataElement].
+enum ObjectDataElementFormat {
+  /// dart object, like User.
+  ///
+  /// can or can not accept additional fields.
+  /// should check [ObjectDataElement.isAdditionalPropertiesAllowed].
+  ///
+  /// properties can be empty.
+  /// should check [ObjectDataElement.properties].
+  object,
+
+  /// Map<String, *>.
+  ///
+  /// must accept additional fields.
+  /// [ObjectDataElement.isAdditionalPropertiesAllowed] is true.
+  map,
+
+  /// dart object which can have additional fields
+  /// like a map.
+  ///
+  /// must accept additional fields.
+  /// [ObjectDataElement.isAdditionalPropertiesAllowed] is true.
+  mixed,
+}
+
+/// format of [StringDataElement].
+enum StringDataElementFormat {
+  /// string
+  plain,
+
+  /// base 64
+  byte,
+
+  /// binary stream or list
+  binary,
+
+  /// date
+  date,
+
+  /// date-time
+  dateTime,
+}
+
 /// base data element:
 ///
 /// - [BooleanDataElement]
@@ -74,25 +148,6 @@ abstract class DataElement {
   /// if present provides enumeration information,
   /// if not present means no enumeration.
   Enumeration? get enumeration;
-
-  /// type with nullability sign
-  ///
-  /// ex. String, String?,
-  /// List<String>, List<String?>, List<String?>?,
-  /// User, User?,
-  ///
-  /// it can be `dynamic` if we have an untyped object.
-  /// may produce `dynamic?`.
-  String get type;
-
-  /// type without nullability sign
-  ///
-  /// ex. String, NOT String?,
-  /// List<String>, List<String?>, NOT List<String?>?,
-  /// User, NOT User?,
-  ///
-  /// it can be `dynamic` if we have an untyped object.
-  String get typeNN;
 
   /// [BooleanDataElement]
   const factory DataElement.boolean({
@@ -190,16 +245,6 @@ class BooleanDataElement with EquatableMixin implements DataElement {
   });
 
   @override
-  String get type {
-    return typeNN.withNullability(isNullable);
-  }
-
-  @override
-  String get typeNN {
-    return 'bool';
-  }
-
-  @override
   List<Object?> get props => [
         name,
         isNullable,
@@ -212,62 +257,6 @@ class BooleanDataElement with EquatableMixin implements DataElement {
   String toString() => 'BooleanDataElement{name: $name, '
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
       'defaultValue: $defaultValue, enumeration: $enumeration}';
-}
-
-/// dart object property.
-///
-/// ex. required String? id;
-class ObjectProperty with EquatableMixin {
-  /// property name
-  final String name;
-
-  /// element type
-  final DataElement item;
-
-  /// if property is required
-  final bool isRequired;
-
-  const ObjectProperty({
-    required this.name,
-    required this.item,
-    this.isRequired = false,
-  });
-
-  @override
-  List<Object?> get props => [
-        name,
-        item,
-        isRequired,
-      ];
-
-  @override
-  String toString() => 'ObjectProperty{name: $name, item: $item, '
-      'isRequired: $isRequired}';
-}
-
-/// format of [ObjectDataElement].
-enum ObjectDataElementFormat {
-  /// dart object, like User.
-  ///
-  /// can or can not accept additional fields.
-  /// should check [ObjectDataElement.isAdditionalPropertiesAllowed].
-  ///
-  /// properties can be empty.
-  /// should check [ObjectDataElement.properties].
-  object,
-
-  /// Map<String, *>.
-  ///
-  /// must accept additional fields.
-  /// [ObjectDataElement.isAdditionalPropertiesAllowed] is true.
-  map,
-
-  /// dart object which can have additional fields
-  /// like a map.
-  ///
-  /// must accept additional fields.
-  /// [ObjectDataElement.isAdditionalPropertiesAllowed] is true.
-  mixed,
 }
 
 /// dart-object or Map<String, *>.
@@ -332,64 +321,6 @@ class ObjectDataElement with EquatableMixin implements DataElement {
     this.additionalProperties,
   });
 
-  /// if is additional properties allowed.
-  bool get isAdditionalPropertiesAllowed => additionalProperties != null;
-
-  /// format.
-  ///
-  /// see: [ObjectDataElementFormat].
-  ObjectDataElementFormat get format {
-    // is null or untyped:
-    if (additionalProperties is UntypedDataElement?) {
-      return ObjectDataElementFormat.object;
-    } else {
-      if (properties.isEmpty) {
-        return ObjectDataElementFormat.map;
-      } else {
-        return ObjectDataElementFormat.mixed;
-      }
-    }
-  }
-
-  @override
-  String get type {
-    return typeNN.withNullability(isNullable);
-  }
-
-  @override
-  String get typeNN {
-    if ((additionalProperties is UntypedDataElement?) ||
-        (properties.isNotEmpty)) {
-      // mixed and object:
-      return name;
-    } else {
-      // map:
-      final sub = additionalProperties!.type;
-      return 'Map<String, $sub>';
-    }
-  }
-
-  /// the type of map used,
-  /// this is more general than [type].
-  ///
-  /// without nullability
-  String? get mapTypeOrNull {
-    return mapTypeNNOrNull?.withNullability(isNullable);
-  }
-
-  /// the type of map used,
-  /// this is more general than [type].
-  ///
-  /// without nullability
-  String? get mapTypeNNOrNull {
-    if (additionalProperties == null) {
-      return null;
-    } else {
-      final sub = additionalProperties!.type;
-      return 'Map<String, $sub>';
-    }
-  }
-
   @override
   List<Object?> get props => [
         name,
@@ -445,18 +376,6 @@ class ArrayDataElement with EquatableMixin implements DataElement {
   });
 
   @override
-  String get type {
-    return typeNN.withNullability(isNullable);
-  }
-
-  @override
-  String get typeNN {
-    final sub = items.type;
-    final base = isUniqueItems ? 'Set' : 'List';
-    return '$base<$sub>';
-  }
-
-  @override
   List<Object?> get props => [
         name,
         isNullable,
@@ -498,16 +417,6 @@ class IntegerDataElement with EquatableMixin implements DataElement {
     this.defaultValue,
     this.enumeration,
   });
-
-  @override
-  String get type {
-    return typeNN.withNullability(isNullable);
-  }
-
-  @override
-  String get typeNN {
-    return 'int';
-  }
 
   @override
   List<Object?> get props => [
@@ -554,17 +463,6 @@ class NumberDataElement with EquatableMixin implements DataElement {
   });
 
   @override
-  String get type {
-    return typeNN.withNullability(isNullable);
-  }
-
-  @override
-  String get typeNN {
-    final base = isFloat ? 'double' : 'num';
-    return base;
-  }
-
-  @override
   List<Object?> get props => [
         name,
         isNullable,
@@ -579,24 +477,6 @@ class NumberDataElement with EquatableMixin implements DataElement {
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
       'defaultValue: $defaultValue, enumeration: $enumeration, '
       'format: $isFloat}';
-}
-
-/// format of [StringDataElement].
-enum StringDataElementFormat {
-  /// string
-  plain,
-
-  /// base 64
-  byte,
-
-  /// binary stream or list
-  binary,
-
-  /// date
-  date,
-
-  /// date-time
-  dateTime,
 }
 
 /// String.
@@ -629,27 +509,6 @@ class StringDataElement with EquatableMixin implements DataElement {
     this.enumeration,
     this.format = StringDataElementFormat.plain,
   });
-
-  @override
-  String get type {
-    return typeNN.withNullability(isNullable);
-  }
-
-  @override
-  String get typeNN {
-    switch (format) {
-      case StringDataElementFormat.plain:
-        return 'String';
-      case StringDataElementFormat.byte:
-        return 'String';
-      case StringDataElementFormat.binary:
-        return 'MultipartFile';
-      case StringDataElementFormat.date:
-        return 'DateTime';
-      case StringDataElementFormat.dateTime:
-        return 'DateTime';
-    }
-  }
 
   @override
   List<Object?> get props => [
@@ -696,16 +555,6 @@ class UntypedDataElement with EquatableMixin implements DataElement {
     this.defaultValue,
     this.enumeration,
   });
-
-  @override
-  String get type {
-    return typeNN.withNullability(isNullable);
-  }
-
-  @override
-  String get typeNN {
-    return 'Object';
-  }
 
   @override
   List<Object?> get props => [
@@ -811,14 +660,8 @@ extension DataElementCastingExt on DataElement {
   UntypedDataElement get asUntypedDataElement => this as UntypedDataElement;
 }
 
-/// internal utilities for strings
-extension _StringExt on String {
-  /// add nullability if needed.
-  String withNullability(bool isNullable) => isNullable ? '$this?' : this;
-}
-
 /// extensions on [DataElement]
-extension DataElementExt on DataElement {
+extension DataElementUtilityExt on DataElement {
   /// is not nullable.
   bool get isNotNullable => !isNullable;
 
@@ -833,7 +676,10 @@ extension DataElementExt on DataElement {
 
   /// has not enum
   bool get hasNotEnum => !hasEnum;
+}
 
+/// extensions on [DataElement]
+extension DataElementEnumNameExt on DataElement {
   /// enum name
   ///
   /// if itself is data class append 'Enum' to it.
@@ -868,4 +714,200 @@ extension ObjectPropertyExt on ObjectProperty {
 
   /// is constructor required.
   bool get isConstructorRequired => isRequired && item.isNotNullable;
+}
+
+/// extensions on [ObjectDataElement].
+extension ObjectDataElementFormatExt on ObjectDataElement {
+  /// format.
+  ///
+  /// see: [ObjectDataElementFormat].
+  ObjectDataElementFormat get format {
+    // is null or untyped:
+    if (additionalProperties is UntypedDataElement?) {
+      return ObjectDataElementFormat.object;
+    } else {
+      if (properties.isEmpty) {
+        return ObjectDataElementFormat.map;
+      } else {
+        return ObjectDataElementFormat.mixed;
+      }
+    }
+  }
+
+  /// if is additional properties allowed.
+  bool get isAdditionalPropertiesAllowed => additionalProperties != null;
+}
+
+/// extensions on [ObjectDataElement].
+extension ObjectDataElementTypeExt on ObjectDataElement {
+  /// the type of map used,
+  /// this is more general than [type].
+  ///
+  /// without nullability
+  String? get mapTypeOrNull {
+    return mapTypeNNOrNull?.withNullability(isNullable);
+  }
+
+  /// the type of map used,
+  /// this is more general than [type].
+  ///
+  /// without nullability
+  String? get mapTypeNNOrNull {
+    if (isAdditionalPropertiesAllowed) {
+      final sub = additionalProperties!.type1;
+      return 'Map<String, $sub>';
+    } else {
+      return null;
+    }
+  }
+}
+
+/// extensions on [DataElement].
+extension DataElementTypeExt on DataElement {
+  /// type possibly with nullability sign.
+  ///
+  /// can be enum.
+  String get type1 {
+    if (hasEnum) {
+      return enumName;
+    } else {
+      return rawType;
+    }
+  }
+
+  /// raw type with nullability sign.
+  ///
+  /// can not be enum.
+  ///
+  /// internal types may be enums.
+  ///
+  /// ex. String, String?,
+  /// List<String>, List<String?>, List<String?>?,
+  /// User, User?,
+  ///
+  /// it can be `Object` or `Object?` if we have an untyped object.
+  String get rawType => rawTypeNN.withNullability(isNullable);
+
+  /// raw type without nullability sign.
+  ///
+  /// can not be enum.
+  ///
+  /// internal types may be enums.
+  ///
+  /// ex. String, NOT String?,
+  /// List<String>, List<String?>, NOT List<String?>?,
+  /// User, NOT User?,
+  ///
+  /// it can be `Object` if we have an untyped object.
+  String get rawTypeNN => match(
+        boolean: (boolean) {
+          return 'bool';
+        },
+        object: (object) {
+          if (object.format == ObjectDataElementFormat.map) {
+            final sub = object.additionalProperties!.type1;
+            return 'Map<String, $sub>';
+          } else {
+            return name;
+          }
+        },
+        array: (array) {
+          final sub = array.items.type1;
+          if (array.isUniqueItems) {
+            return 'Set<$sub>';
+          } else {
+            return 'List<$sub>';
+          }
+        },
+        integer: (integer) {
+          return 'int';
+        },
+        number: (number) {
+          if (number.isFloat) {
+            return 'double';
+          } else {
+            return 'num';
+          }
+        },
+        string: (string) {
+          return _stringRawTypeNN(string);
+        },
+        untyped: (untyped) {
+          return 'Object';
+        },
+      );
+
+  /// recursive raw type with nullability sign.
+  ///
+  /// can not be enum.
+  ///
+  /// internal types can not be enums.
+  String get recRawType => recRawTypeNN.withNullability(isNullable);
+
+  /// recursive raw type without nullability sign.
+  ///
+  /// can not be enum.
+  ///
+  /// internal types can not be enums.
+  String get recRawTypeNN => match(
+        boolean: (boolean) {
+          return 'bool';
+        },
+        object: (object) {
+          if (object.format == ObjectDataElementFormat.map) {
+            final sub = object.additionalProperties!.recRawType;
+            return 'Map<String, $sub>';
+          } else {
+            return name;
+          }
+        },
+        array: (array) {
+          final sub = array.items.recRawType;
+          if (array.isUniqueItems) {
+            return 'Set<$sub>';
+          } else {
+            return 'List<$sub>';
+          }
+        },
+        integer: (integer) {
+          return 'int';
+        },
+        number: (number) {
+          if (number.isFloat) {
+            return 'double';
+          } else {
+            return 'num';
+          }
+        },
+        string: (string) {
+          return _stringRawTypeNN(string);
+        },
+        untyped: (untyped) {
+          return 'Object';
+        },
+      );
+
+  /// string raw type.
+  String _stringRawTypeNN(string) {
+    switch (string.format) {
+      case StringDataElementFormat.plain:
+        return 'String';
+      case StringDataElementFormat.byte:
+        return 'String';
+      case StringDataElementFormat.binary:
+        return 'MultipartFile';
+      case StringDataElementFormat.date:
+        return 'DateTime';
+      case StringDataElementFormat.dateTime:
+        return 'DateTime';
+      default:
+        throw AssertionError();
+    }
+  }
+}
+
+/// internal utilities for strings
+extension _StringNullabilityExt on String {
+  /// add nullability if needed.
+  String withNullability(bool isNullable) => isNullable ? '$this?' : this;
 }
