@@ -826,13 +826,27 @@ extension DataElementExt on DataElement {
   bool get hasDefaultValue => defaultValue != null;
 
   /// has not default value.
-  bool get hasNotDefaultValue => defaultValue == null;
+  bool get hasNotDefaultValue => !hasDefaultValue;
 
   /// has enum
   bool get hasEnum => enumeration != null;
 
   /// has not enum
-  bool get hasNotEnum => enumeration == null;
+  bool get hasNotEnum => !hasEnum;
+
+  /// enum name
+  ///
+  /// if itself is data class append 'Enum' to it.
+  String get enumName {
+    final element = this;
+    // we generate enum for
+    if (element is ObjectDataElement &&
+        element.format != ObjectDataElementFormat.map) {
+      return '${name}Enum';
+    } else {
+      return name;
+    }
+  }
 }
 
 /// extensions on [ObjectProperty]
@@ -843,8 +857,14 @@ extension ObjectPropertyExt on ObjectProperty {
   /// is field optional.
   bool get isFieldOptional => isNotRequired && item.hasNotDefaultValue;
 
+  /// is not field optional.
+  bool get isNotFieldOptional => !isFieldOptional;
+
   /// is constructor optional.
   bool get isConstructorOptional => isNotRequired || item.hasDefaultValue;
+
+  /// is not constructor optional.
+  bool get isNotConstructorOptional => !isConstructorOptional;
 
   /// is constructor required.
   bool get isConstructorRequired => isRequired && item.isNotNullable;
