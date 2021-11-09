@@ -132,33 +132,13 @@ class SchemaMediator {
             isFloat: schemaValue.format != null,
           );
         case 'string':
-          final f = schemaValue.format?.toLowerCase();
-          final StringDataElementFormat format;
-          switch (f) {
-            case 'byte':
-              format = StringDataElementFormat.byte;
-              break;
-            case 'binary':
-              format = StringDataElementFormat.binary;
-              break;
-            case 'date':
-              format = StringDataElementFormat.date;
-              break;
-            case 'datetime':
-              format = StringDataElementFormat.dateTime;
-              break;
-            default:
-              format = StringDataElementFormat.plain;
-              break;
-          }
-
           return DataElement.string(
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
-            format: format,
+            format: _extractStringFormat(schemaValue),
           );
         case null:
           return DataElement.untyped(
@@ -192,5 +172,21 @@ class SchemaMediator {
         : Enumeration(
             values: schemaValue.enumerated!,
           );
+  }
+
+  StringDataElementFormat _extractStringFormat(Schema schemaValue) {
+    final format = schemaValue.format?.toLowerCase();
+    switch (format) {
+      case 'byte':
+        return StringDataElementFormat.byte;
+      case 'binary':
+        return StringDataElementFormat.binary;
+      case 'date':
+        return StringDataElementFormat.date;
+      case 'datetime':
+        return StringDataElementFormat.dateTime;
+      default:
+        return StringDataElementFormat.plain;
+    }
   }
 }
