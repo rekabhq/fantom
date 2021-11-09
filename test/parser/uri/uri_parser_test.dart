@@ -446,7 +446,7 @@ void main() {
     test(
       'should parse simple header primitive parameter',
       () {
-        final uri = uriParser.parserHeader(
+        final uri = uriParser.parseHeader(
           UriParam.primitive('id', 5, 'simple'),
         );
         expect(uri, '5');
@@ -456,10 +456,10 @@ void main() {
     test(
       'should parse simple header array parameter',
       () {
-        final uri = uriParser.parserHeader(
+        final uri = uriParser.parseHeader(
           UriParam.array('id', ['3', '4', '5'], 'simple', false),
         );
-        final explodeUri = uriParser.parserHeader(
+        final explodeUri = uriParser.parseHeader(
           UriParam.array('id', ['3', '4', '5'], 'simple', true),
         );
 
@@ -474,7 +474,7 @@ void main() {
     test(
       'should put object path parameters in uri template using simple style and parse uri correctly',
       () {
-        final uri = uriParser.parserHeader(
+        final uri = uriParser.parseHeader(
           UriParam.object(
             'id',
             {"role": "admin", "firstName": "Alex"},
@@ -482,7 +482,7 @@ void main() {
             false,
           ),
         );
-        final explodeUri = uriParser.parserHeader(
+        final explodeUri = uriParser.parseHeader(
           UriParam.object(
             'id',
             {"role": "admin", "firstName": "Alex"},

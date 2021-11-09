@@ -56,7 +56,7 @@ class MethodUriParser {
     return uriTemplate.expand(templateVariables);
   }
 
-  String parserHeader(UriParam header) {
+  String parseHeader(UriParam header) {
     if (header.style != 'simple') {
       throw StateError('Only simple style is supported for header Parameters');
     }

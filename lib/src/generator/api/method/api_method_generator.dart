@@ -170,7 +170,7 @@ class ApiMethodGenerator {
 
     // final headerParams = {'accept': 'json'};
     if (generatedHeaderParams?.isNotEmpty ?? false) {
-      buffer.writeln(_generateInitialHeaderParameters(generatedHeaderParams));
+      buffer.writeln(_generateParsedHeaderParameters(generatedHeaderParams));
     }
 
     // 7. generate body parameters
@@ -318,21 +318,34 @@ class ApiMethodGenerator {
     if (hasPathParams) {
       buffer.writeln('final pathUriParams = [');
       for (final param in generatedPathParams!) {
+        final style = param.source.style ?? defaultPathParamStyle;
+        final explode = param.source.explode ?? defaultPathParamExplode;
+
         final type = (param.isSchema
                 ? param.schemaComponent?.dataElement.type
                 : param.contentManifest?.manifest.name) ??
             dynamicType;
 
-        final style = param.source.style ?? defaultPathParamStyle;
-        final explode = param.source.explode ?? defaultPathParamExplode;
-
         final name = param.source.name;
+
+        final isRequired = param.source.isRequired == true;
+
+        final defaultValue = (param.schemaComponent != null && !isRequired)
+            ? defaultValueGenerator
+                .generateOrNull(param.schemaComponent!.dataElement)
+            : null;
 
         final isNullable = param.isNullable &&
             type != dynamicType &&
             !type.endsWith(nullableCharacter);
 
-        if (isNullable) {
+        /// should we use '?' or ''
+        final nullableValue =
+            isNullable || (!isRequired && defaultValue == null)
+                ? nullableCharacter
+                : '';
+
+        if (nullableValue == nullableCharacter) {
           buffer.writeln('if($name != null)');
         }
         buffer.writeln(
@@ -346,21 +359,34 @@ class ApiMethodGenerator {
       buffer.writeln('final queryUriParams = [');
 
       for (final param in generatedQueryParams!) {
-        final type = (param.isSchema
-                ? param.schemaComponent?.dataElement.type
-                : param.contentManifest?.manifest.name) ??
-            dynamicType;
-
         final style = param.source.style ?? defaultQueryParamStyle;
         final explode = param.source.explode ?? defaultQueryParamExplode;
 
         final name = param.source.name;
 
+        final type = (param.isSchema
+                ? param.schemaComponent?.dataElement.type
+                : param.contentManifest?.manifest.name) ??
+            dynamicType;
+
+        final isRequired = param.source.isRequired == true;
+
+        final defaultValue = (param.schemaComponent != null && !isRequired)
+            ? defaultValueGenerator
+                .generateOrNull(param.schemaComponent!.dataElement)
+            : null;
+
         final isNullable = param.isNullable &&
             type != dynamicType &&
             !type.endsWith(nullableCharacter);
 
-        if (isNullable) {
+        /// should we use '?' or ''
+        final nullableValue =
+            isNullable || (!isRequired && defaultValue == null)
+                ? nullableCharacter
+                : '';
+
+        if (nullableValue == nullableCharacter) {
           buffer.writeln('if($name != null)');
         }
 
@@ -385,18 +411,49 @@ class ApiMethodGenerator {
   }
 
   // final headerParams = {'accept': 'json'};
-  String _generateInitialHeaderParameters(
+  String _generateParsedHeaderParameters(
     List<GeneratedParameterComponent>? generatedHeaderParams,
   ) {
     if (generatedHeaderParams?.isEmpty ?? true) return '';
 
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('final $headerParamVarName = {');
+    buffer.writeln('final $headerParamVarName = {');
 
     for (final param in generatedHeaderParams!) {
+      final style = param.source.style ?? defaultHeaderParamStyle;
+      final explode = param.source.explode ?? defaultHeaderParamExplode;
+
       final name = param.source.name;
-      buffer.writeln('\'$name\': $name,');
+
+      final type = (param.isSchema
+              ? param.schemaComponent?.dataElement.type
+              : param.contentManifest?.manifest.name) ??
+          dynamicType;
+
+      final isRequired = param.source.isRequired == true;
+
+      final defaultValue = (param.schemaComponent != null && !isRequired)
+          ? defaultValueGenerator
+              .generateOrNull(param.schemaComponent!.dataElement)
+          : null;
+
+      final isNullable = param.isNullable &&
+          type != dynamicType &&
+          !type.endsWith(nullableCharacter);
+
+      /// should we use '?' or ''
+      final nullableValue = isNullable || (!isRequired && defaultValue == null)
+          ? nullableCharacter
+          : '';
+
+      if (nullableValue == nullableCharacter) {
+        buffer.writeln('if($name != null)');
+      }
+      buffer.write('\'$name\': $parameterParserVarName.parseHeader(');
+      buffer.write(
+        '$name.$toUriParamMethod(\'$name\',\'$style\',$explode,),),',
+      );
     }
 
     buffer.writeln('};');
