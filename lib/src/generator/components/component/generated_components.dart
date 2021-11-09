@@ -58,6 +58,18 @@ class GeneratedSchemaComponent extends GeneratedComponent {
   final DataElement dataElement;
 }
 
+class GeneratedMultipartComponent extends GeneratedSchemaComponent {
+  GeneratedMultipartComponent({
+    required DataElement dataElement,
+    required String fileContent,
+    required String fileName,
+  }) : super(
+          dataElement: dataElement,
+          fileName: fileName,
+          fileContent: fileContent,
+        );
+}
+
 class UnGeneratableSchemaComponent extends GeneratedSchemaComponent
     with UnGeneratableComponent {
   UnGeneratableSchemaComponent({required DataElement dataElement})
