@@ -388,7 +388,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  
                   "additionalProperties": {
                     "type": "integer",
                     "format": "int32"
@@ -712,6 +711,62 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "path",
+            "description": "name that need to be updated",
+            "required": true,
+            "style": "matrix",
+            "explode": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "description": "name that need to be updated",
+            "style": "matrix",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "name that need to be updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
             }
           }
         ],

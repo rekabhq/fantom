@@ -345,11 +345,15 @@ class ApiMethodGenerator {
                 ? nullableCharacter
                 : '';
 
+        final isGenerateSchema = param.isSchema && param.isGenerated;
+
+        final toJsonValue = isGenerateSchema ? '.toJson()' : '';
+
         if (nullableValue == nullableCharacter) {
           buffer.writeln('if($name != null)');
         }
         buffer.writeln(
-          '$name.$toUriParamMethod(\'$name\',\'$style\',$explode),',
+          '$name$toJsonValue.$toUriParamMethod(\'$name\',\'$style\',$explode),',
         );
       }
       buffer.writeln('];');
@@ -386,12 +390,16 @@ class ApiMethodGenerator {
                 ? nullableCharacter
                 : '';
 
+        final isGenerateSchema = param.isSchema && param.isGenerated;
+
+        final toJsonValue = isGenerateSchema ? '.toJson()' : '';
+
         if (nullableValue == nullableCharacter) {
           buffer.writeln('if($name != null)');
         }
 
         buffer.writeln(
-          '$name.$toUriParamMethod(\'$name\',\'$style\',$explode),',
+          '$name$toJsonValue.$toUriParamMethod(\'$name\',\'$style\',$explode),',
         );
       }
 
@@ -447,12 +455,16 @@ class ApiMethodGenerator {
           ? nullableCharacter
           : '';
 
+      final isGenerateSchema = param.isSchema && param.isGenerated;
+
+      final toJsonValue = isGenerateSchema ? '.toJson()' : '';
+
       if (nullableValue == nullableCharacter) {
         buffer.writeln('if($name != null)');
       }
       buffer.write('\'$name\': $parameterParserVarName.parseHeader(');
       buffer.write(
-        '$name.$toUriParamMethod(\'$name\',\'$style\',$explode,),),',
+        '$name$toJsonValue.$toUriParamMethod(\'$name\',\'$style\',$explode,),),',
       );
     }
 
