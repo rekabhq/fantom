@@ -6,6 +6,7 @@ class MethodUriParser {
     required List<UriParam>? pathParameters,
     required List<UriParam>? queryParameters,
   }) {
+    // create clone form path url
     var templatePath = pathURL.toString();
 
     if (pathParameters != null) {
@@ -117,6 +118,9 @@ class UriParam {
         return '?';
       case 'pipeDelimited':
         return '?';
+      // TODO: add support for deepObject values
+      case 'deepObject':
+        throw UnimplementedError('currently we are not supporting deepObject');
       default:
         return '';
     }
