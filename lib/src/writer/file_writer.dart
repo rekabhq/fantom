@@ -16,6 +16,13 @@ class GeneratableFile {
   final String fileName;
 
   const GeneratableFile({required this.fileContent, required this.fileName});
+
+  factory GeneratableFile.fromFile(File file, {String? fileName}) {
+    return GeneratableFile(
+      fileContent: file.readAsStringSync(),
+      fileName: fileName ?? file.path,
+    );
+  }
 }
 
 class FileWriter {
