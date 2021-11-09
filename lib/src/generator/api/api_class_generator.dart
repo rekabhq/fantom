@@ -64,6 +64,8 @@ class ApiClassGenerator {
   String _generateFields() {
     return """
     final Dio dio;
+
+    final parameterParser = MethodUriParser();
     """;
   }
 
