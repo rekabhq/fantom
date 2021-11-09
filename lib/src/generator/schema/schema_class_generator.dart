@@ -12,11 +12,15 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
     final String? additionalCode,
     final bool generateJson = true,
     final bool inlineJson = false,
+    final bool generateEquatable = true,
+    final bool generateToString = true,
   }) {
     final content = generateClass(
       object,
       additionalCode: additionalCode,
       inlineJson: inlineJson,
+      generateEquatable: generateEquatable,
+      generateToString: generateToString,
     );
     return GeneratedSchemaComponent(
       dataElement: object,
@@ -34,6 +38,8 @@ class SchemaClassGenerator {
     final String? additionalCode,
     final bool generateJson = true,
     final bool inlineJson = false,
+    final bool generateEquatable = true,
+    final bool generateToString = true,
   }) {
     final name = object.name;
     final format = object.format;
@@ -56,7 +62,11 @@ class SchemaClassGenerator {
     }
 
     return [
-      'class $name {',
+      [
+        'class $name ',
+        if (generateEquatable) 'extends Equatable ',
+        '{',
+      ].joinParts(),
       _fields(object),
       _constructor(object),
       if (generateJson)
@@ -70,6 +80,8 @@ class SchemaClassGenerator {
             inline: inlineJson,
           ),
         ].joinMethods(),
+      if (generateEquatable) _equatable(object),
+      if (generateToString) _toString(object),
       if (additionalCode != null) additionalCode,
       '}',
     ].joinMethods();
@@ -91,12 +103,13 @@ class SchemaClassGenerator {
   }
 
   String _constructor(final ObjectDataElement object) {
+    final name = object.name;
     if (object.properties.isEmpty) {
-      return '${object.name} ();';
+      return '$name ();';
     } else {
       final sdvg = SchemaDefaultValueGenerator();
       return [
-        '${object.name} ({',
+        '$name ({',
         [
           for (final property in object.properties)
             [
@@ -128,5 +141,37 @@ class SchemaClassGenerator {
         ].joinLines().replaceFromLast(',', ';'),
       ].joinLines();
     }
+  }
+
+  String _equatable(final ObjectDataElement object) {
+    return [
+      '@override',
+      'List<Object?> get props => [',
+      for (final property in object.properties)
+        [
+          property.name,
+          ',',
+        ].joinParts(),
+      '];',
+    ].joinLines();
+  }
+
+  String _toString(final ObjectDataElement object) {
+    final name = object.name;
+    return [
+      '@override',
+      'String toString() => ',
+      "'$name('",
+      for (final property in object.properties)
+        [
+          "'",
+          property.name,
+          ': ',
+          '\$',
+          property.name,
+          ",'",
+        ].joinParts(),
+      "')';",
+    ].joinLines();
   }
 }
