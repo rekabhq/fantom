@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 typedef ResultBuilder<T> = T Function(Response value);
 
 /// [Result] contains result of a Future whether it throw an exception or awaited successfully
-/// use extension function Future.result() to create convert a Future<T> into  a Future<Result<T>>
+/// use extension function Future.toResult() to create convert a Future<T> into  a Future<Result<T,E>>
 class Result<T, E extends Exception> {
   final T? _data;
   final E? _error;
@@ -52,16 +52,21 @@ class Result<T, E extends Exception> {
   }
 }
 
-extension SealedResultExt on Future<Response> {
-  /// awaits the [Future] in a try/catch and returns an instance [SealedResult]
+extension FutureResultExt on Future<Response> {
+  /// awaits the [Future] in a try/catch and returns an instance [Result]
   /// which contains the result value of Future if awaited successfully or the exception if Future throw
   /// an exception while being awaited
-  Future<Result<T, Exception>> result<T>(ResultBuilder<T> builder) async {
+  Future<Result<T, Exception>> toResult<T>(
+    ResultBuilder<T> builder, [
+    bool parserResponseErrors = true,
+  ]) async {
     try {
-      var result = await this;
-      return Result.success(builder(result));
+      final response = await this;
+      return Result.success(builder(response));
     } on DioError catch (e) {
-      if (e.type == DioErrorType.response && e.response != null) {
+      if (e.type == DioErrorType.response &&
+          e.response != null &&
+          parserResponseErrors) {
         return Result.success(builder(e.response!));
       }
       return Result.error(e);
