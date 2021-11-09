@@ -14,8 +14,12 @@ class Optional<T extends Object?> extends Equatable {
   String toString() => 'Optional($value)';
 }
 
-extension OptionalExt<T extends Object?> on T {
+extension OptionalWrappingExt<T extends Object?> on T {
   Optional<T> get opt => Optional(this);
+}
+
+extension OptionalUnwrappingExt<T extends Object?> on Optional<T>? {
+  T? get orNull => this?.value;
 }
 
 bool _equals(
