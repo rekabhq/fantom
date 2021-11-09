@@ -365,8 +365,20 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "type": "string",
-                "format": "binary"
+                "type": "object",
+                "required": [
+                  "image",
+                  "name"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
