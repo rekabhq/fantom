@@ -1,3 +1,4 @@
+import 'package:fantom/src/generator/api/api_constants.dart';
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/writer/file_writer.dart';
@@ -65,7 +66,7 @@ class ApiClassGenerator {
     return """
     final Dio dio;
 
-    final parameterParser = MethodUriParser();
+    final $parameterParserVarName = MethodUriParser();
     """;
   }
 

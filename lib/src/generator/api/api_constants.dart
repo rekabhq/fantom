@@ -30,6 +30,10 @@ const bodyValueVarName = 'bodyValue';
 
 const toBodyMethod = 'toBody()';
 
+const parameterParserVarName = 'parameterParser';
+
+const toUriParamMethod = 'toUriParam';
+
 const defaultPathParamStyle = 'simple';
 const defaultPathParamExplode = false;
 const defaultQueryParamStyle = 'form';

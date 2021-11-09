@@ -122,6 +122,7 @@ class ApiMethodGenerator {
     buffer.writeln(
       _generateMethodSyntax(methodName, responseType),
     );
+
     if (methodHasParameter) {
       if (operationParamComponents != null) {
         buffer.writeln(_generateParameters(operationParamComponents));
@@ -151,19 +152,15 @@ class ApiMethodGenerator {
         ?.where((param) => param.source.location == methodPathParam)
         .toList();
 
-    // path = path.replaceFirst('{id}', '123');
-    if (generatedPathParams?.isNotEmpty ?? false) {
-      buffer.writeln(_generateReplacePathParameters(generatedPathParams));
-    }
-
     // 5. generate query parameters
     final generatedQueryParams = operationParamComponents
         ?.where((param) => param.source.location == methodQueryParam)
         .toList();
 
-    // final queryParams = {'id': '123' , 'name': 'John'};
-    if (generatedQueryParams?.isNotEmpty ?? false) {
-      buffer.writeln(_generateInitialQueryParameters(generatedQueryParams));
+    if (generatedPathParams != null || generatedQueryParams != null) {
+      buffer.writeln(
+        _generatePathParamParser(generatedPathParams, generatedQueryParams),
+      );
     }
 
     // 6. generate header parameters
@@ -262,6 +259,7 @@ class ApiMethodGenerator {
       final isRequired = param.source.isRequired == true;
 
       // TODO: should we use Option<T> ?
+      // TODO(amirreza): can your review this method?
       final defaultValue = (param.schemaComponent != null && !isRequired)
           ? defaultValueGenerator
               .generateOrNull(param.schemaComponent!.dataElement)
@@ -306,44 +304,83 @@ class ApiMethodGenerator {
   String _generatePathUrl(String pathUrl) =>
       'String $pathVarName = \'$pathUrl\';';
 
-  // TODO: update this with style and explode options
-  // path = path.replaceFirst('{id}', '123');
-  String _generateReplacePathParameters(
+  // TODO: Test all situations in path and query params
+  String _generatePathParamParser(
     List<GeneratedParameterComponent>? generatedPathParams,
-  ) {
-    if (generatedPathParams?.isEmpty ?? true) return '';
-
-    final StringBuffer buffer = StringBuffer();
-
-    buffer.write('$pathVarName = $pathVarName');
-
-    for (final param in generatedPathParams!) {
-      final name = param.source.name;
-      buffer.writeln('.replaceFirst(\'{$name}\', $name.$toStringMethod)');
-    }
-
-    buffer.writeln(';');
-
-    return buffer.toString();
-  }
-
-  // final queryParams = {'id': '123' , 'name': 'John'};
-  String _generateInitialQueryParameters(
     List<GeneratedParameterComponent>? generatedQueryParams,
   ) {
-    if (generatedQueryParams?.isEmpty ?? true) return '';
+    final hasPathParams = generatedPathParams?.isNotEmpty == true;
+    final hasQueryParams = generatedQueryParams?.isNotEmpty == true;
+    if (!hasPathParams && !hasQueryParams) return '';
 
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write('final $queryParamVarName = {');
+    if (hasPathParams) {
+      buffer.writeln('final pathUriParams = [');
+      for (final param in generatedPathParams!) {
+        final type = (param.isSchema
+                ? param.schemaComponent?.dataElement.type
+                : param.contentManifest?.manifest.name) ??
+            dynamicType;
 
-    for (final param in generatedQueryParams!) {
-      final name = param.source.name;
-      buffer.writeln('\'$name\': $name,');
+        final style = param.source.style ?? defaultPathParamStyle;
+        final explode = param.source.explode ?? defaultPathParamExplode;
+
+        final name = param.source.name;
+
+        final isNullable = param.isNullable &&
+            type != dynamicType &&
+            !type.endsWith(nullableCharacter);
+
+        if (isNullable) {
+          buffer.writeln('if($name != null)');
+        }
+        buffer.writeln(
+          '$name.$toUriParamMethod(\'$name\',\'$style\',$explode),',
+        );
+      }
+      buffer.writeln('];');
     }
 
-    buffer.writeln('};');
+    if (hasQueryParams) {
+      buffer.writeln('final queryUriParams = [');
 
+      for (final param in generatedQueryParams!) {
+        final type = (param.isSchema
+                ? param.schemaComponent?.dataElement.type
+                : param.contentManifest?.manifest.name) ??
+            dynamicType;
+
+        final style = param.source.style ?? defaultQueryParamStyle;
+        final explode = param.source.explode ?? defaultQueryParamExplode;
+
+        final name = param.source.name;
+
+        final isNullable = param.isNullable &&
+            type != dynamicType &&
+            !type.endsWith(nullableCharacter);
+
+        if (isNullable) {
+          buffer.writeln('if($name != null)');
+        }
+
+        buffer.writeln(
+          '$name.$toUriParamMethod(\'$name\',\'$style\',$explode),',
+        );
+      }
+
+      buffer.writeln('];');
+    }
+
+    buffer.writeln('$pathVarName = $parameterParserVarName.parseUri(');
+    buffer.writeln('pathURL : $pathVarName,');
+    if (hasPathParams) {
+      buffer.writeln('pathParameters : pathUriParams,');
+    }
+    if (hasQueryParams) {
+      buffer.writeln('queryParameters : queryUriParams,');
+    }
+    buffer.writeln(');');
     return buffer.toString();
   }
 
@@ -367,7 +404,7 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // final bodyValue = body.toJson();
+  // final bodyValue = body.toBody();
   String _generateInitialBody(
     GeneratedRequestBodyComponent operationBodyComponent,
   ) {
@@ -423,9 +460,6 @@ class ApiMethodGenerator {
 
     buffer.write(
         'final $responseVarName = await $dioInstance.request($pathVarName, ');
-    if (generatedQueryParams?.isNotEmpty ?? false) {
-      buffer.writeln('$dioQueryParams: $queryParamVarName,');
-    }
 
     buffer.writeln('$dioOptions: $optionsVarName,');
 
