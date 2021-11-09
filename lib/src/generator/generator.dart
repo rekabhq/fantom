@@ -11,7 +11,7 @@ import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/reader/model/model.dart';
-import 'package:fantom/src/writer/file_writer.dart';
+import 'package:fantom/src/writer/generatbale_file.dart';
 
 class Generator {
   final ApiClassGenerator apiClassGenerator;

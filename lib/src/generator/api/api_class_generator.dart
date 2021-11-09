@@ -1,7 +1,7 @@
 import 'package:fantom/src/generator/api/api_constants.dart';
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
-import 'package:fantom/src/writer/file_writer.dart';
+import 'package:fantom/src/writer/generatbale_file.dart';
 
 class ApiClassGenerator {
   final OpenApi openApi;

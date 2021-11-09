@@ -1,17 +1,11 @@
 import 'dart:io';
 
-import 'package:fantom/src/writer/file_writer.dart';
+import 'package:fantom/src/writer/generatbale_file.dart';
 
 final allUtilityFiles = [
-  GeneratableFile(
-    fileName: 'optional.dart',
-    fileContent: r'''
-class Optional<T> {
-  final T value;
-
-  const Optional(this.value);
-}    
-    ''',
+  GeneratableFile.fromFile(
+    File('lib/src/generator/schema/copy.dart'),
+    fileName: 'equatbles.dart',
   ),
   GeneratableFile.fromFile(
     File('lib/src/generator/api/method/uri_parser.dart'),

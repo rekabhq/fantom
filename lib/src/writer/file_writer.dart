@@ -6,24 +6,10 @@ import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/utils/process_manager.dart';
 import 'package:fantom/src/writer/dart_package.dart';
 import 'package:fantom/src/writer/directive.dart';
+import 'package:fantom/src/writer/generatbale_file.dart';
 import 'package:fantom/src/writer/utility_files.dart';
 
 // ignore_for_file: unused_local_variable
-
-class GeneratableFile {
-  final String fileContent;
-
-  final String fileName;
-
-  const GeneratableFile({required this.fileContent, required this.fileName});
-
-  factory GeneratableFile.fromFile(File file, {String? fileName}) {
-    return GeneratableFile(
-      fileContent: file.readAsStringSync(),
-      fileName: fileName ?? file.path,
-    );
-  }
-}
 
 class FileWriter {
   FileWriter(this.generationData) {
@@ -93,6 +79,10 @@ class FileWriter {
         '$apisDirPath/utils',
         [],
       );
+      if (utilFile.directives.isNotEmpty) {
+        apiClassImports.insertAll(0, utilFile.directives);
+        modelsFileDirectives.insertAll(0, utilFile.directives);
+      }
       apiClassImports.add(_createImport(
         directiveFilePath: '$apisDirPath/utils/${utilFile.fileName}',
         filePath: '$apisDirPath/api.dart',

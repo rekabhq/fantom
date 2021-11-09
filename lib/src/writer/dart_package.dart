@@ -42,6 +42,12 @@ class FantomPackageInfo {
           ),
           PackageDependencySpec.hosted(
             HostedPackageDependencySpec(
+              package: 'equatable',
+              version: o.Optional('2.0.3'),
+            ),
+          ),
+          PackageDependencySpec.hosted(
+            HostedPackageDependencySpec(
               package: 'uri',
               version: o.Optional('1.0.0'),
             ),

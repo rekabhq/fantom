@@ -6,6 +6,7 @@ import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:fantom/src/writer/dart_package.dart';
 import 'package:fantom/src/writer/file_writer.dart';
+import 'package:fantom/src/writer/generatbale_file.dart';
 import 'package:pubspec_yaml/pubspec_yaml.dart' as p;
 import 'package:test/test.dart';
 
