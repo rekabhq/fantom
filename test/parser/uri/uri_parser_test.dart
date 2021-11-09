@@ -294,7 +294,7 @@ void main() {
           queryParameters: [],
         );
         //then
-        expect(uri.toString(), '/user/5');
+        expect(uri, '/user/5');
       },
     );
 
@@ -312,7 +312,7 @@ void main() {
           queryParameters: [],
         );
         //then
-        expect(uri.toString(), '/user/3,4,5');
+        expect(uri, '/user/3,4,5');
       },
     );
 
@@ -330,7 +330,7 @@ void main() {
           queryParameters: [],
         );
         //then
-        expect(uri.toString(), '/user/3,4,5');
+        expect(uri, '/user/3,4,5');
       },
     );
 
@@ -350,7 +350,7 @@ void main() {
         );
         //then
         expect(
-          uri.toString(),
+          uri,
           '/user/role,admin,firstName,Alex',
         );
       },
@@ -372,34 +372,7 @@ void main() {
         );
         //then
         expect(
-          uri.toString(),
-          '/user/role=admin,firstName=Alex',
-        );
-      },
-    );
-
-    test(
-      'should first override template matcher to be explode'
-      'should put object path parameters in uri template using simple style also explode and parse uri correctly',
-      () {
-        //with
-        var pathURL = '/user/{id}';
-        //when
-        var uri = uriParser.parseUri(
-          pathURL: pathURL,
-          pathParameters: [
-            UriParam.object(
-              'id',
-              {"role": "admin", "firstName": "Alex"},
-              'simple',
-              true,
-            )
-          ],
-          queryParameters: [],
-        );
-        //then
-        expect(
-          uri.toString(),
+          uri,
           '/user/role=admin,firstName=Alex',
         );
       },
@@ -418,7 +391,7 @@ void main() {
         );
         //then
         expect(
-          uri.toString(),
+          uri,
           '/users?id=5',
         );
       },
@@ -439,7 +412,7 @@ void main() {
         );
         //then
         expect(
-          uri.toString(),
+          uri,
           '/users?id=3&id=4&id=5',
         );
       },
@@ -460,9 +433,70 @@ void main() {
         );
         //then
         expect(
-          uri.toString(),
+          uri,
           '/users?role=admin&age=14',
         );
+      },
+    );
+  });
+
+  group('UriParser.parseHeader method :', () {
+    final uriParser = MethodUriParser();
+
+    test(
+      'should parse simple header primitive parameter',
+      () {
+        final uri = uriParser.parserHeader(
+          UriParam.primitive('id', 5, 'simple'),
+        );
+        expect(uri, '5');
+      },
+    );
+
+    test(
+      'should parse simple header array parameter',
+      () {
+        final uri = uriParser.parserHeader(
+          UriParam.array('id', ['3', '4', '5'], 'simple', false),
+        );
+        final explodeUri = uriParser.parserHeader(
+          UriParam.array('id', ['3', '4', '5'], 'simple', true),
+        );
+
+        expect(uri, '3,4,5');
+
+        /// [url] and [explodeUri] should be equal
+        /// because we don't have any difference between explode an unExplode
+        expect(uri, explodeUri);
+      },
+    );
+
+    test(
+      'should put object path parameters in uri template using simple style and parse uri correctly',
+      () {
+        final uri = uriParser.parserHeader(
+          UriParam.object(
+            'id',
+            {"role": "admin", "firstName": "Alex"},
+            'simple',
+            false,
+          ),
+        );
+        final explodeUri = uriParser.parserHeader(
+          UriParam.object(
+            'id',
+            {"role": "admin", "firstName": "Alex"},
+            'simple',
+            true,
+          ),
+        );
+
+        expect(uri, 'role,admin,firstName,Alex');
+
+        /// [url] and [explodeUri] should'nt be equal
+        expect(uri == explodeUri, isFalse);
+
+        expect(explodeUri, 'role=admin,firstName=Alex');
       },
     );
   });

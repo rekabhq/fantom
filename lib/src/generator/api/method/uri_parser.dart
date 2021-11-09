@@ -56,6 +56,21 @@ class MethodUriParser {
     return uriTemplate.expand(templateVariables);
   }
 
+  String parserHeader(UriParam header) {
+    if (header.style != 'simple') {
+      throw StateError('Only simple style is supported for header Parameters');
+    }
+
+    final explodeChar = header.explode ? '*' : '';
+    final uriTemplate = UriTemplate('{${header.name}$explodeChar}');
+
+    final templateVariables = <String, dynamic>{
+      header.name: header.value,
+    };
+
+    return uriTemplate.expand(templateVariables);
+  }
+
   List<String> fixBaseUrlAndPath(String baseUrl, String path) {
     if (baseUrl.endsWith('/') && path.startsWith('/')) {
       return [baseUrl.substring(0, baseUrl.length - 1), path];
