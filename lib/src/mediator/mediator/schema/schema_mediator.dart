@@ -59,8 +59,8 @@ class SchemaMediator {
               : _convert(
                   openApi,
                   as,
-                  // concatenate `$Items` to the end
-                  '$name\$',
+                  // concatenate `_Item` to the end
+                  '${name}_Item',
                 );
 
           // calculation for required items:
@@ -78,8 +78,8 @@ class SchemaMediator {
                       item: _convert(
                         openApi,
                         entry.value,
-                        // concatenate (`$` + `property name`) to the end
-                        '$name\$${entry.key}',
+                        // concatenate (`_` + `property name`) to the end
+                        '${name}_${entry.key}',
                       ),
                       isRequired: requiredItems.contains(entry.key),
                     ),
@@ -101,8 +101,8 @@ class SchemaMediator {
           final items = _convert(
             openApi,
             schemaValue.items!,
-            // concatenate `$` to the end
-            '$name\$',
+            // concatenate `_Item` to the end
+            '${name}_Item',
           );
 
           return DataElement.array(
@@ -175,8 +175,7 @@ class SchemaMediator {
   }
 
   StringDataElementFormat _extractStringFormat(Schema schemaValue) {
-    final format = schemaValue.format?.toLowerCase();
-    switch (format) {
+    switch (schemaValue.format?.toLowerCase()) {
       case 'byte':
         return StringDataElementFormat.byte;
       case 'binary':
