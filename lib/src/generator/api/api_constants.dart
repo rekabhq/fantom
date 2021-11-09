@@ -29,3 +29,10 @@ const headerParamVarName = 'headerParams';
 const bodyValueVarName = 'bodyValue';
 
 const toBodyMethod = 'toBody()';
+
+const defaultPathParamStyle = 'simple';
+const defaultPathParamExplode = false;
+const defaultQueryParamStyle = 'form';
+const defaultQueryParamExplode = true;
+const defaultHeaderParamStyle = 'simple';
+const defaultHeaderParamExplode = false;
