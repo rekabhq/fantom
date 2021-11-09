@@ -11,4 +11,8 @@ final allUtilityFiles = [
     File('lib/src/generator/api/method/uri_parser.dart'),
     fileName: 'uri_parser.dart',
   ),
+  GeneratableFile.fromFile(
+    File('lib/src/generator/api/method/result.dart'),
+    fileName: 'result.dart',
+  ),
 ];
