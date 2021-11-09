@@ -46,8 +46,20 @@ class ApiMethodGenerator {
           )
           .toList();
 
+      //
       if (path.value.operations.isNotEmpty) {
-        buffer.writeln('//${path.key}');
+        final pathValue = '"${path.key}"';
+        final pathLength = pathValue.length;
+
+        final paddingLength = 76 - pathLength;
+
+        final paddingValue =
+            paddingLength > 0 ? '-' * (paddingLength ~/ 2) : '';
+
+        final result = '  //$paddingValue$pathValue$paddingValue';
+        buffer.writeln(result.length == 80 ? result : result + '-');
+        buffer.writeln();
+        buffer.writeln();
       }
 
       // iterating over operations of the path
@@ -118,6 +130,8 @@ class ApiMethodGenerator {
     // Future ->"methodName"<- (params)
     // 3. generate method parameters
     // Future methodName ->"(params)"<-
+
+    buffer.writeln(_generateMethodComment(methodName, operation.key));
 
     buffer.writeln(
       _generateMethodSyntax(methodName, responseType),
@@ -214,6 +228,9 @@ class ApiMethodGenerator {
 
     return buffer.toString();
   }
+
+  String _generateMethodComment(String name, String type) =>
+      '/// $name - $type method';
 
   String _generateContentTypeParameters() => 'String? $contentTypeVariable,';
 
