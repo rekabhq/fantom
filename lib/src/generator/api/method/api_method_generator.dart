@@ -18,6 +18,8 @@ class ApiMethodGenerator {
   final MethodResponseParser methodResponseParser;
   final NameGenerator nameGenerator;
 
+  final bool useResult;
+
   ApiMethodGenerator({
     required this.openApi,
     required this.defaultValueGenerator,
@@ -25,6 +27,7 @@ class ApiMethodGenerator {
     required this.methodBodyParser,
     required this.methodResponseParser,
     required this.nameGenerator,
+    this.useResult = true,
   });
 
   String generateMethods() {
@@ -210,7 +213,6 @@ class ApiMethodGenerator {
     // 9. generate request
     // final response = await dio.request(
     //  parsedPath,
-    //  queryParameters: queryParams,
     //  options: option,
     //  data: bodyJson,
     // );
@@ -218,13 +220,23 @@ class ApiMethodGenerator {
     // we should think about this
     // we should deserialize response.data to Generated response component type
     // return evaluateResponse(response);
-    buffer.writeln(
-      _generateDioRequest(
-        responseType,
-        generatedQueryParams,
-        operationBodyComponent,
-      ),
-    );
+    if (useResult) {
+      buffer.writeln(
+        _generateDioRequestWithResult(
+          responseType,
+          generatedQueryParams,
+          operationBodyComponent,
+        ),
+      );
+    } else {
+      buffer.writeln(
+        _generateDioRequestWithoutResult(
+          responseType,
+          generatedQueryParams,
+          operationBodyComponent,
+        ),
+      );
+    }
     // -------
 
     buffer.writeln('}');
@@ -241,7 +253,9 @@ class ApiMethodGenerator {
       'String? $responseContentTypeVariable,';
 
   String _generateMethodSyntax(String methodName, String returnType) =>
-      'Future<$resultType<$returnType, Exception>> $methodName({';
+      useResult
+          ? 'Future<$resultType<$returnType, Exception>> $methodName({'
+          : 'Future<$returnType> $methodName({';
 
   String _generateEndMethodSyntax() => '}) async {';
 
@@ -535,13 +549,15 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // final response = await dio.request(
-  //  path,
-  //  queryParameters: queryParams,
-  //  options: option,
-  //  data: bodyJson,
-  // );
-  String _generateDioRequest(
+  // return await dio
+  //   .request(
+  //     path,
+  //     options: options,
+  //   )
+  //   .toResult(
+  //     (response) => response,
+  //   );
+  String _generateDioRequestWithResult(
     String responseTypeName,
     List<GeneratedParameterComponent>? generatedQueryParams,
     GeneratedRequestBodyComponent? operationBodyComponent,
@@ -568,6 +584,37 @@ class ApiMethodGenerator {
     }
 
     buffer.writeln(');');
+
+    return buffer.toString();
+  }
+
+  String _generateDioRequestWithoutResult(
+    String responseTypeName,
+    List<GeneratedParameterComponent>? generatedQueryParams,
+    GeneratedRequestBodyComponent? operationBodyComponent,
+  ) {
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write(
+        'final $responseVarName = await $dioInstance.request($pathVarName, ');
+
+    buffer.writeln('$dioOptions: $optionsVarName,');
+
+    if (operationBodyComponent != null) {
+      buffer.writeln('$dioData: $bodyValueVarName,');
+    }
+
+    buffer.writeln(');');
+
+    if (responseTypeName != dioResponseType) {
+      buffer
+        ..writeln('return ${responseTypeName}Ext.from(')
+        ..writeln('$responseVarName,')
+        ..writeln('$responseContentTypeVariable,')
+        ..writeln(');');
+    } else {
+      buffer.writeln('return $responseVarName;');
+    }
 
     return buffer.toString();
   }
