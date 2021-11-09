@@ -3,8 +3,8 @@ import 'package:uri/uri.dart';
 class MethodUriParser {
   String parseUri({
     required String pathURL,
-    required List<UriParam>? pathParameters,
-    required List<UriParam>? queryParameters,
+    List<UriParam>? pathParameters,
+    List<UriParam>? queryParameters,
   }) {
     // create clone form path url
     var templatePath = pathURL.toString();
