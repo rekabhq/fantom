@@ -214,14 +214,17 @@ class ApiMethodGenerator {
     //  options: option,
     //  data: bodyJson,
     // );
-    buffer.writeln(
-      _generateDioRequest(generatedQueryParams, operationBodyComponent),
-    );
     // 10. generate evaluated response
     // we should think about this
     // we should deserialize response.data to Generated response component type
     // return evaluateResponse(response);
-    buffer.writeln(_generateEvaluateResponse(responseType));
+    buffer.writeln(
+      _generateDioRequest(
+        responseType,
+        generatedQueryParams,
+        operationBodyComponent,
+      ),
+    );
     // -------
 
     buffer.writeln('}');
@@ -238,7 +241,7 @@ class ApiMethodGenerator {
       'String? $responseContentTypeVariable,';
 
   String _generateMethodSyntax(String methodName, String returnType) =>
-      'Future<$returnType> $methodName({';
+      'Future<$resultType<$returnType, Exception>> $methodName({';
 
   String _generateEndMethodSyntax() => '}) async {';
 
@@ -539,13 +542,13 @@ class ApiMethodGenerator {
   //  data: bodyJson,
   // );
   String _generateDioRequest(
+    String responseTypeName,
     List<GeneratedParameterComponent>? generatedQueryParams,
     GeneratedRequestBodyComponent? operationBodyComponent,
   ) {
     final StringBuffer buffer = StringBuffer();
 
-    buffer.write(
-        'final $responseVarName = await $dioInstance.request($pathVarName, ');
+    buffer.write('return await $dioInstance.request($pathVarName, ');
 
     buffer.writeln('$dioOptions: $optionsVarName,');
 
@@ -553,21 +556,19 @@ class ApiMethodGenerator {
       buffer.writeln('$dioData: $bodyValueVarName,');
     }
 
+    buffer.writeln(')');
+    buffer.writeln('.toResult(');
+    if (responseTypeName != dioResponseType) {
+      buffer.writeln('($responseVarName) => ${responseTypeName}Ext.from(');
+      buffer.writeln('$responseVarName,');
+      buffer.writeln('$responseContentTypeVariable,');
+      buffer.writeln('),');
+    } else {
+      buffer.writeln('($responseVarName) => $responseVarName,');
+    }
+
     buffer.writeln(');');
 
     return buffer.toString();
-  }
-
-  String _generateEvaluateResponse(String responseTypeName) {
-    if (responseTypeName != dioResponseType) {
-      return '''
-      return ${responseTypeName}Ext.from(
-        $responseVarName,
-        $responseContentTypeVariable,
-      );
-      ''';
-    } else {
-      return 'return $responseVarName;';
-    }
   }
 }

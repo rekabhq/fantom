@@ -12,6 +12,8 @@ const dioOptionMethod = 'method';
 const dioQueryParams = 'queryParameters';
 const dioData = 'data';
 
+const resultType = 'Result';
+
 const dynamicType = 'dynamic';
 const dioResponseType = 'Response';
 const nullableCharacter = '?';
