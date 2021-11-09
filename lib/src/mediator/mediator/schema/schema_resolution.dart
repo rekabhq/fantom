@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
@@ -22,7 +23,7 @@ extension OpenApiSchemaResolutionExt on OpenApi {
   }
 }
 
-class SchemaResolutionInfo {
+class SchemaResolutionInfo extends Equatable {
   final String name;
   final Referenceable<Schema> schema;
 
@@ -30,4 +31,14 @@ class SchemaResolutionInfo {
     required this.name,
     required this.schema,
   });
+
+  @override
+  List<Object?> get props => [
+        name,
+        schema,
+      ];
+
+  @override
+  String toString() => 'SchemaResolutionInfo{name: $name, '
+      'schema: $schema}';
 }
