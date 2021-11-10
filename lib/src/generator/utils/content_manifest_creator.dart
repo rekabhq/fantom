@@ -166,16 +166,6 @@ class ContentManifestCreator {
       if (contentType == 'application/xml') {
         //TODO(alireza): implement fromXml later to return a type of $parentClassName
         buffer.writeln('static dynamic fromXml(String xml) {');
-        // buffer.writeln('$parentClassName fromXml(String xml) {');
-
-        // var manifestField = manifestItem!.fields[0];
-        // var manifestFieldName = manifestField.name;
-        // final schemaFromGen = SchemaFromJsonGenerator();
-        // final application = schemaFromGen.generateApplication(dataElement);
-        // buffer.writeln('final jsonDeserializer =  $application;');
-        // buffer.writeln(
-        //   'return $parentClassName.${ReCase(manifestItem.shortName).camelCase}($manifestFieldName: jsonDeserializer(json));',
-        // );
         buffer.writeln("return '';");
         buffer.writeln('  }');
       }
@@ -185,12 +175,8 @@ class ContentManifestCreator {
       var dataElement = entry.value;
       var contentType = entry.key;
       if (contentType == 'application/xml') {
+        //TODO(alireza): implement toXml later to return a type of $parentClassName
         buffer.writeln('String toXml() {');
-        // final schemaToGen = SchemaToJsonGenerator();
-        // final application = schemaToGen.generateApplication(dataElement);
-        // buffer.writeln('final jsonSerializer =  $application;');
-        // buffer.writeln('final object =  asApplicationJson.applicationJson;');
-        // buffer.writeln('return jsonSerializer(object);');
         buffer.writeln("return 'fake string xml data';");
         buffer.writeln('  }');
       }
@@ -377,7 +363,9 @@ class ContentManifestCreator {
 
   String _getContentTypeShortName(String contentType) {
     var name = contentType;
-    if (contentType == 'application/json') {
+    if (contentType.isEmpty) {
+      name = 'Defaultt';
+    } else if (contentType == 'application/json') {
       name = 'Json';
     } else if (contentType == 'application/xml') {
       name = 'Xml';
@@ -388,7 +376,7 @@ class ContentManifestCreator {
     } else if (contentType == 'application/x-www-form-urlencoded') {
       name = 'FormData';
     } else if (contentType == '*/*') {
-      name = 'Unknown';
+      name = 'StarStart';
     } else if (contentType.startsWith('image/')) {
       name = 'Image';
     }
@@ -396,7 +384,11 @@ class ContentManifestCreator {
   }
 
   String _fixName(String value) {
-    return ReCase(value).camelCase.replaceAll('*', '');
+    final name = ReCase(value).camelCase.replaceAll('*', '');
+    if (name.isEmpty) {
+      return 'defaultt';
+    }
+    return name;
   }
 }
 
