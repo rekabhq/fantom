@@ -47,10 +47,10 @@ class SchemaClassGenerator {
 
     if (format == ObjectDataElementFormat.map) {
       // todo: remove quick fix
-      return 'class $name {}';
-      // throw AssertionError(
-      //   'map objects should not be generated : name is $name',
-      // );
+      // return 'class $name {}';
+      throw AssertionError(
+        'map objects should not be generated : name is $name',
+      );
     }
 
     if (format == ObjectDataElementFormat.mixed) {

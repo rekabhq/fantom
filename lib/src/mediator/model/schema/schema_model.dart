@@ -819,6 +819,15 @@ extension _StringExt on String {
 
 /// extensions on [DataElement]
 extension DataElementExt on DataElement {
+  bool get isGeneratable {
+    if (this is ObjectDataElement) {
+      final format = asObjectDataElement.format;
+      return format == ObjectDataElementFormat.object;
+    }
+
+    return false;
+  }
+
   /// is not nullable.
   bool get isNotNullable => !isNullable;
 

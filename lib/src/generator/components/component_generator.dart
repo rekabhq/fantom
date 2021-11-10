@@ -132,8 +132,8 @@ class ComponentsGenerator {
     }).map((ref, element) {
       return MapEntry(
         ref,
-        element is ObjectDataElement
-            ? schemaClassGenerator.generate(element)
+        element.isGeneratable
+            ? schemaClassGenerator.generate(element.asObjectDataElement)
             : UnGeneratableSchemaComponent(dataElement: element),
       );
     });
