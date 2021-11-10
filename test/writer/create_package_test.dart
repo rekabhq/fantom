@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:fantom/src/cli/commands/generate.dart';
+import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:fantom/src/writer/dart_package.dart';
@@ -30,6 +31,7 @@ void main() {
           ),
           packageName: name,
           outputModuleDir: Directory(generationPath),
+          methodReturnType: MethodReturnType.result,
         ),
         models: [
           GeneratableFile(
