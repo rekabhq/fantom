@@ -50,6 +50,12 @@ class ContentManifestCreator {
       return null;
     }
 
+    // we need to replace */* with any in our content-types since it cannot be used in code generation
+    final removed = content.remove('*/*');
+    if (removed != null) {
+      content['any'] = removed;
+    }
+
     final className = ReCase(typeName).pascalCase;
     _mapOfManifestItems = content.map(
       (contentType, mediaType) {
@@ -361,9 +367,7 @@ class ContentManifestCreator {
 
   String _getContentTypeShortName(String contentType) {
     var name = contentType;
-    if (contentType.isEmpty) {
-      name = 'Defaultt';
-    } else if (contentType == 'application/json') {
+    if (contentType == 'application/json') {
       name = 'Json';
     } else if (contentType == 'application/xml') {
       name = 'Xml';
@@ -373,21 +377,15 @@ class ContentManifestCreator {
       name = 'TextPlain';
     } else if (contentType == 'application/x-www-form-urlencoded') {
       name = 'FormData';
-    } else if (contentType == '*/*') {
-      name = 'StarStart';
+    } else if (contentType == 'any') {
+      name = 'Any';
     } else if (contentType.startsWith('image/')) {
       name = 'Image';
     }
     return name;
   }
 
-  String _fixName(String value) {
-    final name = ReCase(value).camelCase.replaceAll('*', '');
-    if (name.isEmpty) {
-      return 'defaultt';
-    }
-    return name;
-  }
+  String _fixName(String value) => ReCase(value).camelCase.replaceAll('*', '');
 }
 
 /// holds the data that can be used by ComponentGenerators to generate components
