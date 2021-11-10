@@ -63,4 +63,9 @@ class Components extends Equatable {
         requestBodies,
         headers,
       ];
+
+  @override
+  String toString() => 'Components{schemas: $schemas, responses: $responses, '
+      'parameters: $parameters, requestBodies: $requestBodies, '
+      'headers: $headers}';
 }

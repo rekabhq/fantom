@@ -3,32 +3,37 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 class SchemaMediator {
-  static const bool compatibility = true;
-
   const SchemaMediator();
 
   DataElement convert({
+    /// this is used to resolve references
     required final OpenApi openApi,
+
+    /// schema object as referenceable.
+    /// if it is a value wrap it using `Referenceable.value()`.
     required final Referenceable<Schema> schema,
-    final String? name,
+
+    /// this will be schemas map key,
+    /// or a generated name according to context.
+    required final String name,
   }) =>
       _convert(openApi, schema, name);
 
   DataElement _convert(
     final OpenApi openApi,
-    final Referenceable<Schema> schema, [
-    final String? name,
-  ]) {
+    final Referenceable<Schema> schema,
+    final String name,
+  ) {
     if (schema.isReference) {
       var schemaReference = schema.reference;
       final resolution = openApi.resolveSchema(schemaReference);
-      // todo: shouldn't we use `name` ?
+      // we are completely ignoring reference original data,
+      // such as it's name ...
       return _convert(openApi, resolution.schema, resolution.name);
     } else {
       final schemaValue = schema.value;
-      final fullType = _extractFullType(schemaValue);
-      final type = fullType.type;
-      final isNullable = fullType.isNullable;
+      final type = schemaValue.type;
+      final isNullable = schemaValue.nullable == true;
       switch (type) {
         case 'boolean':
           return DataElement.boolean(
@@ -39,58 +44,74 @@ class SchemaMediator {
             enumeration: _extractEnumerationInfo(schemaValue),
           );
         case 'object': // map and object
-          final ObjectAdditionalProperties? additionalProperties;
-          final schemaAdditionalProperties = schemaValue.additionalProperties;
-          if (schemaAdditionalProperties == null) {
-            additionalProperties = ObjectAdditionalProperties(
-              items: null,
-            );
-          } else if (schemaAdditionalProperties.isBoolean) {
-            if (schemaAdditionalProperties.boolean) {
-              additionalProperties = ObjectAdditionalProperties(
-                items: null,
-              );
-            } else {
-              additionalProperties = null;
-            }
-          } else {
-            additionalProperties = ObjectAdditionalProperties(
+          // calculation for additional properties:
+          final aps = schemaValue.additionalProperties;
+          final as = aps == null
+              ? Referenceable.value(Schema.empty())
+              : aps.isBoolean
+                  ? aps.boolean
+                      ? Referenceable.value(Schema.empty())
+                      : null
+                  : aps.value; // aps.isValue == true
+          final additionalProperties = as == null
+              ? null
               // recursive call:
-              items: _convert(
-                openApi,
-                schemaAdditionalProperties.value,
-              ),
-            );
-          }
-          final requiredItems = (schemaValue.requiredItems ?? const []).toSet();
+              : _convert(
+                  openApi,
+                  as,
+                  // concatenate `_Item` to the end
+                  '${name}_Item',
+                );
+
+          // calculation for required items:
+          final requiredItems = (schemaValue.requiredItems ?? []).toSet();
+
+          // calculation for properties:
+          final ps = schemaValue.properties;
+          final properties = ps == null
+              ? <ObjectProperty>[]
+              : ps.entries
+                  .map(
+                    (entry) => ObjectProperty(
+                      name: entry.key,
+                      // recursive call:
+                      item: _convert(
+                        openApi,
+                        entry.value,
+                        // concatenate (`_` + `property name`) to the end
+                        '${name}_${entry.key}',
+                      ),
+                      isRequired: requiredItems.contains(entry.key),
+                    ),
+                  )
+                  .toList();
+
           return DataElement.object(
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
-            properties: schemaValue.properties?.entries
-                .map((entry) => ObjectProperty(
-                      name: entry.key,
-                      // recursive call:
-                      item: _convert(openApi, entry.value),
-                      isRequired: requiredItems.contains(entry.key),
-                    ))
-                .toList(),
+            properties: properties,
             additionalProperties: additionalProperties,
           );
         case 'array':
-          if (schemaValue.items == null) {
-            throw UnimplementedError('untyped array');
-          }
+          // calculation for items:
+          // recursive call:
+          final items = _convert(
+            openApi,
+            schemaValue.items!,
+            // concatenate `_Item` to the end
+            '${name}_Item',
+          );
+
           return DataElement.array(
             name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
-            // recursive call:
-            items: _convert(openApi, schemaValue.items!),
+            items: items,
             isUniqueItems: schemaValue.uniqueItems == true,
           );
         case 'integer':
@@ -117,11 +138,12 @@ class SchemaMediator {
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
-            format: StringDataElementFormat.plain,
+            format: _extractStringFormat(schemaValue),
           );
-        case 'dynamic':
+        case null:
           return DataElement.untyped(
             name: name,
+            isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
             enumeration: _extractEnumerationInfo(schemaValue),
@@ -130,15 +152,6 @@ class SchemaMediator {
           throw AssertionError('unknown type "$type"');
       }
     }
-  }
-
-  _FullType _extractFullType(Schema schemaValue) {
-    final type = schemaValue.type;
-    final nullable = schemaValue.nullable;
-    return _FullType(
-      type: type ?? 'dynamic',
-      isNullable: nullable == true,
-    );
   }
 
   bool _extractIsDeprecated(Schema schemaValue) {
@@ -153,21 +166,26 @@ class SchemaMediator {
           );
   }
 
-  EnumerationInfo? _extractEnumerationInfo(Schema schemaValue) {
+  Enumeration? _extractEnumerationInfo(Schema schemaValue) {
     return schemaValue.enumerated == null
         ? null
-        : EnumerationInfo(
+        : Enumeration(
             values: schemaValue.enumerated!,
           );
   }
-}
 
-class _FullType {
-  final String type;
-  final bool isNullable;
-
-  const _FullType({
-    required this.type,
-    required this.isNullable,
-  });
+  StringDataElementFormat _extractStringFormat(Schema schemaValue) {
+    switch (schemaValue.format?.toLowerCase()) {
+      case 'byte':
+        return StringDataElementFormat.byte;
+      case 'binary':
+        return StringDataElementFormat.binary;
+      case 'date':
+        return StringDataElementFormat.date;
+      case 'datetime':
+        return StringDataElementFormat.dateTime;
+      default:
+        return StringDataElementFormat.plain;
+    }
+  }
 }

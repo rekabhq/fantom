@@ -92,4 +92,12 @@ class Schema extends Equatable {
         properties,
         uniqueItems,
       ];
+
+  @override
+  String toString() => 'Schema{nullable: $nullable, type: $type, '
+      'format: $format, defaultValue: $defaultValue, '
+      'deprecated: $deprecated, requiredItems: $requiredItems, '
+      'enumerated: $enumerated, items: $items, properties: $properties, '
+      'uniqueItems: $uniqueItems, '
+      'additionalProperties: $additionalProperties}';
 }

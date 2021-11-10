@@ -8,6 +8,11 @@ analyzer:
   enable-experiment:
     - non-nullable
 
+  exclude: 
+    - test/
+    - generated/
+
+
   errors:
     unused_import: error
     dead_code: error

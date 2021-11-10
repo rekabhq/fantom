@@ -28,6 +28,10 @@ class OpenApi extends Equatable {
         paths,
         components,
       ];
+
+  @override
+  String toString() => 'OpenApi{openapi: $openapi, '
+      'paths: $paths, components: $components}';
 }
 
 extension OpenApiExt on OpenApi {

@@ -81,3 +81,14 @@ pubspec.lock
 lib/src/fantom/*
 test/cli/testProjectDir/gen
 test/writer/packages
+test/generator/request_body/output.dart
+test/generator/request_body/output1.dart
+test/generator/response/output.dart
+test/generator/response/response_output.dart
+test/generator/response/responses_output.dart
+
+generated/
+
+openapi_files/.playing.dart
+openapi_files/*.private.json
+*.private.yaml

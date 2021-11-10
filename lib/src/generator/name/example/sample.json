@@ -1,0 +1,48 @@
+{
+    "description": "user to add to the system",
+    "content": {
+        "application/json": {
+            "schema": {
+                "type": "string"
+            }
+        },
+        "application/xml": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "text/plain": {
+            "schema": {
+                "$ref": "#/components/schemas/User"
+            }
+        },
+        "application/x-www-form-urlencoded": {
+            "examples": {
+                "user": {
+                    "summary": "User example in other format"
+                }
+            }
+        },
+        "img/*": {
+            "examples": {
+                "user": {
+                    "summary": "User example in other format",
+                    "externalValue": "https://foo.bar/examples/user-example.whatever"
+                }
+            }
+        },
+        "*/*": {
+            "examples": {
+                "user": {
+                    "summary": "User example in other format",
+                    "externalValue": "https://foo.bar/examples/user-example.whatever"
+                }
+            }
+        }
+    }
+}

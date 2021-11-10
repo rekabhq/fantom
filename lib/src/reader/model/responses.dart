@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 class Responses extends Equatable {
-  /// described as [default] in documentation.
+  /// described as [default] in openapi specification.
   /// but [default], is a keyword in Dart.
   final Referenceable<Response>? defaultValue;
 
@@ -29,9 +29,24 @@ class Responses extends Equatable {
     );
   }
 
+  Map<String, Referenceable<Response>> get allResponses {
+    final value = <String, Referenceable<Response>>{};
+    if (defaultValue != null) {
+      value['default'] = defaultValue!;
+    }
+    if (map != null) {
+      value.addAll(map!);
+    }
+    return value;
+  }
+
   @override
   List<Object?> get props => [
         defaultValue,
         map,
       ];
+
+  @override
+  String toString() => 'Responses{defaultValue: $defaultValue, '
+      'map: $map}';
 }

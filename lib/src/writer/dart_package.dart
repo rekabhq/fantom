@@ -34,10 +34,24 @@ class FantomPackageInfo {
         description: 'this is a very funny library',
         environment: {"sdk": ">=2.14.0 <3.0.0"},
         dependencies: [
-          PackageDependencySpec.hosted(HostedPackageDependencySpec(
-            package: 'dio',
-            version: o.Optional('4.0.1'),
-          )),
+          PackageDependencySpec.hosted(
+            HostedPackageDependencySpec(
+              package: 'dio',
+              version: o.Optional('4.0.1'),
+            ),
+          ),
+          PackageDependencySpec.hosted(
+            HostedPackageDependencySpec(
+              package: 'equatable',
+              version: o.Optional('2.0.3'),
+            ),
+          ),
+          PackageDependencySpec.hosted(
+            HostedPackageDependencySpec(
+              package: 'uri',
+              version: o.Optional('1.0.0'),
+            ),
+          ),
         ],
       ),
     );
@@ -70,7 +84,7 @@ class PubspecInfo {
 /// creates a dart package and returns the lib directory of it
 Future createDartPackage(FantomPackageInfo packageInfo) async {
   // create path where dart package should be created
-  await runFromCmd('mkdir', args: ['-p', (packageInfo.generationPath)]);
+  await Directory(packageInfo.generationPath).create(recursive: true);
   // create a dart package with package-simple template
   var packagePath = '${packageInfo.generationPath}/${packageInfo.name}';
   await runFromCmd(
@@ -78,11 +92,11 @@ Future createDartPackage(FantomPackageInfo packageInfo) async {
     args: ['create', packagePath, '--template=package-simple', '--force'],
   );
   // delete default data in the newly created dart package
-  await runFromCmd('rm', args: ['-rf', '$packagePath/lib']);
-  await runFromCmd('rm', args: ['-rf', '$packagePath/example']);
-  await runFromCmd('rm', args: ['-rf', '$packagePath/test']);
+  await Directory('$packagePath/lib').delete(recursive: true);
+  await Directory('$packagePath/example').delete(recursive: true);
+  await Directory('$packagePath/test').delete(recursive: true);
   // recreate lib folder in package
-  await runFromCmd('mkdir', args: ['$packagePath/lib']);
+  await Directory('$packagePath/lib').create(recursive: true);
   // rewrite pubspec.yaml file
   var projectPubspecFile = File('$packagePath/pubspec.yaml');
   var pubspec =

@@ -18,7 +18,7 @@ void main() {
 
     setUpAll(() async {
       openapiMap =
-          await readJsonOrYamlFile(File('test/utils/petstore.openapi.yaml'));
+          await readJsonOrYamlFile(File('openapi_files/petstore.openapi.yaml'));
       swaggerMap = openapiMap!.clone();
       swaggerMap!.remove('openapi');
       swaggerMap!['swagger'] = '2.0.0';

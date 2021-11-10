@@ -27,4 +27,7 @@ class Response extends Equatable {
         headers,
         content,
       ];
+
+  @override
+  String toString() => 'Response{headers: $headers, content: $content}';
 }

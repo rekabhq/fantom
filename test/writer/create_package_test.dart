@@ -2,16 +2,18 @@
 import 'dart:io';
 
 import 'package:fantom/src/cli/commands/generate.dart';
+import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:fantom/src/writer/dart_package.dart';
 import 'package:fantom/src/writer/file_writer.dart';
+import 'package:fantom/src/writer/generatbale_file.dart';
 import 'package:pubspec_yaml/pubspec_yaml.dart' as p;
 import 'package:test/test.dart';
 
 void main() {
   group('CreatePackage:', () {
-    final name = 'fantom';
+    final name = 'client';
     final generationPath = 'test/writer/packages/';
     final packagePath = '$generationPath/$name';
     final libDirPath = '$packagePath/lib';
@@ -29,6 +31,7 @@ void main() {
           ),
           packageName: name,
           outputModuleDir: Directory(generationPath),
+          methodReturnType: MethodReturnType.result,
         ),
         models: [
           GeneratableFile(
@@ -58,7 +61,7 @@ class ApiClass{
       'should create a dart package from package info',
       () async {
         //when
-        await FileWriter.writeGeneratedFiles(generationData);
+        await FileWriter(generationData).writeGeneratedFiles();
         // assert existense of these files
         expect(Directory(libDirPath).existsSync(), isTrue);
         expect(File(pubspecPath).existsSync(), isTrue);
@@ -77,12 +80,12 @@ class ApiClass{
         expect(pubspec.name, packageInfo.name);
         expect(pubspec.dependencies, packageInfo.pubspecInfo.dependencies);
         // assert generated api & model files in lib/
-        var expectedModelFileNames =
-            generationData.models.map((e) => e.fileName).toSet();
         var actualModelFileNames = Directory(packageInfo.modelsDirPath)
             .listSync()
             .map((e) => e.path.split('/').last);
-        expect(actualModelFileNames, expectedModelFileNames);
+        for (var model in generationData.models) {
+          expect(actualModelFileNames.contains(model.fileName), isTrue);
+        }
         var apiFile = File(
             '${packageInfo.apisDirPath}/${generationData.apiClass.fileName}');
         expect(await apiFile.exists(), isTrue);

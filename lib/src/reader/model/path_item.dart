@@ -61,4 +61,41 @@ class PathItem extends Equatable {
         trace,
         parameters,
       ];
+
+  @override
+  String toString() => 'PathItem{get: $get, put: $put, '
+      'post: $post, delete: $delete, options: $options, '
+      'head: $head, patch: $patch, trace: $trace, '
+      'parameters: $parameters}';
+}
+
+extension PathItemExt on PathItem {
+  Map<String, Operation> get operations {
+    final resultMap = <String, Operation>{};
+
+    final map = {
+      'get': get,
+      'put': put,
+      'post': post,
+      'delete': delete,
+      'options': options,
+      'head': head,
+      'patch': patch,
+      'trace': trace,
+    };
+
+    map.forEach((key, value) {
+      if (value != null) {
+        resultMap[key] = value;
+      }
+    });
+
+    return resultMap;
+  }
+}
+
+extension PathItemStringExt on String {
+  bool get hasPathParameter => contains('{') && contains('}');
+
+  int get countPathParameter => '{'.allMatches(this).length;
 }

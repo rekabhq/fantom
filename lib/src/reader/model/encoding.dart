@@ -40,4 +40,8 @@ class Encoding extends Equatable {
         explode,
         allowReserved,
       ];
+
+  @override
+  String toString() => 'Encoding{contentType: $contentType, headers: $headers, '
+      'style: $style, explode: $explode, allowReserved: $allowReserved}';
 }

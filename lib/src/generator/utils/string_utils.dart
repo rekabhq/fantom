@@ -89,6 +89,15 @@ extension StringRemovingExt on String {
     return substring(start.length);
   }
 
+  /// assert that string starts with given [start],
+  /// and remove [start] from start of string.
+  String removeFromStartOrNot(final String start) {
+    if (!startsWith(start)) {
+      throw AssertionError('string "$this" should start with "$start"!');
+    }
+    return substring(start.length);
+  }
+
   /// assert and remove from last.
   String removeFromLast(final String last) {
     if (!endsWith(last)) {
@@ -97,10 +106,27 @@ extension StringRemovingExt on String {
     return substring(0, length - last.length);
   }
 
+  /// assert and replace from last.
+  String replaceFromLast(final String last, final String replace) {
+    if (!endsWith(last)) {
+      throw AssertionError('string "$this" should last with "$last"!');
+    }
+    return substring(0, length - last.length) + replace;
+  }
+
   /// assert and remove from last.
   String removeFromLastOrNot(final String last) {
     if (endsWith(last)) {
       return substring(0, length - last.length);
+    } else {
+      return this;
+    }
+  }
+
+  /// assert and replace from last.
+  String replaceFromLastOrNot(final String last, final String replace) {
+    if (endsWith(last)) {
+      return substring(0, length - last.length) + replace;
     } else {
       return this;
     }

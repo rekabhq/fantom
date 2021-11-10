@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:fantom/fantom.dart';
@@ -50,15 +52,19 @@ class FantomCli extends CommandRunner<int> {
   }
 
   Future _checkIfNewVersionOfThisLibraryIsAvailable() async {
-    await UpdateChecker(packageName: kCliName, currentVersion: kCurrentVersion)
-        .update()
-        .onError((error, stackTrace) {
-      Log.debug(error);
-      Log.debug(stackTrace);
-      Log.info('could not check for package new version');
-    }).timeout(const Duration(milliseconds: 1000), onTimeout: () {
-      Log.debug('Timeout. could not check for update');
-    });
+    final shouldCheck = (Random(10000).nextInt(10000)) < 2000;
+    if (shouldCheck) {
+      await UpdateChecker(
+              packageName: kCliName, currentVersion: kCurrentVersion)
+          .update()
+          .onError((error, stackTrace) {
+        Log.debug(error);
+        Log.debug(stackTrace);
+        Log.info('could not check for package new version');
+      }).timeout(const Duration(milliseconds: 1000), onTimeout: () {
+        Log.debug('Timeout. could not check for update');
+      });
+    }
   }
 
   void _checkWhetherLogsShouldBeVerbose(ArgResults argResults) {

@@ -61,4 +61,10 @@ class Header extends Equatable {
         schema,
         content,
       ];
+
+  @override
+  String toString() => 'Header{isRequired: $isRequired, '
+      'deprecated: $deprecated, allowEmptyValue: $allowEmptyValue, '
+      'style: $style, explode: $explode, allowReserved: $allowReserved, '
+      'schema: $schema, content: $content}';
 }
