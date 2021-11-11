@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/generator/api/sub_class/api_sub_class_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -36,7 +37,7 @@ class ApiClassGenerator {
       ..writeln(_generateClass(apiClassName))
       ..writeln(_generateConstructor(apiClassName))
       ..writeln(_generateFields())
-      ..writeln(_generateSubClassMethods())
+      ..writeln(_generateSubClassMethods(openApi.paths.paths))
       ..writeln('}');
 
     return buffer.toString();
@@ -71,11 +72,42 @@ class ApiClassGenerator {
     """;
   }
 
-  String _generateSubClassMethods() {
+  String _generateSubClassMethods(
+    final Map<String, PathItem> paths,
+  ) {
     // TODO: add subtype classes
     return """
       
 
     """;
   }
+
+  List<_PathSection> _createPathSections(Map<String, PathItem> paths) {
+    final pathSections = <_PathSection>[];
+    // final pathInitiator = _findPathsInitiator(paths.keys.toList());
+
+    return pathSections;
+  }
+
+  String _findPathsInitiator(List<String> pathValues) {
+    final pathUris = pathValues.map((path) => Uri.parse(path)).toList();
+
+    final initiator = '';
+
+    return initiator;
+
+  }
+}
+
+class _PathSection extends Equatable {
+  const _PathSection({
+    required this.sectionName,
+    required this.paths,
+  });
+
+  final String sectionName;
+  final Map<String, PathItem> paths;
+
+  @override
+  List<Object?> get props => [sectionName, paths];
 }
