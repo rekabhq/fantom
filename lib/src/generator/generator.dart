@@ -1,6 +1,6 @@
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/cli/options_values.dart';
-import 'package:fantom/src/generator/api/api_class_generator.dart';
+import 'package:fantom/src/generator/api/class/api_class_generator.dart';
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/generator/api/method/body_parser.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
