@@ -1,16 +1,18 @@
-import 'package:fantom/src/generator/api/api_constants.dart';
 import 'package:fantom/src/generator/api/method/api_method_generator.dart';
+import 'package:fantom/src/generator/api/sub_class/api_sub_class_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/writer/generatbale_file.dart';
 
 class ApiClassGenerator {
-  final OpenApi openApi;
-  final ApiMethodGenerator apiMethodGenerator;
-
   const ApiClassGenerator({
     required this.openApi,
+    required this.apiSubClassGenerator,
     required this.apiMethodGenerator,
   });
+
+  final OpenApi openApi;
+  final ApiSubClassGenerator apiSubClassGenerator;
+  final ApiMethodGenerator apiMethodGenerator;
 
   GeneratableFile generate() {
     final fileContent = _generateFileContent();
@@ -20,7 +22,7 @@ class ApiClassGenerator {
 
     return GeneratableFile(
       fileContent: fileContent,
-      fileName: 'api.dart',
+      fileName: 'api/fantom.dart',
     );
   }
 
@@ -34,7 +36,7 @@ class ApiClassGenerator {
       ..writeln(_generateClass(apiClassName))
       ..writeln(_generateConstructor(apiClassName))
       ..writeln(_generateFields())
-      ..writeln(_generateApiMethods())
+      ..writeln(_generateSubClassMethods())
       ..writeln('}');
 
     return buffer.toString();
@@ -66,14 +68,13 @@ class ApiClassGenerator {
     return """
     final Dio dio;
 
-    final $parameterParserVarName = MethodUriParser();
     """;
   }
 
-  String _generateApiMethods() {
+  String _generateSubClassMethods() {
+    // TODO: add subtype classes
     return """
-    
-    ${apiMethodGenerator.generateMethods()}
+      
 
     """;
   }

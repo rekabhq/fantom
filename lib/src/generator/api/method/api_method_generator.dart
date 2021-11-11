@@ -11,7 +11,6 @@ import 'package:recase/recase.dart';
 
 // TODO: add test for this class
 class ApiMethodGenerator {
-  final OpenApi openApi;
   final SchemaDefaultValueGenerator defaultValueGenerator;
   final MethodParamsParser methodParamsParser;
   final MethodBodyParser methodBodyParser;
@@ -21,7 +20,6 @@ class ApiMethodGenerator {
   final bool useResult;
 
   ApiMethodGenerator({
-    required this.openApi,
     required this.defaultValueGenerator,
     required this.methodParamsParser,
     required this.methodBodyParser,
@@ -30,14 +28,14 @@ class ApiMethodGenerator {
     this.useResult = true,
   });
 
-  String generateMethods() {
-    if (openApi.paths.paths.isEmpty) return '';
+  String generateMethods(Map<String, PathItem> paths) {
+    if (paths.isEmpty) return '';
 
     // buffer to store generated data
     final buffer = StringBuffer();
 
     // iterating over paths
-    for (final path in openApi.paths.paths.entries) {
+    for (final path in paths.entries) {
       final pathParams = path.value.parameters;
 
       final pathGeneratedComponentParams = pathParams
