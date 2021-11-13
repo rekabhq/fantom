@@ -82,11 +82,29 @@ class ApiClassGenerator {
     """;
   }
 
-  List<_PathSection> _createPathSections(Map<String, PathItem> paths) {
-    final pathSections = <_PathSection>[];
+  List<_ApiSection> _createPathSections(Map<String, PathItem> paths) {
     final pathInitiator = _findPathsInitiator(paths.keys.toList());
+    final sections = _splitPathSections(
+      pathInitiator,
+      paths.keys.toList(),
+    );
 
-    return pathSections;
+    List<_ApiSection> apis = [];
+    for (final section in sections) {
+      final apiSections = paths.entries.where(
+        (e) => e.key.contains(section),
+      );
+      if (apiSections.isNotEmpty) {
+        apis.add(
+          _ApiSection(
+            sectionName: section,
+            paths: Map.fromEntries(apiSections),
+          ),
+        );
+      }
+    }
+
+    return apis;
   }
 
   String _findPathsInitiator(List<String> pathValues) {
@@ -120,10 +138,24 @@ class ApiClassGenerator {
 
     return '/$initiatorResult';
   }
+
+  Set<String> _splitPathSections(String pathInitiator, List<String> list) {
+    if (pathInitiator.isEmpty) return list.toSet();
+
+    final Set<String> sections = {};
+
+    for (final path in list) {
+      final section = path.replaceFirst(pathInitiator, '');
+
+      sections.add(section);
+    }
+
+    return sections;
+  }
 }
 
-class _PathSection extends Equatable {
-  const _PathSection({
+class _ApiSection extends Equatable {
+  const _ApiSection({
     required this.sectionName,
     required this.paths,
   });
