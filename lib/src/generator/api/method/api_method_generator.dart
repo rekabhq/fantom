@@ -18,6 +18,8 @@ class ApiMethodGenerator {
   final MethodResponseParser methodResponseParser;
   final NameGenerator nameGenerator;
 
+  final bool useResult;
+
   ApiMethodGenerator({
     required this.openApi,
     required this.defaultValueGenerator,
@@ -25,6 +27,7 @@ class ApiMethodGenerator {
     required this.methodBodyParser,
     required this.methodResponseParser,
     required this.nameGenerator,
+    this.useResult = true,
   });
 
   String generateMethods() {
@@ -46,7 +49,7 @@ class ApiMethodGenerator {
           )
           .toList();
 
-      //
+      // generating doc comments for paths
       if (path.value.operations.isNotEmpty) {
         final pathValue = '"${path.key}"';
         final pathLength = pathValue.length;
@@ -210,18 +213,30 @@ class ApiMethodGenerator {
     // 9. generate request
     // final response = await dio.request(
     //  parsedPath,
-    //  queryParameters: queryParams,
     //  options: option,
     //  data: bodyJson,
     // );
-    buffer.writeln(
-      _generateDioRequest(generatedQueryParams, operationBodyComponent),
-    );
     // 10. generate evaluated response
     // we should think about this
     // we should deserialize response.data to Generated response component type
     // return evaluateResponse(response);
-    buffer.writeln(_generateEvaluateResponse(responseType));
+    if (useResult) {
+      buffer.writeln(
+        _generateDioRequestWithResult(
+          responseType,
+          generatedQueryParams,
+          operationBodyComponent,
+        ),
+      );
+    } else {
+      buffer.writeln(
+        _generateDioRequestWithoutResult(
+          responseType,
+          generatedQueryParams,
+          operationBodyComponent,
+        ),
+      );
+    }
     // -------
 
     buffer.writeln('}');
@@ -238,7 +253,9 @@ class ApiMethodGenerator {
       'String? $responseContentTypeVariable,';
 
   String _generateMethodSyntax(String methodName, String returnType) =>
-      'Future<$returnType> $methodName({';
+      useResult
+          ? 'Future<$resultType<$returnType, Exception>> $methodName({'
+          : 'Future<$returnType> $methodName({';
 
   String _generateEndMethodSyntax() => '}) async {';
 
@@ -532,13 +549,47 @@ class ApiMethodGenerator {
     return buffer.toString();
   }
 
-  // final response = await dio.request(
-  //  path,
-  //  queryParameters: queryParams,
-  //  options: option,
-  //  data: bodyJson,
-  // );
-  String _generateDioRequest(
+  // return await dio
+  //   .request(
+  //     path,
+  //     options: options,
+  //   )
+  //   .toResult(
+  //     (response) => response,
+  //   );
+  String _generateDioRequestWithResult(
+    String responseTypeName,
+    List<GeneratedParameterComponent>? generatedQueryParams,
+    GeneratedRequestBodyComponent? operationBodyComponent,
+  ) {
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.write('return await $dioInstance.request($pathVarName, ');
+
+    buffer.writeln('$dioOptions: $optionsVarName,');
+
+    if (operationBodyComponent != null) {
+      buffer.writeln('$dioData: $bodyValueVarName,');
+    }
+
+    buffer.writeln(')');
+    buffer.writeln('.toResult(');
+    if (responseTypeName != dioResponseType) {
+      buffer.writeln('($responseVarName) => ${responseTypeName}Ext.from(');
+      buffer.writeln('$responseVarName,');
+      buffer.writeln('$responseContentTypeVariable,');
+      buffer.writeln('),');
+    } else {
+      buffer.writeln('($responseVarName) => $responseVarName,');
+    }
+
+    buffer.writeln(');');
+
+    return buffer.toString();
+  }
+
+  String _generateDioRequestWithoutResult(
+    String responseTypeName,
     List<GeneratedParameterComponent>? generatedQueryParams,
     GeneratedRequestBodyComponent? operationBodyComponent,
   ) {
@@ -555,19 +606,16 @@ class ApiMethodGenerator {
 
     buffer.writeln(');');
 
-    return buffer.toString();
-  }
-
-  String _generateEvaluateResponse(String responseTypeName) {
     if (responseTypeName != dioResponseType) {
-      return '''
-      return ${responseTypeName}Ext.from(
-        $responseVarName,
-        $responseContentTypeVariable,
-      );
-      ''';
+      buffer
+        ..writeln('return ${responseTypeName}Ext.from(')
+        ..writeln('$responseVarName,')
+        ..writeln('$responseContentTypeVariable,')
+        ..writeln(');');
     } else {
-      return 'return $responseVarName;';
+      buffer.writeln('return $responseVarName;');
     }
+
+    return buffer.toString();
   }
 }

@@ -93,8 +93,9 @@ class ParameterClassGenerator {
         schema,
         name: className,
       );
-      if (element is ObjectDataElement) {
-        final generatedSchema = schemaGenerator.generate(element);
+      if (element.isGeneratable) {
+        final generatedSchema =
+            schemaGenerator.generate(element.asObjectDataElement);
         return GeneratedParameterComponent.schema(
           source: parameter,
           schemaComponent: generatedSchema,

@@ -1,5 +1,21 @@
 enum DirectiveType { import, export, part, partOf }
 
+DirectiveType? _directiveTypeFrom(String string) {
+  if (string == 'import') {
+    return DirectiveType.import;
+  }
+  if (string == 'export') {
+    return DirectiveType.export;
+  }
+  if (string == 'part') {
+    return DirectiveType.part;
+  }
+  if (string == 'part of') {
+    return DirectiveType.partOf;
+  }
+  return null;
+}
+
 class Directive {
   final String uri;
   final DirectiveType type;
@@ -10,6 +26,32 @@ class Directive {
   Directive.partOf(this.uri) : type = DirectiveType.partOf;
   Directive.import(this.uri) : type = DirectiveType.import;
   Directive.export(this.uri) : type = DirectiveType.export;
+
+  static Directive? tryToCreateFromLine(String line) {
+    DirectiveType? type;
+    String? uri;
+    if (line.startsWith('import')) {
+      type = _directiveTypeFrom(line.substring(0, 6));
+      uri = line.substring(6);
+    }
+    if (line.startsWith('export')) {
+      type = _directiveTypeFrom(line.substring(0, 6));
+      uri = line.substring(6);
+    }
+    if (line.startsWith('part')) {
+      type = _directiveTypeFrom(line.substring(0, 4));
+      uri = line.substring(4);
+    }
+    if (line.startsWith('part of')) {
+      type = _directiveTypeFrom(line.substring(0, 7));
+      uri = line.substring(7);
+    }
+    if (uri == null || type == null) {
+      return null;
+    }
+    uri = uri.replaceAll(';', '').replaceAll("'", "").trim();
+    return Directive._(type, uri);
+  }
 
   factory Directive.relative({
     required String filePath,

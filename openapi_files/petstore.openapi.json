@@ -363,10 +363,22 @@
         },
         "requestBody": {
           "content": {
-            "application/octet-stream": {
+            "multipart/form-data": {
               "schema": {
-                "type": "string",
-                "format": "binary"
+                "type": "object",
+                "required": [
+                  "image",
+                  "name"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }

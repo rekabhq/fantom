@@ -25,7 +25,9 @@ void main() {
           componentsGenerator.generateSchemas(openapi.components!.schemas!);
       map.forEach((ref, component) {
         registerGeneratedComponent(ref, component);
-        outputContent += component.fileContent;
+        if (component.isGenerated) {
+          outputContent += component.fileContent;
+        }
       });
       outputContent += r'''
 class Optional<T> {
@@ -75,7 +77,9 @@ class Optional<T> {
       componentsGenerator.generateSchemas(openapi.components!.schemas!).forEach(
         (ref, component) {
           registerGeneratedComponent(ref, component);
-          outputContent += component.fileContent;
+          if (component.isGenerated) {
+            outputContent += component.fileContent;
+          }
         },
       );
       componentsGenerator

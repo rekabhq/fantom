@@ -2,5 +2,6 @@ fantom:
   openapi: openapi_files/petstore.openapi.json
   package: ../generated/package
   package-name: my_api_package
+  method-return-type: result
   # model-dir: generated/package/my_api_package/lib/network/data/models
   # api-dir: generated/package/my_api_package/lib/network
