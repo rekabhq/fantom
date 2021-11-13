@@ -740,21 +740,69 @@ extension ObjectDataElementFormatExt on ObjectDataElement {
 
 /// extensions on [ObjectDataElement].
 extension ObjectDataElementTypeExt on ObjectDataElement {
-  /// the type of map used,
-  /// this is more general than [type].
+  /// the type of map used.
   ///
-  /// without nullability
+  /// with nullability.
+  ///
+  /// may include enum.
   String? get mapTypeOrNull {
     return mapTypeNNOrNull?.withNullability(isNullable);
   }
 
-  /// the type of map used,
-  /// this is more general than [type].
+  /// the type of map used.
   ///
-  /// without nullability
+  /// without nullability.
+  ///
+  /// may include enum.
   String? get mapTypeNNOrNull {
     if (isAdditionalPropertiesAllowed) {
       final sub = additionalProperties!.type1;
+      return 'Map<String, $sub>';
+    } else {
+      return null;
+    }
+  }
+
+  /// the type of map used.
+  ///
+  /// with nullability.
+  ///
+  /// sub type will be raw.
+  String? get rawMapTypeOrNull {
+    return rawMapTypeNNOrNull?.withNullability(isNullable);
+  }
+
+  /// the type of map used.
+  ///
+  /// without nullability.
+  ///
+  /// sub type will be raw.
+  String? get rawMapTypeNNOrNull {
+    if (isAdditionalPropertiesAllowed) {
+      final sub = additionalProperties!.rawType;
+      return 'Map<String, $sub>';
+    } else {
+      return null;
+    }
+  }
+
+  /// the type of map used.
+  ///
+  /// with nullability.
+  ///
+  /// sub type will be recursively raw.
+  String? get deepRawMapTypeOrNull {
+    return deepRawMapTypeNNOrNull?.withNullability(isNullable);
+  }
+
+  /// the type of map used.
+  ///
+  /// without nullability.
+  ///
+  /// sub type will be recursively raw.
+  String? get deepRawMapTypeNNOrNull {
+    if (isAdditionalPropertiesAllowed) {
+      final sub = additionalProperties!.deepRawType;
       return 'Map<String, $sub>';
     } else {
       return null;
@@ -842,27 +890,27 @@ extension DataElementTypeExt on DataElement {
   /// can not be enum.
   ///
   /// internal types can not be enums.
-  String get recRawType => recRawTypeNN.withNullability(isNullable);
+  String get deepRawType => deepRawTypeNN.withNullability(isNullable);
 
   /// recursive raw type without nullability sign.
   ///
   /// can not be enum.
   ///
   /// internal types can not be enums.
-  String get recRawTypeNN => match(
+  String get deepRawTypeNN => match(
         boolean: (boolean) {
           return 'bool';
         },
         object: (object) {
           if (object.format == ObjectDataElementFormat.map) {
-            final sub = object.additionalProperties!.recRawType;
+            final sub = object.additionalProperties!.deepRawType;
             return 'Map<String, $sub>';
           } else {
             return name;
           }
         },
         array: (array) {
-          final sub = array.items.recRawType;
+          final sub = array.items.deepRawType;
           if (array.isUniqueItems) {
             return 'Set<$sub>';
           } else {
