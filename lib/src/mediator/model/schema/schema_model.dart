@@ -812,6 +812,15 @@ extension ObjectDataElementTypeExt on ObjectDataElement {
 
 /// extensions on [DataElement].
 extension DataElementTypeExt on DataElement {
+  /// raw type or enum
+  String rawTypeOrEnum(final bool useEnum) {
+    if (useEnum && hasEnum) {
+      return enumName;
+    } else {
+      return rawType;
+    }
+  }
+
   /// type possibly with nullability sign.
   ///
   /// can be enum.
