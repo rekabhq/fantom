@@ -911,3 +911,17 @@ extension _StringNullabilityExt on String {
   /// add nullability if needed.
   String withNullability(bool isNullable) => isNullable ? '$this?' : this;
 }
+
+/// extensions on [DataElement]
+extension DataElementGenerationExt on DataElement {
+  /// if data element should be generated
+  bool get isGeneratable => match(
+        boolean: (boolean) => false,
+        object: (object) => object.format != ObjectDataElementFormat.map,
+        array: (array) => false,
+        integer: (integer) => false,
+        number: (number) => false,
+        string: (string) => false,
+        untyped: (untyped) => false,
+      );
+}
