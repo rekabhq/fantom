@@ -84,18 +84,41 @@ class ApiClassGenerator {
 
   List<_PathSection> _createPathSections(Map<String, PathItem> paths) {
     final pathSections = <_PathSection>[];
-    // final pathInitiator = _findPathsInitiator(paths.keys.toList());
+    final pathInitiator = _findPathsInitiator(paths.keys.toList());
 
     return pathSections;
   }
 
   String _findPathsInitiator(List<String> pathValues) {
+    if (pathValues.isEmpty) return '';
+
     final pathUris = pathValues.map((path) => Uri.parse(path)).toList();
 
-    final initiator = '';
+    int segmentCount = 0;
 
-    return initiator;
+    String initiator = pathUris.first.pathSegments[segmentCount];
 
+    bool foundInitiator = false;
+
+    while (!foundInitiator) {
+      final foundInitiatorInPaths = pathUris.every((path) {
+        return path.pathSegments[segmentCount] == initiator;
+      });
+
+      if (foundInitiatorInPaths) {
+        segmentCount++;
+        initiator = pathUris.first.pathSegments[segmentCount];
+      } else {
+        foundInitiator = true;
+      }
+    }
+
+    if (segmentCount == 0) return '';
+
+    final initiatorResult =
+        pathUris.first.pathSegments.sublist(0, segmentCount).join('/');
+
+    return '/$initiatorResult';
   }
 }
 
