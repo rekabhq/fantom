@@ -72,7 +72,7 @@ class SchemaEnumGenerator {
   String _generateCode(final DataElement element) {
     final List<Object?> values = element.enumeration!.values;
     final name = element.enumName;
-    final type = element.type;
+    final type = element.rawType;
     final svg = SchemaValueGenerator();
     final names = [
       for (var index = 0; index < values.length; index++) 'value$index',
