@@ -9,7 +9,7 @@ class SchemaValueGenerator {
     final DataElement element, {
     required final Object? value,
   }) {
-    if (element.hasEnum) {
+    if (element.isEnumerated) {
       // todo: uie, enum item names
       // ex. Status.value1
       final values = element.enumeration!.values;

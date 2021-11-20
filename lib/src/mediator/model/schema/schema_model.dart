@@ -672,10 +672,10 @@ extension DataElementUtilityExt on DataElement {
   bool get hasNotDefaultValue => !hasDefaultValue;
 
   /// has enum
-  bool get hasEnum => enumeration != null;
+  bool get isEnumerated => enumeration != null;
 
   /// has not enum
-  bool get hasNotEnum => !hasEnum;
+  bool get isNotEnumerated => !isEnumerated;
 }
 
 /// extensions on [DataElement]
@@ -816,7 +816,7 @@ extension DataElementTypeExt on DataElement {
   ///
   /// can be enum.
   String get type1 {
-    if (hasEnum) {
+    if (isEnumerated) {
       return enumName;
     } else {
       return rawType;

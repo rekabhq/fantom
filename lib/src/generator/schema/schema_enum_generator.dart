@@ -33,7 +33,7 @@ class SchemaEnumGenerator {
 
   List<GeneratedEnum> generateEnumsRecursively(final DataElement element) {
     return [
-      if (element.hasEnum) _generate(element),
+      if (element.isEnumerated) _generate(element),
       ...element.match(
         boolean: (boolean) => [],
         object: (object) => [
@@ -54,7 +54,7 @@ class SchemaEnumGenerator {
   }
 
   String generateEnum(final DataElement element) {
-    if (element.hasNotEnum) {
+    if (element.isNotEnumerated) {
       throw AssertionError(
         'element ${element.name} does not contain an enum',
       );
@@ -90,17 +90,11 @@ class SchemaEnumGenerator {
       ].joinLines(),
       // enum serialization and values class:
       [
-        'abstract class ${name}Serialization {',
-        // constructor:
-        [
-          '${name}Serialization._() {',
-          'throw AssertionError();',
-          '}',
-        ].joinLines(),
+        'extension ${name}Ext on $name {',
         // serialize:
         [
-          'static $type serialize(final $name value) {',
-          'switch(value) {',
+          '$type serialize() {',
+          'switch(this) {',
           for (var index = 0; index < values.length; index++)
             [
               'case $name.',
@@ -110,6 +104,7 @@ class SchemaEnumGenerator {
               ';',
             ].joinParts(),
           '}',
+          "throw AssertionError('not found');",
           '}',
         ].joinLines(),
         // deserialize:
