@@ -221,4 +221,9 @@ class GeneratedClassesRecursively extends Equatable {
   @override
   String toString() => 'GeneratedClassesRecursively{node: $node, '
       'sub: $sub}';
+
+  List<GeneratedSchemaComponent> get all => [
+        if (node != null) node!,
+        ...sub,
+      ];
 }

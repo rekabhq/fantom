@@ -53,14 +53,15 @@ import 'package:equatable/equatable.dart';
         // todo : fix ...
 
         content += SchemaEnumGenerator()
-            .generateEnumsRecursively(
+            .generateRecursively(
               SchemaMediator().convert(
                 openApi: openapi,
                 schema: requestBody.content.values.first.schema!,
                 name: 'PetBodyApplicationJson',
               ),
             )
-            .map((e) => e.code)
+            .all
+            .map((e) => e.fileContent)
             .join('\n\n');
 
         for (final key in openapi.components!.schemas!.keys) {

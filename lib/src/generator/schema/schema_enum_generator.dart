@@ -177,4 +177,9 @@ class GeneratedEnumsRecursively extends Equatable {
   @override
   String toString() => 'GeneratedEnumsRecursively{node: $node, '
       'sub: $sub}';
+
+  List<GeneratedEnumComponent> get all => [
+        if (node != null) node!,
+        ...sub,
+      ];
 }
