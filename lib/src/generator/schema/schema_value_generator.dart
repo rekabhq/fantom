@@ -8,8 +8,9 @@ class SchemaValueGenerator {
   String generate(
     final DataElement element, {
     required final Object? value,
+    final bool ignoreTopEnum = false,
   }) {
-    if (element.isEnumerated) {
+    if (element.isEnumerated && !ignoreTopEnum) {
       // todo: uie, enum item names
       // ex. Status.value1
       final values = element.enumeration!.values;

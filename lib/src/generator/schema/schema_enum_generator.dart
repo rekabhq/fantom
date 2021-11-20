@@ -128,7 +128,11 @@ class SchemaEnumGenerator {
               'static final $type ',
               names[index],
               ' = ',
-              svg.generate(element, value: values[index]),
+              svg.generate(
+                element,
+                value: values[index],
+                ignoreTopEnum: true,
+              ),
               ';',
             ].joinParts(),
         ].joinLines(),

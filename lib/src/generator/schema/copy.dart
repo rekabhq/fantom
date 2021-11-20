@@ -1,4 +1,4 @@
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, dead_code, prefer_initializing_formals
 
 import 'package:equatable/equatable.dart';
 
