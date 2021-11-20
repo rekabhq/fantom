@@ -1,3 +1,4 @@
+import 'package:fantom/src/generator/schema/equality.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
@@ -13,7 +14,7 @@ class SchemaValueGenerator {
       // ex. Status.value1
       final values = element.enumeration!.values;
       for (var index = 0; index <= values.length; index++) {
-        if (_deepEquals(value, values[index])) {
+        if (deepJsonEquals(value, values[index])) {
           return element.enumName + '.' + 'value$index';
         }
       }
@@ -209,72 +210,6 @@ class SchemaValueGenerator {
       return '<String, Object?>{$joined}';
     } else {
       throw AssertionError();
-    }
-  }
-
-  // todo: uie, sets ?
-  bool _deepEquals(final Object? o1, final Object? o2) {
-    if (o1 == null && o2 == null) {
-      return true;
-    } else if (o1 is int && o2 is int) {
-      return o1 == o2;
-    } else if (o1 is double && o2 is double) {
-      return o1 == o2;
-    } else if (o1 is bool && o2 is bool) {
-      return o1 == o2;
-    } else if (o1 is String && o2 is String) {
-      return o1 == o2;
-    } else if (o1 is List<Object?> && o2 is List<Object?>) {
-      if (o1.length == o2.length) {
-        for (var index = 0; index < o1.length; index++) {
-          if (!_deepEquals(o1[index], o2[index])) {
-            return false;
-          }
-        }
-        return true;
-      } else {
-        return false;
-      }
-    } else if (o1 is Set<Object?> && o2 is Set<Object?>) {
-      if (o1.length == o2.length) {
-        final acc = Set.of(o2);
-        for (final item1 in o1) {
-          bool isFound = false;
-          Object? found;
-          for (final item2 in acc) {
-            if (_deepEquals(item1, item2)) {
-              isFound = true;
-              found = item2;
-              break;
-            }
-          }
-          if (isFound) {
-            acc.remove(found);
-          } else {
-            return false;
-          }
-        }
-        return true;
-      } else {
-        return false;
-      }
-    } else if (o1 is Map<String, Object?> && o2 is Map<String, Object?>) {
-      if (o1.length == o2.length) {
-        for (var key in o1.keys) {
-          if (!o2.containsKey(key)) {
-            return false;
-          } else {
-            if (!_deepEquals(o1[key], o2[key])) {
-              return false;
-            }
-          }
-        }
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
     }
   }
 }
