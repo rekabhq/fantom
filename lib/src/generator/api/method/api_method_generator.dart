@@ -286,7 +286,7 @@ class ApiMethodGenerator {
 
     for (final param in methodParams) {
       final type = (param.isSchema
-              ? param.schemaComponent?.dataElement.type1
+              ? param.schemaComponent?.dataElement.type
               : param.contentManifest?.manifest.name) ??
           dynamicType;
 
@@ -357,7 +357,7 @@ class ApiMethodGenerator {
         final explode = param.source.explode ?? defaultPathParamExplode;
 
         final type = (param.isSchema
-                ? param.schemaComponent?.dataElement.type1
+                ? param.schemaComponent?.dataElement.type
                 : param.contentManifest?.manifest.name) ??
             dynamicType;
 
@@ -404,7 +404,7 @@ class ApiMethodGenerator {
         final name = param.source.name;
 
         final type = (param.isSchema
-                ? param.schemaComponent?.dataElement.type1
+                ? param.schemaComponent?.dataElement.type
                 : param.contentManifest?.manifest.name) ??
             dynamicType;
 
@@ -470,7 +470,7 @@ class ApiMethodGenerator {
       final name = param.source.name;
 
       final type = (param.isSchema
-              ? param.schemaComponent?.dataElement.type1
+              ? param.schemaComponent?.dataElement.type
               : param.contentManifest?.manifest.name) ??
           dynamicType;
 

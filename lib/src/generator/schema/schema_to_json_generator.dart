@@ -9,7 +9,7 @@ class SchemaToJsonGenerator {
     final DataElement element, {
     final bool inline = false,
   }) {
-    final type = element.type1;
+    final type = element.type;
     return [
       '(($type value) => ',
       _logic(element, 'value', inline),
@@ -24,7 +24,7 @@ class SchemaToJsonGenerator {
     final bool isStatic = true,
     final bool inline = false,
   }) {
-    final type = element.type1;
+    final type = element.type;
     return [
       if (isStatic) 'static ',
       'dynamic $name($type value) => ',

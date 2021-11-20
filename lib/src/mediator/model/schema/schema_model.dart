@@ -756,7 +756,7 @@ extension ObjectDataElementTypeExt on ObjectDataElement {
   /// may include enum.
   String? get mapTypeNNOrNull {
     if (isAdditionalPropertiesAllowed) {
-      final sub = additionalProperties!.type1;
+      final sub = additionalProperties!.type;
       return 'Map<String, $sub>';
     } else {
       return null;
@@ -815,7 +815,7 @@ extension DataElementTypeExt on DataElement {
   /// type possibly with nullability sign.
   ///
   /// can be enum.
-  String get type1 {
+  String get type {
     if (isEnumerated) {
       return enumName;
     } else {
@@ -853,14 +853,14 @@ extension DataElementTypeExt on DataElement {
         },
         object: (object) {
           if (object.format == ObjectDataElementFormat.map) {
-            final sub = object.additionalProperties!.type1;
+            final sub = object.additionalProperties!.type;
             return 'Map<String, $sub>';
           } else {
             return name;
           }
         },
         array: (array) {
-          final sub = array.items.type1;
+          final sub = array.items.type;
           if (array.isUniqueItems) {
             return 'Set<$sub>';
           } else {

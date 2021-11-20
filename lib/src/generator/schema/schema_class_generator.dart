@@ -89,7 +89,7 @@ class SchemaClassGenerator {
         [
           'final ',
           if (property.isFieldOptional) 'Optional<',
-          property.item.type1,
+          property.item.type,
           if (property.isFieldOptional) '>?',
           ' ',
           property.name,
@@ -111,7 +111,7 @@ class SchemaClassGenerator {
             [
               if (property.isConstructorRequired) 'required ',
               if (property.isConstructorOptional) 'Optional<',
-              property.item.type1,
+              property.item.type,
               if (property.isConstructorOptional) '>?',
               ' ',
               property.name,

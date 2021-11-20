@@ -152,7 +152,7 @@ class ContentManifestCreator {
         } else if (dataElement.isArrayDataElement) {
           returnType = 'List<Map<String,dynamic>>';
         } else {
-          returnType = dataElement.type1;
+          returnType = dataElement.type;
         }
         buffer.writeln('$returnType toJson() {');
         final schemaToGen = SchemaToJsonGenerator();
@@ -336,7 +336,7 @@ class ContentManifestCreator {
       }
       _mapOfDataElements[mediaTypeName] = component.dataElement;
 
-      typeName = component.dataElement.type1;
+      typeName = component.dataElement.type;
       isNullable = component.dataElement.isNullable;
     }
 

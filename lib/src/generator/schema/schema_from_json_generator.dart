@@ -23,7 +23,7 @@ class SchemaFromJsonGenerator {
     final bool isStatic = true,
     final bool inline = false,
   }) {
-    final type = element.type1;
+    final type = element.type;
     return [
       if (isStatic) 'static ',
       '$type $name(dynamic json) => ',
@@ -110,7 +110,7 @@ class SchemaFromJsonGenerator {
         },
         object: (object) {
           if (object.format == ObjectDataElementFormat.map) {
-            final sub = object.additionalProperties!.type1;
+            final sub = object.additionalProperties!.type;
             return [
               '((Map<String, dynamic> json) => ',
               'json.map<String, $sub>((key, it) => ',
@@ -135,7 +135,7 @@ class SchemaFromJsonGenerator {
           }
         },
         array: (array) {
-          final sub = array.items.type1;
+          final sub = array.items.type;
           return [
             '((List<dynamic> json) => ',
             'json.map<$sub>((it) => ',

@@ -43,7 +43,7 @@ class SchemaValueGenerator {
             if (format == ObjectDataElementFormat.map) {
               // ex. <String, int>{'a': 12}
               final additionalProperties = object.additionalProperties!;
-              final sub = additionalProperties.type1;
+              final sub = additionalProperties.type;
               final joined = value.entries
                   .map((e) {
                     return _string(e.key) +
@@ -113,7 +113,7 @@ class SchemaValueGenerator {
             if (value is! List<Object?>) {
               throw AssertionError('bad types');
             }
-            final sub = array.items.type1;
+            final sub = array.items.type;
             // both set and list are stored as list in json and yaml:
             final joined = value
                 // recursive call:
