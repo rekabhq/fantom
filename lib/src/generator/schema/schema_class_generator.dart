@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
@@ -8,33 +9,63 @@ import 'package:recase/recase.dart';
 
 extension SchemaClassGeneratorExt on SchemaClassGenerator {
   GeneratedSchemaComponent generate(
-    final ObjectDataElement object, {
-    final String? additionalCode,
-    final bool generateJson = true,
-    final bool inlineJson = false,
-    final bool generateEquatable = true,
-    final bool generateToString = true,
-  }) {
-    final content = generateClass(
-      object,
-      additionalCode: additionalCode,
-      generateJson: generateJson,
-      inlineJson: inlineJson,
-      generateEquatable: generateEquatable,
-      generateToString: generateToString,
-    );
+    final ObjectDataElement object,
+  ) {
     return GeneratedSchemaComponent(
       dataElement: object,
-      fileContent: content,
+      fileContent: generateCode(object),
       fileName: '${ReCase(object.name).snakeCase}.dart',
     );
+  }
+
+  GeneratedClassesRecursively generateRecursively(
+    final DataElement element,
+  ) {
+    return GeneratedClassesRecursively(
+      node: (element is ObjectDataElement &&
+              element.format != ObjectDataElementFormat.map)
+          ? generate(element)
+          : null,
+      sub: _generateRecursively(
+        element,
+        generateSelf: false,
+      ),
+    );
+  }
+
+  List<GeneratedSchemaComponent> _generateRecursively(
+    final DataElement element, {
+    final bool generateSelf = true,
+  }) {
+    return [
+      if (generateSelf &&
+          element is ObjectDataElement &&
+          element.format != ObjectDataElementFormat.map)
+        generate(element),
+      ...element.match(
+        boolean: (boolean) => [],
+        object: (object) => [
+          for (final property in object.properties)
+            ..._generateRecursively(property.item),
+          if (object.isAdditionalPropertiesAllowed)
+            ..._generateRecursively(object.additionalProperties!),
+        ],
+        array: (array) => [
+          ..._generateRecursively(array.items),
+        ],
+        integer: (integer) => [],
+        number: (number) => [],
+        string: (string) => [],
+        untyped: (untyped) => [],
+      ),
+    ];
   }
 }
 
 class SchemaClassGenerator {
   const SchemaClassGenerator();
 
-  String generateClass(
+  String generateCode(
     final ObjectDataElement object, {
     final String? additionalCode,
     final bool generateJson = true,
@@ -170,4 +201,24 @@ class SchemaClassGenerator {
       "')';",
     ].joinLines();
   }
+}
+
+class GeneratedClassesRecursively extends Equatable {
+  final GeneratedSchemaComponent? node;
+  final List<GeneratedSchemaComponent> sub;
+
+  const GeneratedClassesRecursively({
+    required this.node,
+    required this.sub,
+  });
+
+  @override
+  List<Object?> get props => [
+        node,
+        sub,
+      ];
+
+  @override
+  String toString() => 'GeneratedClassesRecursively{node: $node, '
+      'sub: $sub}';
 }

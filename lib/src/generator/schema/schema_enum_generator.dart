@@ -6,70 +6,62 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
 
 extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
-  GeneratedSchemaComponent generate(
-    final DataElement element,
-  ) {
-    return GeneratedSchemaComponent(
+  GeneratedEnumComponent generate(final DataElement element) {
+    return GeneratedEnumComponent(
       dataElement: element,
-      fileContent: generateEnum(element),
+      fileContent: generateCode(element),
       fileName: '${ReCase(element.enumName).snakeCase}.dart',
     );
   }
 
-  List<GeneratedSchemaComponent> generateRecursively(
+  GeneratedEnumsRecursively generateRecursively(
     final DataElement element,
   ) {
-    return generateEnumsRecursively(element)
-        .map((e) => GeneratedSchemaComponent(
-            dataElement: e.element,
-            fileContent: e.code,
-            fileName: '${ReCase(e.element.enumName).snakeCase}.dart'))
-        .toList();
+    return GeneratedEnumsRecursively(
+      node: element.isEnumerated ? generate(element) : null,
+      sub: _generateRecursively(
+        element,
+        generateSelf: false,
+      ),
+    );
+  }
+
+  List<GeneratedEnumComponent> _generateRecursively(
+    final DataElement element, {
+    final bool generateSelf = true,
+  }) {
+    return [
+      if (generateSelf && element.isEnumerated) generate(element),
+      ...element.match(
+        boolean: (boolean) => [],
+        object: (object) => [
+          for (final property in object.properties)
+            ..._generateRecursively(property.item),
+          if (object.isAdditionalPropertiesAllowed)
+            ..._generateRecursively(object.additionalProperties!),
+        ],
+        array: (array) => [
+          ..._generateRecursively(array.items),
+        ],
+        integer: (integer) => [],
+        number: (number) => [],
+        string: (string) => [],
+        untyped: (untyped) => [],
+      ),
+    ];
   }
 }
 
 class SchemaEnumGenerator {
   const SchemaEnumGenerator();
 
-  List<GeneratedEnum> generateEnumsRecursively(final DataElement element) {
-    return [
-      if (element.isEnumerated) _generate(element),
-      ...element.match(
-        boolean: (boolean) => [],
-        object: (object) => [
-          for (final property in object.properties)
-            ...generateEnumsRecursively(property.item),
-          if (object.isAdditionalPropertiesAllowed)
-            ...generateEnumsRecursively(object.additionalProperties!),
-        ],
-        array: (array) => [
-          ...generateEnumsRecursively(array.items),
-        ],
-        integer: (integer) => [],
-        number: (number) => [],
-        string: (string) => [],
-        untyped: (untyped) => [],
-      )
-    ];
-  }
-
-  String generateEnum(final DataElement element) {
+  String generateCode(final DataElement element) {
     if (element.isNotEnumerated) {
       throw AssertionError(
         'element ${element.name} does not contain an enum',
       );
     }
-    return _generateCode(element);
-  }
 
-  GeneratedEnum _generate(final DataElement element) {
-    return GeneratedEnum(
-      element: element,
-      code: _generateCode(element),
-    );
-  }
-
-  String _generateCode(final DataElement element) {
     final List<Object?> values = element.enumeration!.values;
     final length = values.length;
     final enumName = element.enumName;
@@ -79,7 +71,8 @@ class SchemaEnumGenerator {
       for (var index = 0; index < length; index++) 'item$index',
     ];
     final enumNames = [
-      for (var index = 0; index < length; index++) enumItemName(element, index),
+      for (var index = 0; index < length; index++)
+        SchemaEnumGenerator.enumItemName(element, index),
     ];
     return [
       // enum:
@@ -166,22 +159,22 @@ class SchemaEnumGenerator {
   }
 }
 
-class GeneratedEnum extends Equatable {
-  final DataElement element;
-  final String code;
+class GeneratedEnumsRecursively extends Equatable {
+  final GeneratedEnumComponent? node;
+  final List<GeneratedEnumComponent> sub;
 
-  GeneratedEnum({
-    required this.element,
-    required this.code,
+  const GeneratedEnumsRecursively({
+    required this.node,
+    required this.sub,
   });
 
   @override
   List<Object?> get props => [
-        element,
-        code,
+        node,
+        sub,
       ];
 
   @override
-  String toString() => 'GeneratedEnum{element: $element, '
-      'code: $code}';
+  String toString() => 'GeneratedEnumsRecursively{node: $node, '
+      'sub: $sub}';
 }
