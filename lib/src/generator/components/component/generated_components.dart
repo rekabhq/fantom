@@ -68,6 +68,29 @@ class UnGeneratableSchemaComponent extends GeneratedSchemaComponent
         );
 }
 
+class GeneratedEnumComponent extends GeneratedComponent {
+  GeneratedEnumComponent({
+    required this.dataElement,
+    required String fileContent,
+    required String fileName,
+  }) : super(
+          fileContent: fileContent,
+          fileName: fileName,
+        );
+
+  final DataElement dataElement;
+}
+
+class UnGeneratableEnumComponent extends GeneratedEnumComponent
+    with UnGeneratableComponent {
+  UnGeneratableEnumComponent({required DataElement dataElement})
+      : super(
+          dataElement: dataElement,
+          fileContent: '',
+          fileName: '',
+        );
+}
+
 class GeneratedParameterComponent extends GeneratedComponent {
   GeneratedParameterComponent._({
     this.schemaComponent,

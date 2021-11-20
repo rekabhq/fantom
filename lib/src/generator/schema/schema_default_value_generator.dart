@@ -12,7 +12,8 @@ class SchemaDefaultValueGenerator {
     if (defaultValue == null) {
       return null;
     } else {
-      return SchemaValueGenerator().generate(
+      final svg = SchemaValueGenerator();
+      return svg.generate(
         element,
         value: defaultValue.value,
       );

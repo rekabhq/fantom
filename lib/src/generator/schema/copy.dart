@@ -1,4 +1,4 @@
-// ignore_for_file: unused_element
+// ignore_for_file: unused_element, dead_code, prefer_initializing_formals
 
 import 'package:equatable/equatable.dart';
 
@@ -22,6 +22,7 @@ extension OptionalUnwrappingExt<T extends Object?> on Optional<T>? {
   T? get orNull => this?.value;
 }
 
+// todo: uie, sets ?
 bool _equals(
   final Object? value1,
   final Object? value2,
