@@ -1,4 +1,5 @@
 import 'package:fantom/src/generator/schema/equality.dart';
+import 'package:fantom/src/generator/schema/schema_enum_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
@@ -16,7 +17,11 @@ class SchemaValueGenerator {
       final values = element.enumeration!.values;
       for (var index = 0; index <= values.length; index++) {
         if (deepJsonEquals(value, values[index])) {
-          return element.enumName + '.' + 'value$index';
+          return [
+            element.enumName,
+            '.',
+            SchemaEnumGenerator.enumItemName(element, index),
+          ].joinParts();
         }
       }
       throw AssertionError('enum item not found');
@@ -89,6 +94,7 @@ class SchemaValueGenerator {
                   [
                     '$key : ',
                     if (propertiesMap[key]!.isConstructorOptional) 'Optional(',
+                    // recursive call:
                     generate(
                       propertiesMap[key]!.item,
                       value: fixedValues[key],

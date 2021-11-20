@@ -71,62 +71,58 @@ class SchemaEnumGenerator {
 
   String _generateCode(final DataElement element) {
     final List<Object?> values = element.enumeration!.values;
-    final name = element.enumName;
+    final length = values.length;
+    final enumName = element.enumName;
     final type = element.rawType;
     final svg = SchemaValueGenerator();
-    final names = [
-      for (var index = 0; index < values.length; index++) 'value$index',
+    final serNames = [
+      for (var index = 0; index < length; index++) 'item$index',
+    ];
+    final enumNames = [
+      for (var index = 0; index < length; index++) enumItemName(element, index),
     ];
     return [
       // enum:
       [
-        'enum $name {',
-        for (var index = 0; index < values.length; index++)
+        'enum $enumName {',
+        for (var index = 0; index < length; index++)
           [
-            names[index],
+            enumNames[index],
             ',',
           ].joinParts(),
         '}',
       ].joinLines(),
       // enum serialization and values class:
       [
-        'extension ${name}Ext on $name {',
+        'extension ${enumName}Ext on $enumName {',
         // serialize:
         [
           '$type serialize() {',
-          'switch(this) {',
-          for (var index = 0; index < values.length; index++)
-            [
-              'case $name.',
-              names[index],
-              ': return ',
-              names[index],
-              ';',
-            ].joinParts(),
+          'for (var index = 0; index < items.length; index++) {',
+          'if($enumName.values[index] == this) {',
+          'return items[index];',
+          '}',
           '}',
           "throw AssertionError('not found');",
           '}',
         ].joinLines(),
         // deserialize:
         [
-          'static $name deserialize(final $type value) {',
-          for (var index = 0; index < values.length; index++)
-            [
-              'if(_equals(value, ',
-              names[index],
-              ')) return $name.',
-              names[index],
-              ';',
-            ].joinParts(),
+          'static $enumName deserialize(final $type item) {',
+          'for (var index = 0; index < items.length; index++) {',
+          'if(_equals(items[index], item)) {',
+          'return $enumName.values[index];',
+          '}',
+          '}',
           "throw AssertionError('not found');",
           '}',
         ].joinLines(),
-        // value#index:
+        // item#index:
         [
-          for (var index = 0; index < values.length; index++)
+          for (var index = 0; index < length; index++)
             [
               'static final $type ',
-              names[index],
+              serNames[index],
               ' = ',
               svg.generate(
                 element,
@@ -136,12 +132,12 @@ class SchemaEnumGenerator {
               ';',
             ].joinParts(),
         ].joinLines(),
-        // values:
+        // items:
         [
-          'static final List<$type> values = [',
-          for (var index = 0; index < values.length; index++)
+          'static final List<$type> items = [',
+          for (var index = 0; index < length; index++)
             [
-              names[index],
+              serNames[index],
               ',',
             ].joinParts(),
           '];',
@@ -149,6 +145,24 @@ class SchemaEnumGenerator {
         '}',
       ].joinMethods(),
     ].joinMethods();
+  }
+
+  static String enumItemName(final DataElement element, final int index) {
+    if (element.isEnumerated) {
+      if (element is StringDataElement &&
+          element.isNotNullable &&
+          element.format == StringDataElementFormat.plain) {
+        final value = element.enumeration!.values[index];
+        if (value is! String) {
+          throw AssertionError('bad types');
+        }
+        return value;
+      } else {
+        return 'value$index';
+      }
+    } else {
+      throw AssertionError('not enumerated');
+    }
   }
 }
 
