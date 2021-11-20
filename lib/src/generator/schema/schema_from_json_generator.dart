@@ -23,7 +23,7 @@ class SchemaFromJsonGenerator {
     final bool isStatic = true,
     final bool inline = false,
   }) {
-    final type = element.type;
+    final type = element.type1;
     return [
       if (isStatic) 'static ',
       '$type $name(dynamic json) => ',
@@ -38,7 +38,7 @@ class SchemaFromJsonGenerator {
   }) {
     final name = object.name;
     if (object.format == ObjectDataElementFormat.map) {
-      throw UnimplementedError(
+      throw AssertionError(
         'map objects are not supported : name is ${object.name}',
       );
     }
@@ -55,6 +55,7 @@ class SchemaFromJsonGenerator {
     final ObjectDataElement object,
     final bool inline,
   ) {
+    // todo: uie
     if (object.format == ObjectDataElementFormat.mixed) {
       throw UnimplementedError('mixed objects is not supported');
     }

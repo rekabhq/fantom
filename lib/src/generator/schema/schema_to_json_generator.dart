@@ -9,7 +9,7 @@ class SchemaToJsonGenerator {
     final DataElement element, {
     final bool inline = false,
   }) {
-    final type = element.type;
+    final type = element.type1;
     return [
       '(($type value) => ',
       _logic(element, 'value', inline),
@@ -24,7 +24,7 @@ class SchemaToJsonGenerator {
     final bool isStatic = true,
     final bool inline = false,
   }) {
-    final type = element.type;
+    final type = element.type1;
     return [
       if (isStatic) 'static ',
       'dynamic $name($type value) => ',
@@ -39,7 +39,7 @@ class SchemaToJsonGenerator {
     final bool inline = false,
   }) {
     if (object.format == ObjectDataElementFormat.map) {
-      throw UnimplementedError(
+      throw AssertionError(
         'map objects are not supported : name is ${object.name}',
       );
     }
@@ -57,6 +57,7 @@ class SchemaToJsonGenerator {
     final bool inline,
     final bool prefixCall,
   ) {
+    // todo: uie
     if (object.format == ObjectDataElementFormat.mixed) {
       throw UnimplementedError('mixed objects is not supported');
     }
