@@ -19,7 +19,7 @@ class ApiSubClassGenerator {
 
     return GeneratableFile(
       fileContent: fileContent,
-      fileName: 'api/${subClassName.snakeCase}.dart',
+      fileName: '${subClassName.snakeCase}.dart',
     );
   }
 
@@ -29,7 +29,6 @@ class ApiSubClassGenerator {
   ) {
     final buffer = StringBuffer();
     buffer
-      ..writeln(_generateImports())
       ..writeln(_generateClass(subClassName))
       ..writeln(_generateConstructor(subClassName))
       ..writeln(_generateFields())
@@ -37,14 +36,6 @@ class ApiSubClassGenerator {
       ..writeln('}');
 
     return buffer.toString();
-  }
-
-  String _generateImports() {
-    //TODO(payam): add models import
-
-    return """
-    import 'package:dio/dio.dart';
-    """;
   }
 
   String _generateClass(String className) {

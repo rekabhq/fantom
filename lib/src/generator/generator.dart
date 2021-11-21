@@ -60,8 +60,14 @@ class Generator {
   /// [apiClassGenerator] and [componentsGenerator] then puts all the generated data in a [GenerationData] object
   /// in order to be written into the corresponding directories by the FileWriter class
   GenerationData generate(OpenApi openApi, GenerateConfig config) {
+    // generate components
     componentsGenerator.generateAndRegisterComponents();
-    var apiClassFile = apiClassGenerator.generate();
+    // generate api classes files
+    final apiClassFiles = apiClassGenerator.generate();
+    final mainApiClass =
+        apiClassFiles.where((file) => file.fileName == 'api.dart').first;
+    final resourceApiClasses =
+        apiClassFiles.where((file) => file.fileName != 'api.dart');
     // creating GenerationData object
     var modelsFile = allGeneratedComponents
         .where((element) => element.isGenerated)
@@ -75,7 +81,8 @@ class Generator {
     var generationData = GenerationData(
       config: config,
       models: modelsFile,
-      apiClass: apiClassFile,
+      apiClass: mainApiClass,
+      resourceApiClasses: resourceApiClasses.toList(),
     );
     return generationData;
   }

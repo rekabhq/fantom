@@ -38,7 +38,7 @@ class ApiClassGenerator {
     }
 
     apiClassList.add(
-      GeneratableFile(fileContent: fileContent, fileName: 'api/fantom.dart'),
+      GeneratableFile(fileContent: fileContent, fileName: 'api.dart'),
     );
 
     return apiClassList;
@@ -50,7 +50,6 @@ class ApiClassGenerator {
 
     final buffer = StringBuffer();
     buffer
-      ..writeln(_generateImports())
       ..writeln(_generateClass(apiClassName))
       ..writeln(_generateConstructor(apiClassName))
       ..writeln(_generateFields())
@@ -60,12 +59,6 @@ class ApiClassGenerator {
       ..writeln('}');
 
     return buffer.toString();
-  }
-
-  String _generateImports() {
-    return """
-    import 'package:dio/dio.dart';
-    """;
   }
 
   String _generateClass(String className) {

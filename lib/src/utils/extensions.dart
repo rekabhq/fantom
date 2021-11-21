@@ -120,3 +120,7 @@ extension Formatter on DartFormatter {
     }
   }
 }
+
+extension ListExt<T> on List<T> {
+  void insertAtEnd(T value) => insert(length, value);
+}

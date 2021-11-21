@@ -51,6 +51,7 @@ class ApiClass{
       ''',
           fileName: 'api.dart',
         ),
+        resourceApiClasses: [],
       );
 
       packageInfo = FantomPackageInfo.fromConfig(

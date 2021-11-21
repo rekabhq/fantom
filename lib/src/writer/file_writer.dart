@@ -40,6 +40,7 @@ class FileWriter {
     if (generationData.config is GenerateAsPartOfProjectConfig) {
       await _writeGeneratedFilesToProject(
         generationData.models,
+        generationData.resourceApiClasses,
         generationData.apiClass,
         false,
       );
@@ -55,12 +56,12 @@ class FileWriter {
 
   Future _writeGeneratedFilesToProject(
     List<GeneratableFile> models,
-    List<GeneratableFile> apiClass,
+    List<GeneratableFile> resourceApiClasses,
+    GeneratableFile apiClass,
     bool isFantomPackage,
   ) async {
     // writing models to models path
     final apiClassImports = <Directive>[];
-    final apiSubClassImports = <Directive>[];
     final modelsFileDirectives = <Directive>[
       Directive.import('package:dio/dio.dart')
     ];
@@ -86,7 +87,7 @@ class FileWriter {
       }
       apiClassImports.add(_createImport(
         directiveFilePath: '$apisDirPath/utils/${utilFile.fileName}',
-        filePath: '$apisDirPath/fantom.dart',
+        filePath: '$apisDirPath/api.dart',
       ));
       modelsFileDirectives.insert(
         0,
@@ -110,49 +111,48 @@ class FileWriter {
       modelsDirPath,
       [],
     );
+    // writing resources api classes to api path
 
-    //writing api classes to apis path
-    apiClassImports.add(
+    for (var resourceApi in resourceApiClasses) {
+      _createGeneratableFileIn(
+        resourceApi,
+        apisDirPath,
+        [
+          Directive.relative(
+            filePath: '$apisDirPath/${resourceApi.fileName}',
+            directiveFilePath: '$apisDirPath/api.dart',
+            type: DirectiveType.partOf,
+          ),
+        ],
+      );
+      apiClassImports.insertAtEnd(
+        Directive.relative(
+          filePath: '$apisDirPath/api.dart',
+          directiveFilePath: '$apisDirPath/${resourceApi.fileName}',
+          type: DirectiveType.part,
+        ),
+      );
+    }
+
+    //writing api class to apis path
+    apiClassImports.insert(
+      0,
       _createImport(
         directiveFilePath: '$modelsDirPath/models.dart',
-        //TODO(alireza): is it ok?
-        filePath: '$apisDirPath/fantom.dart',
+        filePath: '$apisDirPath/api.dart',
       ),
     );
-
-    apiSubClassImports.addAll(apiClassImports.toList());
-
-    apiClassImports.addAll(
-      apiClass.map(
-        (e) => _createImport(
-          directiveFilePath: '$apisDirPath/api/${e.fileName}',
-          filePath: '$apisDirPath/fantom.dart',
-        ),
-      ),
+    await _createGeneratableFileIn(
+      apiClass,
+      apisDirPath,
+      apiClassImports,
     );
-
-    for (var api in apiClass) {
-      final isBaseApiClass = api.fileName == 'fantom.dart';
-
-      if (isBaseApiClass) {
-        await _createGeneratableFileIn(
-          api,
-          apisDirPath,
-          apiClassImports,
-        );
-      } else {
-        await _createGeneratableFileIn(
-          api,
-          apisDirPath,
-          apiSubClassImports,
-        );
-      }
-    }
   }
 
   Future _writeGeneratedFilestToPackage(GenerationData data) async {
     var models = data.models;
     var apiClass = data.apiClass;
+    var resourceApiClasses = data.resourceApiClasses;
     var config = data.config as GenerateAsStandAlonePackageConfig;
     var fantomPackageInfo = FantomPackageInfo.fromConfig(
       data.config as GenerateAsStandAlonePackageConfig,
@@ -160,6 +160,7 @@ class FileWriter {
     await createDartPackage(fantomPackageInfo);
     await _writeGeneratedFilesToProject(
       models,
+      resourceApiClasses,
       apiClass,
       true,
     );
