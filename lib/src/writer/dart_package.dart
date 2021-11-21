@@ -20,7 +20,7 @@ class FantomPackageInfo {
 
   String get modelsDirPath => '$libDir/models/';
 
-  String get apisDirPath => '$libDir/apis/';
+  String get apisDirPath => libDir;
 
   String get libDir => '$generationPath/$name/lib/';
 

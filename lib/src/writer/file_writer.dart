@@ -86,7 +86,7 @@ class FileWriter {
       }
       apiClassImports.add(_createImport(
         directiveFilePath: '$apisDirPath/utils/${utilFile.fileName}',
-        filePath: '$apisDirPath/api.dart',
+        filePath: '$apisDirPath/fantom.dart',
       ));
       modelsFileDirectives.insert(
         0,
@@ -116,16 +116,16 @@ class FileWriter {
       _createImport(
         directiveFilePath: '$modelsDirPath/models.dart',
         //TODO(alireza): is it ok?
-        filePath: '$apisDirPath/api.dart',
+        filePath: '$apisDirPath/fantom.dart',
       ),
     );
 
-    apiSubClassImports.addAll(apiClassImports);
+    apiSubClassImports.addAll(apiClassImports.toList());
 
     apiClassImports.addAll(
       apiClass.map(
         (e) => _createImport(
-          directiveFilePath: '${apisDirPath}api/${e.fileName}',
+          directiveFilePath: '$apisDirPath/api/${e.fileName}',
           filePath: '$apisDirPath/fantom.dart',
         ),
       ),
@@ -147,12 +147,6 @@ class FileWriter {
           apiSubClassImports,
         );
       }
-
-      await _createGeneratableFileIn(
-        api,
-        apisDirPath,
-        apiSubClassImports,
-      );
     }
   }
 
