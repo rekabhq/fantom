@@ -2,16 +2,20 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
+import 'package:fantom/src/cli/config/exclude_models.dart';
 import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:io/io.dart';
 
 class FantomConfig {
-  FantomConfig._({
+  FantomConfig({
     required this.path,
     required this.apiMethodReturnType,
+    required this.excludedComponents,
+    required this.excludedPaths,
     this.outputDir,
     this.outputPackageDir,
     this.outputModelsDir,
@@ -26,6 +30,8 @@ class FantomConfig {
   final String? outputModelsDir;
   final String? outputApiDir;
   final String? packageName;
+  final List<String> excludedComponents;
+  final ExcludedPaths excludedPaths;
 
   static Future<FantomConfig> fromArgResults(
     String openapiOrConfigFilePath,
@@ -60,7 +66,7 @@ class FantomConfig {
         outputPackageName = argResults[GenerateCommand.optionPackageName];
       }
       apiMethodReturnType = argResults[GenerateCommand.optionMethodRetuenType];
-      return FantomConfig._(
+      return FantomConfig(
         path: file.path,
         apiMethodReturnType: apiMethodReturnType!,
         outputPackageDir: outputPackagePath,
@@ -68,6 +74,9 @@ class FantomConfig {
         outputModelsDir: outputModelsPath,
         outputApiDir: outputApisPath,
         outputDir: outputDirPath,
+        // excluded components & paths can only be read from fantom config file
+        excludedComponents: [],
+        excludedPaths: ExcludedPaths.fromFantomConfigValues([]),
       );
     } else if (await file.isFantomConfigFile) {
       return fromFile(file);
@@ -102,7 +111,23 @@ class FantomConfig {
         fantomConfig.getValue(GenerateCommand.optionMethodRetuenType) ??
             MethodReturnType.result;
     MethodReturnType.check(apiMethodReturnType);
-    return FantomConfig._(
+    List<String> excludedComponentNames =
+        ((fantomConfig.getValue('excluded-components') as List?) ?? [])
+            .map((e) => e.toString())
+            .toList();
+    checkExcludedComponentsValues(excludedComponentNames);
+    List<String> excludedPathsNames =
+        ((fantomConfig.getValue('excluded-paths') as List?) ?? [])
+            .map((e) => e.toString())
+            .toList();
+
+    final excludedPaths =
+        ExcludedPaths.fromFantomConfigValues(excludedPathsNames);
+
+    Log.debug(excludedPaths);
+    Log.debug(excludedComponentNames);
+
+    return FantomConfig(
       path: path,
       apiMethodReturnType: apiMethodReturnType,
       outputPackageDir: outputPackagePath,
@@ -110,6 +135,8 @@ class FantomConfig {
       outputModelsDir: outputModelsPath,
       outputApiDir: outputApisPath,
       outputDir: outputDirPath,
+      excludedComponents: excludedComponentNames,
+      excludedPaths: excludedPaths,
     );
   }
 }

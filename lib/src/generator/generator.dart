@@ -42,7 +42,8 @@ class Generator {
       ),
       nameGenerator: nameGenerator,
       defaultValueGenerator: SchemaDefaultValueGenerator(),
-      useResult: config.methodReturnType == MethodReturnType.result,
+      useResult:
+          config.fantomConfig.apiMethodReturnType == MethodReturnType.result,
     );
     return Generator(
       apiClassGenerator: ApiClassGenerator(

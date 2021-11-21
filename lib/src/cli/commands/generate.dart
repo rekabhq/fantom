@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
-import 'package:fantom/src/cli/fantom_config.dart';
+import 'package:fantom/src/cli/config/fantom_config.dart';
 import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
@@ -123,34 +123,18 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
           fantomConfig.outputDir == null &&
           fantomConfig.outputApiDir == null &&
           fantomConfig.outputPackageDir == null) {
-        return _createDefaultGenerateArgs(
-          openApiMap,
-          fantomConfig.apiMethodReturnType,
-        );
+        return _createDefaultGenerateArgs(openApiMap, fantomConfig);
       }
       // check if user wants to generate module as part of the project where models and apis are in separate folders
       else if (fantomConfig.outputModelsDir != null &&
           fantomConfig.outputApiDir != null) {
-        return _createGenerateAsPartOfProjectArgs(
-          openApiMap,
-          fantomConfig.outputModelsDir!,
-          fantomConfig.outputApiDir!,
-          fantomConfig.apiMethodReturnType,
-        );
+        return _createGenerateAsPartOfProjectArgs(openApiMap, fantomConfig);
       } else if (fantomConfig.outputDir != null) {
         return _createGenerateAsPartOfProjectArgsWithOutputDir(
-          openApiMap,
-          fantomConfig.outputDir!,
-          fantomConfig.apiMethodReturnType,
-        );
+            openApiMap, fantomConfig);
       } else {
         _warnUser(fantomConfig.outputModelsDir, fantomConfig.outputApiDir);
-        return _createGenerateAsStandAlonePackageArgs(
-          openApiMap,
-          fantomConfig.packageName,
-          fantomConfig.outputPackageDir,
-          fantomConfig.apiMethodReturnType,
-        );
+        return _createGenerateAsStandAlonePackageArgs(openApiMap, fantomConfig);
       }
     } else {
       return tryToCreateGenerateArgsWithoutAnyCliInput();
@@ -162,7 +146,10 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     // parse an OpenApi model object from openapi map in arguments
     var progress = Log.progress('🤓 Reading openapi file');
     // ignore: unused_local_variable
-    var openapiModel = OpenApiReader.parseOpenApiModel(arguments.openApi);
+    var openapiModel = OpenApiReader(
+      openapi: arguments.openApi,
+      config: arguments.fantomConfig,
+    ).parseOpenApiModel();
     progress.finish(showTiming: true);
     // generate models and apis
     progress = Log.progress('🔥 Generating ... ');
@@ -210,38 +197,26 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     if (fantomConfig.outputModelsDir != null &&
         fantomConfig.outputApiDir != null) {
       // at this point we don't want to create network client as a module since models and apis path are separate
-      return _createGenerateAsPartOfProjectArgs(
-        openApiMap,
-        fantomConfig.outputModelsDir!,
-        fantomConfig.outputApiDir!,
-        fantomConfig.apiMethodReturnType,
-      );
+      return _createGenerateAsPartOfProjectArgs(openApiMap, fantomConfig);
     } else {
       _warnUser(fantomConfig.outputModelsDir, fantomConfig.outputApiDir);
-      return _createGenerateAsStandAlonePackageArgs(
-        openApiMap,
-        fantomConfig.packageName,
-        fantomConfig.outputPackageDir,
-        fantomConfig.apiMethodReturnType,
-      );
+      return _createGenerateAsStandAlonePackageArgs(openApiMap, fantomConfig);
     }
   }
 
   /// tries to creates a [GenerateAsPartOfProjectConfig] from the given arguments
   Future<GenerateAsPartOfProjectConfig> _createGenerateAsPartOfProjectArgs(
     Map<String, dynamic> openApiMap,
-    String outputModelsPath,
-    String outputApisPath,
-    String methodReturnType,
+    FantomConfig fantomConfig,
   ) async {
     var modelsDirectory = await getDirectoryInPath(
-      path: outputModelsPath,
+      path: fantomConfig.outputModelsDir,
       directoryPathIsNotValid:
           '($optionModelDir | $abbrModelsDir) directory path is not valid',
     );
 
     var apisDirectory = await getDirectoryInPath(
-      path: outputApisPath,
+      path: fantomConfig.outputApiDir,
       directoryPathIsNotValid:
           '($optionApiDir | $abbrApiDir) directory path is not valid',
     );
@@ -250,7 +225,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       openApi: openApiMap,
       outputModelsDir: modelsDirectory,
       outputApisDir: apisDirectory,
-      methodReturnType: methodReturnType,
+      fantomConfig: fantomConfig,
     );
   }
 
@@ -258,11 +233,10 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   Future<GenerateAsPartOfProjectConfig>
       _createGenerateAsPartOfProjectArgsWithOutputDir(
     Map<String, dynamic> openApiMap,
-    String outputDirPath,
-    String methodReturnType,
+    FantomConfig fantomConfig,
   ) async {
     var directory = await getDirectoryInPath(
-      path: outputDirPath,
+      path: fantomConfig.outputDir,
       directoryPathIsNotValid:
           '($optionDir | $abbrDir) directory path is not valid',
     );
@@ -282,7 +256,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       openApi: openApiMap,
       outputModelsDir: modelsDirectory,
       outputApisDir: apisDirectory,
-      methodReturnType: methodReturnType,
+      fantomConfig: fantomConfig,
     );
   }
 
@@ -290,21 +264,19 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   FutureOr<GenerateAsStandAlonePackageConfig>
       _createGenerateAsStandAlonePackageArgs(
     Map<String, dynamic> openApiMap,
-    String? packageName,
-    String? outputPackagePath,
-    String methodReturnType,
+    FantomConfig fantomConfig,
   ) async {
     // warning user
     var outputModuleDirectory = await getDirectoryInPath(
-      path: outputPackagePath,
+      path: fantomConfig.outputPackageDir,
       directoryPathIsNotValid:
           '($optionPackage | $abbrPackage) module directory path is not provided or not valid',
     );
     return GenerateAsStandAlonePackageConfig(
       openApi: openApiMap,
-      packageName: packageName ?? kDefaultGeneratedPackageName,
+      packageName: fantomConfig.packageName ?? kDefaultGeneratedPackageName,
       outputModuleDir: outputModuleDirectory,
-      methodReturnType: methodReturnType,
+      fantomConfig: fantomConfig,
     );
   }
 
@@ -360,7 +332,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
   Future<GenerateAsPartOfProjectConfig> _createDefaultGenerateArgs(
     Map<String, dynamic> openApiMap,
-    String methodReturnType,
+    FantomConfig fantomConfig,
   ) async {
     if (currentDirectory.isDartOrFlutterProject) {
       var outputModelsPath = await getDirectoryInPath(
@@ -379,7 +351,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
         openApi: openApiMap,
         outputModelsDir: outputModelsPath,
         outputApisDir: outputApisPath,
-        methodReturnType: methodReturnType,
+        fantomConfig: fantomConfig,
       );
     } else {
       throw GenerationConfigNotProvidedException();
@@ -389,8 +361,11 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
 
 class GenerateConfig {
   final Map<String, dynamic> openApi;
-  final String methodReturnType;
-  GenerateConfig({required this.openApi, required this.methodReturnType});
+  final FantomConfig fantomConfig;
+  GenerateConfig({
+    required this.openApi,
+    required this.fantomConfig,
+  });
 }
 
 /// this argument is used by generate command to generate the fantom client as a standalone module
@@ -400,10 +375,13 @@ class GenerateAsStandAlonePackageConfig extends GenerateConfig {
 
   GenerateAsStandAlonePackageConfig({
     required Map<String, dynamic> openApi,
-    required String methodReturnType,
+    required FantomConfig fantomConfig,
     required this.packageName,
     required this.outputModuleDir,
-  }) : super(openApi: openApi, methodReturnType: methodReturnType);
+  }) : super(
+          openApi: openApi,
+          fantomConfig: fantomConfig,
+        );
 
   @override
   String toString() {
@@ -424,10 +402,13 @@ class GenerateAsPartOfProjectConfig extends GenerateConfig {
 
   GenerateAsPartOfProjectConfig({
     required Map<String, dynamic> openApi,
-    required String methodReturnType,
+    required FantomConfig fantomConfig,
     required this.outputModelsDir,
     required this.outputApisDir,
-  }) : super(openApi: openApi, methodReturnType: methodReturnType);
+  }) : super(
+          openApi: openApi,
+          fantomConfig: fantomConfig,
+        );
 
   @override
   String toString() {
