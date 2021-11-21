@@ -20,6 +20,7 @@ class ExcludedPaths {
               .replaceAll('[', '')
               .replaceAll(']', '')
               .split(',')
+              .map((e) => e.trim())
               .toList();
         }
         map[path] = operations;

@@ -2,7 +2,9 @@ import 'package:fantom/fantom.dart';
 import 'package:fantom/src/cli/config/fantom_config.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/constants.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:version/version.dart';
+import 'package:fantom/src/utils/extensions.dart';
 
 class OpenApiReader {
   final Map<String, dynamic> openapi;
@@ -12,7 +14,8 @@ class OpenApiReader {
 
   OpenApi parseOpenApiModel() {
     _checkVersionOf(openapi);
-    _excludePathsAndComponents(openapi);
+    _removeExcludedComponents(openapi);
+    _removeExcludedPaths(openapi);
     return OpenApi.fromMap(openapi);
   }
 
@@ -37,5 +40,30 @@ class OpenApiReader {
         version.compareTo(kMaxOpenapiSupportedVersion) < 0;
   }
 
-  void _excludePathsAndComponents(Map<String, dynamic> openapi) {}
+  void _removeExcludedComponents(Map<String, dynamic> openapi) {
+    for (var component in config.excludedComponents) {
+      openapi.removeItemInNestedMapsWithKeys(component.split('/'));
+    }
+  }
+
+  void _removeExcludedPaths(Map<String, dynamic> openapi) {
+    for (var entry in config.excludedPaths.paths.entries) {
+      final path = entry.key;
+      final operations = entry.value;
+      if (operations.isEmpty) {
+        // delete all operations in that path if no operations is defined for excluding
+        openapi.removeItemInNestedMapsWithKeys(['paths', path]);
+      } else {
+        // delete only operations defined for excluding
+        Map<String, dynamic>? pathObject = openapi['paths'][path];
+        if (pathObject != null) {
+          for (var operation in operations) {
+            Log.debug('\nremoving $operation from $pathObject\n\n');
+            pathObject.remove(operation);
+          }
+        }
+        Log.debug('result is $pathObject');
+      }
+    }
+  }
 }

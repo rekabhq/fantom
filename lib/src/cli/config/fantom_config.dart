@@ -11,7 +11,7 @@ import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:io/io.dart';
 
 class FantomConfig {
-  FantomConfig._({
+  FantomConfig({
     required this.path,
     required this.apiMethodReturnType,
     required this.excludedComponents,
@@ -66,7 +66,7 @@ class FantomConfig {
         outputPackageName = argResults[GenerateCommand.optionPackageName];
       }
       apiMethodReturnType = argResults[GenerateCommand.optionMethodRetuenType];
-      return FantomConfig._(
+      return FantomConfig(
         path: file.path,
         apiMethodReturnType: apiMethodReturnType!,
         outputPackageDir: outputPackagePath,
@@ -127,7 +127,7 @@ class FantomConfig {
     Log.debug(excludedPaths);
     Log.debug(excludedComponentNames);
 
-    return FantomConfig._(
+    return FantomConfig(
       path: path,
       apiMethodReturnType: apiMethodReturnType,
       outputPackageDir: outputPackagePath,

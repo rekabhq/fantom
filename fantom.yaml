@@ -4,11 +4,7 @@ fantom:
   package-name: my_api_package
   method-return-type: result
   excluded-paths:
-    - some/path -- [get, post]
-    - another/path    # when no operation specified everything gets excluded
+    - /pet -- [get, post, put]
+    - /pet/findByStatus    # when no operation specified everything gets excluded
   excluded-components:
-    - components/schemas/Pet   
-    - components/responses/Pet
-    - components/parameters/Pet
-    - components/requestBodies/Pet
-    - components/headers/Pet
+    - components/schemas/Shalgham
