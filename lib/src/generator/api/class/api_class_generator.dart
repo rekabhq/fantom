@@ -92,9 +92,6 @@ class ApiClassGenerator {
       final subClassName = '${sectionName}Api'.pascalCase;
       final getterName = '${sectionName}Api'.camelCase;
 
-      print('section: ${section.sectionName}');
-      print('apiSectionName: $sectionName');
-
       buffer
           .writeln('$subClassName get $getterName => $subClassName(dio:dio);');
       buffer.write('');
@@ -110,10 +107,7 @@ class ApiClassGenerator {
       paths.keys.toList(),
     );
 
-    print('sections: $sections');
-
     final pureSections = _removeDuplicatedSections(sections);
-    print('pureSections: $pureSections');
 
     List<_ApiSection> apis = [];
     for (final section in pureSections) {
@@ -187,15 +181,10 @@ class ApiClassGenerator {
 
       final split = section.split('/');
 
-      print('section split: $split');
-
       final sectionInitiator = split.first;
-      print('section initiator: $sectionInitiator');
 
       result.add(sectionInitiator);
     }
-
-    print('Result: ${result.toList()}');
 
     return result;
   }

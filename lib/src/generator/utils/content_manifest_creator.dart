@@ -359,7 +359,8 @@ class ContentManifestCreator {
       name: name,
     );
     if (dataElement.isGeneratable) {
-      return schemaClassGenerator.generate(dataElement.asObjectDataElement);
+      return schemaClassGenerator
+          .generateWithEnums(dataElement.asObjectDataElement);
     } else {
       return UnGeneratableSchemaComponent(dataElement: dataElement);
     }

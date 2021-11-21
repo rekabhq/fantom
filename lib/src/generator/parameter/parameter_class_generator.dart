@@ -95,7 +95,7 @@ class ParameterClassGenerator {
       );
       if (element.isGeneratable) {
         final generatedSchema =
-            schemaGenerator.generate(element.asObjectDataElement);
+            schemaGenerator.generateWithEnums(element.asObjectDataElement);
         return GeneratedParameterComponent.schema(
           source: parameter,
           schemaComponent: generatedSchema,

@@ -20,7 +20,6 @@ class MethodUriParser {
           parameterTemplate,
         );
       }
-      print('Template Path after param: $templatePath');
     }
 
     // {?id*,numbers*}
@@ -37,11 +36,7 @@ class MethodUriParser {
       templatePath = templatePath.substring(0, templatePath.length - 1);
 
       templatePath += '}';
-
-      print('Template Path after query: $templatePath');
     }
-
-    print('template Path final: $templatePath');
 
     final uriTemplate = UriTemplate(templatePath);
 

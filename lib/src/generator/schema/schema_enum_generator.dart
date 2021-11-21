@@ -19,7 +19,7 @@ extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
   ) {
     return GeneratedEnumsRecursively(
       node: element.isEnumerated ? generate(element) : null,
-      sub: _generateRecursively(
+      subs: _generateRecursively(
         element,
         generateSelf: false,
       ),
@@ -161,25 +161,25 @@ class SchemaEnumGenerator {
 
 class GeneratedEnumsRecursively extends Equatable {
   final GeneratedEnumComponent? node;
-  final List<GeneratedEnumComponent> sub;
+  final List<GeneratedEnumComponent> subs;
 
   const GeneratedEnumsRecursively({
     required this.node,
-    required this.sub,
+    required this.subs,
   });
 
   @override
   List<Object?> get props => [
         node,
-        sub,
+        subs,
       ];
 
   @override
   String toString() => 'GeneratedEnumsRecursively{node: $node, '
-      'sub: $sub}';
+      'sub: $subs}';
 
   List<GeneratedEnumComponent> get all => [
         if (node != null) node!,
-        ...sub,
+        ...subs,
       ];
 }

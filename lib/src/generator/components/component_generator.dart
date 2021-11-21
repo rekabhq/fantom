@@ -120,7 +120,6 @@ class ComponentsGenerator {
     Map<String, Referenceable<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
-      //TODO: this should be done when we are reading the openapi file not here. lets talk about this payam, amirreza
       return MapEntry(
         '#/components/schemas/$ref',
         schemaMediator.convert(
@@ -133,7 +132,8 @@ class ComponentsGenerator {
       return MapEntry(
         ref,
         element.isGeneratable
-            ? schemaClassGenerator.generate(element.asObjectDataElement)
+            ? schemaClassGenerator
+                .generateWithEnums(element.asObjectDataElement)
             : UnGeneratableSchemaComponent(dataElement: element),
       );
     });
