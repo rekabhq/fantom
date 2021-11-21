@@ -115,7 +115,7 @@ class FantomConfig {
         ((fantomConfig.getValue('excluded-components') as List?) ?? [])
             .map((e) => e.toString())
             .toList();
-
+    checkExcludedComponentsValues(excludedComponentNames);
     List<String> excludedPathsNames =
         ((fantomConfig.getValue('excluded-paths') as List?) ?? [])
             .map((e) => e.toString())

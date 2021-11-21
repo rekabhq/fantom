@@ -37,7 +37,7 @@ class ExcludedPaths {
 /// a method to check the values of the excluded components added to fantom config file
 void checkExcludedComponentsValues(List<String> exclusions) {
   for (var componentName in exclusions) {
-    if (componentName.startsWith('#') || componentName.contains('/')) {
+    if (!componentName.startsWith('components/')) {
       throw InvalidExcludedComponent(componentName);
     }
   }

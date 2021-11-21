@@ -7,5 +7,8 @@ fantom:
     - some/path -- [get, post]
     - another/path    # when no operation specified everything gets excluded
   excluded-components:
-    - Pet   
-    - Order
+    - components/schemas/Pet   
+    - components/responses/Pet
+    - components/parameters/Pet
+    - components/requestBodies/Pet
+    - components/headers/Pet
