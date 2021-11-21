@@ -4,7 +4,7 @@ import 'package:fantom/src/writer/generatbale_file.dart';
 class GenerationData {
   final GenerateConfig config;
   final List<GeneratableFile> models;
-  final GeneratableFile apiClass;
+  final List<GeneratableFile> apiClass;
 
   GenerationData({
     required this.config,

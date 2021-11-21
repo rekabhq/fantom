@@ -16,16 +16,35 @@ class ApiClassGenerator {
   final ApiSubClassGenerator apiSubClassGenerator;
   final ApiMethodGenerator apiMethodGenerator;
 
-  GeneratableFile generate() {
-    final fileContent = _generateFileContent();
+  List<GeneratableFile> generate() {
+    final apiClasses = _generateApiClasses();
 
-    return GeneratableFile(
-      fileContent: fileContent,
-      fileName: 'api/fantom.dart',
-    );
+    return apiClasses;
   }
 
-  String _generateFileContent() {
+  List<GeneratableFile> _generateApiClasses() {
+    final sections = _createPathSections(openApi.paths.paths);
+
+    final fileContent = _generateFileContent(sections);
+
+    final List<GeneratableFile> apiClassList = [];
+
+    for (final section in sections) {
+      final apiClass = apiSubClassGenerator.generate(
+        subClassName: '${section.sectionName}Api'.pascalCase,
+        paths: section.paths,
+      );
+      apiClassList.add(apiClass);
+    }
+
+    apiClassList.add(
+      GeneratableFile(fileContent: fileContent, fileName: 'api/fantom.dart'),
+    );
+
+    return apiClassList;
+  }
+
+  String _generateFileContent(List<_ApiSection> apiSections) {
     //TODO: maybe we can get this somehow from cli
     final apiClassName = 'FantomApi';
 
@@ -83,7 +102,8 @@ class ApiClassGenerator {
       print('section: ${section.sectionName}');
       print('apiSectionName: $sectionName');
 
-      buffer.writeln('$subClassName get $getterName => $subClassName(dio);');
+      buffer
+          .writeln('$subClassName get $getterName => $subClassName(dio:dio);');
       buffer.write('');
     }
 
