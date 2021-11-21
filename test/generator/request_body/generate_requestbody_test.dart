@@ -4,6 +4,7 @@ import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
+import 'package:fantom/src/generator/schema/schema_enum_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -50,6 +51,18 @@ import 'package:equatable/equatable.dart';
         content += output.fileContent;
 
         // todo : fix ...
+
+        content += SchemaEnumGenerator()
+            .generateRecursively(
+              SchemaMediator().convert(
+                openApi: openapi,
+                schema: requestBody.content.values.first.schema!,
+                name: 'PetBodyApplicationJson',
+              ),
+            )
+            .all
+            .map((e) => e.fileContent)
+            .join('\n\n');
 
         for (final key in openapi.components!.schemas!.keys) {
           if (key.startsWith('Obj') ||

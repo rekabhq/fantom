@@ -6,143 +6,131 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
 
 extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
-  GeneratedSchemaComponent generate(
-    final DataElement element,
-  ) {
-    return GeneratedSchemaComponent(
+  GeneratedEnumComponent generate(final DataElement element) {
+    return GeneratedEnumComponent(
       dataElement: element,
-      fileContent: generateEnum(element),
+      fileContent: generateCode(element),
       fileName: '${ReCase(element.enumName).snakeCase}.dart',
     );
   }
 
-  List<GeneratedSchemaComponent> generateRecursively(
+  GeneratedEnumsRecursively generateRecursively(
     final DataElement element,
   ) {
-    return generateEnumsRecursively(element)
-        .map((e) => GeneratedSchemaComponent(
-            dataElement: e.element,
-            fileContent: e.code,
-            fileName: '${ReCase(e.element.enumName).snakeCase}.dart'))
-        .toList();
+    return GeneratedEnumsRecursively(
+      node: element.isEnumerated ? generate(element) : null,
+      sub: _generateRecursively(
+        element,
+        generateSelf: false,
+      ),
+    );
+  }
+
+  List<GeneratedEnumComponent> _generateRecursively(
+    final DataElement element, {
+    final bool generateSelf = true,
+  }) {
+    return [
+      if (generateSelf && element.isEnumerated) generate(element),
+      ...element.match(
+        boolean: (boolean) => [],
+        object: (object) => [
+          for (final property in object.properties)
+            ..._generateRecursively(property.item),
+          if (object.isAdditionalPropertiesAllowed)
+            ..._generateRecursively(object.additionalProperties!),
+        ],
+        array: (array) => [
+          ..._generateRecursively(array.items),
+        ],
+        integer: (integer) => [],
+        number: (number) => [],
+        string: (string) => [],
+        untyped: (untyped) => [],
+      ),
+    ];
   }
 }
 
 class SchemaEnumGenerator {
   const SchemaEnumGenerator();
 
-  List<GeneratedEnum> generateEnumsRecursively(final DataElement element) {
-    return [
-      if (element.hasEnum) _generate(element),
-      ...element.match(
-        boolean: (boolean) => [],
-        object: (object) => [
-          for (final property in object.properties)
-            ...generateEnumsRecursively(property.item),
-          if (object.isAdditionalPropertiesAllowed)
-            ...generateEnumsRecursively(object.additionalProperties!),
-        ],
-        array: (array) => [
-          ...generateEnumsRecursively(array.items),
-        ],
-        integer: (integer) => [],
-        number: (number) => [],
-        string: (string) => [],
-        untyped: (untyped) => [],
-      )
-    ];
-  }
-
-  String generateEnum(final DataElement element) {
-    if (element.hasNotEnum) {
+  String generateCode(final DataElement element) {
+    if (element.isNotEnumerated) {
       throw AssertionError(
         'element ${element.name} does not contain an enum',
       );
     }
-    return _generateCode(element);
-  }
 
-  GeneratedEnum _generate(final DataElement element) {
-    return GeneratedEnum(
-      element: element,
-      code: _generateCode(element),
-    );
-  }
-
-  String _generateCode(final DataElement element) {
     final List<Object?> values = element.enumeration!.values;
-    final name = element.enumName;
-    final type = element.type;
+    final length = values.length;
+    final enumName = element.enumName;
+    final type = element.rawType;
     final svg = SchemaValueGenerator();
-    final names = [
-      for (var index = 0; index < values.length; index++) 'value$index',
+    final serNames = [
+      for (var index = 0; index < length; index++) 'item$index',
+    ];
+    final enumNames = [
+      for (var index = 0; index < length; index++)
+        SchemaEnumGenerator.enumItemName(element, index),
     ];
     return [
       // enum:
       [
-        'enum $name {',
-        for (var index = 0; index < values.length; index++)
+        'enum $enumName {',
+        for (var index = 0; index < length; index++)
           [
-            names[index],
+            enumNames[index],
             ',',
           ].joinParts(),
         '}',
       ].joinLines(),
       // enum serialization and values class:
       [
-        'abstract class ${name}Serialization {',
-        // constructor:
-        [
-          '${name}Serialization._() {',
-          'throw AssertionError();',
-          '}',
-        ].joinLines(),
+        'extension ${enumName}Ext on $enumName {',
         // serialize:
         [
-          'static $type serialize(final $name value) {',
-          'switch(value) {',
-          for (var index = 0; index < values.length; index++)
-            [
-              'case $name.',
-              names[index],
-              ': return ',
-              names[index],
-              ';',
-            ].joinParts(),
+          '$type serialize() {',
+          'for (var index = 0; index < items.length; index++) {',
+          'if($enumName.values[index] == this) {',
+          'return items[index];',
           '}',
+          '}',
+          "throw AssertionError('not found');",
           '}',
         ].joinLines(),
         // deserialize:
         [
-          'static $name deserialize(final $type value) {',
-          for (var index = 0; index < values.length; index++)
-            [
-              'if(_equals(value, ',
-              names[index],
-              ')) return $name.',
-              names[index],
-              ';',
-            ].joinParts(),
+          'static $enumName deserialize(final $type item) {',
+          'for (var index = 0; index < items.length; index++) {',
+          'if(_equals(items[index], item)) {',
+          'return $enumName.values[index];',
+          '}',
+          '}',
           "throw AssertionError('not found');",
           '}',
         ].joinLines(),
-        // value#index:
+        // item#index:
         [
-          for (var index = 0; index < values.length; index++)
+          for (var index = 0; index < length; index++)
             [
               'static final $type ',
-              names[index],
+              serNames[index],
               ' = ',
-              svg.generate(element, value: values[index]),
+              svg.generate(
+                element,
+                value: values[index],
+                ignoreTopEnum: true,
+              ),
               ';',
             ].joinParts(),
         ].joinLines(),
-        // values:
+        // items:
         [
-          'static final List<$type> values = [',
-          for (var index = 0; index < values.length; index++)
+          'static final List<$type> items = [',
+          for (var index = 0; index < length; index++)
             [
-              names[index],
+              serNames[index],
               ',',
             ].joinParts(),
           '];',
@@ -151,24 +139,47 @@ class SchemaEnumGenerator {
       ].joinMethods(),
     ].joinMethods();
   }
+
+  static String enumItemName(final DataElement element, final int index) {
+    if (element.isEnumerated) {
+      if (element is StringDataElement &&
+          element.isNotNullable &&
+          element.format == StringDataElementFormat.plain) {
+        final value = element.enumeration!.values[index];
+        if (value is! String) {
+          throw AssertionError('bad types');
+        }
+        return value;
+      } else {
+        return 'value$index';
+      }
+    } else {
+      throw AssertionError('not enumerated');
+    }
+  }
 }
 
-class GeneratedEnum extends Equatable {
-  final DataElement element;
-  final String code;
+class GeneratedEnumsRecursively extends Equatable {
+  final GeneratedEnumComponent? node;
+  final List<GeneratedEnumComponent> sub;
 
-  GeneratedEnum({
-    required this.element,
-    required this.code,
+  const GeneratedEnumsRecursively({
+    required this.node,
+    required this.sub,
   });
 
   @override
   List<Object?> get props => [
-        element,
-        code,
+        node,
+        sub,
       ];
 
   @override
-  String toString() => 'GeneratedEnum{element: $element, '
-      'code: $code}';
+  String toString() => 'GeneratedEnumsRecursively{node: $node, '
+      'sub: $sub}';
+
+  List<GeneratedEnumComponent> get all => [
+        if (node != null) node!,
+        ...sub,
+      ];
 }

@@ -19,7 +19,7 @@ void main() {
     group('generate', () {
       group('boolean', () {
         test('non-nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.boolean(
               name: 'MyName1',
               enumeration: Enumeration(values: [
@@ -32,7 +32,7 @@ void main() {
         });
 
         test('nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.boolean(
               isNullable: true,
               name: 'MyName2',
@@ -68,9 +68,9 @@ void main() {
               },
             ]),
           );
-          final x = seg.generateEnum(element);
+          final x = seg.generateCode(element);
           _check(
-            SchemaClassGenerator().generateClass(
+            SchemaClassGenerator().generateCode(
               element as ObjectDataElement,
             ),
           );
@@ -97,9 +97,9 @@ void main() {
               },
             ]),
           );
-          final x = seg.generateEnum(element);
+          final x = seg.generateCode(element);
           _check(
-            SchemaClassGenerator().generateClass(
+            SchemaClassGenerator().generateCode(
               element as ObjectDataElement,
             ),
           );
@@ -109,7 +109,7 @@ void main() {
 
       group('array', () {
         test('non-nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.array(
               items: DataElement.integer(
                 name: 'MyNameItems',
@@ -125,7 +125,7 @@ void main() {
         });
 
         test('nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.array(
               isNullable: true,
               isUniqueItems: true,
@@ -145,7 +145,7 @@ void main() {
 
       group('integer', () {
         test('non-nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.integer(
               name: 'MyName5',
               enumeration: Enumeration(values: [
@@ -158,7 +158,7 @@ void main() {
         });
 
         test('nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.integer(
               isNullable: true,
               name: 'MyName6',
@@ -174,7 +174,7 @@ void main() {
 
       group('number', () {
         test('non-nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.number(
               isFloat: true,
               name: 'MyName7',
@@ -188,7 +188,7 @@ void main() {
         });
 
         test('nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.number(
               isFloat: false,
               isNullable: true,
@@ -206,7 +206,7 @@ void main() {
 
       group('string', () {
         test('non-nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.string(
               name: 'MyName9',
               enumeration: Enumeration(values: [
@@ -219,7 +219,7 @@ void main() {
         });
 
         test('nullable', () {
-          final x = seg.generateEnum(
+          final x = seg.generateCode(
             DataElement.string(
               isNullable: true,
               name: 'MyName10',

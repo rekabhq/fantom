@@ -59,8 +59,8 @@ class SchemaMediator {
               : _convert(
                   openApi,
                   as,
-                  // concatenate `_Item` to the end
-                  '${name}_Item',
+                  // concatenate `AdditionalProperty` to the end
+                  '${name}AdditionalProperty',
                 );
 
           // calculation for required items:
@@ -78,8 +78,9 @@ class SchemaMediator {
                       item: _convert(
                         openApi,
                         entry.value,
-                        // concatenate (`_` + `property name`) to the end
-                        '${name}_${entry.key}',
+                        // concatenate `property name`
+                        // with upper start to the end
+                        '$name${entry.key.toUpperStart()}',
                       ),
                       isRequired: requiredItems.contains(entry.key),
                     ),
@@ -101,8 +102,8 @@ class SchemaMediator {
           final items = _convert(
             openApi,
             schemaValue.items!,
-            // concatenate `_Item` to the end
-            '${name}_Item',
+            // concatenate `Item` to the end
+            '${name}Item',
           );
 
           return DataElement.array(
@@ -186,6 +187,18 @@ class SchemaMediator {
         return StringDataElementFormat.dateTime;
       default:
         return StringDataElementFormat.plain;
+    }
+  }
+}
+
+extension StringCaseExt on String {
+  String toUpperStart() {
+    if (isEmpty) {
+      return this;
+    } else {
+      final p1 = substring(0, 1);
+      final p2 = substring(1);
+      return p1.toUpperCase() + p2;
     }
   }
 }

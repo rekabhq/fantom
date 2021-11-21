@@ -38,7 +38,7 @@ class SchemaFromJsonGenerator {
   }) {
     final name = object.name;
     if (object.format == ObjectDataElementFormat.map) {
-      throw UnimplementedError(
+      throw AssertionError(
         'map objects are not supported : name is ${object.name}',
       );
     }
@@ -55,6 +55,7 @@ class SchemaFromJsonGenerator {
     final ObjectDataElement object,
     final bool inline,
   ) {
+    // todo: uie
     if (object.format == ObjectDataElementFormat.mixed) {
       throw UnimplementedError('mixed objects is not supported');
     }
@@ -91,76 +92,88 @@ class SchemaFromJsonGenerator {
     final String name,
     final bool inline,
   ) {
-    final isNullable = element.isNullable;
-    final fixedName = isNullable ? '$name!' : name;
+    if (element.isEnumerated) {
+      // ex. StatusExt.deserialize(value)
+      return [
+        element.enumName,
+        'Ext.deserialize(',
+        name,
+        ')',
+      ].joinParts();
+    } else {
+      final isNullable = element.isNullable;
+      final fixedName = isNullable ? '$name!' : name;
 
-    final String code = element.match(
-      boolean: (boolean) {
-        return fixedName;
-      },
-      object: (object) {
-        if (object.format == ObjectDataElementFormat.map) {
-          final sub = object.additionalProperties!.type;
-          return [
-            '((Map<String, dynamic> json) => ',
-            'json.map<String, $sub>((key, it) => ',
-            'MapEntry(key, ',
-            _logic(object.additionalProperties!, 'it', inline),
-            '))',
-            ')($fixedName)',
-          ].joinParts();
-        } else {
-          final typeNN = object.typeNN;
-          if (inline) {
+      final String code = element.match(
+        boolean: (boolean) {
+          return fixedName;
+        },
+        object: (object) {
+          if (object.format == ObjectDataElementFormat.map) {
+            final sub = object.additionalProperties!.type;
             return [
               '((Map<String, dynamic> json) => ',
-              _inner(object, inline),
+              'json.map<String, $sub>((key, it) => ',
+              'MapEntry(key, ',
+              _logic(object.additionalProperties!, 'it', inline),
+              '))',
               ')($fixedName)',
             ].joinParts();
           } else {
-            return '$typeNN.fromJson($fixedName)';
+            if (inline) {
+              return [
+                '((Map<String, dynamic> json) => ',
+                _inner(object, inline),
+                ')($fixedName)',
+              ].joinParts();
+            } else {
+              return [
+                object.name,
+                '.fromJson($fixedName)',
+              ].joinParts();
+            }
           }
-        }
-      },
-      array: (array) {
-        final sub = array.items.type;
-        return [
-          '((List<dynamic> json) => ',
-          'json.map<$sub>((it) => ',
-          _logic(array.items, 'it', inline),
-          ')',
-          array.isUniqueItems ? '.toSet()' : '.toList()',
-          ')($fixedName)',
-        ].joinParts();
-      },
-      integer: (integer) {
-        return fixedName;
-      },
-      number: (number) {
-        return fixedName;
-      },
-      string: (string) {
-        switch (string.format) {
-          case StringDataElementFormat.plain:
-            return fixedName;
-          case StringDataElementFormat.byte:
-            return fixedName;
-          case StringDataElementFormat.binary:
-            return fixedName;
-          case StringDataElementFormat.date:
-            return 'DateTime.parse($fixedName)';
-          case StringDataElementFormat.dateTime:
-            return 'DateTime.parse($fixedName)';
-        }
-      },
-      untyped: (untyped) {
-        return fixedName;
-      },
-    );
+        },
+        array: (array) {
+          final sub = array.items.type;
+          return [
+            '((List<dynamic> json) => ',
+            'json.map<$sub>((it) => ',
+            _logic(array.items, 'it', inline),
+            ')',
+            array.isUniqueItems ? '.toSet()' : '.toList()',
+            ')($fixedName)',
+          ].joinParts();
+        },
+        integer: (integer) {
+          return fixedName;
+        },
+        number: (number) {
+          return fixedName;
+        },
+        string: (string) {
+          switch (string.format) {
+            case StringDataElementFormat.plain:
+              return fixedName;
+            case StringDataElementFormat.byte:
+              return fixedName;
+            case StringDataElementFormat.binary:
+              return fixedName;
+            case StringDataElementFormat.date:
+              return 'DateTime.parse($fixedName)';
+            case StringDataElementFormat.dateTime:
+              return 'DateTime.parse($fixedName)';
+          }
+        },
+        untyped: (untyped) {
+          return fixedName;
+        },
+      );
 
-    return [
-      if (isNullable) '$name == null ? null : ',
-      code,
-    ].joinParts();
+      return [
+        if (isNullable) '$name == null ? null : ',
+        code,
+      ].joinParts();
+    }
   }
 }
