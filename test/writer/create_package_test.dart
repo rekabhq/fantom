@@ -2,6 +2,8 @@
 import 'dart:io';
 
 import 'package:fantom/src/cli/commands/generate.dart';
+import 'package:fantom/src/cli/config/exclude_models.dart';
+import 'package:fantom/src/cli/config/fantom_config.dart';
 import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
@@ -29,9 +31,16 @@ void main() {
           openApi: await readJsonOrYamlFile(
             File('test/openapi/model/openapi/simple_openapi.yaml'),
           ),
+          fantomConfig: FantomConfig(
+            packageName: name,
+            outputPackageDir: generationPath,
+            apiMethodReturnType: MethodReturnType.result,
+            excludedComponents: [],
+            excludedPaths: ExcludedPaths.fromFantomConfigValues([]),
+            path: '',
+          ),
           packageName: name,
           outputModuleDir: Directory(generationPath),
-          methodReturnType: MethodReturnType.result,
         ),
         models: [
           GeneratableFile(

@@ -3,5 +3,8 @@ fantom:
   package: ../generated/package
   package-name: my_api_package
   method-return-type: result
-  # model-dir: generated/package/my_api_package/lib/network/data/models
-  # api-dir: generated/package/my_api_package/lib/network
+  excluded-paths:
+    - /pet -- [get, post, put]
+    - /pet/findByStatus    # when no operation specified everything gets excluded
+  excluded-components:
+    - components/schemas/Shalgham

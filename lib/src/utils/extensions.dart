@@ -13,6 +13,17 @@ extension MapExt<K, V> on Map<K, V> {
   }
 
   Map<K, V> clone() => Map.fromEntries(entries);
+
+  void removeItemInNestedMapsWithKeys(Iterable<String> keys) {
+    Map<K, V>? map = this;
+    for (var key in keys) {
+      if (key == keys.last) {
+        map?.remove(key);
+      } else {
+        map = map?[key] as Map<K, V>?;
+      }
+    }
+  }
 }
 
 extension DoubleExt on double {

@@ -129,6 +129,46 @@ class GeneratedComponentAlreadyDefinedException extends FantomException {
         );
 }
 
+class InvalidExcludedPathException extends FantomException {
+  InvalidExcludedPathException(String excludedPath)
+      : super(
+          '''
+Something Wrong with one of the excluded paths in your fantom config
+Make sure all your excluded paths are configured correctly
+Invalid excluded path was -> $excludedPath\n
+    excluded-paths:
+      - some/path -- [get, post]
+      - another/path    # when no operation specified everything gets excluded
+          ''',
+          io.ExitCode.config.code,
+        );
+}
+
+class InvalidExcludedComponent extends FantomException {
+  InvalidExcludedComponent(String excludedComponent)
+      : super(
+          // 'Something Wrong with one of the excluded components in your fantom config\n'
+          // 'Make sure all your excluded components are configured correctly\n'
+          // 'Invalid excluded component was -> $excludedComponent\n\n'
+          // 'Below is aa valid example of excluded components\n\n'
+          '''
+ Something Wrong with one of the excluded components in your fantom config.
+ Make sure all your excluded components are configured correctly. they must start with 
+ `component` and end with the name of the component
+ Invalid excluded component was -> $excludedComponent
+ Below is a valid example of excluded components\n
+    excluded-components:
+      - components/schemas/Pet   
+      - components/responses/Pet
+      - components/parameters/Pet
+      - components/requestBodies/Pet
+      - components/headers/Pet
+          
+          ''',
+          io.ExitCode.config.code,
+        );
+}
+
 void handleExceptions(e, stacktrace) {
   if (e is FantomException) {
     Log.error('\n❌❌ ${e.message}');
