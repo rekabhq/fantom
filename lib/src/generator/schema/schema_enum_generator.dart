@@ -103,7 +103,7 @@ class SchemaEnumGenerator {
         [
           'static $enumName deserialize(final $type item) {',
           'for (var index = 0; index < items.length; index++) {',
-          'if(_equals(items[index], item)) {',
+          'if(fantomEquals(items[index], item)) {',
           'return $enumName.values[index];',
           '}',
           '}',
