@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/base_command.dart';
-import 'package:fantom/src/cli/fantom_config.dart';
+import 'package:fantom/src/cli/config/fantom_config.dart';
 import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
