@@ -5,6 +5,7 @@ import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/generator/api/method/body_parser.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
+import 'package:fantom/src/generator/api/sub_class/api_sub_class_generator.dart';
 import 'package:fantom/src/generator/components/component_generator.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/name/method_name_generator.dart';
@@ -30,7 +31,6 @@ class Generator {
 
     final componentsGenerator = ComponentsGenerator.createDefault(openApi);
     final methodGenerator = ApiMethodGenerator(
-      openApi: openApi,
       methodParamsParser: MethodParamsParser(
         parameterClassGenerator: componentsGenerator.parameterClassGenerator,
       ),
@@ -48,6 +48,9 @@ class Generator {
     return Generator(
       apiClassGenerator: ApiClassGenerator(
         openApi: openApi,
+        apiSubClassGenerator: ApiSubClassGenerator(
+          apiMethodGenerator: methodGenerator,
+        ),
         apiMethodGenerator: methodGenerator,
       ),
       componentsGenerator: componentsGenerator,
@@ -58,8 +61,14 @@ class Generator {
   /// [apiClassGenerator] and [componentsGenerator] then puts all the generated data in a [GenerationData] object
   /// in order to be written into the corresponding directories by the FileWriter class
   GenerationData generate(OpenApi openApi, GenerateConfig config) {
+    // generate components
     componentsGenerator.generateAndRegisterComponents();
-    var apiClassFile = apiClassGenerator.generate();
+    // generate api classes files
+    final apiClassFiles = apiClassGenerator.generate();
+    final mainApiClass =
+        apiClassFiles.where((file) => file.fileName == 'api.dart').first;
+    final resourceApiClasses =
+        apiClassFiles.where((file) => file.fileName != 'api.dart');
     // creating GenerationData object
     var modelsFile = allGeneratedComponents
         .where((element) => element.isGenerated)
@@ -73,7 +82,8 @@ class Generator {
     var generationData = GenerationData(
       config: config,
       models: modelsFile,
-      apiClass: apiClassFile,
+      apiClass: mainApiClass,
+      resourceApiClasses: resourceApiClasses.toList(),
     );
     return generationData;
   }

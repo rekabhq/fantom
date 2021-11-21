@@ -40,6 +40,7 @@ class FileWriter {
     if (generationData.config is GenerateAsPartOfProjectConfig) {
       await _writeGeneratedFilesToProject(
         generationData.models,
+        generationData.resourceApiClasses,
         generationData.apiClass,
         false,
       );
@@ -55,6 +56,7 @@ class FileWriter {
 
   Future _writeGeneratedFilesToProject(
     List<GeneratableFile> models,
+    List<GeneratableFile> resourceApiClasses,
     GeneratableFile apiClass,
     bool isFantomPackage,
   ) async {
@@ -109,11 +111,37 @@ class FileWriter {
       modelsDirPath,
       [],
     );
+    // writing resources api classes to api path
+
+    for (var resourceApi in resourceApiClasses) {
+      _createGeneratableFileIn(
+        resourceApi,
+        apisDirPath,
+        [
+          Directive.relative(
+            filePath: '$apisDirPath/${resourceApi.fileName}',
+            directiveFilePath: '$apisDirPath/api.dart',
+            type: DirectiveType.partOf,
+          ),
+        ],
+      );
+      apiClassImports.insertAtEnd(
+        Directive.relative(
+          filePath: '$apisDirPath/api.dart',
+          directiveFilePath: '$apisDirPath/${resourceApi.fileName}',
+          type: DirectiveType.part,
+        ),
+      );
+    }
+
     //writing api class to apis path
-    apiClassImports.add(_createImport(
-      directiveFilePath: '$modelsDirPath/models.dart',
-      filePath: '$apisDirPath/api.dart',
-    ));
+    apiClassImports.insert(
+      0,
+      _createImport(
+        directiveFilePath: '$modelsDirPath/models.dart',
+        filePath: '$apisDirPath/api.dart',
+      ),
+    );
     await _createGeneratableFileIn(
       apiClass,
       apisDirPath,
@@ -124,6 +152,7 @@ class FileWriter {
   Future _writeGeneratedFilestToPackage(GenerationData data) async {
     var models = data.models;
     var apiClass = data.apiClass;
+    var resourceApiClasses = data.resourceApiClasses;
     var config = data.config as GenerateAsStandAlonePackageConfig;
     var fantomPackageInfo = FantomPackageInfo.fromConfig(
       data.config as GenerateAsStandAlonePackageConfig,
@@ -131,6 +160,7 @@ class FileWriter {
     await createDartPackage(fantomPackageInfo);
     await _writeGeneratedFilesToProject(
       models,
+      resourceApiClasses,
       apiClass,
       true,
     );

@@ -5,10 +5,12 @@ class GenerationData {
   final GenerateConfig config;
   final List<GeneratableFile> models;
   final GeneratableFile apiClass;
+  final List<GeneratableFile> resourceApiClasses;
 
   GenerationData({
     required this.config,
     required this.models,
     required this.apiClass,
+    required this.resourceApiClasses,
   });
 }
