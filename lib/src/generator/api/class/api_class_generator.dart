@@ -3,6 +3,7 @@ import 'package:fantom/src/generator/api/method/api_method_generator.dart';
 import 'package:fantom/src/generator/api/sub_class/api_sub_class_generator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/writer/generatbale_file.dart';
+import 'package:recase/recase.dart';
 
 class ApiClassGenerator {
   const ApiClassGenerator({
@@ -17,9 +18,6 @@ class ApiClassGenerator {
 
   GeneratableFile generate() {
     final fileContent = _generateFileContent();
-
-    //TODO(payam): analyzer file content of the class
-    //TODO(payam): format the content of the class
 
     return GeneratableFile(
       fileContent: fileContent,
@@ -37,15 +35,15 @@ class ApiClassGenerator {
       ..writeln(_generateClass(apiClassName))
       ..writeln(_generateConstructor(apiClassName))
       ..writeln(_generateFields())
-      ..writeln(_generateSubClassMethods(openApi.paths.paths))
+      ..writeln(
+        _generateSubClassMethods(_createPathSections(openApi.paths.paths)),
+      )
       ..writeln('}');
 
     return buffer.toString();
   }
 
   String _generateImports() {
-    //TODO(payam): add models import
-
     return """
     import 'package:dio/dio.dart';
     """;
@@ -73,13 +71,23 @@ class ApiClassGenerator {
   }
 
   String _generateSubClassMethods(
-    final Map<String, PathItem> paths,
+    List<_ApiSection> apiSections,
   ) {
-    // TODO: add subtype classes
-    return """
-      
+    final buffer = StringBuffer();
 
-    """;
+    for (final section in apiSections) {
+      final sectionName = section.sectionName.split('/').first;
+      final subClassName = '${sectionName}Api'.pascalCase;
+      final getterName = '${sectionName}Api'.camelCase;
+
+      print('section: ${section.sectionName}');
+      print('apiSectionName: $sectionName');
+
+      buffer.writeln('$subClassName get $getterName => $subClassName(dio);');
+      buffer.write('');
+    }
+
+    return buffer.toString();
   }
 
   List<_ApiSection> _createPathSections(Map<String, PathItem> paths) {
@@ -89,10 +97,15 @@ class ApiClassGenerator {
       paths.keys.toList(),
     );
 
+    print('sections: $sections');
+
+    final pureSections = _removeDuplicatedSections(sections);
+    print('pureSections: $pureSections');
+
     List<_ApiSection> apis = [];
-    for (final section in sections) {
+    for (final section in pureSections) {
       final apiSections = paths.entries.where(
-        (e) => e.key.contains(section),
+        (e) => e.key.startsWith('/$section'),
       );
       if (apiSections.isNotEmpty) {
         apis.add(
@@ -151,6 +164,27 @@ class ApiClassGenerator {
     }
 
     return sections;
+  }
+
+  Set<String> _removeDuplicatedSections(Set<String> sections) {
+    final Set<String> result = {};
+
+    for (var section in sections) {
+      if (section.startsWith('/')) section = section.replaceFirst('/', '');
+
+      final split = section.split('/');
+
+      print('section split: $split');
+
+      final sectionInitiator = split.first;
+      print('section initiator: $sectionInitiator');
+
+      result.add(sectionInitiator);
+    }
+
+    print('Result: ${result.toList()}');
+
+    return result;
   }
 }
 
