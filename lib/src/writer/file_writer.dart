@@ -98,18 +98,13 @@ class FileWriter {
       );
     }
     // create models.dart file
-    final modelsFileContent = StringBuffer();
-    modelsFileContent.writeAll(
-      modelsFileDirectives.map((e) => e.toString()),
-      '\n',
-    );
     await _createGeneratableFileIn(
       GeneratableFile(
-        fileContent: modelsFileContent.toString(),
+        fileContent: '',
         fileName: 'models.dart',
       ),
       modelsDirPath,
-      [],
+      modelsFileDirectives,
     );
     // writing resources api classes to api path
 
@@ -179,7 +174,7 @@ class FileWriter {
     var modelFile = File('$path/${generatableFile.fileName}');
     await modelFile.create(recursive: true);
     final content = StringBuffer();
-    for (var directive in directives) {
+    for (var directive in directives.toSet()) {
       content.writeln(directive.toString());
     }
     content.writeln(generatableFile.fileContent);

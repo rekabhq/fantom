@@ -53,7 +53,11 @@ class GeneratedComponentsRegistery {
 
   GeneratedComponent? getGeneratedComponentByRef(String ref) {
     _validateReference(ref);
-    return components[ref];
+    final component = components[ref];
+    if (component == null) {
+      throw InvalidGeneratedComponentRefereceException(ref);
+    }
+    return component;
   }
 
   @visibleForTesting
