@@ -15,18 +15,25 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
   /// there is any enums in the properties of this dataElement. if there is it will register them
   /// in [GeneratedComponentsRegistery] as [GeneratedEnumComponent]
   GeneratedSchemaComponent generateWithEnums(DataElement dataElement) {
+    // if (dataElement.isEnumerated || dataElement.isArrayDataElement) {
+    Log.debug(
+        'schema type => ${dataElement.type} - enumname -> ${dataElement.enumName} - ${dataElement.type}');
+    // }
     late GeneratedSchemaComponent nodeComponent;
     if (dataElement.isGeneratable) {
       nodeComponent = generate(dataElement.asObjectDataElement);
     } else {
+      Log.debug(
+          'UnGeneratable =+ ${dataElement.type} - enumname -> ${dataElement.enumName} - ${dataElement.type}');
       nodeComponent = UnGeneratableSchemaComponent(dataElement: dataElement);
     }
-    final subComponents =
+    final subEnums =
         SchemaEnumGenerator().generateRecursively(dataElement).subs;
+
     // ignore: avoid_function_literals_in_foreach_calls
-    subComponents.forEach((element) => Log.debug(
+    subEnums.forEach((element) => Log.debug(
         '${element.fileName} - ${element.dataElement.type} - ${element.dataElement.isEnumerated}'));
-    for (var subComponent in subComponents) {
+    for (var subComponent in subEnums) {
       registerGeneratedEnumComponent(subComponent);
     }
     return nodeComponent;

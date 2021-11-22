@@ -6,7 +6,6 @@ import 'package:fantom/src/cli/config/exclude_models.dart';
 import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
-import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:io/io.dart';
 
@@ -123,9 +122,6 @@ class FantomConfig {
 
     final excludedPaths =
         ExcludedPaths.fromFantomConfigValues(excludedPathsNames);
-
-    Log.debug(excludedPaths);
-    Log.debug(excludedComponentNames);
 
     return FantomConfig(
       path: path,
