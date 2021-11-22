@@ -1,13 +1,44 @@
 import 'package:equatable/equatable.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
+import 'package:fantom/src/generator/schema/schema_enum_generator.dart';
 import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
 import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:recase/recase.dart';
 
 extension SchemaClassGeneratorExt on SchemaClassGenerator {
+  /// this method generates the given dataElement and returns it. but also checks if
+  /// there is any enums in the properties of this dataElement. if there is it will register them
+  /// in [GeneratedComponentsRegistery] as [GeneratedEnumComponent]
+  GeneratedSchemaComponent generateWithEnums(DataElement dataElement) {
+    // if (dataElement.isEnumerated || dataElement.isArrayDataElement) {
+    Log.debug(
+        'schema type => ${dataElement.type} - enumname -> ${dataElement.enumName} - ${dataElement.type}');
+    // }
+    late GeneratedSchemaComponent nodeComponent;
+    if (dataElement.isGeneratable) {
+      nodeComponent = generate(dataElement.asObjectDataElement);
+    } else {
+      Log.debug(
+          'UnGeneratable =+ ${dataElement.type} - enumname -> ${dataElement.enumName} - ${dataElement.type}');
+      nodeComponent = UnGeneratableSchemaComponent(dataElement: dataElement);
+    }
+    final subEnums =
+        SchemaEnumGenerator().generateRecursively(dataElement).subs;
+
+    // ignore: avoid_function_literals_in_foreach_calls
+    subEnums.forEach((element) => Log.debug(
+        '${element.fileName} - ${element.dataElement.type} - ${element.dataElement.isEnumerated}'));
+    for (var subComponent in subEnums) {
+      registerGeneratedEnumComponent(subComponent);
+    }
+    return nodeComponent;
+  }
+
   GeneratedSchemaComponent generate(
     final ObjectDataElement object,
   ) {
@@ -18,9 +49,7 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
     );
   }
 
-  GeneratedClassesRecursively generateRecursively(
-    final DataElement element,
-  ) {
+  GeneratedClassesRecursively generateRecursively(final DataElement element) {
     return GeneratedClassesRecursively(
       node: (element is ObjectDataElement &&
               element.format != ObjectDataElementFormat.map)

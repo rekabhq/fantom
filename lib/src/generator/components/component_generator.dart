@@ -7,7 +7,6 @@ import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/generator/utils/reference_finder.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 
 class ComponentsGenerator {
@@ -120,7 +119,6 @@ class ComponentsGenerator {
     Map<String, Referenceable<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
-      //TODO: this should be done when we are reading the openapi file not here. lets talk about this payam, amirreza
       return MapEntry(
         '#/components/schemas/$ref',
         schemaMediator.convert(
@@ -132,9 +130,7 @@ class ComponentsGenerator {
     }).map((ref, element) {
       return MapEntry(
         ref,
-        element.isGeneratable
-            ? schemaClassGenerator.generate(element.asObjectDataElement)
-            : UnGeneratableSchemaComponent(dataElement: element),
+        schemaClassGenerator.generateWithEnums(element),
       );
     });
   }

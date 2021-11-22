@@ -8,12 +8,17 @@ void registerGeneratedComponent(String ref, GeneratedComponent component) =>
 void registerGeneratedComponentWithoutRef(GeneratedComponent component) =>
     _globalComponentsRegistery.registerGeneratedComponentWithoutRef(component);
 
+void registerGeneratedEnumComponent(GeneratedEnumComponent component) {
+  _globalComponentsRegistery.registerEnum(component);
+}
+
 GeneratedComponent? getGeneratedComponentByRef(String ref) =>
     _globalComponentsRegistery.getGeneratedComponentByRef(ref);
 
 List<GeneratedComponent> allGeneratedComponents = [
   ..._globalComponentsRegistery.components.values.toList(),
   ..._globalComponentsRegistery.unNamedComponents.toList(),
+  ..._globalComponentsRegistery.enums.toList(),
 ];
 
 final GeneratedComponentsRegistery _globalComponentsRegistery =
@@ -27,6 +32,7 @@ void clearComponentsRegistry() {
 class GeneratedComponentsRegistery {
   final Map<String, GeneratedComponent> components = {};
   final Set<GeneratedComponent> unNamedComponents = {};
+  final Set<GeneratedEnumComponent> enums = {};
 
   void registerGeneratedComponent(String ref, GeneratedComponent component) {
     _validateReference(ref);
@@ -41,9 +47,17 @@ class GeneratedComponentsRegistery {
     unNamedComponents.add(component);
   }
 
+  void registerEnum(GeneratedEnumComponent component) {
+    enums.add(component);
+  }
+
   GeneratedComponent? getGeneratedComponentByRef(String ref) {
     _validateReference(ref);
-    return components[ref];
+    final component = components[ref];
+    if (component == null) {
+      throw InvalidGeneratedComponentRefereceException(ref);
+    }
+    return component;
   }
 
   @visibleForTesting

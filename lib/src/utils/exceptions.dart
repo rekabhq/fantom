@@ -129,6 +129,19 @@ class GeneratedComponentAlreadyDefinedException extends FantomException {
         );
 }
 
+class InvalidGeneratedComponentRefereceException extends FantomException {
+  InvalidGeneratedComponentRefereceException(String ref)
+      : super(
+          'Invalid Component Reference:\n'
+          'There is no component with reference [$ref].\n'
+          'please make surethere is a component with reference [$ref] defined in openapi file components section.\n'
+          'also make sure this component is not excluded\n\n'
+          'if you wish to exclude this component you must also exclude all other components and paths\n'
+          'that use this component',
+          io.ExitCode.cantCreate.code,
+        );
+}
+
 class InvalidExcludedPathException extends FantomException {
   InvalidExcludedPathException(String excludedPath)
       : super(

@@ -23,21 +23,21 @@ extension OptionalUnwrappingExt<T extends Object?> on Optional<T>? {
 }
 
 // todo: uie, sets ?
-bool _equals(
+bool fantomEquals(
   final Object? value1,
   final Object? value2,
 ) {
-  return _Equals(value1) == _Equals(value2);
+  return FantomEqualityModel(value1) == FantomEqualityModel(value2);
 }
 
-class _Equals extends Equatable {
+class FantomEqualityModel extends Equatable {
   final Object? value;
 
-  const _Equals(this.value);
+  const FantomEqualityModel(this.value);
 
   @override
   List<Object?> get props => [value];
 
   @override
-  String toString() => '_Equals($value)';
+  String toString() => 'FantomEqualityModel($value)';
 }

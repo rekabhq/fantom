@@ -99,23 +99,32 @@ class Optional<T extends Object?> extends Equatable {
   String toString() => 'Optional($value)';
 }
 
-bool _equals(
+extension OptionalWrappingExt<T extends Object?> on T {
+  Optional<T> get opt => Optional(this);
+}
+
+extension OptionalUnwrappingExt<T extends Object?> on Optional<T>? {
+  T? get orNull => this?.value;
+}
+
+// todo: uie, sets ?
+bool fantomEquals(
   final Object? value1,
   final Object? value2,
 ) {
-  return _Equals(value1) == _Equals(value2);
+  return FantomEqualityModel(value1) == FantomEqualityModel(value2);
 }
 
-class _Equals extends Equatable {
+class FantomEqualityModel extends Equatable {
   final Object? value;
 
-  const _Equals(this.value);
+  const FantomEqualityModel(this.value);
 
   @override
   List<Object?> get props => [value];
 
   @override
-  String toString() => '_Equals($value)';
+  String toString() => 'FantomEqualityModel($value)';
 }
 
 // ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators, prefer_if_null_operators, unnecessary_non_null_assertion
