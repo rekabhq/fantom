@@ -86,7 +86,7 @@ Future createDartPackage(FantomPackageInfo packageInfo) async {
   // create path where dart package should be created
   await Directory(packageInfo.generationPath).create(recursive: true);
   // create a dart package with package-simple template
-  var packagePath = '${packageInfo.generationPath}/${packageInfo.name}';
+  final packagePath = '${packageInfo.generationPath}/${packageInfo.name}';
   await runFromCmd(
     'dart',
     args: ['create', packagePath, '--template=package-simple', '--force'],
@@ -98,16 +98,20 @@ Future createDartPackage(FantomPackageInfo packageInfo) async {
   // recreate lib folder in package
   await Directory('$packagePath/lib').create(recursive: true);
   // rewrite pubspec.yaml file
-  var projectPubspecFile = File('$packagePath/pubspec.yaml');
-  var pubspec =
-      p.PubspecYaml.loadFromYamlString(await projectPubspecFile.readAsString());
-  var newPubspec = pubspec.copyWith(
+  final pubspecFile = File('$packagePath/pubspec.yaml');
+  final pubspec =
+      p.PubspecYaml.loadFromYamlString(await pubspecFile.readAsString());
+  final newPubspec = pubspec.copyWith(
     description: o.Optional(packageInfo.pubspecInfo.description),
     version: o.Optional(packageInfo.pubspecInfo.version.toString()),
     environment: packageInfo.pubspecInfo.environment,
     dependencies: packageInfo.pubspecInfo.dependencies,
   );
-  projectPubspecFile.writeAsString(newPubspec.toYamlString());
-
-  // write generated files in lib/
+  pubspecFile.writeAsString(newPubspec.toYamlString());
+  // rewrite analysis file
+  final analysisOptionsFile = File('$packagePath/analysis_options.yaml');
+  final overrideAnalysisOptionsFile =
+      File('lib/src/writer/analysis_options_override.yaml');
+  final overrideContent = await overrideAnalysisOptionsFile.readAsString();
+  await analysisOptionsFile.writeAsString(overrideContent);
 }

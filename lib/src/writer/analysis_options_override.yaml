@@ -1,0 +1,12 @@
+analyzer:
+  exclude:
+  
+  errors:
+    unused_import: ignore
+    unused_local_variable: ignore
+    dead_code: ignore
+    prefer_final_locals: warning
+    use_key_in_widget_constructors: ignore
+    invalid_annotation_target: ignore
+    prefer_const_constructors: ignore
+    avoid_print: ignore
