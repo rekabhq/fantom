@@ -8,15 +8,22 @@ class SchemaDefaultValueGenerator {
   ///
   /// return null if no default value
   String? generateOrNull(final DataElement element) {
-    final defaultValue = element.defaultValue;
-    if (defaultValue == null) {
-      return null;
+    return element.hasDefaultValue ? _generate(element) : null;
+  }
+
+  String generate(final DataElement element) {
+    if (element.hasDefaultValue) {
+      return _generate(element);
     } else {
-      final svg = SchemaValueGenerator();
-      return svg.generate(
-        element,
-        value: defaultValue.value,
-      );
+      throw AssertionError('no default value for element ${element.name}');
     }
+  }
+
+  String _generate(DataElement element) {
+    final svg = SchemaValueGenerator();
+    return svg.generate(
+      element,
+      value: element.defaultValue!.value,
+    );
   }
 }
