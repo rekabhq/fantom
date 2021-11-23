@@ -22,8 +22,9 @@ class SchemaMediator {
   DataElement _convert(
     final OpenApi openApi,
     final Referenceable<Schema> schema,
-    final String name,
-  ) {
+    final String name, {
+    final bool forceNullable = false,
+  }) {
     if (schema.isReference) {
       var schemaReference = schema.reference;
       final resolution = openApi.resolveSchema(schemaReference);
@@ -33,7 +34,7 @@ class SchemaMediator {
     } else {
       final schemaValue = schema.value;
       final type = schemaValue.type;
-      final isNullable = schemaValue.nullable == true;
+      final isNullable = forceNullable || schemaValue.nullable == true;
       switch (type) {
         case 'boolean':
           return DataElement.boolean(
@@ -67,6 +68,8 @@ class SchemaMediator {
           final requiredItems = (schemaValue.requiredItems ?? []).toSet();
 
           // calculation for properties:
+          // if property is required then we should not change nullability.
+          // if is not required we should change to nullable forcefully.
           final ps = schemaValue.properties;
           final properties = ps == null
               ? <ObjectProperty>[]
@@ -81,8 +84,8 @@ class SchemaMediator {
                         // concatenate `property name`
                         // with upper start to the end
                         '$name${entry.key.toUpperStart()}',
+                        forceNullable: !requiredItems.contains(entry.key),
                       ),
-                      isRequired: requiredItems.contains(entry.key),
                     ),
                   )
                   .toList();
