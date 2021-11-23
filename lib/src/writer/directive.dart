@@ -73,10 +73,11 @@ class Directive {
         pathsBranchFound = true;
       }
     }
-    if (directiveFilePathParts.length > filePathParts.length) {
+    // ignore: prefer_is_empty
+    if (filePathParts.length == 1 && directiveFilePathParts.length >= 1) {
       return Directive._(type, directiveFilePathParts.join('/'));
     } else {
-      var subDirCount = filePathParts.length - directiveFilePathParts.length;
+      var subDirCount = filePathParts.length - 1;
       while (subDirCount > 0) {
         directiveFilePathParts.insert(0, '..');
         subDirCount--;

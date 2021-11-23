@@ -2,7 +2,6 @@ import 'package:fantom/fantom.dart';
 import 'package:fantom/src/cli/config/fantom_config.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/constants.dart';
-import 'package:fantom/src/utils/logger.dart';
 import 'package:version/version.dart';
 import 'package:fantom/src/utils/extensions.dart';
 
@@ -58,11 +57,9 @@ class OpenApiReader {
         Map<String, dynamic>? pathObject = openapi['paths'][path];
         if (pathObject != null) {
           for (var operation in operations) {
-            Log.debug('\nremoving $operation from $pathObject\n\n');
             pathObject.remove(operation);
           }
         }
-        Log.debug('result is $pathObject');
       }
     }
   }
