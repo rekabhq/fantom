@@ -696,6 +696,8 @@ extension DataElementEnumNameExt on DataElement {
 }
 
 /// extensions on [ObjectProperty]
+///
+/// if is required we should ignore default value.
 extension ObjectPropertyExt on ObjectProperty {
   /// is not required.
   bool get isNotRequired => !isRequired;
@@ -707,13 +709,18 @@ extension ObjectPropertyExt on ObjectProperty {
   bool get isNotFieldOptional => !isFieldOptional;
 
   /// is constructor optional.
-  bool get isConstructorOptional => isNotRequired || item.hasDefaultValue;
+  ///
+  /// todo: this is fixed should be tested.
+  bool get isConstructorOptional => isNotRequired;
 
   /// is not constructor optional.
   bool get isNotConstructorOptional => !isConstructorOptional;
 
   /// is constructor required.
   bool get isConstructorRequired => isRequired && item.isNotNullable;
+
+  /// is not constructor required.
+  bool get isNotConstructorRequired => !isConstructorRequired;
 }
 
 /// extensions on [ObjectDataElement].
