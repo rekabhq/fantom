@@ -62,7 +62,7 @@ class SchemaEnumGenerator {
       );
     }
 
-    final List<Object?> values = element.enumeration!.values;
+    final List<Object> values = element.enumeration!.values;
     final length = values.length;
     final enumName = element.enumName;
     final type = element.rawType;
@@ -83,6 +83,8 @@ class SchemaEnumGenerator {
             enumNames[index],
             ',',
           ].joinParts(),
+        // empty enums are not supported in dart, so:
+        if (values.isEmpty) r'$EMPTY$,',
         '}',
       ].joinLines(),
       // enum serialization and values class:

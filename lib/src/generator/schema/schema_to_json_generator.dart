@@ -94,13 +94,15 @@ class SchemaToJsonGenerator {
     final String name,
     final bool inline,
   ) {
+    final isNullable = element.isNullable;
+    final fixedName = isNullable ? '$name!' : name;
+
+    final String code;
     if (element.isEnumerated) {
       // ex. status.serialize()
-      return '$name.serialize()';
+      code = '$fixedName.serialize()';
     } else {
-      final isNullable = element.isNullable;
-      final fixedName = isNullable ? '$name!' : name;
-      final code = element.match(
+      code = element.match(
         boolean: (boolean) {
           return fixedName;
         },
@@ -162,11 +164,11 @@ class SchemaToJsonGenerator {
           return fixedName;
         },
       );
-
-      return [
-        if (isNullable) '$name == null ? null : ',
-        code,
-      ].joinParts();
     }
+
+    return [
+      if (isNullable) '$name == null ? null : ',
+      code,
+    ].joinParts();
   }
 }

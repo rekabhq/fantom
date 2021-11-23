@@ -19,11 +19,15 @@ class DefaultValue with EquatableMixin {
 }
 
 /// information for an enum or constant value
+///
+/// ALL NULLABLE ENUMERATED ELEMENTS CAN HAVE NULL AS A VALID VALUE
+///
+/// NULLABLE  ENUMERATED ELEMENTS ARE REPRESENTED AS NULLABLE ENUMS
 class Enumeration with EquatableMixin {
   /// values of enum
   ///
   /// ex. ['hello', 'hi', null]
-  final List<Object?> values;
+  final List<Object> values;
 
   const Enumeration({
     required this.values,
@@ -792,10 +796,19 @@ extension DataElementTypeExt on DataElement {
   /// can be enum.
   String get type {
     if (isEnumerated) {
-      return enumName;
+      return enumType;
     } else {
       return rawType;
     }
+  }
+
+  /// type as if element is enumerated
+  ///
+  /// ex. Status or Status?
+  ///
+  /// (even if element is not enumerated)
+  String get enumType {
+    return enumName.withNullability(isNullable);
   }
 
   /// raw type with nullability sign.

@@ -89,19 +89,20 @@ class SchemaFromJsonGenerator {
     final String name,
     final bool inline,
   ) {
+    final isNullable = element.isNullable;
+    final fixedName = isNullable ? '$name!' : name;
+
+    final String code;
     if (element.isEnumerated) {
       // ex. StatusExt.deserialize(value)
-      return [
+      code = [
         element.enumName,
         'Ext.deserialize(',
-        name,
+        fixedName,
         ')',
       ].joinParts();
     } else {
-      final isNullable = element.isNullable;
-      final fixedName = isNullable ? '$name!' : name;
-
-      final String code = element.match(
+      code = element.match(
         boolean: (boolean) {
           return fixedName;
         },
@@ -166,11 +167,11 @@ class SchemaFromJsonGenerator {
           return fixedName;
         },
       );
-
-      return [
-        if (isNullable) '$name == null ? null : ',
-        code,
-      ].joinParts();
     }
+
+    return [
+      if (isNullable) '$name == null ? null : ',
+      code,
+    ].joinParts();
   }
 }

@@ -174,7 +174,8 @@ class SchemaMediator {
     return schemaValue.enumerated == null
         ? null
         : Enumeration(
-            values: schemaValue.enumerated!,
+            // filter null elements:
+            values: schemaValue.enumerated!.whereType<Object>().toList(),
           );
   }
 

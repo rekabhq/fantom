@@ -817,10 +817,19 @@ extension DataElementTypeExt on DataElement {
   /// can be enum.
   String get type {
     if (isEnumerated) {
-      return enumName;
+      return enumType;
     } else {
       return rawType;
     }
+  }
+
+  /// type as if element is enumerated
+  ///
+  /// ex. Status but NOT Status?
+  ///
+  /// (even if element is not enumerated)
+  String get enumType {
+    return enumName;
   }
 
   /// raw type with nullability sign.
