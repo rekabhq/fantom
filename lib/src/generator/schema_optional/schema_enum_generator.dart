@@ -35,6 +35,8 @@ class SchemaEnumGenerator {
             enumNames[index],
             ',',
           ].joinParts(),
+        // empty enums are not supported in dart, so:
+        if (values.isEmpty) r'$EMPTY$,',
         '}',
       ].joinLines(),
       // enum serialization and values class:
