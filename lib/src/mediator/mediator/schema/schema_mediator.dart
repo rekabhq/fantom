@@ -30,7 +30,13 @@ class SchemaMediator {
       final resolution = openApi.resolveSchema(schemaReference);
       // we are completely ignoring reference original data,
       // such as it's name ...
-      return _convert(openApi, resolution.schema, resolution.name);
+      return _convert(
+        openApi,
+        resolution.schema,
+        resolution.name,
+        // cascade forceNullable down the line:
+        forceNullable: forceNullable,
+      );
     } else {
       final schemaValue = schema.value;
       final type = schemaValue.type;

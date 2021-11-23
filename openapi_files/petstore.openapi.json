@@ -1147,6 +1147,8 @@
                 "photoUrls",
                 "o1",
                 "o2",
+                "o7",
+                "o8",
                 "p1",
                 "p2",
                 "x1",
@@ -1225,6 +1227,12 @@
                 },
                 "o6": {
                   "$ref": "#/components/schemas/ObjNullable"
+                },
+                "o7": {
+                  "$ref": "#/components/schemas/ObjDefault"
+                },
+                "o8": {
+                  "$ref": "#/components/schemas/ObjNullableDefault"
                 },
                 "p1": {
                   "nullable": false,
