@@ -58,12 +58,8 @@ class FantomCli extends CommandRunner<int> {
               packageName: kCliName, currentVersion: kCurrentVersion)
           .update()
           .onError((error, stackTrace) {
-        Log.debug(error);
-        Log.debug(stackTrace);
         Log.info('could not check for package new version');
-      }).timeout(const Duration(milliseconds: 1000), onTimeout: () {
-        Log.debug('Timeout. could not check for update');
-      });
+      }).timeout(const Duration(milliseconds: 1000), onTimeout: () {});
     }
   }
 

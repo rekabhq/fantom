@@ -7,7 +7,6 @@ import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
 import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
-import 'package:fantom/src/utils/logger.dart';
 import 'package:recase/recase.dart';
 
 extension SchemaClassGeneratorExt on SchemaClassGenerator {
@@ -16,23 +15,17 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
   /// in [GeneratedComponentsRegistery] as [GeneratedEnumComponent]
   GeneratedSchemaComponent generateWithEnums(DataElement dataElement) {
     // if (dataElement.isEnumerated || dataElement.isArrayDataElement) {
-    Log.debug(
-        'schema type => ${dataElement.type} - enumname -> ${dataElement.enumName} - ${dataElement.type}');
     // }
     late GeneratedSchemaComponent nodeComponent;
     if (dataElement.isGeneratable) {
       nodeComponent = generate(dataElement.asObjectDataElement);
     } else {
-      Log.debug(
-          'UnGeneratable =+ ${dataElement.type} - enumname -> ${dataElement.enumName} - ${dataElement.type}');
       nodeComponent = UnGeneratableSchemaComponent(dataElement: dataElement);
     }
     final subEnums =
         SchemaEnumGenerator().generateRecursively(dataElement).subs;
 
     // ignore: avoid_function_literals_in_foreach_calls
-    subEnums.forEach((element) => Log.debug(
-        '${element.fileName} - ${element.dataElement.type} - ${element.dataElement.isEnumerated}'));
     for (var subComponent in subEnums) {
       registerGeneratedEnumComponent(subComponent);
     }
