@@ -11,10 +11,6 @@ import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:test/test.dart';
 
-// import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
-// import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
-// import 'package:fantom/src/generator/utils/string_utils.dart';
-
 void main() {
   group('RequestBodyClassGenerator: ', () {
     late RequestBodyClassGenerator requestBodyClassGenerator;
@@ -107,7 +103,7 @@ class FantomEqualityModel extends Equatable {
   String toString() => 'FantomEqualityModel($value)';
 }
 
-// ignore_for_file: prefer_initializing_formals, prefer_null_aware_operators, prefer_if_null_operators, unnecessary_non_null_assertion
+// ignore_for_file: unnecessary_non_null_assertion
 
 ''';
 

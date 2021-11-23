@@ -172,7 +172,8 @@ class SchemaClassGenerator {
                 'required ',
               'this.',
               property.name,
-              if (property.item.hasDefaultValue)
+              if (property.item.hasDefaultValue &&
+                  property.item.defaultValue!.value != null)
                 [
                   ' = ',
                   sdvg.generate(property.item),
