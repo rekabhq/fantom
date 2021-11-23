@@ -5,6 +5,9 @@ import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_enum_generator.dart';
+import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
+import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
+import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -107,139 +110,136 @@ class FantomEqualityModel extends Equatable {
 
 ''';
 
-        // final a = ObjectDataElement(
-        //   name: 'Sugar',
-        //   isNullable: true,
-        //   properties: [
-        //     ObjectProperty(
-        //       name: 'id',
-        //       item: IntegerDataElement(
-        //         name: 'SugarId',
-        //         defaultValue: DefaultValue(value: 50),
-        //       ),
-        //       isRequired: false,
-        //     ),
-        //     ObjectProperty(
-        //       name: 'amount',
-        //       item: NumberDataElement(
-        //         name: 'SugarAmount',
-        //         isFloat: true,
-        //         isNullable: true,
-        //       ),
-        //       isRequired: true,
-        //     ),
-        //   ],
-        //   defaultValue: DefaultValue(
-        //     value: <String, dynamic>{
-        //       'id': 1000,
-        //       'amount': 10.5,
-        //     },
-        //   ),
-        // );
-        // content += SchemaClassGenerator().generateClass(
-        //   a,
-        //   generateJson: true,
-        // );
-        // final b = ObjectDataElement(
-        //   name: 'Lollipop',
-        //   isNullable: true,
-        //   defaultValue: DefaultValue(value: {
-        //     'count': 10000,
-        //     'sugar': {
-        //       'id': 156,
-        //       'amount': 10.5,
-        //     }
-        //   }),
-        //   properties: [
-        //     ObjectProperty(
-        //       name: 'id',
-        //       item: IntegerDataElement(
-        //         name: 'LollipopId',
-        //         defaultValue: DefaultValue(value: 100),
-        //       ),
-        //       isRequired: false,
-        //     ),
-        //     ObjectProperty(
-        //       name: 'count',
-        //       item: IntegerDataElement(
-        //         name: 'LollipopCount',
-        //       ),
-        //       isRequired: false,
-        //     ),
-        //     ObjectProperty(
-        //       name: 'sugar',
-        //       item: a,
-        //       isRequired: false,
-        //     ),
-        //   ],
-        // );
-        // content += SchemaClassGenerator().generateClass(
-        //   b,
-        //   generateJson: true,
-        //   inlineJson: true,
-        //   additionalCode: [
-        //     [
-        //       'final toJsonApplication = ',
-        //       SchemaToJsonGenerator().generateApplication(b),
-        //       ';',
-        //     ].joinParts(),
-        //     SchemaToJsonGenerator().generateMethod(
-        //       b,
-        //       name: 'toJsonMethod',
-        //       isStatic: true,
-        //     ),
-        //     [
-        //       'final fromJsonApplication = ',
-        //       SchemaFromJsonGenerator().generateApplication(b),
-        //       ';',
-        //     ].joinParts(),
-        //     SchemaFromJsonGenerator().generateMethod(
-        //       b,
-        //       name: 'fromJsonMethod',
-        //       isStatic: true,
-        //     ),
-        //     [
-        //       'final toJsonApplicationInline = ',
-        //       SchemaToJsonGenerator().generateApplication(
-        //         b,
-        //         inline: true,
-        //       ),
-        //       ';',
-        //     ].joinParts(),
-        //     SchemaToJsonGenerator().generateMethod(
-        //       b,
-        //       name: 'toJsonMethodInline',
-        //       isStatic: true,
-        //       inline: true,
-        //     ),
-        //     [
-        //       'final fromJsonApplicationInline = ',
-        //       SchemaFromJsonGenerator().generateApplication(
-        //         b,
-        //         inline: true,
-        //       ),
-        //       ';',
-        //     ].joinParts(),
-        //     SchemaFromJsonGenerator().generateMethod(
-        //       b,
-        //       name: 'fromJsonMethodInline',
-        //       isStatic: true,
-        //       inline: true,
-        //     ),
-        //   ].joinMethods(),
-        // );
-        // final c = ObjectDataElement(
-        //   name: 'Ginger',
-        //   properties: [
-        //     ObjectProperty(
-        //       name: 'lollipop',
-        //       item: b,
-        //       isRequired: false,
-        //     ),
-        //   ],
-        // );
-        // content += '\n\n';
-        // content += SchemaClassGenerator().generateClass(c);
+        final a = ObjectDataElement(
+          name: 'Sugar',
+          isNullable: true,
+          properties: [
+            ObjectProperty(
+              name: 'id',
+              item: IntegerDataElement(
+                isNullable: false,
+                name: 'SugarId',
+                defaultValue: DefaultValue(value: 50),
+              ),
+            ),
+            ObjectProperty(
+              name: 'amount',
+              item: NumberDataElement(
+                name: 'SugarAmount',
+                isFloat: true,
+                isNullable: true,
+              ),
+            ),
+          ],
+          defaultValue: DefaultValue(
+            value: <String, dynamic>{
+              'id': 1000,
+              'amount': 10.5,
+            },
+          ),
+        );
+        content += SchemaClassGenerator().generateCode(
+          a,
+          generateJson: true,
+        );
+        final b = ObjectDataElement(
+          name: 'Lollipop',
+          isNullable: true,
+          defaultValue: DefaultValue(value: {
+            'count': 10000,
+            'sugar': {
+              'id': 156,
+              'amount': 10.5,
+            }
+          }),
+          properties: [
+            ObjectProperty(
+              name: 'id',
+              item: IntegerDataElement(
+                name: 'LollipopId',
+                defaultValue: DefaultValue(value: 100),
+                isNullable: true,
+              ),
+            ),
+            ObjectProperty(
+              name: 'count',
+              item: IntegerDataElement(
+                name: 'LollipopCount',
+                isNullable: false,
+              ),
+            ),
+            ObjectProperty(
+              name: 'sugar',
+              item: a,
+            ),
+          ],
+        );
+        content += SchemaClassGenerator().generateCode(
+          b,
+          generateJson: true,
+          inlineJson: true,
+          additionalCode: [
+            [
+              'static final toJsonApplication = ',
+              SchemaToJsonGenerator().generateApplication(b),
+              ';',
+            ].joinParts(),
+            SchemaToJsonGenerator().generateMethod(
+              b,
+              name: 'toJsonMethod',
+              isStatic: true,
+            ),
+            [
+              'static final fromJsonApplication = ',
+              SchemaFromJsonGenerator().generateApplication(b),
+              ';',
+            ].joinParts(),
+            SchemaFromJsonGenerator().generateMethod(
+              b,
+              name: 'fromJsonMethod',
+              isStatic: true,
+            ),
+            [
+              'static final toJsonApplicationInline = ',
+              SchemaToJsonGenerator().generateApplication(
+                b,
+                inline: true,
+              ),
+              ';',
+            ].joinParts(),
+            SchemaToJsonGenerator().generateMethod(
+              b,
+              name: 'toJsonMethodInline',
+              isStatic: true,
+              inline: true,
+            ),
+            [
+              'static final fromJsonApplicationInline = ',
+              SchemaFromJsonGenerator().generateApplication(
+                b,
+                inline: true,
+              ),
+              ';',
+            ].joinParts(),
+            SchemaFromJsonGenerator().generateMethod(
+              b,
+              name: 'fromJsonMethodInline',
+              isStatic: true,
+              inline: true,
+            ),
+          ].joinMethods(),
+        );
+        final c = ObjectDataElement(
+          name: 'Ginger',
+          properties: [
+            ObjectProperty(
+              name: 'lollipop',
+              item: b,
+            ),
+          ],
+        );
+        content += '\n\n';
+        content += SchemaClassGenerator().generateCode(c);
 
         await outputFile.writeAsString(content);
       },
