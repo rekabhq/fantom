@@ -65,7 +65,7 @@ class SchemaEnumGenerator {
     final List<Object> values = element.enumeration!.values;
     final length = values.length;
     final enumName = element.enumName;
-    final type = element.rawType;
+    final typeNN = element.rawTypeNN;
     final svg = SchemaValueGenerator();
     final serNames = [
       for (var index = 0; index < length; index++) 'item$index',
@@ -92,7 +92,7 @@ class SchemaEnumGenerator {
         'extension ${enumName}Ext on $enumName {',
         // serialize:
         [
-          '$type serialize() {',
+          '$typeNN serialize() {',
           'for (var index = 0; index < ${enumName}Ext.items.length; index++) {',
           'if($enumName.values[index] == this) {',
           'return ${enumName}Ext.items[index];',
@@ -103,7 +103,7 @@ class SchemaEnumGenerator {
         ].joinLines(),
         // deserialize:
         [
-          'static $enumName deserialize(final $type item) {',
+          'static $enumName deserialize(final $typeNN item) {',
           'for (var index = 0; index < ${enumName}Ext.items.length; index++) {',
           'if(fantomEquals(${enumName}Ext.items[index], item)) {',
           'return $enumName.values[index];',
@@ -116,7 +116,7 @@ class SchemaEnumGenerator {
         [
           for (var index = 0; index < length; index++)
             [
-              'static const $type ',
+              'static const $typeNN ',
               serNames[index],
               ' = ',
               svg.generate(
@@ -129,7 +129,7 @@ class SchemaEnumGenerator {
         ].joinLines(),
         // items:
         [
-          'static const List<$type> items = [',
+          'static const List<$typeNN> items = [',
           for (var index = 0; index < length; index++)
             [
               '${enumName}Ext.',

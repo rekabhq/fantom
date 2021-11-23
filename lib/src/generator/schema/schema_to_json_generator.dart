@@ -92,15 +92,28 @@ class SchemaToJsonGenerator {
   String _logic(
     final DataElement element,
     final String name,
-    final bool inline,
-  ) {
-    final isNullable = element.isNullable;
+    final bool inline, {
+    final bool ignoreTopEnum = false,
+    final bool ignoreTopNullability = false,
+  }) {
+    final isNullable = !ignoreTopNullability && element.isNullable;
     final fixedName = isNullable ? '$name!' : name;
 
     final String code;
-    if (element.isEnumerated) {
-      // ex. status.serialize()
-      code = '$fixedName.serialize()';
+    if (!ignoreTopEnum && element.isEnumerated) {
+      // ex. ((String value) => value)(status.serialize())
+      final typeNN = element.rawTypeNN;
+      code = [
+        '(($typeNN value) => ',
+        _logic(
+          element,
+          'value',
+          inline,
+          ignoreTopEnum: true,
+          ignoreTopNullability: true,
+        ),
+        ')($fixedName.serialize())',
+      ].joinParts();
     } else {
       code = element.match(
         boolean: (boolean) {

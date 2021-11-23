@@ -87,19 +87,27 @@ class SchemaFromJsonGenerator {
   String _logic(
     final DataElement element,
     final String name,
-    final bool inline,
-  ) {
-    final isNullable = element.isNullable;
+    final bool inline, {
+    final bool ignoreTopEnum = false,
+    final bool ignoreTopNullability = false,
+  }) {
+    final isNullable = !ignoreTopNullability && element.isNullable;
     final fixedName = isNullable ? '$name!' : name;
 
     final String code;
-    if (element.isEnumerated) {
-      // ex. StatusExt.deserialize(value)
+    if (!ignoreTopEnum && element.isEnumerated) {
+      // ex. StatusExt.deserialize(_logic(value))
       code = [
         element.enumName,
         'Ext.deserialize(',
-        fixedName,
-        ')',
+        _logic(
+          element,
+          fixedName,
+          inline,
+          ignoreTopEnum: true,
+          ignoreTopNullability: true,
+        ),
+        ',)',
       ].joinParts();
     } else {
       code = element.match(

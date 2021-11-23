@@ -103,7 +103,7 @@ class FantomEqualityModel extends Equatable {
   String toString() => 'FantomEqualityModel($value)';
 }
 
-// ignore_for_file: unnecessary_non_null_assertion
+// ignore_for_file: unnecessary_non_null_assertion, unnecessary_const, unused_local_variable
 
 ''';
 
