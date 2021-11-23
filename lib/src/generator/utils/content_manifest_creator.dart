@@ -216,6 +216,17 @@ class ContentManifestCreator {
           "return $parentClassName.$methodName($argName: jsonDeserializer(data));");
       buffer.writeln('}');
     }
+    if (content.keys.contains('any')) {
+      buffer.writeln('    // using */* content type');
+      final methodName = ReCase(_fixName('any')).camelCase;
+      final argName = methodName;
+      final dataElement = content['any']!;
+      final schemaFromGen = SchemaFromJsonGenerator();
+      final application = schemaFromGen.generateApplication(dataElement);
+      buffer.writeln('final jsonDeserializer =  $application;');
+      buffer.writeln(
+          "return $parentClassName.$methodName($argName: jsonDeserializer(data));");
+    }
     buffer.writeln(
         "throw Exception('could not create a $parentClassName from contenttype = \$contentType & data =\\n\$data\\n');");
     buffer.writeln('}');
