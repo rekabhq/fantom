@@ -58,7 +58,7 @@ class SchemaValueGenerator {
                   })
                   .toList()
                   .joinArgsFull();
-              return '<String, $sub>{$joined}';
+              return 'const <String, $sub>{$joined}';
             } else {
               // ex. User(name: 'john')
               // note: we have handled `null` value so no need for `User?`
@@ -89,17 +89,15 @@ class SchemaValueGenerator {
               }
 
               return [
-                '$name(',
+                'const $name(',
                 for (final key in fixedValues.keys)
                   [
                     '$key : ',
-                    if (propertiesMap[key]!.isConstructorOptional) 'Optional(',
                     // recursive call:
                     generate(
                       propertiesMap[key]!.item,
                       value: fixedValues[key],
                     ),
-                    if (propertiesMap[key]!.isConstructorOptional) ')',
                     ',',
                   ].joinParts(),
                 // if (object.format == ObjectDataElementFormat.mixed)
@@ -126,7 +124,8 @@ class SchemaValueGenerator {
                 .map((e) => generate(array.items, value: e))
                 .toList()
                 .joinArgsFull();
-            return '<$sub>' + (array.isUniqueItems ? '{$joined}' : '[$joined]');
+            return 'const <$sub>' +
+                (array.isUniqueItems ? '{$joined}' : '[$joined]');
           },
           integer: (integer) {
             // ex. "1"
@@ -167,6 +166,7 @@ class SchemaValueGenerator {
               return _string(value);
             } else if (format == StringDataElementFormat.date ||
                 format == StringDataElementFormat.dateTime) {
+              // todo: dateTime.parse is not constant value
               return 'DateTime.parse(${_string(value)})';
             } else {
               throw AssertionError();
@@ -203,7 +203,7 @@ class SchemaValueGenerator {
                 _untyped(e),
           )
           .joinArgsFull();
-      return '<Object?>[$joined]';
+      return 'const <Object?>[$joined]';
     } else if (value is Map<String, Object?>) {
       final joined = value.entries
           .map(
@@ -214,7 +214,7 @@ class SchemaValueGenerator {
             ].joinParts(),
           )
           .joinArgsFull();
-      return '<String, Object?>{$joined}';
+      return 'const <String, Object?>{$joined}';
     } else {
       throw AssertionError();
     }

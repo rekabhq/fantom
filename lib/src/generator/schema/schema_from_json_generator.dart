@@ -77,13 +77,10 @@ class SchemaFromJsonGenerator {
     final bool inline,
   ) {
     final name = property.name;
-    final isOptional = property.isConstructorOptional;
     final fixedName = "json['$name']";
     return [
       '$name: ',
-      if (isOptional) "json.containsKey('$name') ? Optional(",
       _logic(property.item, fixedName, inline),
-      if (isOptional) ') : null'
     ].joinParts();
   }
 

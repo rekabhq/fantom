@@ -114,7 +114,7 @@ class SchemaEnumGenerator {
         [
           for (var index = 0; index < length; index++)
             [
-              'static final $type ',
+              'static const $type ',
               serNames[index],
               ' = ',
               svg.generate(
@@ -127,7 +127,7 @@ class SchemaEnumGenerator {
         ].joinLines(),
         // items:
         [
-          'static final List<$type> items = [',
+          'static const List<$type> items = [',
           for (var index = 0; index < length; index++)
             [
               serNames[index],

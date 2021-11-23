@@ -1,6 +1,8 @@
 // todo: uie, sets ?
 bool deepJsonEquals(final Object? o1, final Object? o2) {
-  if (o1 == null && o2 == null) {
+  if (identical(o1, o2)) {
+    return true;
+  } else if (o1 == null && o2 == null) {
     return true;
   } else if (o1 is int && o2 is int) {
     return o1 == o2;

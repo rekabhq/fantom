@@ -148,9 +148,7 @@ class SchemaClassGenerator {
       for (final property in object.properties)
         [
           'final ',
-          if (property.isFieldOptional) 'Optional<',
           property.item.type,
-          if (property.isFieldOptional) '>?',
           ' ',
           property.name,
           ';',
@@ -165,36 +163,24 @@ class SchemaClassGenerator {
     } else {
       final sdvg = SchemaDefaultValueGenerator();
       return [
-        '$name ({',
+        'const $name ({',
         [
           for (final property in object.properties)
             [
-              if (property.isConstructorRequired) 'required ',
-              if (property.isConstructorOptional) 'Optional<',
-              property.item.type,
-              if (property.isConstructorOptional) '>?',
-              ' ',
-              property.name,
-              ',',
-            ].joinParts(),
-        ].joinLines(),
-        '}) : ',
-        [
-          for (final property in object.properties)
-            [
-              property.name,
-              ' = ',
+              if (property.item.isNotNullable &&
+                  property.item.hasNotDefaultValue)
+                'required ',
+              'this.',
               property.name,
               if (property.item.hasDefaultValue)
                 [
-                  ' != null ? ',
-                  property.name,
-                  '.value : ',
-                  sdvg.generateOrNull(property.item)!,
+                  ' = ',
+                  sdvg.generate(property.item),
                 ].joinParts(),
               ',',
             ].joinParts(),
-        ].joinLines().replaceFromLast(',', ';'),
+        ].joinLines(),
+        '});',
       ].joinLines();
     }
   }

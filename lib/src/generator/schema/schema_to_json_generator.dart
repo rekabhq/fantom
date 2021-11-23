@@ -83,12 +83,9 @@ class SchemaToJsonGenerator {
       if (prefixCall) 'value.',
       name,
     ].joinParts();
-    final isOptional = property.isFieldOptional;
-    final fixedName = isOptional ? '$nameCall!.value' : nameCall;
     return [
-      if (isOptional) 'if ($nameCall != null) ',
       "'$name' : ",
-      _logic(property.item, fixedName, inline),
+      _logic(property.item, nameCall, inline),
     ].joinParts();
   }
 
