@@ -41,6 +41,8 @@ class Enumeration with EquatableMixin {
 /// dart object property.
 ///
 /// ex. required String? id;
+///
+/// ALL PROPERTIES ALL REQUIRED
 class ObjectProperty with EquatableMixin {
   /// property name
   final String name;
@@ -48,25 +50,19 @@ class ObjectProperty with EquatableMixin {
   /// element type
   final DataElement item;
 
-  /// if property is required
-  final bool isRequired;
-
   const ObjectProperty({
     required this.name,
     required this.item,
-    this.isRequired = false,
   });
 
   @override
   List<Object?> get props => [
         name,
         item,
-        isRequired,
       ];
 
   @override
-  String toString() => 'ObjectProperty{name: $name, item: $item, '
-      'isRequired: $isRequired}';
+  String toString() => 'ObjectProperty{name: $name, item: $item}';
 }
 
 /// format of [ObjectDataElement].
@@ -693,27 +689,6 @@ extension DataElementEnumNameExt on DataElement {
       return name;
     }
   }
-}
-
-/// extensions on [ObjectProperty]
-extension ObjectPropertyExt on ObjectProperty {
-  /// is not required.
-  bool get isNotRequired => !isRequired;
-
-  /// is field optional.
-  bool get isFieldOptional => isNotRequired && item.hasNotDefaultValue;
-
-  /// is not field optional.
-  bool get isNotFieldOptional => !isFieldOptional;
-
-  /// is constructor optional.
-  bool get isConstructorOptional => isNotRequired || item.hasDefaultValue;
-
-  /// is not constructor optional.
-  bool get isNotConstructorOptional => !isConstructorOptional;
-
-  /// is constructor required.
-  bool get isConstructorRequired => isRequired && item.isNotNullable;
 }
 
 /// extensions on [ObjectDataElement].
