@@ -90,14 +90,20 @@ class SchemaFromJsonGenerator {
   String _logic(
     final DataElement element,
     final String name,
-    final bool inline,
-  ) {
-    if (element.isEnumerated) {
-      // ex. StatusExt.deserialize(value)
+    final bool inline, {
+    final bool ignoreTopEnum = false,
+  }) {
+    if (!ignoreTopEnum && element.isEnumerated) {
+      // ex. StatusExt.deserialize(_logic(value))
       return [
         element.enumName,
         'Ext.deserialize(',
-        name,
+        _logic(
+          element,
+          name,
+          inline,
+          ignoreTopEnum: true,
+        ),
         ')',
       ].joinParts();
     } else {
