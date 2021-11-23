@@ -75,6 +75,7 @@ class FileWriter {
     }
 
     // writing utility files to utils dir
+    final allUtilityFiles = await getUtilityFiles();
     for (var utilFile in allUtilityFiles) {
       await _createGeneratableFileIn(
         utilFile,

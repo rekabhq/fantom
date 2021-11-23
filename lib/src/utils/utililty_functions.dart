@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
@@ -73,3 +74,14 @@ String codeSectionSeparator([String? section]) =>
     '\n\n// ######################################'
     '###${section == null ? '' : ' $section '}######'
     '###################################\n\n';
+
+Future<File> getSourceFileAsAsset(String path) async {
+  final splitted = path.split('lib/');
+  if (splitted.length > 1) {
+    path = splitted.last;
+  }
+  final uri = await Isolate.resolvePackageUri(
+      Uri(scheme: 'package', path: 'fantom/$path'));
+  final filePath = uri!.toFilePath(windows: Platform.isWindows);
+  return File(filePath);
+}

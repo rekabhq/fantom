@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/utils/process_manager.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:pubspec_yaml/pubspec_yaml.dart' as p;
 import 'package:plain_optional/plain_optional.dart' as o;
 import 'package:pubspec_yaml/pubspec_yaml.dart';
@@ -110,8 +111,9 @@ Future createDartPackage(FantomPackageInfo packageInfo) async {
   pubspecFile.writeAsString(newPubspec.toYamlString());
   // rewrite analysis file
   final analysisOptionsFile = File('$packagePath/analysis_options.yaml');
-  final overrideAnalysisOptionsFile =
-      File('lib/src/writer/analysis_options_override.yaml');
+  final overrideAnalysisOptionsFile = await getSourceFileAsAsset(
+    'lib/src/writer/analysis_options_override.yaml',
+  );
   final overrideContent = await overrideAnalysisOptionsFile.readAsString();
   await analysisOptionsFile.writeAsString(overrideContent);
 }
