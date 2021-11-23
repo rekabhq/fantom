@@ -152,6 +152,8 @@ class ApiMethodGenerator {
 
     buffer.writeln(_generateResponseContentTypeParameters());
 
+    buffer.writeln(_generateExtraHeadersParameter());
+
     buffer.writeln(_generateEndMethodSyntax());
 
     buffer.writeln(_generateContentTypeValue(
@@ -209,6 +211,9 @@ class ApiMethodGenerator {
       ),
     );
 
+    // add extra headers
+    buffer.writeln(_addExtraHeaderParameters());
+
     // 9. generate request
     // final response = await dio.request(
     //  parsedPath,
@@ -250,6 +255,9 @@ class ApiMethodGenerator {
 
   String _generateResponseContentTypeParameters() =>
       'String? $responseContentTypeVariable,';
+
+  String _generateExtraHeadersParameter() =>
+      'Map<String,String>? $extraHeadersVariableName,';
 
   String _generateMethodSyntax(String methodName, String returnType) =>
       useResult
@@ -614,6 +622,18 @@ class ApiMethodGenerator {
     } else {
       buffer.writeln('return $responseVarName;');
     }
+
+    return buffer.toString();
+  }
+
+  String _addExtraHeaderParameters() {
+    final buffer = StringBuffer();
+    buffer.writeln('if ($extraHeadersVariableName != null){');
+    buffer.writeln('   for (var header in $extraHeadersVariableName.entries){');
+    buffer.writeln(
+        '$optionsVarName.headers?.addAll({header.key : header.value});');
+    buffer.writeln('   }');
+    buffer.writeln('}');
 
     return buffer.toString();
   }

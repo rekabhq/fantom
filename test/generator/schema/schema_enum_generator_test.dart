@@ -37,7 +37,6 @@ void main() {
               isNullable: true,
               name: 'MyName2',
               enumeration: Enumeration(values: [
-                null,
                 false,
               ]),
             ),
@@ -56,7 +55,6 @@ void main() {
                 item: DataElement.integer(
                   name: 'UserId',
                 ),
-                isRequired: true,
               ),
             ],
             enumeration: Enumeration(values: [
@@ -87,11 +85,9 @@ void main() {
                 item: DataElement.integer(
                   name: 'UserId',
                 ),
-                isRequired: true,
               ),
             ],
             enumeration: Enumeration(values: [
-              null,
               {
                 'id': 200,
               },
@@ -134,7 +130,6 @@ void main() {
               ),
               name: 'MyName4',
               enumeration: Enumeration(values: [
-                null,
                 [3, 4, 5],
               ]),
             ),
@@ -163,7 +158,6 @@ void main() {
               isNullable: true,
               name: 'MyName6',
               enumeration: Enumeration(values: [
-                null,
                 20,
               ]),
             ),
@@ -194,7 +188,6 @@ void main() {
               isNullable: true,
               name: 'MyName8',
               enumeration: Enumeration(values: [
-                null,
                 20,
                 13.506,
               ]),
@@ -224,7 +217,6 @@ void main() {
               isNullable: true,
               name: 'MyName10',
               enumeration: Enumeration(values: [
-                null,
                 'def',
               ]),
             ),

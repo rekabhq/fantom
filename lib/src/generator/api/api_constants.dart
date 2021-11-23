@@ -21,6 +21,7 @@ const toStringMethod = 'toString()';
 const requiredType = 'required';
 
 const contentTypeVariable = 'contentType';
+const extraHeadersVariableName = 'extraHeaders';
 const responseContentTypeVariable = 'responseContentType';
 const responseVarName = 'response';
 const bodyVarName = 'body';
