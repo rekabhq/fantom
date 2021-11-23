@@ -1,7 +1,7 @@
 import 'package:fantom/src/generator/schema_optional/equality.dart';
 import 'package:fantom/src/generator/schema_optional/schema_enum_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/mediator/model/schema_optional/schema_model.dart';
 
 class SchemaValueGenerator {
   const SchemaValueGenerator();

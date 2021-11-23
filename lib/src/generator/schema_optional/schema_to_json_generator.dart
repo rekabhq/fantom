@@ -1,5 +1,5 @@
 import 'package:fantom/src/generator/utils/string_utils.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/mediator/model/schema_optional/schema_model.dart';
 
 class SchemaToJsonGenerator {
   const SchemaToJsonGenerator();

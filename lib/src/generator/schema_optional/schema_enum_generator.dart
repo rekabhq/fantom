@@ -2,55 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/schema_optional/schema_value_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
-import 'package:recase/recase.dart';
-
-extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
-  GeneratedEnumComponent generate(final DataElement element) {
-    return GeneratedEnumComponent(
-      dataElement: element,
-      fileContent: generateCode(element),
-      fileName: '${ReCase(element.enumName).snakeCase}.dart',
-    );
-  }
-
-  GeneratedEnumsRecursively generateRecursively(
-    final DataElement element,
-  ) {
-    return GeneratedEnumsRecursively(
-      node: element.isEnumerated ? generate(element) : null,
-      subs: _generateRecursively(
-        element,
-        generateSelf: false,
-      ),
-    );
-  }
-
-  List<GeneratedEnumComponent> _generateRecursively(
-    final DataElement element, {
-    final bool generateSelf = true,
-  }) {
-    return [
-      if (generateSelf && element.isEnumerated) generate(element),
-      ...element.match(
-        boolean: (boolean) => [],
-        object: (object) => [
-          for (final property in object.properties)
-            ..._generateRecursively(property.item),
-          if (object.isAdditionalPropertiesAllowed)
-            ..._generateRecursively(object.additionalProperties!),
-        ],
-        array: (array) => [
-          ..._generateRecursively(array.items),
-        ],
-        integer: (integer) => [],
-        number: (number) => [],
-        string: (string) => [],
-        untyped: (untyped) => [],
-      ),
-    ];
-  }
-}
+import 'package:fantom/src/mediator/model/schema_optional/schema_model.dart';
 
 class SchemaEnumGenerator {
   const SchemaEnumGenerator();
