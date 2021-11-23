@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
+import 'package:fantom/src/writer/generatbale_file.dart';
 import 'package:yaml/yaml.dart';
 
 /// checks [path] to file and if a file exists there a it will be returned otherwise
@@ -84,4 +85,15 @@ Future<File> getSourceFileAsAsset(String path) async {
       Uri(scheme: 'package', path: 'fantom/$path'));
   final filePath = uri!.toFilePath(windows: Platform.isWindows);
   return File(filePath);
+}
+
+Future<GeneratableFile> createGeneratableFileFromSourceFile({
+  required String fileName,
+  required String relativePath,
+}) async {
+  final file = await getSourceFileAsAsset(relativePath);
+  return GeneratableFile.fromFile(
+    file,
+    fileName: fileName,
+  );
 }
