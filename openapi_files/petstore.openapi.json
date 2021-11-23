@@ -1076,6 +1076,30 @@
           "id"
         ]
       },
+      "ObjEnumerated": {
+        "type": "object",
+        "nullable": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "enum": [
+          {
+            "id": 100
+          },
+          {
+            "id": 200
+          },
+          {
+            "id": 300
+          }
+        ]
+      },
       "ObjNullable": {
         "type": "object",
         "nullable": true,
@@ -1087,6 +1111,30 @@
         },
         "required": [
           "id"
+        ]
+      },
+      "ObjEnumeratedNullable": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": false
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "enum": [
+          {
+            "id": 100
+          },
+          {
+            "id": 200
+          },
+          {
+            "id": 300
+          }
         ]
       },
       "ObjDefault": {
@@ -1147,6 +1195,8 @@
                 "photoUrls",
                 "o1",
                 "o2",
+                "o1e",
+                "o2e",
                 "o7",
                 "o8",
                 "p1",
@@ -1212,6 +1262,12 @@
                 },
                 "o2": {
                   "$ref": "#/components/schemas/ObjNullable"
+                },
+                "o1e": {
+                  "$ref": "#/components/schemas/ObjEnumerated"
+                },
+                "o2e": {
+                  "$ref": "#/components/schemas/ObjEnumeratedNullable"
                 },
                 "o3": {
                   "$ref": "#/components/schemas/ObjDefault"

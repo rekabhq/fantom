@@ -45,9 +45,9 @@ class SchemaEnumGenerator {
         // serialize:
         [
           '$type serialize() {',
-          'for (var index = 0; index < items.length; index++) {',
+          'for (var index = 0; index < ${enumName}Ext.items.length; index++) {',
           'if($enumName.values[index] == this) {',
-          'return items[index];',
+          'return ${enumName}Ext.items[index];',
           '}',
           '}',
           "throw AssertionError('not found');",
@@ -56,8 +56,8 @@ class SchemaEnumGenerator {
         // deserialize:
         [
           'static $enumName deserialize(final $type item) {',
-          'for (var index = 0; index < items.length; index++) {',
-          'if(fantomEquals(items[index], item)) {',
+          'for (var index = 0; index < ${enumName}Ext.items.length; index++) {',
+          'if(fantomEquals(${enumName}Ext.items[index], item)) {',
           'return $enumName.values[index];',
           '}',
           '}',
@@ -84,6 +84,7 @@ class SchemaEnumGenerator {
           'static final List<$type> items = [',
           for (var index = 0; index < length; index++)
             [
+              '${enumName}Ext.',
               serNames[index],
               ',',
             ].joinParts(),
