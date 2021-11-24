@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/logger.dart';
-import 'package:fantom/src/utils/utililty_functions.dart';
 
 class FileDownloader {
   final String fileUrl;
@@ -11,7 +10,7 @@ class FileDownloader {
 
   FileDownloader({required this.fileUrl, required this.savePath});
 
-  Future<Map<String, dynamic>> download() async {
+  Future<File> download() async {
     String? content;
 
     // trying to download file from [fileUrl]
@@ -21,26 +20,35 @@ class FileDownloader {
         validateStatus: (status) => (status ?? 400) < 400,
       );
       final dio = Dio(options);
-      final response = await dio.get(fileUrl);
-      content = response.data.toString();
+      final response = await dio.get(
+        fileUrl,
+        options: Options(
+          responseType: ResponseType.plain,
+        ),
+      );
+      content = response.data;
+      Log.debug(content);
     } catch (e) {
       Log.error(e.toString());
       throw CouldNotDownloadFileException(fileUrl);
     }
 
     // trying to save file in savePath
-
+    File? openapiFile;
     if (savePath != null) {
       Log.info('Saving file in $savePath');
       try {
-        final openapiFile = File(savePath!);
-        await openapiFile.writeAsString(content);
+        openapiFile = File(savePath!);
+        if (!openapiFile.existsSync()) {
+          await openapiFile.create(recursive: true);
+        }
+        await openapiFile.writeAsString(content!);
       } catch (e) {
         Log.error(e.toString());
         throw CouldNotSaveFileException(savePath!);
       }
     }
 
-    return readJsonOrYaml(content);
+    return openapiFile!;
   }
 }

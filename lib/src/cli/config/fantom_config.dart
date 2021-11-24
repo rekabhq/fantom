@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/cli/config/exclude_models.dart';
+import 'package:fantom/src/cli/downloader.dart';
 import 'package:fantom/src/cli/options_values.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:io/io.dart';
 
@@ -33,14 +35,23 @@ class FantomConfig {
   final ExcludedPaths excludedPaths;
 
   static Future<FantomConfig> fromArgResults(
-    String openapiOrConfigFilePath,
+    String openapiOrConfigFile,
     ArgResults argResults,
   ) async {
-    var error = IncorrectFilePathArgument(openapiOrConfigFilePath);
-    var file = await getFileInPath(
-      path: openapiOrConfigFilePath,
-      notFoundErrorMessage: error.message,
-    );
+    var error = IncorrectFilePathArgument(openapiOrConfigFile);
+    late File file;
+    if (openapiOrConfigFile.isValidUrl) {
+      final downloader = FileDownloader(
+        fileUrl: openapiOrConfigFile,
+        savePath: argResults[GenerateCommand.optionDownloadPath],
+      );
+      file = await downloader.download();
+    } else {
+      file = await getFileInPath(
+        path: openapiOrConfigFile,
+        notFoundErrorMessage: error.message,
+      );
+    }
     if (await file.isOpenApiFile) {
       String? outputPackagePath;
       String? outputPackageName;
@@ -96,7 +107,21 @@ class FantomConfig {
         ExitCode.noInput.code,
       );
     }
-    var path = fantomConfig.getValue('openapi');
+
+    var openapi = fantomConfig.getValue('openapi').toString();
+    late String path;
+    String? downloadPath =
+        fantomConfig.getValue(GenerateCommand.optionDownloadPath);
+    if (openapi.isValidUrl) {
+      final url = openapi;
+      final downloader = FileDownloader(fileUrl: url, savePath: downloadPath);
+      final openapiFile = await downloader.download();
+      path = openapiFile.path;
+      Log.debug(path);
+      Log.debug(openapiFile.lengthSync());
+    } else {
+      path = openapi;
+    }
     String? outputPackagePath =
         fantomConfig.getValue(GenerateCommand.optionPackage);
     String? outputModelsPath =

@@ -7,6 +7,8 @@ import 'package:fantom/src/utils/extensions.dart';
 import 'package:fantom/src/writer/generatbale_file.dart';
 import 'package:yaml/yaml.dart';
 
+import 'logger.dart';
+
 /// checks [path] to file and if a file exists there a it will be returned otherwise
 /// a [FantomException] with message [notFoundErrorMessage] will be thrown
 Future<File> getFileInPath(
@@ -50,10 +52,11 @@ Future<Directory> getDirectoryInPath(
 ///
 /// if the provided file is not json or yaml or the content is not valid an [UnsupportedFileException] will be thrown
 Future<Map<String, dynamic>> readJsonOrYamlFile(File file) async {
-  var fileContent = await file.readAsString();
   try {
+    var fileContent = await file.readAsString();
     return _readJsonOrYaml(fileContent);
   } catch (e, _) {
+    Log.debug(e);
     throw UnsupportedFileException(
       'Unsupported File: make sure the file content is in correct json or yaml format',
       file.path,
@@ -70,6 +73,7 @@ Map<String, dynamic> readJsonOrYaml(String content) {
 }
 
 Map<String, dynamic> _readJsonOrYaml(String content) {
+  Log.debug(content.substring(0, 40));
   if (content.startsWith('{')) {
     var json = jsonDecode(content);
     return json;

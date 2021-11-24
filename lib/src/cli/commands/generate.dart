@@ -49,6 +49,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   static const String optionModelDir = 'model-dir';
   static const String optionApiDir = 'api-dir';
   static const String optionMethodRetuenType = 'method-return-type';
+  static const String optionDownloadPath = 'download-path';
 
   static const String abbrDir = 'd';
   static const String abbrPackage = 'p';
@@ -56,6 +57,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   static const String abbrModelsDir = 'm';
   static const String abbrApiDir = 'a';
   static const String abbrMethodReturnType = 'r';
+  static const String abbrDownloadPath = 'e';
 
   static GenerateCommand createDefaultInstance() => GenerateCommand(
         currentDirectory: kCurrentDirectory,
@@ -102,6 +104,12 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
         MethodReturnType.simple:
             'return type of api methods will be Future<DATA>',
       },
+    );
+    argParser.addOption(
+      optionDownloadPath,
+      abbr: abbrDownloadPath,
+      help: 'where download openapi file will be saved. only works when '
+          'instead of a local path to openapi file a url is provided',
     );
   }
 

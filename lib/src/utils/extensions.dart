@@ -66,7 +66,7 @@ extension StringExtentions on String {
     return result;
   }
 
-  bool get isValidUrl => Uri.parse(this).isAbsolute;
+  bool get isValidUrl => Uri.parse(this).isAbsolute && startsWith('http');
 }
 
 extension DirectoryExtensions on Directory {
