@@ -41,9 +41,14 @@ class FantomConfig {
     var error = IncorrectFilePathArgument(openapiOrConfigFile);
     late File file;
     if (openapiOrConfigFile.isValidUrl) {
+      final String? downloadPath =
+          argResults[GenerateCommand.optionDownloadPath];
+      if (downloadPath?.isNullOrBlank == true) {
+        throw Exception(OpenapiFileDownloadPathRequiredException());
+      }
       final downloader = FileDownloader(
         fileUrl: openapiOrConfigFile,
-        savePath: argResults[GenerateCommand.optionDownloadPath],
+        savePath: downloadPath!,
       );
       file = await downloader.download();
     } else {
@@ -112,9 +117,12 @@ class FantomConfig {
     late String path;
     String? downloadPath =
         fantomConfig.getValue(GenerateCommand.optionDownloadPath);
+    if (downloadPath?.isNullOrBlank == true) {
+      throw Exception(OpenapiFileDownloadPathRequiredException());
+    }
     if (openapi.isValidUrl) {
       final url = openapi;
-      final downloader = FileDownloader(fileUrl: url, savePath: downloadPath);
+      final downloader = FileDownloader(fileUrl: url, savePath: downloadPath!);
       final openapiFile = await downloader.download();
       path = openapiFile.path;
       Log.debug(path);

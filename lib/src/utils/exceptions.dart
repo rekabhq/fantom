@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/utils/constants.dart';
 import 'package:io/io.dart' as io;
@@ -204,6 +205,15 @@ class CouldNotSaveFileException extends FantomException {
   CouldNotSaveFileException(String saveDir)
       : super(
           'Could not save file in $saveDir',
+          io.ExitCode.ioError.code,
+        );
+}
+
+class OpenapiFileDownloadPathRequiredException extends FantomException {
+  OpenapiFileDownloadPathRequiredException()
+      : super(
+          'you need to provide [${GenerateCommand.optionDownloadPath} | ${GenerateCommand.abbrDownloadPath} ] '
+          'so openapi file from provided url could be downloaded and saved',
           io.ExitCode.ioError.code,
         );
 }

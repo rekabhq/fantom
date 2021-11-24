@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,7 +7,7 @@ import 'package:fantom/src/utils/logger.dart';
 
 class FileDownloader {
   final String fileUrl;
-  final String? savePath;
+  final String savePath;
 
   FileDownloader({required this.fileUrl, required this.savePath});
 
@@ -26,8 +27,8 @@ class FileDownloader {
           responseType: ResponseType.plain,
         ),
       );
-      content = response.data;
-      Log.debug(content);
+      final encoder = JsonEncoder.withIndent("    ");
+      content = encoder.convert(jsonDecode(response.data));
     } catch (e) {
       Log.error(e.toString());
       throw CouldNotDownloadFileException(fileUrl);
@@ -35,20 +36,18 @@ class FileDownloader {
 
     // trying to save file in savePath
     File? openapiFile;
-    if (savePath != null) {
-      Log.info('Saving file in $savePath');
-      try {
-        openapiFile = File(savePath!);
-        if (!openapiFile.existsSync()) {
-          await openapiFile.create(recursive: true);
-        }
-        await openapiFile.writeAsString(content!);
-      } catch (e) {
-        Log.error(e.toString());
-        throw CouldNotSaveFileException(savePath!);
+    Log.info('Saving file in $savePath');
+    try {
+      openapiFile = File(savePath);
+      if (!openapiFile.existsSync()) {
+        await openapiFile.create(recursive: true);
       }
+      await openapiFile.writeAsString(content);
+    } catch (e) {
+      Log.error(e.toString());
+      throw CouldNotSaveFileException(savePath);
     }
 
-    return openapiFile!;
+    return openapiFile;
   }
 }
