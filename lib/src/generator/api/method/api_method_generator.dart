@@ -629,6 +629,11 @@ class ApiMethodGenerator {
   String _addExtraHeaderParameters() {
     final buffer = StringBuffer();
     buffer.writeln('if ($extraHeadersVariableName != null){');
+    buffer.write('''
+            if ($optionsVarName.headers == null) {
+          $optionsVarName.headers = {};
+        }
+    ''');
     buffer.writeln('   for (var header in $extraHeadersVariableName.entries){');
     buffer.writeln(
         '$optionsVarName.headers?.addAll({header.key : header.value});');
