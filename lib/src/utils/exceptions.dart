@@ -74,6 +74,16 @@ class UnsupportedFileException extends FantomException {
         );
 }
 
+class UnsupportedJsonOrYamlException extends FantomException {
+  UnsupportedJsonOrYamlException()
+      : super(
+          'Unsupported Json or Yaml \n '
+          'Please make sure if you are providing an openapi-file or a fantom-config file in json or yaml format\n'
+          'it is in the correct format',
+          io.ExitCode.osFile.code,
+        );
+}
+
 class GenerationConfigNotProvidedException extends FantomException {
   GenerationConfigNotProvidedException()
       : super(
@@ -179,6 +189,22 @@ class InvalidExcludedComponent extends FantomException {
           
           ''',
           io.ExitCode.config.code,
+        );
+}
+
+class CouldNotDownloadFileException extends FantomException {
+  CouldNotDownloadFileException(String fileUrl)
+      : super(
+          'Could not download the file from $fileUrl',
+          io.ExitCode.software.code,
+        );
+}
+
+class CouldNotSaveFileException extends FantomException {
+  CouldNotSaveFileException(String saveDir)
+      : super(
+          'Could not save file in $saveDir',
+          io.ExitCode.ioError.code,
         );
 }
 

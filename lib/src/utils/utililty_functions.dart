@@ -52,19 +52,31 @@ Future<Directory> getDirectoryInPath(
 Future<Map<String, dynamic>> readJsonOrYamlFile(File file) async {
   var fileContent = await file.readAsString();
   try {
-    if (fileContent.startsWith('{')) {
-      var json = jsonDecode(fileContent);
-      return json;
-    } else {
-      YamlMap yaml = loadYaml(fileContent);
-      var map = jsonDecode(jsonEncode(yaml)) as Map<String, dynamic>;
-      return map;
-    }
+    return _readJsonOrYaml(fileContent);
   } catch (e, _) {
     throw UnsupportedFileException(
       'Unsupported File: make sure the file content is in correct json or yaml format',
       file.path,
     );
+  }
+}
+
+Map<String, dynamic> readJsonOrYaml(String content) {
+  try {
+    return _readJsonOrYaml(content);
+  } catch (e, _) {
+    throw UnsupportedJsonOrYamlException();
+  }
+}
+
+Map<String, dynamic> _readJsonOrYaml(String content) {
+  if (content.startsWith('{')) {
+    var json = jsonDecode(content);
+    return json;
+  } else {
+    YamlMap yaml = loadYaml(content);
+    var map = jsonDecode(jsonEncode(yaml)) as Map<String, dynamic>;
+    return map;
   }
 }
 
