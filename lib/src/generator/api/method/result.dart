@@ -63,13 +63,6 @@ extension FutureResultExt on Future<Response> {
     try {
       final response = await this;
       return Result.success(builder(response));
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.response &&
-          e.response != null &&
-          parserResponseErrors) {
-        return Result.success(builder(e.response!));
-      }
-      return Result.error(e);
     } on Exception catch (e) {
       return Result.error(e);
     }
