@@ -4,7 +4,7 @@ typedef ResultBuilder<T> = T Function(Response value);
 
 /// [Result] contains result of a Future whether it throw an exception or awaited successfully
 /// use extension function Future.toResult() to create convert a Future<T> into  a Future<Result<T,E>>
-class Result<T, E extends Exception> {
+class Result<T, E extends FantomError> {
   final T? _data;
   final E? _error;
 
@@ -56,15 +56,25 @@ extension FutureResultExt on Future<Response> {
   /// awaits the [Future] in a try/catch and returns an instance [Result]
   /// which contains the result value of Future if awaited successfully or the exception if Future throw
   /// an exception while being awaited
-  Future<Result<T, Exception>> toResult<T>(
+  Future<Result<T, FantomError>> toResult<T>(
     ResultBuilder<T> builder, [
     bool parserResponseErrors = true,
   ]) async {
     try {
       final response = await this;
       return Result.success(builder(response));
+    } on DioError catch (e) {
+      return Result.error(FantomError(e, e.response, e.response?.statusCode));
     } on Exception catch (e) {
-      return Result.error(e);
+      return Result.error(FantomError(e, null, null));
     }
   }
+}
+
+class FantomError implements Exception {
+  final Exception caughtException;
+  final Response? response;
+  final int? statusCode;
+
+  FantomError(this.caughtException, this.response, this.statusCode);
 }
