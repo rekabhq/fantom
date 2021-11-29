@@ -153,10 +153,18 @@ class SchemaEnumGenerator {
         if (value is! String) {
           throw AssertionError('bad types');
         }
-        // NOTE
-        // if you found issues concerning enum item and value names clash, then:
-        // if prefix was 'item' then return 'item$value' for example.
-        // or simply use 'item$index' for _itemName.
+
+        // todo: is this really needed ?
+        if (prefix == 'item') {
+          final f = value.substring(0, 1);
+          final fu = f.toUpperCase();
+          if (f == fu) {
+            return 'ITEM_$value';
+          } else {
+            return 'item' + (fu + value.substring(1, value.length));
+          }
+        }
+
         return value;
       } else {
         return '$prefix$index';
