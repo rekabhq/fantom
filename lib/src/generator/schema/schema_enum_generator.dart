@@ -35,10 +35,8 @@ extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
       ...element.match(
         boolean: (boolean) => [],
         object: (object) => [
-          for (final property in object.properties)
-            ..._generateRecursively(property.item),
-          if (object.isAdditionalPropertiesAllowed)
-            ..._generateRecursively(object.additionalProperties!),
+          for (final property in object.properties) ..._generateRecursively(property.item),
+          if (object.isAdditionalPropertiesAllowed) ..._generateRecursively(object.additionalProperties!),
         ],
         array: (array) => [
           ..._generateRecursively(array.items),
@@ -71,8 +69,7 @@ class SchemaEnumGenerator {
       for (var index = 0; index < length; index++) 'item$index',
     ];
     final enumNames = [
-      for (var index = 0; index < length; index++)
-        SchemaEnumGenerator.enumItemName(element, index),
+      for (var index = 0; index < length; index++) SchemaEnumGenerator.enumItemName(element, index),
     ];
     return [
       // enum:
@@ -145,9 +142,7 @@ class SchemaEnumGenerator {
 
   static String enumItemName(final DataElement element, final int index) {
     if (element.isEnumerated) {
-      if (element is StringDataElement &&
-          element.isNotNullable &&
-          element.format == StringDataElementFormat.plain) {
+      if (element is StringDataElement && element.format == StringDataElementFormat.plain) {
         final value = element.enumeration!.values[index];
         if (value is! String) {
           throw AssertionError('bad types');
@@ -157,7 +152,7 @@ class SchemaEnumGenerator {
         return 'value$index';
       }
     } else {
-      throw AssertionError('not enumerated');
+      throw AssertionError('element is not enumerated');
     }
   }
 }
