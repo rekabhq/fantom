@@ -19,3 +19,31 @@ class FantomEqualityModel extends Equatable {
   @override
   String toString() => 'FantomEqualityModel($value)';
 }
+
+I fantomEnumSerialize<V extends Object, I extends Object>({
+  required final List<V> values,
+  required final List<I> items,
+  required final V value,
+}) {
+  final length = items.length;
+  for (var index = 0; index < length; index++) {
+    if (values[index] == value) {
+      return items[index];
+    }
+  }
+  throw AssertionError('enum serialization: not found value.');
+}
+
+V fantomEnumDeserialize<V extends Object, I extends Object>({
+  required final List<V> values,
+  required final List<I> items,
+  required final I item,
+}) {
+  final length = items.length;
+  for (var index = 0; index < length; index++) {
+    if (fantomEquals(items[index], item)) {
+      return values[index];
+    }
+  }
+  throw AssertionError('enum deserialization: not found item.');
+}

@@ -25,7 +25,7 @@ class SchemaValueGenerator {
           return [
             element.enumName,
             '.',
-            SchemaEnumGenerator.enumItemName(element, index),
+            SchemaEnumGenerator.valueName(element, index),
           ].joinParts();
         }
       }

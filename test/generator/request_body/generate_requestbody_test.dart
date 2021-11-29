@@ -20,13 +20,11 @@ void main() {
     late OpenApi openapi;
     setUpAll(() async {
       print('');
-      var openapiMap =
-          await readJsonOrYamlFile(File('openapi_files/petstore.openapi.json'));
+      var openapiMap = await readJsonOrYamlFile(File('openapi_files/petstore.openapi.json'));
       openapi = OpenApi.fromMap(openapiMap);
       final componentsGenerator = ComponentsGenerator.createDefault(openapi);
 
-      var map =
-          componentsGenerator.generateSchemas(openapi.components!.schemas!);
+      var map = componentsGenerator.generateSchemas(openapi.components!.schemas!);
       map.forEach((ref, component) {
         registerGeneratedComponent(ref, component);
       });
@@ -76,8 +74,7 @@ import 'package:equatable/equatable.dart';
               schema: schema,
               name: key,
             );
-            if (element is ObjectDataElement &&
-                element.format != ObjectDataElementFormat.map) {
+            if (element is ObjectDataElement && element.format != ObjectDataElementFormat.map) {
               final component = SchemaClassGenerator().generate(element);
               content += component.fileContent;
             }
@@ -104,6 +101,34 @@ class FantomEqualityModel extends Equatable {
 
   @override
   String toString() => 'FantomEqualityModel($value)';
+}
+
+I fantomEnumSerialize<V extends Object, I extends Object>({
+  required final List<V> values,
+  required final List<I> items,
+  required final V value,
+}) {
+  final length = items.length;
+  for (var index = 0; index < length; index++) {
+    if (values[index] == value) {
+      return items[index];
+    }
+  }
+  throw AssertionError('enum serialization: not found value.');
+}
+
+V fantomEnumDeserialize<V extends Object, I extends Object>({
+  required final List<V> values,
+  required final List<I> items,
+  required final I item,
+}) {
+  final length = items.length;
+  for (var index = 0; index < length; index++) {
+    if (fantomEquals(items[index], item)) {
+      return values[index];
+    }
+  }
+  throw AssertionError('enum deserialization: not found item.');
 }
 
 // ignore_for_file: unnecessary_non_null_assertion, unnecessary_const, unused_local_variable

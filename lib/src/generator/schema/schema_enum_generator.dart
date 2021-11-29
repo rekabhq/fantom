@@ -66,10 +66,10 @@ class SchemaEnumGenerator {
     final typeNN = element.rawTypeNN;
     final svg = SchemaValueGenerator();
     final serNames = [
-      for (var index = 0; index < length; index++) 'item$index',
+      for (var index = 0; index < length; index++) SchemaEnumGenerator._itemName(element, index),
     ];
     final enumNames = [
-      for (var index = 0; index < length; index++) SchemaEnumGenerator.enumItemName(element, index),
+      for (var index = 0; index < length; index++) SchemaEnumGenerator.valueName(element, index),
     ];
     return [
       // enum:
@@ -89,25 +89,27 @@ class SchemaEnumGenerator {
         'extension ${enumName}Ext on $enumName {',
         // serialize:
         [
-          '$typeNN serialize() {',
-          'for (var index = 0; index < ${enumName}Ext.items.length; index++) {',
-          'if($enumName.values[index] == this) {',
-          'return ${enumName}Ext.items[index];',
-          '}',
-          '}',
-          "throw AssertionError('not found');",
-          '}',
+          '$typeNN serialize() => ',
+          'fantomEnumSerialize',
+          // if you found issues with type inference, the comment out:
+          // '<$enumName, $typeNN>',
+          '(',
+          'values: $enumName.values, ',
+          'items: ${enumName}Ext.items, ',
+          'value: this,',
+          ');'
         ].joinLines(),
         // deserialize:
         [
-          'static $enumName deserialize(final $typeNN item) {',
-          'for (var index = 0; index < ${enumName}Ext.items.length; index++) {',
-          'if(fantomEquals(${enumName}Ext.items[index], item)) {',
-          'return $enumName.values[index];',
-          '}',
-          '}',
-          "throw AssertionError('not found');",
-          '}',
+          'static $enumName deserialize($typeNN item) => ',
+          'fantomEnumDeserialize',
+          // if you found issues with type inference, the comment out:
+          // '<$enumName, $typeNN>',
+          '(',
+          'values: $enumName.values, ',
+          'items: ${enumName}Ext.items, ',
+          'item: item,',
+          ');'
         ].joinLines(),
         // item#index:
         [
@@ -140,20 +142,40 @@ class SchemaEnumGenerator {
     ].joinMethods();
   }
 
-  static String enumItemName(final DataElement element, final int index) {
+  static String _nameForIndex(
+    final DataElement element,
+    final int index,
+    final String prefix,
+  ) {
     if (element.isEnumerated) {
       if (element is StringDataElement && element.format == StringDataElementFormat.plain) {
         final value = element.enumeration!.values[index];
         if (value is! String) {
           throw AssertionError('bad types');
         }
+        // NOTE
+        // if you found issues concerning enum item and value names clash, then:
+        // if prefix was 'item' then return 'item$value' for example.
+        // or simply use 'item$index' for _itemName.
         return value;
       } else {
-        return 'value$index';
+        return '$prefix$index';
       }
     } else {
       throw AssertionError('element is not enumerated');
     }
+  }
+
+  /// ex. success
+  /// ex. item3
+  static String _itemName(final DataElement element, final int index) {
+    return _nameForIndex(element, index, 'item');
+  }
+
+  /// ex. success
+  /// ex. value3
+  static String valueName(final DataElement element, final int index) {
+    return _nameForIndex(element, index, 'value');
   }
 }
 
