@@ -1,5 +1,5 @@
 import 'package:fantom/src/utils/exceptions.dart';
-import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components.dart';
 import 'package:meta/meta.dart';
 
 void registerGeneratedComponent(String ref, GeneratedComponent component) =>

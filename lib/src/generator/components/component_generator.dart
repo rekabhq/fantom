@@ -1,4 +1,4 @@
-import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/parameter/parameter_class_generator.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
@@ -48,8 +48,17 @@ class ComponentsGenerator {
     final requestBodyClassGenerator = RequestBodyClassGenerator(
       contentManifestGenerator: contentManifestGenerator,
     );
-
+    final responseClassGenerator = ResponseClassGenerator(
+      openApi: openApi,
+      schemaClassGenerator: schemaGenerator,
+      schemaMediator: schemaMediator,
+    );
     final referenceFinder = ReferenceFinder(openApi: openApi);
+    final parameterClassGenerator = ParameterClassGenerator(
+      schemaGenerator: schemaGenerator,
+      schemaMediator: schemaMediator,
+      contentManifestGenerator: contentManifestGenerator,
+    );
 
     return ComponentsGenerator(
       openApi: openApi,
@@ -58,14 +67,8 @@ class ComponentsGenerator {
       schemaClassGenerator: schemaGenerator,
       contentManifestGenerator: contentManifestGenerator,
       requestBodyClassGenerator: requestBodyClassGenerator,
-      parameterClassGenerator: ParameterClassGenerator(
-        schemaGenerator: schemaGenerator,
-        schemaMediator: schemaMediator,
-        contentManifestGenerator: contentManifestGenerator,
-      ),
-      responseClassGenerator: ResponseClassGenerator(
-        contentManifestCreator: contentManifestGenerator,
-      ),
+      parameterClassGenerator: parameterClassGenerator,
+      responseClassGenerator: responseClassGenerator,
     );
   }
 

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/schema_optional/schema_default_value_generator.dart';
 import 'package:fantom/src/generator/schema_optional/schema_from_json_generator.dart';
 import 'package:fantom/src/generator/schema_optional/schema_to_json_generator.dart';

@@ -2,7 +2,7 @@ import 'package:fantom/src/generator/api/api_constants.dart';
 import 'package:fantom/src/generator/api/method/body_parser.dart';
 import 'package:fantom/src/generator/api/method/params_parser.dart';
 import 'package:fantom/src/generator/api/method/response_parser.dart';
-import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/generator/name/utils.dart';
 import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
@@ -119,7 +119,7 @@ class ApiMethodGenerator {
     );
 
     final responseType =
-        operationResponsesComponents.contentManifest?.manifest.name ??
+        operationResponsesComponents.typeName ??
             dioResponseType;
 
     final StringBuffer buffer = StringBuffer();
@@ -582,7 +582,7 @@ class ApiMethodGenerator {
     buffer.writeln(')');
     buffer.writeln('.toResult(');
     if (responseTypeName != dioResponseType) {
-      buffer.writeln('($responseVarName) => ${responseTypeName}Ext.from(');
+      buffer.writeln('($responseVarName) => $responseTypeName.from(');
       buffer.writeln('$responseVarName,');
       buffer.writeln('$responseContentTypeVariable,');
       buffer.writeln('),');

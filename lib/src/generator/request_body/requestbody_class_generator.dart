@@ -1,6 +1,6 @@
 import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/reader/model/model.dart';
-import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:recase/recase.dart';
 import 'package:sealed_writer/sealed_writer.dart';

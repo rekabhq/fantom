@@ -183,47 +183,34 @@ class UnGeneratableRequestBodyComponent extends GeneratedRequestBodyComponent
         );
 }
 
-class GeneratedResponseComponent extends GeneratedComponent {
+class GeneratedResponseComponent extends GeneratedComponent
+    with UnGeneratableComponent {
   GeneratedResponseComponent({
-    required String fileContent,
-    required String fileName,
-    required this.seedName,
-    required this.contentManifest,
+    required this.contentTypes,
+    required this.generatedComponents,
     required this.source,
   }) : super(
-          fileContent: fileContent,
-          fileName: fileName,
-        );
-
-  final ContentManifest? contentManifest;
-  final String seedName;
-  final Response source;
-}
-
-class UnGeneratableResponseComponent extends GeneratedResponseComponent
-    with UnGeneratableComponent {
-  UnGeneratableResponseComponent(Response source)
-      : super(
-          source: source,
-          contentManifest: null,
-          seedName: 'no seed name',
           fileContent: '',
           fileName: '',
         );
+
+  final Map<String, GeneratedSchemaComponent> contentTypes;
+  final List<GeneratedSchemaComponent> generatedComponents;
+  final Response source;
 }
 
 class GeneratedResponsesComponent extends GeneratedComponent {
   GeneratedResponsesComponent({
     required String fileContent,
     required String fileName,
-    required this.contentManifest,
+    required this.typeName,
     required this.source,
   }) : super(
           fileContent: fileContent,
           fileName: fileName,
         );
 
-  final ContentManifest? contentManifest;
+  final String? typeName;
   final Responses source;
 }
 
@@ -232,7 +219,7 @@ class UnGeneratableResponsesComponent extends GeneratedResponsesComponent
   UnGeneratableResponsesComponent(Responses source)
       : super(
           source: source,
-          contentManifest: null,
+          typeName: null,
           fileContent: '',
           fileName: '',
         );
