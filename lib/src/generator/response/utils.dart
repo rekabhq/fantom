@@ -119,52 +119,6 @@ String createSealedResponseType(
   return buffer.toString();
 }
 
-// String _generateResponsesExtensionMethods(
-//   String className,
-//   Map<String, GeneratedResponseComponent> responseParts,
-// ) {
-//   final buffer = StringBuffer();
-//   buffer.writeln('\n');
-//   buffer.writeln('extension ${className}Ext on $className {');
-//   // create from(statusCode, data, contentType) method for the generated Responses type class
-//   buffer.writeln(
-//     'static $className from(Response response, String? responseContentType,){ ',
-//   );
-//   buffer.writeln(
-//       "final contentType = responseContentType ?? response.headers.value('content-type');");
-//   buffer.writeln(
-//       "final statusCode = response.statusCode?.toString() ?? 'default';");
-//   buffer.writeln('final data = response.data;');
-//   for (var entry in responseParts.entries) {
-//     final statusCodeValue = entry.key;
-//     final responsePart = entry.value;
-//     final responseClassName = responsePart.contentManifest?.manifest.name;
-
-//     final methodName = manifestItems[entry.key]!.shortName;
-//     if (responseClassName != null) {
-//       final argName = ReCase(responseClassName).camelCase;
-//       buffer.writeln("if(statusCode == '$statusCodeValue'){");
-//       buffer.writeln(
-//           'final responseObject =  ${responseClassName}Ext.fromContentType(contentType, data);');
-//       buffer
-//           .writeln('return $className.$methodName($argName: responseObject);');
-//       buffer.writeln('}');
-//     } else {
-//       buffer.writeln("if(statusCode == '$statusCodeValue'){");
-//       buffer.writeln('return $className.$methodName(response: response);');
-//       buffer.writeln('}');
-//     }
-//   }
-//   buffer.writeln(
-//     "throw Exception('could not find a match to deserialize a $className from)\\n'\n'\\n\$statusCode & \$contentType & \\n \$data');",
-//   );
-
-//   buffer.writeln('  }');
-//   buffer.writeln('}');
-//   buffer.writeln('\n');
-//   return buffer.toString();
-// }
-
 String _getContentTypeShortName(String contentType) {
   var name = contentType;
   if (contentType == 'application/json') {
@@ -184,4 +138,3 @@ String _getContentTypeShortName(String contentType) {
   }
   return name;
 }
-
