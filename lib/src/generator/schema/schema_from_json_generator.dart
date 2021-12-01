@@ -1,7 +1,7 @@
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
-String generateReturnFromJsonBoilerplateFor({
+String generateJsonDeserilzationBoilerplateFor({
   required DataElement element,
   required String jsonObjectName,
   required String deserializedObjectName,

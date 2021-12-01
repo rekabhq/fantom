@@ -205,6 +205,7 @@ class GeneratedResponsesComponent extends GeneratedComponent {
     required String fileName,
     required this.typeName,
     required this.source,
+    this.dataElement,
   }) : super(
           fileContent: fileContent,
           fileName: fileName,
@@ -212,15 +213,20 @@ class GeneratedResponsesComponent extends GeneratedComponent {
 
   final String? typeName;
   final Responses source;
+  DataElement? dataElement;
 }
 
 class UnGeneratableResponsesComponent extends GeneratedResponsesComponent
     with UnGeneratableComponent {
-  UnGeneratableResponsesComponent(Responses source)
-      : super(
+  UnGeneratableResponsesComponent({
+    required Responses source,
+    required String? typeName,
+    DataElement? dataElement,
+  }) : super(
           source: source,
-          typeName: null,
+          typeName: typeName,
           fileContent: '',
           fileName: '',
+          dataElement: dataElement,
         );
 }

@@ -1,5 +1,6 @@
 import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
+import 'package:fantom/src/generator/response/tuple2.dart';
 import 'package:fantom/src/generator/response/utils.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
@@ -103,11 +104,12 @@ class ResponseClassGenerator {
     final Responses responses,
     final String seedName,
   ) {
+    var typeName = ReCase('${seedName}Response').pascalCase;
     // first we get all components for the response parts either by ref or we generate them and map them to our
     // reponse status codes in our responses object
     if (responses.allResponses.isEmpty ||
         responses.allResponses.entries.isEmpty) {
-      return UnGeneratableResponsesComponent(responses);
+      return UnGeneratableResponsesComponent(source: responses, typeName: null);
     }
 
     Map<String, _ResponsePart> responseParts = responses.allResponses.map(
@@ -131,9 +133,44 @@ class ResponseClassGenerator {
     if (!responseParts.values
         .any((element) => element.contentTypes.entries.isNotEmpty)) {
       Log.debug('there is no usable values');
-      return UnGeneratableResponsesComponent(responses);
+      return UnGeneratableResponsesComponent(source: responses, typeName: null);
     }
-    final typeName = ReCase('${seedName}Response').pascalCase;
+    // check if we have only one type in our openapi Responses model that can be generated into a type
+    // if so we will return that type to be used in api methods and not generate a response class
+    // for example for getAllPets api method we will could have a List<Pet> as reposne type instead of
+    // creating a GetAllPetResponse wich has a List<Pet> inside it. because there is not point creating
+    // GetAllPetResponse type that has single property List<Pet>
+
+    // map of status code and schema of each content type
+    final allSchemaTypesOfResponseParts =
+        <Tuple2<String, GeneratedSchemaComponent>>[];
+
+    for (var entry in responseParts.entries) {
+      final responseComponent = entry.value;
+      final statusCode = entry.key;
+      for (var item in responseComponent.contentTypes.values) {
+        allSchemaTypesOfResponseParts.add(Tuple2(statusCode, item));
+      }
+    }
+    if (allSchemaTypesOfResponseParts.length == 1) {
+      final schemaComponent = allSchemaTypesOfResponseParts[0].item2;
+      final statusCode = allSchemaTypesOfResponseParts[0].item1;
+      if (statusCode.startsWith('2')) {
+        for (var components in responseParts.values) {
+          for (var generatedComponent in components.generatedComponents) {
+            if (generatedComponent.isGenerated) {
+              registerGeneratedComponentWithoutRef(generatedComponent);
+            }
+          }
+        }
+        typeName = schemaComponent.dataElement.type;
+        return UnGeneratableResponsesComponent(
+          source: responses,
+          typeName: typeName,
+          dataElement: schemaComponent.dataElement,
+        );
+      }
+    }
 
     final buffer = StringBuffer();
     buffer.writeln(createSealedResponseType(typeName, responseParts));

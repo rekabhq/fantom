@@ -91,7 +91,7 @@ String createSealedResponseType(
     final propertyInfo = allPropertyInfos[i];
     buffer.writeln(
         "if(contentType == '${propertyInfo.contentType}' && statusCode == '${propertyInfo.statusCode}'){");
-    buffer.writeln(generateReturnFromJsonBoilerplateFor(
+    buffer.writeln(generateJsonDeserilzationBoilerplateFor(
       element: propertyInfo.dataElement,
       jsonObjectName: 'data',
       deserializedObjectName: 'object',
@@ -185,4 +185,3 @@ String _getContentTypeShortName(String contentType) {
   return name;
 }
 
-String _fixName(String value) => ReCase(value).camelCase.replaceAll('*', '');

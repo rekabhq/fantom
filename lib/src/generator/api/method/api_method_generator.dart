@@ -6,6 +6,7 @@ import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/name/name_generator.dart';
 import 'package:fantom/src/generator/name/utils.dart';
 import 'package:fantom/src/generator/schema/schema_default_value_generator.dart';
+import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:recase/recase.dart';
@@ -119,8 +120,7 @@ class ApiMethodGenerator {
     );
 
     final responseType =
-        operationResponsesComponents.typeName ??
-            dioResponseType;
+        operationResponsesComponents.typeName ?? dioResponseType;
 
     final StringBuffer buffer = StringBuffer();
 
@@ -228,6 +228,7 @@ class ApiMethodGenerator {
       buffer.writeln(
         _generateDioRequestWithResult(
           responseType,
+          operationResponsesComponents.dataElement,
           generatedQueryParams,
           operationBodyComponent,
         ),
@@ -236,6 +237,7 @@ class ApiMethodGenerator {
       buffer.writeln(
         _generateDioRequestWithoutResult(
           responseType,
+          operationResponsesComponents.dataElement,
           generatedQueryParams,
           operationBodyComponent,
         ),
@@ -566,6 +568,7 @@ class ApiMethodGenerator {
   //   );
   String _generateDioRequestWithResult(
     String responseTypeName,
+    DataElement? responseDataElement,
     List<GeneratedParameterComponent>? generatedQueryParams,
     GeneratedRequestBodyComponent? operationBodyComponent,
   ) {
@@ -582,10 +585,23 @@ class ApiMethodGenerator {
     buffer.writeln(')');
     buffer.writeln('.toResult(');
     if (responseTypeName != dioResponseType) {
-      buffer.writeln('($responseVarName) => $responseTypeName.from(');
-      buffer.writeln('$responseVarName,');
-      buffer.writeln('$responseContentTypeVariable,');
-      buffer.writeln('),');
+      final isResponseTypeDataElement = responseDataElement != null;
+      if (!isResponseTypeDataElement) {
+        buffer.writeln('($responseVarName) => $responseTypeName.from(');
+        buffer.writeln('$responseVarName,');
+        buffer.writeln('$responseContentTypeVariable,');
+        buffer.writeln('),');
+      } else {
+        buffer.writeln('($responseVarName) {');
+        final deserialization = generateJsonDeserilzationBoilerplateFor(
+          element: responseDataElement!,
+          jsonObjectName: '$responseVarName.data',
+          deserializedObjectName: 'object',
+        );
+        buffer.writeln(deserialization);
+        buffer.writeln('return object;');
+        buffer.writeln('}');
+      }
     } else {
       buffer.writeln('($responseVarName) => $responseVarName,');
     }
@@ -597,6 +613,7 @@ class ApiMethodGenerator {
 
   String _generateDioRequestWithoutResult(
     String responseTypeName,
+    DataElement? responseDataElement,
     List<GeneratedParameterComponent>? generatedQueryParams,
     GeneratedRequestBodyComponent? operationBodyComponent,
   ) {
@@ -614,11 +631,22 @@ class ApiMethodGenerator {
     buffer.writeln(');');
 
     if (responseTypeName != dioResponseType) {
-      buffer
-        ..writeln('return ${responseTypeName}Ext.from(')
-        ..writeln('$responseVarName,')
-        ..writeln('$responseContentTypeVariable,')
-        ..writeln(');');
+      final isResponseTypeDataElement = responseDataElement != null;
+      if (!isResponseTypeDataElement) {
+        buffer
+          ..writeln('return ${responseTypeName}Ext.from(')
+          ..writeln('$responseVarName,')
+          ..writeln('$responseContentTypeVariable,')
+          ..writeln(');');
+      } else {
+        final deserialization = generateJsonDeserilzationBoilerplateFor(
+          element: responseDataElement!,
+          jsonObjectName: '$responseVarName.data',
+          deserializedObjectName: 'object',
+        );
+        buffer.writeln(deserialization);
+        buffer.writeln('return object;');
+      }
     } else {
       buffer.writeln('return $responseVarName;');
     }
