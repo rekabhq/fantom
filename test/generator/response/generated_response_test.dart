@@ -45,22 +45,22 @@ class Optional<T> {
       clearComponentsRegistry();
     });
 
-    test(
-      'test request_body type generation from map of mediaTypes => contents',
-      () async {
-        var usersResultResponse =
-            openapi.components!.responses!.values.toList()[2].value;
+    // test(
+    //   'test response type generation from map of mediaTypes => contents',
+    //   () async {
+    //     var usersResultResponse =
+    //         openapi.components!.responses!.values.toList()[2].value;
 
-        var output = responseClassGenerator.generateResponse(
-            usersResultResponse, 'UsersResult');
+    //     var output = responseClassGenerator.generateResponse(
+    //         usersResultResponse, 'UsersResult');
 
-        var outputFile = File('test/generator/response/response_output.dart');
+    //     var outputFile = File('test/generator/response/response_output.dart');
 
-        outputContent += output.fileContent;
+    //     outputContent += output.fileContent;
 
-        await outputFile.writeAsString(outputContent);
-      },
-    );
+    //     await outputFile.writeAsString(outputContent);
+    //   },
+    // );
   });
 
   group('ResponseClassGenerator.generateResponses method:', () {

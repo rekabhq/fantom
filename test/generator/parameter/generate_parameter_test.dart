@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:fantom/src/generator/components/component/generated_components.dart';
 import 'package:fantom/src/generator/components/component_generator.dart';
+import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
 import 'package:fantom/src/generator/parameter/parameter_class_generator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';

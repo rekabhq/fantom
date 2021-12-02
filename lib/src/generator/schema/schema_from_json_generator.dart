@@ -1,6 +1,19 @@
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
+String generateJsonDeserilzationBoilerplateFor({
+  required DataElement element,
+  required String jsonObjectName,
+  required String deserializedObjectName,
+}) {
+  final generator = SchemaFromJsonGenerator();
+  final application = generator.generateApplication(element);
+  return '''
+  final deserializer = $application;
+  final $deserializedObjectName = deserializer($jsonObjectName);
+  ''';
+}
+
 class SchemaFromJsonGenerator {
   const SchemaFromJsonGenerator();
 

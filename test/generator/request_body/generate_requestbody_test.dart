@@ -20,11 +20,13 @@ void main() {
     late OpenApi openapi;
     setUpAll(() async {
       print('');
-      var openapiMap = await readJsonOrYamlFile(File('openapi_files/petstore.openapi.json'));
+      var openapiMap =
+          await readJsonOrYamlFile(File('openapi_files/petstore.openapi.json'));
       openapi = OpenApi.fromMap(openapiMap);
       final componentsGenerator = ComponentsGenerator.createDefault(openapi);
 
-      var map = componentsGenerator.generateSchemas(openapi.components!.schemas!);
+      var map =
+          componentsGenerator.generateSchemas(openapi.components!.schemas!);
       map.forEach((ref, component) {
         registerGeneratedComponent(ref, component);
       });
@@ -74,7 +76,8 @@ import 'package:equatable/equatable.dart';
               schema: schema,
               name: key,
             );
-            if (element is ObjectDataElement && element.format != ObjectDataElementFormat.map) {
+            if (element is ObjectDataElement &&
+                element.format != ObjectDataElementFormat.map) {
               final component = SchemaClassGenerator().generate(element);
               content += component.fileContent;
             }

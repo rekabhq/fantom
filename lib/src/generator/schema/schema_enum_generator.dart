@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fantom/src/generator/components/component/generated_components.dart';
+import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/schema/schema_value_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
@@ -35,8 +35,10 @@ extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
       ...element.match(
         boolean: (boolean) => [],
         object: (object) => [
-          for (final property in object.properties) ..._generateRecursively(property.item),
-          if (object.isAdditionalPropertiesAllowed) ..._generateRecursively(object.additionalProperties!),
+          for (final property in object.properties)
+            ..._generateRecursively(property.item),
+          if (object.isAdditionalPropertiesAllowed)
+            ..._generateRecursively(object.additionalProperties!),
         ],
         array: (array) => [
           ..._generateRecursively(array.items),
@@ -66,10 +68,12 @@ class SchemaEnumGenerator {
     final typeNN = element.rawTypeNN;
     final svg = SchemaValueGenerator();
     final serNames = [
-      for (var index = 0; index < length; index++) SchemaEnumGenerator._itemName(element, index),
+      for (var index = 0; index < length; index++)
+        SchemaEnumGenerator._itemName(element, index),
     ];
     final enumNames = [
-      for (var index = 0; index < length; index++) SchemaEnumGenerator.valueName(element, index),
+      for (var index = 0; index < length; index++)
+        SchemaEnumGenerator.valueName(element, index),
     ];
     return [
       // enum:
@@ -148,7 +152,8 @@ class SchemaEnumGenerator {
     final String prefix,
   ) {
     if (element.isEnumerated) {
-      if (element is StringDataElement && element.format == StringDataElementFormat.plain) {
+      if (element is StringDataElement &&
+          element.format == StringDataElementFormat.plain) {
         final value = element.enumeration!.values[index];
         if (value is! String) {
           throw AssertionError('bad types');
