@@ -2,6 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:fantom/src/generator/components/components.dart';
+import 'package:fantom/src/generator/schema/schema_class_generator.dart';
+import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
+import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
 import 'package:fantom/src/writer/generatbale_file.dart';
@@ -9,6 +14,26 @@ import 'package:recase/recase.dart';
 import 'package:yaml/yaml.dart';
 
 import 'logger.dart';
+
+GeneratedSchemaComponent createSchemaClassFrom({
+  required Referenceable<Schema> schema,
+  required String name,
+  required SchemaMediator schemaMediator,
+  required SchemaClassGenerator schemaClassGenerator,
+  required OpenApi openApi,
+}) {
+  var dataElement = schemaMediator.convert(
+    openApi: openApi,
+    schema: schema,
+    name: name,
+  );
+  if (dataElement.isGeneratable) {
+    return schemaClassGenerator
+        .generateWithEnums(dataElement.asObjectDataElement);
+  } else {
+    return UnGeneratableSchemaComponent(dataElement: dataElement);
+  }
+}
 
 /// checks [path] to file and if a file exists there a it will be returned otherwise
 /// a [FantomException] with message [notFoundErrorMessage] will be thrown

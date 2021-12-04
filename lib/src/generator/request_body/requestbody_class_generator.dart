@@ -4,10 +4,8 @@ import 'package:fantom/src/generator/request_body/utils.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/reader/model/model.dart';
-import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:recase/recase.dart';
-import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
 class RequestBodyClassGenerator {
   RequestBodyClassGenerator({
@@ -25,8 +23,6 @@ class RequestBodyClassGenerator {
     final String seedName,
   ) {
     final typeName = '${seedName}RequestBody'.pascalCase;
-    Log.debug(seedName);
-    Log.debug(typeName);
     List<GeneratedSchemaComponent> generatedComponents = [];
     // we need to replace */* with any in our content-types since it cannot be used in code generation
     final removed = requestBody.content.remove('*/*');
@@ -47,10 +43,14 @@ class RequestBodyClassGenerator {
               as GeneratedSchemaComponent;
         } else {
           // our schema object first needs to be generated
-          component = _createSchemaClassFrom(
-            refOrSchema,
-            '$typeName${ReCase(getContentTypeShortName(contentType)).pascalCase}'
-                .pascalCase,
+          component = createSchemaClassFrom(
+            schema: refOrSchema,
+            name:
+                '$typeName${ReCase(getContentTypeShortName(contentType)).pascalCase}'
+                    .pascalCase,
+            openApi: openApi,
+            schemaClassGenerator: schemaClassGenerator,
+            schemaMediator: schemaMediator,
           );
           generatedComponents.add(component);
         }
@@ -79,22 +79,5 @@ class RequestBodyClassGenerator {
       source: requestBody,
       typeName: typeName,
     );
-  }
-
-  GeneratedSchemaComponent _createSchemaClassFrom(
-    Referenceable<Schema> schema,
-    String name,
-  ) {
-    var dataElement = schemaMediator.convert(
-      openApi: openApi,
-      schema: schema,
-      name: name,
-    );
-    if (dataElement.isGeneratable) {
-      return schemaClassGenerator
-          .generateWithEnums(dataElement.asObjectDataElement);
-    } else {
-      return UnGeneratableSchemaComponent(dataElement: dataElement);
-    }
   }
 }

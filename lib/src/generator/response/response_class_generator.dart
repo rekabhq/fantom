@@ -44,10 +44,14 @@ class ResponseClassGenerator {
               as GeneratedSchemaComponent;
         } else {
           // our schema object first needs to be generated
-          component = _createSchemaClassFrom(
-            refOrSchema,
-            '${ReCase(typeName).pascalCase}${ReCase(getContentTypeShortName(contentType)).pascalCase}'
-                .pascalCase,
+          component = createSchemaClassFrom(
+            schema: refOrSchema,
+            name:
+                '${ReCase(typeName).pascalCase}${ReCase(getContentTypeShortName(contentType)).pascalCase}'
+                    .pascalCase,
+            schemaClassGenerator: schemaClassGenerator,
+            schemaMediator: schemaMediator,
+            openApi: openApi,
           );
           generatedComponents.add(component);
         }
@@ -60,23 +64,6 @@ class ResponseClassGenerator {
       generatedComponents: generatedComponents,
       source: response,
     );
-  }
-
-  GeneratedSchemaComponent _createSchemaClassFrom(
-    Referenceable<Schema> schema,
-    String name,
-  ) {
-    var dataElement = schemaMediator.convert(
-      openApi: openApi,
-      schema: schema,
-      name: name,
-    );
-    if (dataElement.isGeneratable) {
-      return schemaClassGenerator
-          .generateWithEnums(dataElement.asObjectDataElement);
-    } else {
-      return UnGeneratableSchemaComponent(dataElement: dataElement);
-    }
   }
 
   GeneratedResponsesComponent generateResponses(

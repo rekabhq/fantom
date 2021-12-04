@@ -59,7 +59,7 @@ class ComponentsGenerator {
     final parameterClassGenerator = ParameterClassGenerator(
       schemaGenerator: schemaGenerator,
       schemaMediator: schemaMediator,
-      contentManifestGenerator: contentManifestGenerator,
+      openApi: openApi,
     );
 
     return ComponentsGenerator(

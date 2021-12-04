@@ -1,4 +1,3 @@
-import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/exceptions.dart';
@@ -94,7 +93,7 @@ class UnGeneratableEnumComponent extends GeneratedEnumComponent
 class GeneratedParameterComponent extends GeneratedComponent {
   GeneratedParameterComponent._({
     this.schemaComponent,
-    this.contentManifest,
+    this.contentTypeName,
     required this.source,
     required String fileContent,
     required String fileName,
@@ -117,25 +116,25 @@ class GeneratedParameterComponent extends GeneratedComponent {
       );
 
   factory GeneratedParameterComponent.content({
-    required ContentManifest contentManifest,
+    required String contentTypeName,
     required Parameter source,
     required String fileContent,
     required String fileName,
   }) =>
       GeneratedParameterComponent._(
-        contentManifest: contentManifest,
+        contentTypeName: contentTypeName,
         source: source,
         fileContent: fileContent,
         fileName: fileName,
       );
 
   final GeneratedSchemaComponent? schemaComponent;
-  final ContentManifest? contentManifest;
+  final String? contentTypeName;
   final Parameter source;
 
   bool get isSchema => schemaComponent != null;
 
-  bool get isContent => contentManifest != null;
+  bool get isContent => contentTypeName != null;
 
   bool get isNullable {
     if (!isSchema) return true;

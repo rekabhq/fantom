@@ -1,23 +1,23 @@
 import 'package:fantom/src/generator/components/components.dart';
 import 'package:fantom/src/generator/components/components_registrey.dart';
+import 'package:fantom/src/generator/parameter/parameter_from_content_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
-import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:recase/recase.dart';
-import 'package:sealed_writer/sealed_writer.dart';
 
 class ParameterClassGenerator {
   const ParameterClassGenerator({
     required this.schemaGenerator,
     required this.schemaMediator,
-    required this.contentManifestGenerator,
+    required this.openApi,
   });
 
   final SchemaClassGenerator schemaGenerator;
   final SchemaMediator schemaMediator;
-  final ContentManifestCreator contentManifestGenerator;
+  final OpenApi openApi;
 
   GeneratedParameterComponent generate(
     final OpenApi openApi,
@@ -26,7 +26,8 @@ class ParameterClassGenerator {
   ) {
     // user+id+query+parameter = UserIdQueryParameter
     final typeName =
-        '$nameSeed/${parameter.name}/${parameter.location}/parameter';
+        '$nameSeed/${parameter.name}/${parameter.location}/parameter'
+            .pascalCase;
 
     if (parameter.schema != null && parameter.content != null) {
       throw StateError('Parameter can not have both schema and content');
@@ -34,51 +35,64 @@ class ParameterClassGenerator {
       /// parameter value has a content. so we should return a content manifest
       /// and sealed class
     } else if (parameter.content != null) {
-      // UserIdQueryJson
-      final subTypeName = '$nameSeed/${parameter.name}/${parameter.location}';
-
-      // UserIdQueryBody
-      final schemaTypeName =
-          '$nameSeed/${parameter.name}/${parameter.location}/body';
-
-      /// creating content manifest base on parameter content values
-      final contentManifest = contentManifestGenerator.generateContentType(
-        typeName: typeName.pascalCase,
-        subTypeName: subTypeName.pascalCase,
-        generatedSchemaTypeName: schemaTypeName.pascalCase,
-        content: parameter.content!,
-        contentOwner: ContentOwner.parameter,
-      );
-
-      if (contentManifest == null) {
-        return UnGeneratableParameterComponent(source: parameter);
+      List<GeneratedSchemaComponent> generatedComponents = [];
+      // we need to replace */* with any in our content-types since it cannot be used in code generation
+      final removed = parameter.content!.remove('*/*');
+      if (removed != null) {
+        parameter.content!['any'] = removed;
       }
 
-      final forward = SourceWriter(
-        contentManifest.manifest,
-        referToManifest: false,
-      );
+      Map<String, GeneratedSchemaComponent> map = {};
+
+      for (var entry in parameter.content!.entries) {
+        GeneratedSchemaComponent? component;
+        final mediaType = entry.value;
+        final contentType = entry.key;
+        final refOrSchema = mediaType.schema;
+        if (refOrSchema != null) {
+          if (refOrSchema.isReference) {
+            component = getGeneratedComponentByRef(refOrSchema.reference.ref)
+                as GeneratedSchemaComponent;
+          } else {
+            // our schema object first needs to be generated
+            component = createSchemaClassFrom(
+              schema: refOrSchema,
+              name:
+                  '$typeName${ReCase(getContentTypeShortName(contentType)).pascalCase}'
+                      .pascalCase,
+              schemaClassGenerator: schemaGenerator,
+              schemaMediator: schemaMediator,
+              openApi: openApi,
+            );
+            generatedComponents.add(component);
+          }
+        }
+        if (component != null) {
+          map[contentType] = component;
+        }
+      }
 
       /// create and generate sealed class base on parameter content values
-      final sealedClassContent = forward.write();
+      final sealedClassContent = createParameterClassFromContent(
+        typeName: typeName,
+        contentMap: map,
+      );
       final buffer = StringBuffer();
 
       buffer.writeln(sealedClassContent);
 
       /// add relative classes in end of the file
-      for (final component in contentManifest.generatedComponents) {
+      for (final component in generatedComponents) {
         buffer.writeln(component.fileContent);
       }
-      buffer.writeln(contentManifest.extensionMethods);
-
       final fileContent = buffer.toString();
       final fileName = '${typeName.snakeCase}.dart';
 
       return GeneratedParameterComponent.content(
         fileName: fileName,
         fileContent: fileContent,
-        contentManifest: contentManifest,
         source: parameter,
+        contentTypeName: typeName,
       );
       // parameter value has a schema. so we should return a schema generated component
     } else {
