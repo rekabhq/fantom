@@ -6,6 +6,7 @@ import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/utils/logger.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:recase/recase.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 
@@ -43,10 +44,14 @@ class ResponseClassGenerator {
               as GeneratedSchemaComponent;
         } else {
           // our schema object first needs to be generated
-          component = _createSchemaClassFrom(
-            refOrSchema,
-            '${ReCase(typeName).pascalCase}${ReCase(_getContentTypeShortName(_fixName(contentType))).pascalCase}'
-                .pascalCase,
+          component = createSchemaClassFrom(
+            schema: refOrSchema,
+            name:
+                '${ReCase(typeName).pascalCase}${ReCase(getContentTypeShortName(contentType)).pascalCase}'
+                    .pascalCase,
+            schemaClassGenerator: schemaClassGenerator,
+            schemaMediator: schemaMediator,
+            openApi: openApi,
           );
           generatedComponents.add(component);
         }
@@ -60,45 +65,6 @@ class ResponseClassGenerator {
       source: response,
     );
   }
-
-  GeneratedSchemaComponent _createSchemaClassFrom(
-    Referenceable<Schema> schema,
-    String name,
-  ) {
-    var dataElement = schemaMediator.convert(
-      openApi: openApi,
-      schema: schema,
-      name: name,
-    );
-    if (dataElement.isGeneratable) {
-      return schemaClassGenerator
-          .generateWithEnums(dataElement.asObjectDataElement);
-    } else {
-      return UnGeneratableSchemaComponent(dataElement: dataElement);
-    }
-  }
-
-  String _getContentTypeShortName(String contentType) {
-    var name = contentType;
-    if (contentType == 'application/json') {
-      name = 'Json';
-    } else if (contentType == 'application/xml') {
-      name = 'Xml';
-    } else if (contentType == 'multipart/form-data') {
-      name = 'Multipart';
-    } else if (contentType == 'text/plain') {
-      name = 'TextPlain';
-    } else if (contentType == 'application/x-www-form-urlencoded') {
-      name = 'FormData';
-    } else if (contentType == 'any') {
-      name = 'Any';
-    } else if (contentType.startsWith('image/')) {
-      name = 'Image';
-    }
-    return name;
-  }
-
-  String _fixName(String value) => ReCase(value).camelCase.replaceAll('*', '');
 
   GeneratedResponsesComponent generateResponses(
     final Responses responses,

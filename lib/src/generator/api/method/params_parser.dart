@@ -11,8 +11,7 @@ class MethodParamsParser {
 
   final ParameterClassGenerator parameterClassGenerator;
 
-  OpenApi get openApi =>
-      parameterClassGenerator.contentManifestGenerator.openApi;
+  OpenApi get openApi => parameterClassGenerator.openApi;
 
   List<GeneratedParameterComponent> parseParams(
     List<Referenceable<Parameter>> operationParameters,

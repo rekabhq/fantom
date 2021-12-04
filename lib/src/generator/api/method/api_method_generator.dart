@@ -193,7 +193,7 @@ class ApiMethodGenerator {
 
     // 7. generate body parameters
     // final bodyJson = body.toJson();
-    if (operationBodyComponent?.contentManifest != null) {
+    if (operationBodyComponent?.typeName != null) {
       buffer.writeln(_generateInitialBody(operationBodyComponent!));
     }
 
@@ -295,7 +295,7 @@ class ApiMethodGenerator {
     for (final param in methodParams) {
       final type = (param.isSchema
               ? param.schemaComponent?.dataElement.type
-              : param.contentManifest?.manifest.name) ??
+              : param.contentTypeName) ??
           dynamicType;
 
       final name = param.source.name;
@@ -332,7 +332,7 @@ class ApiMethodGenerator {
   String _generateRequestBody(
     GeneratedRequestBodyComponent requestBody,
   ) {
-    final type = requestBody.contentManifest?.manifest.name ?? dynamicType;
+    final type = requestBody.typeName ?? dynamicType;
 
     final isRequired = requestBody.source.isRequired == true;
 
@@ -366,7 +366,7 @@ class ApiMethodGenerator {
 
         final type = (param.isSchema
                 ? param.schemaComponent?.dataElement.type
-                : param.contentManifest?.manifest.name) ??
+                : param.contentTypeName) ??
             dynamicType;
 
         final name = param.source.name;
@@ -413,7 +413,7 @@ class ApiMethodGenerator {
 
         final type = (param.isSchema
                 ? param.schemaComponent?.dataElement.type
-                : param.contentManifest?.manifest.name) ??
+                : param.contentTypeName) ??
             dynamicType;
 
         final isRequired = param.source.isRequired == true;
@@ -479,7 +479,7 @@ class ApiMethodGenerator {
 
       final type = (param.isSchema
               ? param.schemaComponent?.dataElement.type
-              : param.contentManifest?.manifest.name) ??
+              : param.contentTypeName) ??
           dynamicType;
 
       final isRequired = param.source.isRequired == true;
@@ -520,8 +520,7 @@ class ApiMethodGenerator {
   String _generateInitialBody(
     GeneratedRequestBodyComponent operationBodyComponent,
   ) {
-    final type =
-        operationBodyComponent.contentManifest?.manifest.name ?? dynamicType;
+    final type = operationBodyComponent.typeName ?? dynamicType;
 
     final isRequired = operationBodyComponent.source.isRequired == true;
 
