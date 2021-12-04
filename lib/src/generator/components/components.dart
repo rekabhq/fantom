@@ -159,8 +159,8 @@ class UnGeneratableParameterComponent extends GeneratedParameterComponent
 
 class GeneratedRequestBodyComponent extends GeneratedComponent {
   GeneratedRequestBodyComponent({
-    this.contentManifest,
     required this.source,
+    required this.typeName,
     required String fileContent,
     required String fileName,
   }) : super(
@@ -168,9 +168,8 @@ class GeneratedRequestBodyComponent extends GeneratedComponent {
           fileName: fileName,
         );
 
-  final ContentManifest? contentManifest;
-
   final RequestBody source;
+  final String? typeName;
 }
 
 class UnGeneratableRequestBodyComponent extends GeneratedRequestBodyComponent
@@ -178,6 +177,7 @@ class UnGeneratableRequestBodyComponent extends GeneratedRequestBodyComponent
   UnGeneratableRequestBodyComponent(RequestBody source)
       : super(
           source: source,
+          typeName: null,
           fileContent: '',
           fileName: '',
         );

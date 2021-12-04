@@ -5,6 +5,7 @@ import 'dart:isolate';
 import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
 import 'package:fantom/src/writer/generatbale_file.dart';
+import 'package:recase/recase.dart';
 import 'package:yaml/yaml.dart';
 
 import 'logger.dart';
@@ -112,4 +113,24 @@ Future<GeneratableFile> createGeneratableFileFromSourceFile({
     file,
     fileName: fileName,
   );
+}
+
+String getContentTypeShortName(String contentType) {
+  var name = ReCase(contentType).camelCase.replaceAll('*', '');
+  if (contentType == 'application/json') {
+    name = 'Json';
+  } else if (contentType == 'application/xml') {
+    name = 'Xml';
+  } else if (contentType == 'multipart/form-data') {
+    name = 'Multipart';
+  } else if (contentType == 'text/plain') {
+    name = 'TextPlain';
+  } else if (contentType == 'application/x-www-form-urlencoded') {
+    name = 'FormData';
+  } else if (contentType == 'any') {
+    name = 'Any';
+  } else if (contentType.startsWith('image/')) {
+    name = 'Image';
+  }
+  return name;
 }

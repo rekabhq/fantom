@@ -8,6 +8,7 @@ import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:fantom/src/utils/utililty_functions.dart';
 import 'package:recase/recase.dart';
 import 'package:sealed_writer/sealed_writer.dart';
 
@@ -59,7 +60,7 @@ class ContentManifestCreator {
     _mapOfManifestItems = content.map(
       (contentType, mediaType) {
         final subClassName =
-            '${ReCase(subTypeName).pascalCase}${ReCase(_getContentTypeShortName(_fixName(contentType))).pascalCase}';
+            '${ReCase(subTypeName).pascalCase}${ReCase(getContentTypeShortName(_fixName(contentType))).pascalCase}';
         final subClassShortName = _fixName(contentType);
         return MapEntry(
           contentType,
@@ -80,7 +81,7 @@ class ContentManifestCreator {
     );
     if (contentOwner == ContentOwner.requestBody) {
       final subClassName =
-          '${ReCase(subTypeName).pascalCase}${ReCase(_getContentTypeShortName(_fixName('custom'))).pascalCase}';
+          '${ReCase(subTypeName).pascalCase}${ReCase(getContentTypeShortName(_fixName('custom'))).pascalCase}';
       final subClassShortName = _fixName('custom');
       _mapOfManifestItems['custom'] = ManifestItem(
         name: subClassName,
@@ -338,7 +339,7 @@ class ContentManifestCreator {
         // our schema object first needs to be generated and registered
         component = _createSchemaClassFrom(
           refOrSchema,
-          '${ReCase(generatedSchemaSeedName).pascalCase}${ReCase(_getContentTypeShortName(_fixName(mediaTypeName))).pascalCase}'
+          '${ReCase(generatedSchemaSeedName).pascalCase}${ReCase(getContentTypeShortName(_fixName(mediaTypeName))).pascalCase}'
               .pascalCase,
         );
         _generatedComponents.add(component);
@@ -373,26 +374,6 @@ class ContentManifestCreator {
     } else {
       return UnGeneratableSchemaComponent(dataElement: dataElement);
     }
-  }
-
-  String _getContentTypeShortName(String contentType) {
-    var name = contentType;
-    if (contentType == 'application/json') {
-      name = 'Json';
-    } else if (contentType == 'application/xml') {
-      name = 'Xml';
-    } else if (contentType == 'multipart/form-data') {
-      name = 'Multipart';
-    } else if (contentType == 'text/plain') {
-      name = 'TextPlain';
-    } else if (contentType == 'application/x-www-form-urlencoded') {
-      name = 'FormData';
-    } else if (contentType == 'any') {
-      name = 'Any';
-    } else if (contentType.startsWith('image/')) {
-      name = 'Image';
-    }
-    return name;
   }
 
   String _fixName(String value) => ReCase(value).camelCase.replaceAll('*', '');

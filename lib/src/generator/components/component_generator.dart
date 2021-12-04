@@ -46,7 +46,9 @@ class ComponentsGenerator {
       schemaClassGenerator: schemaGenerator,
     );
     final requestBodyClassGenerator = RequestBodyClassGenerator(
-      contentManifestGenerator: contentManifestGenerator,
+      openApi: openApi,
+      schemaClassGenerator: schemaGenerator,
+      schemaMediator: schemaMediator,
     );
     final responseClassGenerator = ResponseClassGenerator(
       openApi: openApi,
