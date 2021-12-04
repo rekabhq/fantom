@@ -62,8 +62,12 @@ String createRequestBodyClass(
   // add custom body property
   // create private constructor
   buffer.writeln('$typeName._(');
-  for (var info in requestBodyInfos) {
-    buffer.writeln('this.${info.propertyName},');
+  for (var i = 0; i < requestBodyInfos.length; i++) {
+    final info = requestBodyInfos[i];
+    buffer.writeln('this.${info.propertyName}');
+    if (i + 1 != requestBodyInfos.length) {
+      buffer.write(',');
+    }
   }
   buffer.writeln(');\n');
   // create factory constructors
@@ -73,9 +77,12 @@ String createRequestBodyClass(
         'factory $typeName.${info.namedFactoryMethodName}(${info.propertyType} ${info.propertyName}) => $typeName._(');
     for (var j = 0; j < requestBodyInfos.length; j++) {
       if (j == i) {
-        buffer.writeln('${info.propertyName},');
+        buffer.writeln(info.propertyName);
       } else {
-        buffer.writeln('null,');
+        buffer.writeln('null');
+      }
+      if (j + 1 != requestBodyInfos.length) {
+        buffer.write(',');
       }
     }
     buffer.writeln(');\n');
