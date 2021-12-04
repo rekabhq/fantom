@@ -115,6 +115,8 @@ String createRequestBodyClass(
       buffer.writeln('}');
     }
   }
+  buffer.writeln(
+      "throw Exception('could not convert $typeName to an object that can be used as request-body by dio');");
   buffer.writeln('}\n');
   // class end
   buffer.writeln('}');

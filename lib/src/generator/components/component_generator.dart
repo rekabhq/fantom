@@ -4,7 +4,6 @@ import 'package:fantom/src/generator/parameter/parameter_class_generator.dart';
 import 'package:fantom/src/generator/request_body/requestbody_class_generator.dart';
 import 'package:fantom/src/generator/response/response_class_generator.dart';
 import 'package:fantom/src/generator/schema/schema_class_generator.dart';
-import 'package:fantom/src/generator/utils/content_manifest_creator.dart';
 import 'package:fantom/src/generator/utils/reference_finder.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/reader/model/model.dart';
@@ -15,7 +14,6 @@ class ComponentsGenerator {
     required this.schemaMediator,
     required this.referenceFinder,
     required this.schemaClassGenerator,
-    required this.contentManifestGenerator,
     required this.parameterClassGenerator,
     required this.requestBodyClassGenerator,
     required this.responseClassGenerator,
@@ -29,8 +27,6 @@ class ComponentsGenerator {
 
   final SchemaClassGenerator schemaClassGenerator;
 
-  final ContentManifestCreator contentManifestGenerator;
-
   final ParameterClassGenerator parameterClassGenerator;
 
   final RequestBodyClassGenerator requestBodyClassGenerator;
@@ -40,11 +36,6 @@ class ComponentsGenerator {
   factory ComponentsGenerator.createDefault(OpenApi openApi) {
     final schemaMediator = SchemaMediator();
     final schemaGenerator = SchemaClassGenerator();
-    final contentManifestGenerator = ContentManifestCreator(
-      openApi: openApi,
-      schemaMediator: schemaMediator,
-      schemaClassGenerator: schemaGenerator,
-    );
     final requestBodyClassGenerator = RequestBodyClassGenerator(
       openApi: openApi,
       schemaClassGenerator: schemaGenerator,
@@ -67,7 +58,6 @@ class ComponentsGenerator {
       schemaMediator: schemaMediator,
       referenceFinder: referenceFinder,
       schemaClassGenerator: schemaGenerator,
-      contentManifestGenerator: contentManifestGenerator,
       requestBodyClassGenerator: requestBodyClassGenerator,
       parameterClassGenerator: parameterClassGenerator,
       responseClassGenerator: responseClassGenerator,
