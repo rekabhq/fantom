@@ -193,7 +193,7 @@ class SchemaMediator {
         return StringDataElementFormat.binary;
       case 'date':
         return StringDataElementFormat.date;
-      case 'datetime':
+      case 'date-time':
         return StringDataElementFormat.dateTime;
       default:
         return StringDataElementFormat.plain;
