@@ -1,4 +1,8 @@
 # Fantom
+<p align="center">
+<img src="https://user-images.githubusercontent.com/6934577/147094526-218eb76e-1b5b-4f79-bca6-56de34714d59.png" height="100" alt="Bloc" />
+</p>
+
 
 Fantom is a cli tool for generating API layer based on OpenAPI Spec.
 
