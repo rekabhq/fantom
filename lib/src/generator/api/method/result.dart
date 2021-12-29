@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 typedef ResultBuilder<T> = T Function(Response value);
+typedef Mapper = FantomError? Function(Exception e);
 
 /// [Result] contains result of a Future whether it throw an exception or awaited successfully
 /// use extension function Future.toResult() to create convert a Future<T> into  a Future<Result<T,E>>
@@ -64,9 +65,13 @@ extension FutureResultExt on Future<Response> {
       final response = await this;
       return Result.success(builder(response));
     } on DioError catch (e) {
-      return Result.error(FantomError(e, e.response, e.response?.statusCode));
+      final exception = FantomExceptionMapping._mapping?.call(e) ??
+          FantomError(e, e.response, e.response?.statusCode);
+      return Result.error(exception);
     } on Exception catch (e) {
-      return Result.error(FantomError(e, null, null));
+      final exception = FantomExceptionMapping._mapping?.call(e) ??
+          FantomError(e, null, null);
+      return Result.error(exception);
     }
   }
 }
@@ -77,4 +82,16 @@ class FantomError implements Exception {
   final int? statusCode;
 
   FantomError(this.caughtException, this.response, this.statusCode);
+}
+
+class FantomExceptionMapping {
+  FantomExceptionMapping._();
+
+  static Mapper? _mapping;
+
+  static bool get hasMapper => _mapping != null;
+
+  static setMapper(Mapper mapper) {
+    _mapping = mapper;
+  }
 }
