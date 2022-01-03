@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 typedef ResultBuilder<T> = T Function(Response value);
-typedef Mapper = FantomError? Function(Exception e);
+typedef Mapper = FantomError? Function(Exception e, dynamic stacktrace);
 
 /// [Result] contains result of a Future whether it throw an exception or awaited successfully
 /// use extension function Future.toResult() to create convert a Future<T> into  a Future<Result<T,E>>
@@ -64,24 +64,35 @@ extension FutureResultExt on Future<Response> {
     try {
       final response = await this;
       return Result.success(builder(response));
-    } on DioError catch (e) {
-      final exception = FantomExceptionMapping._mapping?.call(e) ??
-          FantomError(e, e.response, e.response?.statusCode);
+    } on DioError catch (e, stacktrace) {
+      final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
+          FantomError(
+            exception: e,
+            response: e.response,
+            statusCode: e.response?.statusCode,
+            stacktrace: stacktrace,
+          );
       return Result.error(exception);
-    } on Exception catch (e) {
-      final exception = FantomExceptionMapping._mapping?.call(e) ??
-          FantomError(e, null, null);
+    } on Exception catch (e, stacktrace) {
+      final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
+          FantomError(exception: e, stacktrace: stacktrace);
       return Result.error(exception);
     }
   }
 }
 
 class FantomError implements Exception {
-  final Exception caughtException;
+  final Exception exception;
   final Response? response;
   final int? statusCode;
+  final dynamic stacktrace;
 
-  FantomError(this.caughtException, this.response, this.statusCode);
+  FantomError({
+    required this.exception,
+    this.response,
+    this.statusCode,
+    this.stacktrace,
+  });
 }
 
 class FantomExceptionMapping {
