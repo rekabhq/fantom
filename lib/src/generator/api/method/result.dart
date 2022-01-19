@@ -1,6 +1,8 @@
+import 'dart:isolate';
+
 import 'package:dio/dio.dart';
 
-typedef ResultBuilder<T> = T Function(Response value);
+typedef Deserializer<T> = T Function(Response value);
 typedef Mapper = FantomError? Function(Exception e, dynamic stacktrace);
 
 /// [Result] contains result of a Future whether it throw an exception or awaited successfully
@@ -58,27 +60,39 @@ extension FutureResultExt on Future<Response> {
   /// which contains the result value of Future if awaited successfully or the exception if Future throw
   /// an exception while being awaited
   Future<Result<T, FantomError>> toResult<T>(
-    ResultBuilder<T> builder, [
-    bool parserResponseErrors = true,
+    Deserializer<T> deserializer, [
+    bool useCompute = false,
   ]) async {
     try {
       final response = await this;
-      return Result.success(builder(response));
-    } on DioError catch (e, stacktrace) {
-      final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
-          FantomError(
-            exception: e,
-            response: e.response,
-            statusCode: e.response?.statusCode,
-            stacktrace: stacktrace,
-          );
-      return Result.error(exception);
+      if (!useCompute) {
+        return Result.success(deserializer(response));
+      } else {
+        return ResultComputer<T>(response, deserializer).compute();
+      }
     } on Exception catch (e, stacktrace) {
-      final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
-          FantomError(exception: e, stacktrace: stacktrace);
-      return Result.error(exception);
+      return _createCaughtException<T>(e, stacktrace);
     }
   }
+}
+
+Future<Result<T, FantomError>> _createCaughtException<T>(
+  Exception e,
+  StackTrace stacktrace,
+) async {
+  if (e is DioError) {
+    final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
+        FantomError(
+          exception: e,
+          response: e.response,
+          statusCode: e.response?.statusCode,
+          stacktrace: stacktrace,
+        );
+    return Result.error(exception);
+  }
+  final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
+      FantomError(exception: e, stacktrace: stacktrace);
+  return Result.error(exception);
 }
 
 class FantomError implements Exception {
@@ -104,5 +118,34 @@ class FantomExceptionMapping {
 
   static setMapper(Mapper mapper) {
     _mapping = mapper;
+  }
+}
+
+class ResultComputer<T> {
+  final Response<dynamic> response;
+  final Deserializer<T> deserializer;
+
+  ResultComputer(this.response, this.deserializer);
+
+  Future<Result<T, FantomError>> compute() async {
+    final receivePort = ReceivePort();
+    await Isolate.spawn(_doJob, receivePort.sendPort);
+    final List returnedValues = await receivePort.first;
+    if (returnedValues.first is T) {
+      return Result.success(returnedValues.first);
+    } else {
+      return _createCaughtException(returnedValues[0], returnedValues[1]);
+    }
+  }
+
+  Future<void> _doJob(SendPort sendPort) async {
+    List returnValues = [];
+    try {
+      final deserializedObject = deserializer(response);
+      returnValues.add(deserializedObject);
+    } catch (e, stacktrace) {
+      returnValues.addAll([e, stacktrace]);
+    }
+    Isolate.exit(sendPort, returnValues);
   }
 }

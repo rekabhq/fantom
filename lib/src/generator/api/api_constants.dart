@@ -21,7 +21,6 @@ const toStringMethod = 'toString()';
 const requiredType = 'required';
 
 const contentTypeVariable = 'contentType';
-const extraHeadersVariableName = 'extraHeaders';
 const responseContentTypeVariable = 'responseContentType';
 const responseVarName = 'response';
 const bodyVarName = 'body';
@@ -30,6 +29,8 @@ const optionsVarName = 'options';
 const queryParamVarName = 'queryParams';
 const headerParamVarName = 'headerParams';
 const bodyValueVarName = 'bodyValue';
+const extraHeadersVarName = 'extraHeaders';
+const useComputeVarName = 'useCompute';
 
 const toBodyMethod = 'toBody()';
 

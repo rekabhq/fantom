@@ -152,6 +152,8 @@ class ApiMethodGenerator {
 
     buffer.writeln(_generateResponseContentTypeParameters());
 
+    buffer.writeln(_generateUseComputeParameter());
+
     buffer.writeln(_generateExtraHeadersParameter());
 
     buffer.writeln(_generateEndMethodSyntax());
@@ -259,7 +261,9 @@ class ApiMethodGenerator {
       'String? $responseContentTypeVariable,';
 
   String _generateExtraHeadersParameter() =>
-      'Map<String,String>? $extraHeadersVariableName,';
+      'Map<String,String>? $extraHeadersVarName,';
+
+  String _generateUseComputeParameter() => 'bool $useComputeVarName = false,';
 
   String _generateMethodSyntax(String methodName, String returnType) =>
       useResult
@@ -599,12 +603,12 @@ class ApiMethodGenerator {
         );
         buffer.writeln(deserialization);
         buffer.writeln('return object;');
-        buffer.writeln('}');
+        buffer.writeln('},');
+        buffer.writeln('$useComputeVarName ,');
       }
     } else {
       buffer.writeln('($responseVarName) => $responseVarName,');
     }
-
     buffer.writeln(');');
 
     return buffer.toString();
@@ -655,13 +659,13 @@ class ApiMethodGenerator {
 
   String _addExtraHeaderParameters() {
     final buffer = StringBuffer();
-    buffer.writeln('if ($extraHeadersVariableName != null){');
+    buffer.writeln('if ($extraHeadersVarName != null){');
     buffer.write('''
             if ($optionsVarName.headers == null) {
           $optionsVarName.headers = {};
         }
     ''');
-    buffer.writeln('   for (var header in $extraHeadersVariableName.entries){');
+    buffer.writeln('   for (var header in $extraHeadersVarName.entries){');
     buffer.writeln(
         '$optionsVarName.headers?.addAll({header.key : header.value});');
     buffer.writeln('   }');
