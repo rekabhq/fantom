@@ -9,6 +9,7 @@ extension MapExt<K, V> on Map<K, V> {
     if (containsKey(key)) {
       return this[key];
     }
+    return null;
   }
 
   Map<K, V> clone() => Map.fromEntries(entries);
