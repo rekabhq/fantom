@@ -63,7 +63,7 @@ class FileWriter {
     // writing models to models path
     final apiClassImports = <Directive>[];
     final modelsFileDirectives = <Directive>[
-      Directive.import('package:dio/dio.dart')
+      Directive.import('package:dio/dio.dart'),
     ];
     for (var model in models) {
       await _createGeneratableFileIn(

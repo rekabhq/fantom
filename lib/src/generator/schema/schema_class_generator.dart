@@ -26,8 +26,8 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
         SchemaEnumGenerator().generateRecursively(dataElement).subs;
 
     // ignore: avoid_function_literals_in_foreach_calls
-    for (var subComponent in subEnums) {
-      registerGeneratedEnumComponent(subComponent);
+    for (var subEnumComponent in subEnums) {
+      registerGeneratedEnumComponent(subEnumComponent);
     }
     return nodeComponent;
   }
@@ -94,6 +94,7 @@ class SchemaClassGenerator {
     final bool inlineJson = false,
     final bool generateEquatable = true,
     final bool generateToString = true,
+    final bool generateCopyWith = true,
   }) {
     final name = object.name;
     final format = object.format;
@@ -118,6 +119,7 @@ class SchemaClassGenerator {
       ].joinParts(),
       _fields(object),
       _constructor(object),
+      _copyWithMethod(name, object),
       if (generateJson)
         [
           SchemaToJsonGenerator().generateForClass(
@@ -147,6 +149,49 @@ class SchemaClassGenerator {
           ';',
         ].joinParts(),
     ].joinLines();
+  }
+
+  String _copyWithMethod(
+    final String className,
+    final ObjectDataElement object,
+  ) {
+    if (object.properties.isEmpty) {
+      return '';
+    }
+    final info = [
+      for (final property in object.properties)
+        '// name=${property.name} | type=${property.item.type} | isNullable=${property.item.isNullable}'
+    ].joinLines();
+
+    final buffer = StringBuffer();
+
+    buffer.writeln('$className copyWith({'); // copyWith method open
+    for (var property in object.properties) {
+      if (property.item.isNullable) {
+        buffer.writeln('Optional<${property.item.type}>? ${property.name},');
+      } else {
+        var type = property.item.type;
+        if (!type.endsWith('?')) {
+          type += '?';
+        }
+        buffer.writeln('   $type ${property.name},');
+      }
+    }
+    buffer.writeln('}) {'); // copyWith method open
+    buffer.writeln('   return $className(');
+    for (var property in object.properties) {
+      if (property.item.isNullable) {
+        buffer.writeln(
+            '   ${property.name}: (${property.name} != null) ? ${property.name}.value : this.${property.name},');
+      } else {
+        buffer.writeln(
+            '   ${property.name}: ${property.name} ?? this.${property.name},');
+      }
+    }
+    buffer.writeln('  );');
+    buffer.writeln('}'); // copyWith method close
+
+    return info + '\n\n' + buffer.toString();
   }
 
   String _constructor(final ObjectDataElement object) {
