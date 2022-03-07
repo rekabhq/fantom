@@ -158,10 +158,6 @@ class SchemaClassGenerator {
     if (object.properties.isEmpty) {
       return '';
     }
-    final info = [
-      for (final property in object.properties)
-        '// name=${property.name} | type=${property.item.type} | isNullable=${property.item.isNullable}'
-    ].joinLines();
 
     final buffer = StringBuffer();
 
@@ -191,7 +187,7 @@ class SchemaClassGenerator {
     buffer.writeln('  );');
     buffer.writeln('}'); // copyWith method close
 
-    return info + '\n\n' + buffer.toString();
+    return buffer.toString();
   }
 
   String _constructor(final ObjectDataElement object) {

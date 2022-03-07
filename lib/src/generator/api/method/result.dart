@@ -65,7 +65,7 @@ extension FutureResultExt on Future<Response> {
   ]) async {
     try {
       final response = await this;
-      if (!useCompute) {
+      if (!useCompute || kIsJs) {
         return Result.success(deserializer(response));
       } else {
         return ResultComputer<T>(response, deserializer).compute();
@@ -149,3 +149,6 @@ class ResultComputer<T> {
     Isolate.exit(sendPort, returnValues);
   }
 }
+
+/// this is hacky as F... BUUUT ...
+bool get kIsJs => identical(1, 1.0);
