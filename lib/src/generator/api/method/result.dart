@@ -134,7 +134,11 @@ class ResultComputer<T> {
     if (returnedValues.first is T) {
       return Result.success(returnedValues.first);
     } else {
-      return _createCaughtException(returnedValues[0], returnedValues[1]);
+      var e = returnedValues[0];
+      if(e is! Exception){
+        e = Exception(e.toString());
+      }
+      return _createCaughtException(e, returnedValues[1]);
     }
   }
 
