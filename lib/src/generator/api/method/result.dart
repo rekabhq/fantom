@@ -70,14 +70,14 @@ extension FutureResultExt on Future<Response> {
       } else {
         return ResultComputer<T>(response, deserializer).compute();
       }
-    } on Exception catch (e, stacktrace) {
+    } catch (e, stacktrace) {
       return _createCaughtException<T>(e, stacktrace);
     }
   }
 }
 
 Future<Result<T, FantomError>> _createCaughtException<T>(
-  Exception e,
+  dynamic e,
   StackTrace stacktrace,
 ) async {
   if (e is DioError) {
@@ -90,8 +90,11 @@ Future<Result<T, FantomError>> _createCaughtException<T>(
         );
     return Result.error(exception);
   }
-  final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
-      FantomError(exception: e, stacktrace: stacktrace);
+  if (e is! Exception) {
+    e = Exception(e.toString());
+  }
+  final exception =
+      FantomExceptionMapping._mapping?.call(e, stacktrace) ?? FantomError(exception: e, stacktrace: stacktrace);
   return Result.error(exception);
 }
 
@@ -135,7 +138,7 @@ class ResultComputer<T> {
       return Result.success(returnedValues.first);
     } else {
       var e = returnedValues[0];
-      if(e is! Exception){
+      if (e is! Exception) {
         e = Exception(e.toString());
       }
       return _createCaughtException(e, returnedValues[1]);
