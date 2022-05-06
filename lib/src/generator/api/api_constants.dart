@@ -30,6 +30,7 @@ const queryParamVarName = 'queryParams';
 const headerParamVarName = 'headerParams';
 const bodyValueVarName = 'bodyValue';
 const extraHeadersVarName = 'extraHeaders';
+const cancelTokenParamName = 'cancelToken';
 const useComputeVarName = 'useCompute';
 
 const toBodyMethod = 'toBody()';

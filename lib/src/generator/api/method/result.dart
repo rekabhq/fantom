@@ -93,8 +93,8 @@ Future<Result<T, FantomError>> _createCaughtException<T>(
   if (e is! Exception) {
     e = Exception(e.toString());
   }
-  final exception =
-      FantomExceptionMapping._mapping?.call(e, stacktrace) ?? FantomError(exception: e, stacktrace: stacktrace);
+  final exception = FantomExceptionMapping._mapping?.call(e, stacktrace) ??
+      FantomError(exception: e, stacktrace: stacktrace);
   return Result.error(exception);
 }
 

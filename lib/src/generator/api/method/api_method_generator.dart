@@ -11,7 +11,6 @@ import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
 import 'package:recase/recase.dart';
 
-// TODO: add test for this class
 class ApiMethodGenerator {
   final SchemaDefaultValueGenerator defaultValueGenerator;
   final MethodParamsParser methodParamsParser;
@@ -156,6 +155,10 @@ class ApiMethodGenerator {
 
     buffer.writeln(_generateExtraHeadersParameter());
 
+    //TODO: add generateCancelTokenParam
+
+    buffer.writeln(_generateCancelTokenParameter());
+
     buffer.writeln(_generateEndMethodSyntax());
 
     buffer.writeln(_generateContentTypeValue(
@@ -262,6 +265,9 @@ class ApiMethodGenerator {
 
   String _generateExtraHeadersParameter() =>
       'Map<String,String>? $extraHeadersVarName,';
+
+  String _generateCancelTokenParameter() =>
+      'CancelToken? $cancelTokenParamName,';
 
   String _generateUseComputeParameter() => 'bool $useComputeVarName = false,';
 
@@ -580,6 +586,8 @@ class ApiMethodGenerator {
     buffer.write('return await $dioInstance.request($pathVarName, ');
 
     buffer.writeln('$dioOptions: $optionsVarName,');
+
+    buffer.writeln('cancelToken: $cancelTokenParamName,');
 
     if (operationBodyComponent != null) {
       buffer.writeln('$dioData: $bodyValueVarName,');
