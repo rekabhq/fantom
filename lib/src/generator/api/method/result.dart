@@ -3,11 +3,11 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 
 typedef Deserializer<T> = T Function(Response value);
-typedef Mapper = FantomError? Function(Exception e, dynamic stacktrace);
+typedef Mapper = Exception? Function(Exception e, dynamic stacktrace);
 
 /// [Result] contains result of a Future whether it throw an exception or awaited successfully
 /// use extension function Future.toResult() to create convert a Future<T> into  a Future<Result<T,E>>
-class Result<T, E extends FantomError> {
+class Result<T, E extends Exception> {
   final T? _data;
   final E? _error;
 
@@ -59,7 +59,7 @@ extension FutureResultExt on Future<Response> {
   /// awaits the [Future] in a try/catch and returns an instance [Result]
   /// which contains the result value of Future if awaited successfully or the exception if Future throw
   /// an exception while being awaited
-  Future<Result<T, FantomError>> toResult<T>(
+  Future<Result<T, Exception>> toResult<T>(
     Deserializer<T> deserializer, [
     bool useCompute = false,
   ]) async {
@@ -76,7 +76,7 @@ extension FutureResultExt on Future<Response> {
   }
 }
 
-Future<Result<T, FantomError>> _createCaughtException<T>(
+Future<Result<T, Exception>> _createCaughtException<T>(
   dynamic e,
   StackTrace stacktrace,
 ) async {
@@ -130,7 +130,7 @@ class ResultComputer<T> {
 
   ResultComputer(this.response, this.deserializer);
 
-  Future<Result<T, FantomError>> compute() async {
+  Future<Result<T, Exception>> compute() async {
     final receivePort = ReceivePort();
     await Isolate.spawn(_doJob, receivePort.sendPort);
     final List returnedValues = await receivePort.first;
@@ -159,3 +159,7 @@ class ResultComputer<T> {
 
 /// this is hacky as F... BUUUT ...
 bool get kIsJs => identical(1, 1.0);
+
+extension FantomExceptionExt on Exception {
+  bool get isFantomError => this is FantomError;
+}

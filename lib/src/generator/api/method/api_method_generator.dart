@@ -273,7 +273,7 @@ class ApiMethodGenerator {
 
   String _generateMethodSyntax(String methodName, String returnType) =>
       useResult
-          ? 'Future<$resultType<$returnType, FantomError>> $methodName({'
+          ? 'Future<$resultType<$returnType, Exception>> $methodName({'
           : 'Future<$returnType> $methodName({';
 
   String _generateEndMethodSyntax() => '}) async {';
