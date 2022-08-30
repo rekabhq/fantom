@@ -16,13 +16,17 @@ import 'package:fantom/src/reader/model/model.dart';
 import 'package:fantom/src/writer/generatbale_file.dart';
 
 class Generator {
-  final ApiClassGenerator apiClassGenerator;
-  final ComponentsGenerator componentsGenerator;
-
   Generator({
     required this.apiClassGenerator,
     required this.componentsGenerator,
+    required this.openApi,
+    required this.config,
   });
+
+  final ApiClassGenerator apiClassGenerator;
+  final ComponentsGenerator componentsGenerator;
+  final OpenApi openApi;
+  final GenerateConfig config;
 
   factory Generator.createDefault(OpenApi openApi, GenerateConfig config) {
     final nameGenerator = NameGenerator(
@@ -46,6 +50,8 @@ class Generator {
           config.fantomConfig.apiMethodReturnType == MethodReturnType.result,
     );
     return Generator(
+      openApi: openApi,
+      config: config,
       apiClassGenerator: ApiClassGenerator(
         openApi: openApi,
         apiSubClassGenerator: ApiSubClassGenerator(
@@ -60,7 +66,7 @@ class Generator {
   /// takes an [openApi] object that is read by OpenApiReader class and generates all api and model files using
   /// [apiClassGenerator] and [componentsGenerator] then puts all the generated data in a [GenerationData] object
   /// in order to be written into the corresponding directories by the FileWriter class
-  GenerationData generate(OpenApi openApi, GenerateConfig config) {
+  GenerationData generate() {
     // generate components
     componentsGenerator.generateAndRegisterComponents();
     // generate api classes files
