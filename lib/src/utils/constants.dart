@@ -20,3 +20,10 @@ const kPackageName = 'fantom';
 const kCurrentVersion = '0.0.1';
 
 const kDefaultGeneratedPackageName = 'FantomApi';
+
+const kFantomFileHeader = '''/// Generated code: do not edit by hand.
+
+/// Generated using Fantom.
+/// https://pub.dev/packages/fantom
+
+''';

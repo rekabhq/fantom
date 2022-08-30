@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:dart_style/dart_style.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
+import 'package:fantom/src/utils/constants.dart';
+import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/process_manager.dart';
 import 'package:fantom/src/writer/dart_package.dart';
 import 'package:fantom/src/writer/directive.dart';
@@ -60,6 +63,10 @@ class FileWriter {
     GeneratableFile apiClass,
     bool isFantomPackage,
   ) async {
+    // deleting old models and api files
+    await _deleteOldGeneratedFilesFromDirectory(apisDirPath);
+    await _deleteOldGeneratedFilesFromDirectory(modelsDirPath);
+
     // writing models to models path
     final apiClassImports = <Directive>[];
     final modelsFileDirectives = <Directive>[
@@ -175,6 +182,9 @@ class FileWriter {
     var modelFile = File('$path/${generatableFile.fileName}');
     await modelFile.create(recursive: true);
     final content = StringBuffer();
+    if (generatableFile.fileName.endsWith('.dart')) {
+      content.writeln(kFantomFileHeader);
+    }
     for (var directive in directives.toSet()) {
       content.writeln(directive.toString());
     }
@@ -202,6 +212,25 @@ class FileWriter {
         directiveFilePath: directiveFilePath,
         type: DirectiveType.import,
       );
+    }
+  }
+
+  Future _deleteOldGeneratedFilesFromDirectory(String dirPath) async {
+    final directory = Directory(dirPath);
+
+    if (!directory.existsSync()) {
+      throw NoSuchFileException(
+          'An Error occured while deleting old generated files', dirPath);
+    }
+
+    final children = directory.listSync().whereType<File>();
+    for (var file in children) {
+      Log.debug(file.path);
+
+      final content = await file.readAsString();
+      if (content.contains(kFantomFileHeader)) {
+        await file.delete();
+      }
     }
   }
 }
