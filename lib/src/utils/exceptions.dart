@@ -28,15 +28,15 @@ class FantomException implements Exception {
 /// $ fantom generate path/to/fantom-config.yaml
 /// ```
 class IncorrectFilePathArgument extends FantomException {
-  IncorrectFilePathArgument(String openapiOrConfigFilePath)
+  IncorrectFilePathArgument(String filePath)
       : super(
           '''
-InvalidArgument -> $openapiOrConfigFilePath
+InvalidArgument -> $filePath
 Either the file path is invalid or the file is not in correct json or yaml format
-please provide a valid path to a valid file which is either an openapi file in yaml or json format
+please provide a valid path to a valid file which is openapi file either in yaml or json format
 
-or a fantom config file in yaml format. note that if you are providing a fantom config file make sure it has a
-valid fantom config like below
+or a fantom config file in yaml or json format. note that if you are providing a fantom config file make sure it has a
+valid configuration like below. to find out how to write fantom configurations read the documentation
 
 fantom:
   openapi: example/openapi-files/petstore.openapi.yaml
@@ -79,8 +79,9 @@ class UnsupportedJsonOrYamlException extends FantomException {
   UnsupportedJsonOrYamlException()
       : super(
           'Unsupported Json or Yaml \n '
-          'Please make sure if you are providing an openapi-file or a fantom-config file in json or yaml format\n'
-          'it is in the correct format',
+          'Please make sure if you are providing an openapi file or a fantom config file they should be in\n'
+          'VALID yaml or json format\n'
+          'NOTE: you can use both json or yaml and $kCliName can read both of them',
           io.ExitCode.osFile.code,
         );
 }
@@ -91,7 +92,7 @@ class GenerationConfigNotProvidedException extends FantomException {
           'Not Enough Configuration options provided to generate fantom network client. \n'
           'you must specify where is your openapi file and where you want to generate the network files\n\n'
           'path to the openapi file is the least of required arguments by $kPackageName cli. if you are \n'
-          'calling (generate) command from your project root directory only openapi path is required and a default\n'
+          'calling (generate) command from your project root directory only openapi file path is required and a default\n'
           'output path in your project\'s lib directory will be used to store generated files\n\n'
           'Please read the documentation for more info on how to provide $kPackageName cli with'
           'the required configuration to generate your network client\n',
@@ -134,8 +135,7 @@ class GeneratedComponentAlreadyDefinedException extends FantomException {
   GeneratedComponentAlreadyDefinedException(
       String ref, GeneratedComponent definedComponent)
       : super(
-          'Another Component with $ref is already defined'
-          'Defined Component\'s name is ',
+          'Another Component with $ref is already defined\n',
           io.ExitCode.cantCreate.code,
         );
 }
@@ -145,8 +145,8 @@ class InvalidGeneratedComponentRefereceException extends FantomException {
       : super(
           'Invalid Component Reference:\n'
           'There is no component with reference [$ref].\n'
-          'please make surethere is a component with reference [$ref] defined in openapi file components section.\n'
-          'also make sure this component is not excluded\n\n'
+          'please make sure there is a component with reference [$ref] defined in openapi file components section.\n'
+          'also make sure you have not excluded this component in fantom config file\n\n'
           'if you wish to exclude this component you must also exclude all other components and paths\n'
           'that use this component',
           io.ExitCode.cantCreate.code,
@@ -157,9 +157,10 @@ class InvalidExcludedPathException extends FantomException {
   InvalidExcludedPathException(String excludedPath)
       : super(
           '''
-Something Wrong with one of the excluded paths in your fantom config
+Something Went Wrong with one of the excluded paths in your fantom config
 Make sure all your excluded paths are configured correctly
 Invalid excluded path was -> $excludedPath\n
+Here is an example of how to exclude paths from being read by $kCliName
     excluded-paths:
       - some/path -- [get, post]
       - another/path    # when no operation specified everything gets excluded
@@ -171,15 +172,11 @@ Invalid excluded path was -> $excludedPath\n
 class InvalidExcludedComponent extends FantomException {
   InvalidExcludedComponent(String excludedComponent)
       : super(
-          // 'Something Wrong with one of the excluded components in your fantom config\n'
-          // 'Make sure all your excluded components are configured correctly\n'
-          // 'Invalid excluded component was -> $excludedComponent\n\n'
-          // 'Below is aa valid example of excluded components\n\n'
           '''
- Something Wrong with one of the excluded components in your fantom config.
+ Something Went Wrong with one of the excluded components in your fantom config.
  Make sure all your excluded components are configured correctly. they must start with 
  `component` and end with the name of the component
- Invalid excluded component was -> $excludedComponent
+ Invalid excluded component was -> $excludedComponent\n
  Below is a valid example of excluded components\n
     excluded-components:
       - components/schemas/Pet   
