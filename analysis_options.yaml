@@ -5,9 +5,6 @@ analyzer:
   #    implicit-dynamic: false
   #    implicit-casts: false
 
-  enable-experiment:
-    - non-nullable
-
   exclude: 
     - test/
     - generated/
