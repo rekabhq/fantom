@@ -14,7 +14,7 @@ class MethodParamsParser {
   OpenApi get openApi => parameterClassGenerator.openApi;
 
   List<GeneratedParameterComponent> parseParams(
-    List<Referenceable<Parameter>> operationParameters,
+    List<ReferenceOr<Parameter>> operationParameters,
     String nameSeed, {
     List<GeneratedParameterComponent>? pathParameterComponents,
   }) {
@@ -56,7 +56,7 @@ class MethodParamsParser {
 
   GeneratedParameterComponent getGeneratedParameterComponent(
     String nameSeed,
-    Referenceable<Parameter> parameter,
+    ReferenceOr<Parameter> parameter,
   ) {
     if (parameter.isValue) {
       return parameterClassGenerator.generate(

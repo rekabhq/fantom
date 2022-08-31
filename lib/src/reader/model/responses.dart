@@ -3,10 +3,10 @@ part of 'model.dart';
 class Responses extends Equatable {
   /// described as [default] in openapi specification.
   /// but [default], is a keyword in Dart.
-  final Referenceable<Response>? defaultValue;
+  final ReferenceOr<Response>? defaultValue;
 
   /// other key-value pairs
-  final Map<String, Referenceable<Response>>? map;
+  final Map<String, ReferenceOr<Response>>? map;
 
   const Responses({
     required this.defaultValue,
@@ -15,7 +15,7 @@ class Responses extends Equatable {
 
   factory Responses.fromMap(Map<String, dynamic> map) {
     final all = map.mapValues(
-      (e) => Referenceable.fromMap(
+      (e) => ReferenceOr.fromMap(
         e,
         builder: (m) => Response.fromMap(m),
       ),
@@ -29,8 +29,8 @@ class Responses extends Equatable {
     );
   }
 
-  Map<String, Referenceable<Response>> get allResponses {
-    final value = <String, Referenceable<Response>>{};
+  Map<String, ReferenceOr<Response>> get allResponses {
+    final value = <String, ReferenceOr<Response>>{};
     if (defaultValue != null) {
       value['default'] = defaultValue!;
     }

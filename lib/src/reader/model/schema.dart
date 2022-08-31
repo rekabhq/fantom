@@ -21,13 +21,13 @@ class Schema extends Equatable {
   /// but [enum], is a keyword in Dart.
   final List<Object?>? enumerated;
 
-  final Referenceable<Schema>? items;
+  final ReferenceOr<Schema>? items;
 
-  final Map<String, Referenceable<Schema>>? properties;
+  final Map<String, ReferenceOr<Schema>>? properties;
 
   final bool? uniqueItems;
 
-  final Boolable<Referenceable<Schema>>? additionalProperties;
+  final Boolable<ReferenceOr<Schema>>? additionalProperties;
 
   const Schema({
     required this.nullable,
@@ -57,12 +57,12 @@ class Schema extends Equatable {
         enumerated: (map['enum'] as List<dynamic>?)?.cast<Object?>(),
         items: map['items'] == null
             ? null
-            : Referenceable.fromMap(
+            : ReferenceOr.fromMap(
                 map['items'],
                 builder: (e) => Schema.fromMap(e),
               ),
         properties: (map['properties'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (f) => Schema.fromMap(f),
           ),
@@ -72,7 +72,7 @@ class Schema extends Equatable {
             ? null
             : Boolable.fromMap(
                 map['additionalProperties'],
-                builder: (e) => Referenceable.fromMap(
+                builder: (e) => ReferenceOr.fromMap(
                   e,
                   builder: (f) => Schema.fromMap(f),
                 ),

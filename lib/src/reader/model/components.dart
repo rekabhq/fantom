@@ -1,15 +1,15 @@
 part of 'model.dart';
 
 class Components extends Equatable {
-  final Map<String, Referenceable<Schema>>? schemas;
+  final Map<String, ReferenceOr<Schema>>? schemas;
 
-  final Map<String, Referenceable<Response>>? responses;
+  final Map<String, ReferenceOr<Response>>? responses;
 
-  final Map<String, Referenceable<Parameter>>? parameters;
+  final Map<String, ReferenceOr<Parameter>>? parameters;
 
-  final Map<String, Referenceable<RequestBody>>? requestBodies;
+  final Map<String, ReferenceOr<RequestBody>>? requestBodies;
 
-  final Map<String, Referenceable<Header>>? headers;
+  final Map<String, ReferenceOr<Header>>? headers;
 
   // we don't have path items in v3.0.0
 
@@ -23,32 +23,32 @@ class Components extends Equatable {
 
   factory Components.fromMap(Map<String, dynamic> map) => Components(
         schemas: (map['schemas'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Schema.fromMap(m),
           ),
         ),
         responses: (map['responses'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Response.fromMap(m),
           ),
         ),
         parameters: (map['parameters'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Parameter.fromMap(m),
           ),
         ),
         requestBodies:
             (map['requestBodies'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => RequestBody.fromMap(m),
           ),
         ),
         headers: (map['headers'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Header.fromMap(m),
           ),

@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 class MediaType extends Equatable {
-  final Referenceable<Schema>? schema;
+  final ReferenceOr<Schema>? schema;
 
   final Map<String, Encoding>? encoding;
 
@@ -13,7 +13,7 @@ class MediaType extends Equatable {
   factory MediaType.fromMap(Map<String, dynamic> map) => MediaType(
         schema: map['schema'] == null
             ? null
-            : Referenceable.fromMap(
+            : ReferenceOr.fromMap(
                 map['schema'],
                 builder: (m) => Schema.fromMap(m),
               ),

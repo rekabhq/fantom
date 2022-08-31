@@ -3,9 +3,9 @@ part of 'model.dart';
 class Operation extends Equatable {
   final String? operationId;
 
-  final List<Referenceable<Parameter>>? parameters;
+  final List<ReferenceOr<Parameter>>? parameters;
 
-  final Referenceable<RequestBody>? requestBody;
+  final ReferenceOr<RequestBody>? requestBody;
 
   // [responses] is required in version 3.0.3
   final Responses responses;
@@ -26,14 +26,14 @@ class Operation extends Equatable {
 
   factory Operation.fromMap(Map<String, dynamic> map) => Operation(
         parameters: (map['parameters'] as List<dynamic>?)?.mapToList(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Parameter.fromMap(m),
           ),
         ),
         requestBody: map['requestBody'] == null
             ? null
-            : Referenceable.fromMap(
+            : ReferenceOr.fromMap(
                 map['requestBody'],
                 builder: (m) => RequestBody.fromMap(m),
               ),

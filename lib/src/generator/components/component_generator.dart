@@ -111,7 +111,7 @@ class ComponentsGenerator {
   }
 
   Map<String, GeneratedSchemaComponent> generateSchemas(
-    Map<String, Referenceable<Schema>> schemas,
+    Map<String, ReferenceOr<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
       return MapEntry(
@@ -131,7 +131,7 @@ class ComponentsGenerator {
   }
 
   Map<String, GeneratedParameterComponent> _generateParameters(
-    Map<String, Referenceable<Parameter>> parameters,
+    Map<String, ReferenceOr<Parameter>> parameters,
   ) {
     return parameters.map(
       (ref, value) {
@@ -150,7 +150,7 @@ class ComponentsGenerator {
   }
 
   Map<String, GeneratedRequestBodyComponent> _generateRequestBodies(
-    Map<String, Referenceable<RequestBody>> requestBodies,
+    Map<String, ReferenceOr<RequestBody>> requestBodies,
   ) {
     return requestBodies.map((ref, requestBody) {
       final actualReference = '#/components/requestBodies/$ref';
@@ -165,7 +165,7 @@ class ComponentsGenerator {
   }
 
   Map<String, GeneratedResponseComponent> generateResponses(
-    Map<String, Referenceable<Response>> responses,
+    Map<String, ReferenceOr<Response>> responses,
   ) {
     return responses.map((ref, response) {
       final actualReference = '#/components/responses/$ref';

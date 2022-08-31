@@ -126,7 +126,7 @@ class ParameterClassGenerator {
 
   DataElement _findSchemaElement(
     OpenApi openApi,
-    Referenceable<Schema> schema, {
+    ReferenceOr<Schema> schema, {
     required String name,
   }) {
     if (schema.isReference) {

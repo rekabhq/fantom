@@ -25,7 +25,7 @@ extension OpenApiSchemaResolutionExt on OpenApi {
 
 class SchemaResolutionInfo extends Equatable {
   final String name;
-  final Referenceable<Schema> schema;
+  final ReferenceOr<Schema> schema;
 
   const SchemaResolutionInfo({
     required this.name,

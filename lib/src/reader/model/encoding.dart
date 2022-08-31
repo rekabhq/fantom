@@ -3,7 +3,7 @@ part of 'model.dart';
 class Encoding extends Equatable {
   final String? contentType;
 
-  final Map<String, Referenceable<Header>>? headers;
+  final Map<String, ReferenceOr<Header>>? headers;
 
   final String? style;
 
@@ -22,7 +22,7 @@ class Encoding extends Equatable {
   factory Encoding.fromMap(Map<String, dynamic> map) => Encoding(
         contentType: map['contentType'],
         headers: (map['headers'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Header.fromMap(m),
           ),

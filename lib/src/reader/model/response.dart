@@ -1,7 +1,7 @@
 part of 'model.dart';
 
 class Response extends Equatable {
-  final Map<String, Referenceable<Header>>? headers;
+  final Map<String, ReferenceOr<Header>>? headers;
 
   final Map<String, MediaType>? content;
 
@@ -12,7 +12,7 @@ class Response extends Equatable {
 
   factory Response.fromMap(Map<String, dynamic> map) => Response(
         headers: (map['headers'] as Map<String, dynamic>?)?.mapValues(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Header.fromMap(m),
           ),

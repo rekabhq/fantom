@@ -9,7 +9,7 @@ class MethodBodyParser {
   final RequestBodyClassGenerator bodyClassGenerator;
 
   GeneratedRequestBodyComponent parseRequestBody(
-    Referenceable<RequestBody> requestBody,
+    ReferenceOr<RequestBody> requestBody,
     String seedName,
   ) {
     if (requestBody.isReference) {

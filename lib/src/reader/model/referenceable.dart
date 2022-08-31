@@ -1,15 +1,15 @@
 part of 'model.dart';
 
-class Referenceable<T extends Object> extends Equatable {
+class ReferenceOr<T extends Object> extends Equatable {
   final T? _value;
 
   final Reference<T>? _reference;
 
-  const Referenceable.value(T value)
+  const ReferenceOr.value(T value)
       : _value = value,
         _reference = null;
 
-  const Referenceable.reference(Reference<T> reference)
+  const ReferenceOr.reference(Reference<T> reference)
       : _value = null,
         _reference = reference;
 
@@ -31,13 +31,13 @@ class Referenceable<T extends Object> extends Equatable {
   }) =>
       _value != null ? value(_value!) : reference(_reference!);
 
-  factory Referenceable.fromMap(
+  factory ReferenceOr.fromMap(
     dynamic map, {
     required T Function(dynamic json) builder,
   }) =>
       Reference.isReferenceMap(map)
-          ? Referenceable<T>.reference(Reference<T>.fromMap(map))
-          : Referenceable<T>.value(builder(map));
+          ? ReferenceOr<T>.reference(Reference<T>.fromMap(map))
+          : ReferenceOr<T>.value(builder(map));
 
   @override
   List<Object?> get props => [

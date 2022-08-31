@@ -17,7 +17,7 @@ class PathItem extends Equatable {
 
   final Operation? trace;
 
-  final List<Referenceable<Parameter>>? parameters;
+  final List<ReferenceOr<Parameter>>? parameters;
 
   const PathItem({
     required this.get,
@@ -42,7 +42,7 @@ class PathItem extends Equatable {
         patch: map['patch'] == null ? null : Operation.fromMap(map['patch']),
         trace: map['trace'] == null ? null : Operation.fromMap(map['trace']),
         parameters: (map['parameters'] as List<dynamic>?)?.mapToList(
-          (e) => Referenceable.fromMap(
+          (e) => ReferenceOr.fromMap(
             e,
             builder: (m) => Parameter.fromMap(m),
           ),

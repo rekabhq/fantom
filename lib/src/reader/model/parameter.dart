@@ -23,7 +23,7 @@ class Parameter extends Equatable {
 
   final bool? allowReserved;
 
-  final Referenceable<Schema>? schema;
+  final ReferenceOr<Schema>? schema;
 
   final Map<String, MediaType>? content;
 
@@ -50,7 +50,7 @@ class Parameter extends Equatable {
         allowReserved: map['allowReserved'],
         schema: map['schema'] == null
             ? null
-            : Referenceable.fromMap(
+            : ReferenceOr.fromMap(
                 map['schema'],
                 builder: (m) => Schema.fromMap(m),
               ),

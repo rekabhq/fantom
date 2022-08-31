@@ -11,7 +11,7 @@ class SchemaMediator {
 
     /// schema object as referenceable.
     /// if it is a value wrap it using `Referenceable.value()`.
-    required final Referenceable<Schema> schema,
+    required final ReferenceOr<Schema> schema,
 
     /// this will be schemas map key,
     /// or a generated name according to context.
@@ -21,7 +21,7 @@ class SchemaMediator {
 
   DataElement _convert(
     final OpenApi openApi,
-    final Referenceable<Schema> schema,
+    final ReferenceOr<Schema> schema,
     final String name, {
     final bool forceNullable = false,
   }) {
@@ -54,10 +54,10 @@ class SchemaMediator {
           // calculation for additional properties:
           final aps = schemaValue.additionalProperties;
           final as = aps == null
-              ? Referenceable.value(Schema.empty())
+              ? ReferenceOr.value(Schema.empty())
               : aps.isBoolean
                   ? aps.boolean
-                      ? Referenceable.value(Schema.empty())
+                      ? ReferenceOr.value(Schema.empty())
                       : null
                   : aps.value; // aps.isValue == true
           final additionalProperties = as == null

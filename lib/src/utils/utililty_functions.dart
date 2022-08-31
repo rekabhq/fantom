@@ -16,7 +16,7 @@ import 'package:yaml/yaml.dart';
 import 'logger.dart';
 
 GeneratedSchemaComponent createSchemaClassFrom({
-  required Referenceable<Schema> schema,
+  required ReferenceOr<Schema> schema,
   required String name,
   required SchemaMediator schemaMediator,
   required SchemaClassGenerator schemaClassGenerator,
