@@ -40,7 +40,7 @@ void main() {
           final parameter = openapi.components?.parameters?['Status'];
 
           expect(parameter, isNotNull);
-          expect(parameter, isA<Referenceable<Parameter>>());
+          expect(parameter, isA<ReferenceOr<Parameter>>());
           expect(parameter!.isValue, isTrue);
 
           final generatedParameter = parameterClassGenerator.generate(
@@ -86,7 +86,7 @@ void main() {
           final parameter = openapi.components?.parameters?['Id'];
 
           expect(parameter, isNotNull);
-          expect(parameter, isA<Referenceable<Parameter>>());
+          expect(parameter, isA<ReferenceOr<Parameter>>());
           expect(parameter!.isValue, isTrue);
 
           final generatedParameter = parameterClassGenerator.generate(
@@ -129,7 +129,7 @@ void main() {
           final parameter = openapi.components?.parameters?['User'];
 
           expect(parameter, isNotNull);
-          expect(parameter, isA<Referenceable<Parameter>>());
+          expect(parameter, isA<ReferenceOr<Parameter>>());
           expect(parameter!.isValue, isTrue);
 
           final generatedParameter = parameterClassGenerator.generate(

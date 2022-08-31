@@ -22,7 +22,7 @@ void main() {
       () async {
         final mediaType = MediaType.fromMap(map!);
 
-        expect(mediaType.schema, isA<Referenceable<Schema>>());
+        expect(mediaType.schema, isA<ReferenceOr<Schema>>());
         expect(mediaType.schema!.value.type, 'object');
         expect(mediaType.schema!.value.properties, isNotNull);
       },

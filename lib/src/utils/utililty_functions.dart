@@ -129,7 +129,7 @@ Future<File> getSourceFileAsAsset(String path) async {
   return File(filePath);
 }
 
-Future<GeneratedFile> createGeneratableFileFromSourceFile({
+Future<GeneratedFile> createGeneratedFileFromSourceFile({
   required String fileName,
   required String relativePath,
 }) async {

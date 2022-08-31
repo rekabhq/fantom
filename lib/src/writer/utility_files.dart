@@ -6,19 +6,19 @@ import 'package:fantom/src/writer/generatbale_file.dart';
 ///
 Future<List<GeneratedFile>> getUtilityFiles() async {
   return [
-    await createGeneratableFileFromSourceFile(
+    await createGeneratedFileFromSourceFile(
       relativePath: 'src/generator/schema/equatables.dart',
       fileName: 'equatbles.dart',
     ),
-    await createGeneratableFileFromSourceFile(
+    await createGeneratedFileFromSourceFile(
       relativePath: 'src/generator/schema/optional.dart',
       fileName: 'optional.dart',
     ),
-    await createGeneratableFileFromSourceFile(
+    await createGeneratedFileFromSourceFile(
       relativePath: 'src/generator/api/method/uri_parser.dart',
       fileName: 'uri_parser.dart',
     ),
-    await createGeneratableFileFromSourceFile(
+    await createGeneratedFileFromSourceFile(
       relativePath: 'src/generator/api/method/result.dart',
       fileName: 'result.dart',
     ),

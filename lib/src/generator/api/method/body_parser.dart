@@ -32,7 +32,7 @@ class MethodBodyParser {
 
       return generatedBody;
     } else {
-      throw Exception('Unknown RequestBody Referenceable type');
+      throw Exception('Unknown RequestBody ReferenceOr type');
     }
   }
 }

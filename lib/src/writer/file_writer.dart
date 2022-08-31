@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:dart_style/dart_style.dart';
 import 'package:fantom/src/cli/commands/generate.dart';
 import 'package:fantom/src/utils/constants.dart';
-import 'package:fantom/src/utils/exceptions.dart';
 import 'package:fantom/src/utils/extensions.dart';
 import 'package:fantom/src/generator/utils/generation_data.dart';
 import 'package:fantom/src/utils/logger.dart';
@@ -73,7 +72,7 @@ class FileWriter {
       Directive.import('package:dio/dio.dart'),
     ];
     for (var model in models) {
-      await _createGeneratableFileIn(
+      await _createGeneratedFileIn(
         model,
         modelsDirPath,
         [Directive.partOf('models.dart')],
@@ -84,7 +83,7 @@ class FileWriter {
     // writing utility files to utils dir
     final allUtilityFiles = await getUtilityFiles();
     for (var utilFile in allUtilityFiles) {
-      await _createGeneratableFileIn(
+      await _createGeneratedFileIn(
         utilFile,
         '$apisDirPath/utils',
         [],
@@ -107,7 +106,7 @@ class FileWriter {
     }
 
     // create models.dart file
-    await _createGeneratableFileIn(
+    await _createGeneratedFileIn(
       GeneratedFile(fileContent: '', fileName: 'models.dart'),
       modelsDirPath,
       modelsFileDirectives,
@@ -115,7 +114,7 @@ class FileWriter {
 
     // writing resources api classes to api path
     for (var resourceApi in resourceApiClasses) {
-      await _createGeneratableFileIn(
+      await _createGeneratedFileIn(
         resourceApi,
         apisDirPath,
         [
@@ -144,7 +143,7 @@ class FileWriter {
         filePath: '$apisDirPath/api.dart',
       ),
     );
-    await _createGeneratableFileIn(
+    await _createGeneratedFileIn(
       apiClass,
       apisDirPath,
       apiClassImports,
@@ -173,24 +172,24 @@ class FileWriter {
     ]);
   }
 
-  Future _createGeneratableFileIn(
-    GeneratedFile generatableFile,
+  Future _createGeneratedFileIn(
+    GeneratedFile file,
     String path,
     List<Directive> directives,
   ) async {
-    var modelFile = File('$path/${generatableFile.fileName}');
+    var modelFile = File('$path/${file.fileName}');
     await modelFile.create(recursive: true);
     final content = StringBuffer();
-    if (generatableFile.fileName.endsWith('.dart')) {
+    if (file.fileName.endsWith('.dart')) {
       content.writeln(kFantomFileHeader);
     }
     for (var directive in directives.toSet()) {
       content.writeln(directive.toString());
     }
-    content.writeln(generatableFile.fileContent);
+    content.writeln(file.fileContent);
     var formattedContent = _formatter.tryFormat(
       content.toString(),
-      fileName: generatableFile.fileName,
+      fileName: file.fileName,
     );
     await modelFile.writeAsString(formattedContent);
   }
@@ -217,20 +216,15 @@ class FileWriter {
   Future _deleteOldGeneratedFilesFromDirectory(String dirPath) async {
     final directory = Directory(dirPath);
 
-    if (!directory.existsSync()) {
-      throw NoSuchFileException(
-        'An Error occured while deleting old generated files',
-        dirPath,
-      );
-    }
+    if (directory.existsSync()) {
+      final children = directory.listSync().whereType<File>();
+      for (var file in children) {
+        Log.debug(file.path);
 
-    final children = directory.listSync().whereType<File>();
-    for (var file in children) {
-      Log.debug(file.path);
-
-      final content = await file.readAsString();
-      if (content.contains(kFantomFileHeader)) {
-        await file.delete();
+        final content = await file.readAsString();
+        if (content.contains(kFantomFileHeader)) {
+          await file.delete();
+        }
       }
     }
   }

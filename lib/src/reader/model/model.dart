@@ -13,7 +13,7 @@ part 'parameter.dart';
 part 'path_item.dart';
 part 'paths.dart';
 part 'reference.dart';
-part 'referenceable.dart';
+part 'reference_or.dart';
 part 'request_body.dart';
 part 'response.dart';
 part 'responses.dart';

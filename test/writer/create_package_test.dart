@@ -43,7 +43,7 @@ void main() {
           outputModuleDir: Directory(generationPath),
         ),
         models: [
-          GeneratableFile(
+          GeneratedFile(
             fileContent: '''
 class ModelA{
 
@@ -52,7 +52,7 @@ class ModelA{
             fileName: 'model_a.dart',
           )
         ],
-        apiClass: GeneratableFile(
+        apiClass: GeneratedFile(
           fileContent: '''
 class ApiClass{
 

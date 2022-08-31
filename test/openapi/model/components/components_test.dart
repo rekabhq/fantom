@@ -31,7 +31,7 @@ void main() {
         expect(components.schemas, isNotNull);
         expect(components.schemas, isMap);
         expect(components.schemas, contains('Foo'));
-        expect(components.schemas?['Foo'], isA<Referenceable<Schema>>());
+        expect(components.schemas?['Foo'], isA<ReferenceOr<Schema>>());
       },
     );
   });

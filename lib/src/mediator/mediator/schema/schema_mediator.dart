@@ -9,8 +9,8 @@ class SchemaMediator {
     /// this is used to resolve references
     required final OpenApi openApi,
 
-    /// schema object as referenceable.
-    /// if it is a value wrap it using `Referenceable.value()`.
+    /// schema object as [ReferenceOr].
+    /// if it is a value wrap it using `ReferenceOr.value()`.
     required final ReferenceOr<Schema> schema,
 
     /// this will be schemas map key,
