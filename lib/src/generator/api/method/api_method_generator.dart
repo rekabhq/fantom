@@ -605,7 +605,7 @@ class ApiMethodGenerator {
       } else {
         buffer.writeln('($responseVarName) {');
         final deserialization = generateJsonDeserilzationBoilerplateFor(
-          element: responseDataElement!,
+          element: responseDataElement,
           jsonObjectName: '$responseVarName.data',
           deserializedObjectName: 'object',
         );
@@ -651,7 +651,7 @@ class ApiMethodGenerator {
           ..writeln(');');
       } else {
         final deserialization = generateJsonDeserilzationBoilerplateFor(
-          element: responseDataElement!,
+          element: responseDataElement,
           jsonObjectName: '$responseVarName.data',
           deserializedObjectName: 'object',
         );
