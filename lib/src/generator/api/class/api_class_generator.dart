@@ -16,18 +16,18 @@ class ApiClassGenerator {
   final ApiSubClassGenerator apiSubClassGenerator;
   final ApiMethodGenerator apiMethodGenerator;
 
-  List<GeneratableFile> generate() {
+  List<GeneratedFile> generate() {
     final apiClasses = _generateApiClasses();
 
     return apiClasses;
   }
 
-  List<GeneratableFile> _generateApiClasses() {
+  List<GeneratedFile> _generateApiClasses() {
     final sections = _createPathSections(openApi.paths.paths);
 
     final fileContent = _generateFileContent(sections);
 
-    final List<GeneratableFile> apiClassList = [];
+    final List<GeneratedFile> apiClassList = [];
 
     for (final section in sections) {
       final apiClass = apiSubClassGenerator.generate(
@@ -38,7 +38,7 @@ class ApiClassGenerator {
     }
 
     apiClassList.add(
-      GeneratableFile(fileContent: fileContent, fileName: 'api.dart'),
+      GeneratedFile(fileContent: fileContent, fileName: 'api.dart'),
     );
 
     return apiClassList;

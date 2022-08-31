@@ -4,7 +4,7 @@ import 'package:fantom/src/writer/generatbale_file.dart';
 /// returns utility files that are going to be copied with the generated api/model classes since the content
 /// of these utility files are used in generated classes
 ///
-Future<List<GeneratableFile>> getUtilityFiles() async {
+Future<List<GeneratedFile>> getUtilityFiles() async {
   return [
     await createGeneratableFileFromSourceFile(
       relativePath: 'src/generator/schema/equatables.dart',

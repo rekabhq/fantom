@@ -11,13 +11,13 @@ class ApiSubClassGenerator {
 
   final ApiMethodGenerator apiMethodGenerator;
 
-  GeneratableFile generate({
+  GeneratedFile generate({
     required final String subClassName,
     required final Map<String, PathItem> paths,
   }) {
     final fileContent = _generateFileContent(subClassName, paths);
 
-    return GeneratableFile(
+    return GeneratedFile(
       fileContent: fileContent,
       fileName: '${subClassName.snakeCase}.dart',
     );

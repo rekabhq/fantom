@@ -79,7 +79,7 @@ class Generator {
     var modelsFile = allGeneratedComponents
         .where((element) => element.isGenerated)
         .map(
-          (e) => GeneratableFile(
+          (e) => GeneratedFile(
             fileContent: e.fileContent,
             fileName: e.fileName,
           ),

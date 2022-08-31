@@ -58,9 +58,9 @@ class FileWriter {
   }
 
   Future _writeGeneratedFilesToProject(
-    List<GeneratableFile> models,
-    List<GeneratableFile> resourceApiClasses,
-    GeneratableFile apiClass,
+    List<GeneratedFile> models,
+    List<GeneratedFile> resourceApiClasses,
+    GeneratedFile apiClass,
     bool isFantomPackage,
   ) async {
     // deleting old models and api files
@@ -105,19 +105,17 @@ class FileWriter {
         ),
       );
     }
+
     // create models.dart file
     await _createGeneratableFileIn(
-      GeneratableFile(
-        fileContent: '',
-        fileName: 'models.dart',
-      ),
+      GeneratedFile(fileContent: '', fileName: 'models.dart'),
       modelsDirPath,
       modelsFileDirectives,
     );
-    // writing resources api classes to api path
 
+    // writing resources api classes to api path
     for (var resourceApi in resourceApiClasses) {
-      _createGeneratableFileIn(
+      await _createGeneratableFileIn(
         resourceApi,
         apisDirPath,
         [
@@ -128,6 +126,7 @@ class FileWriter {
           ),
         ],
       );
+
       apiClassImports.insertAtEnd(
         Directive.relative(
           filePath: '$apisDirPath/api.dart',
@@ -175,7 +174,7 @@ class FileWriter {
   }
 
   Future _createGeneratableFileIn(
-    GeneratableFile generatableFile,
+    GeneratedFile generatableFile,
     String path,
     List<Directive> directives,
   ) async {
@@ -220,7 +219,9 @@ class FileWriter {
 
     if (!directory.existsSync()) {
       throw NoSuchFileException(
-          'An Error occured while deleting old generated files', dirPath);
+        'An Error occured while deleting old generated files',
+        dirPath,
+      );
     }
 
     final children = directory.listSync().whereType<File>();
