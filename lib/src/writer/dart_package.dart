@@ -19,9 +19,9 @@ class FantomPackageInfo {
     required this.pubspecInfo,
   });
 
-  String get modelsDirPath => '$libDir/models/';
+  String get modelsDirPath => '$libDir/model/';
 
-  String get apisDirPath => libDir;
+  String get apisDirPath => '$libDir/api/';
 
   String get libDir => '$generationPath/$name/lib/';
 

@@ -29,6 +29,7 @@ class FileWriter {
       modelsDirPath = fantomPackageInfo.modelsDirPath;
       apisDirPath = fantomPackageInfo.apisDirPath;
       packageName = fantomPackageInfo.name;
+      libDir = fantomPackageInfo.libDir;
     }
   }
 
@@ -36,6 +37,7 @@ class FileWriter {
   final GenerationData generationData;
   late String modelsDirPath;
   late String apisDirPath;
+  late String libDir;
   String? packageName;
 
   Future writeGeneratedFiles() async {
@@ -60,17 +62,23 @@ class FileWriter {
     List<GeneratedFile> models,
     List<GeneratedFile> resourceApiClasses,
     GeneratedFile apiClass,
-    bool isFantomPackage,
+    bool isStandalonePackage,
   ) async {
     // deleting old models and api files
     await _deleteOldGeneratedFilesFromDirectory(apisDirPath);
     await _deleteOldGeneratedFilesFromDirectory(modelsDirPath);
 
-    // writing models to models path
+    String mainApiClassPath = apisDirPath;
+    if (isStandalonePackage) {
+      mainApiClassPath = libDir;
+    }
+
     final apiClassImports = <Directive>[];
     final modelsFileDirectives = <Directive>[
       Directive.import('package:dio/dio.dart'),
     ];
+
+    // writing models to models path
     for (var model in models) {
       await _createGeneratedFileIn(
         model,
@@ -94,7 +102,7 @@ class FileWriter {
       }
       apiClassImports.add(_createImport(
         directiveFilePath: '$apisDirPath/utils/${utilFile.fileName}',
-        filePath: '$apisDirPath/api.dart',
+        filePath: '$mainApiClassPath/api.dart',
       ));
       modelsFileDirectives.insert(
         0,
@@ -120,7 +128,7 @@ class FileWriter {
         [
           Directive.relative(
             filePath: '$apisDirPath/${resourceApi.fileName}',
-            directiveFilePath: '$apisDirPath/api.dart',
+            directiveFilePath: '$mainApiClassPath/api.dart',
             type: DirectiveType.partOf,
           ),
         ],
@@ -128,7 +136,7 @@ class FileWriter {
 
       apiClassImports.insertAtEnd(
         Directive.relative(
-          filePath: '$apisDirPath/api.dart',
+          filePath: '$mainApiClassPath/api.dart',
           directiveFilePath: '$apisDirPath/${resourceApi.fileName}',
           type: DirectiveType.part,
         ),
@@ -140,12 +148,14 @@ class FileWriter {
       0,
       _createImport(
         directiveFilePath: '$modelsDirPath/models.dart',
-        filePath: '$apisDirPath/api.dart',
+        filePath: '$mainApiClassPath/api.dart',
       ),
     );
+
+    // write main api class
     await _createGeneratedFileIn(
       apiClass,
-      apisDirPath,
+      mainApiClassPath,
       apiClassImports,
     );
   }

@@ -26,4 +26,6 @@ const kFantomFileHeader = '''/// Generated code: do not edit by hand.
 /// Generated using Fantom.
 /// https://pub.dev/packages/fantom
 
+// ignore_for_file: unused_import
+
 ''';

@@ -46,7 +46,7 @@ void main() {
           GeneratedFile(
             fileContent: '''
 class ModelA{
-
+// just an empty model to test FileWriter.
 }
       ''',
             fileName: 'model_a.dart',
@@ -55,12 +55,21 @@ class ModelA{
         apiClass: GeneratedFile(
           fileContent: '''
 class ApiClass{
-
+// just an empty api class to test FileWriter.
 }
       ''',
           fileName: 'api.dart',
         ),
-        resourceApiClasses: [],
+        resourceApiClasses: [
+          GeneratedFile(
+            fileContent: '''
+class ResourceApi{
+// just an empty api class to test FileWriter.
+}
+      ''',
+            fileName: 'resource_api.dart',
+          ),
+        ],
       );
 
       packageInfo = FantomPackageInfo.fromConfig(
@@ -97,7 +106,7 @@ class ApiClass{
           expect(actualModelFileNames.contains(model.fileName), isTrue);
         }
         var apiFile = File(
-            '${packageInfo.apisDirPath}/${generationData.apiClass.fileName}');
+            '${packageInfo.libDir}/${generationData.apiClass.fileName}');
         expect(await apiFile.exists(), isTrue);
       },
     );
