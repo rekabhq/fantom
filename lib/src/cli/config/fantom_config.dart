@@ -22,6 +22,7 @@ class FantomConfig {
     this.outputModelsDir,
     this.outputApiDir,
     this.packageName,
+    this.recreatePackage = true,
   });
 
   final String path;
@@ -31,6 +32,7 @@ class FantomConfig {
   final String? outputModelsDir;
   final String? outputApiDir;
   final String? packageName;
+  final bool recreatePackage;
   final List<String> excludedComponents;
   final ExcludedPaths excludedPaths;
 
@@ -64,6 +66,8 @@ class FantomConfig {
       String? outputApisPath;
       String? outputDirPath;
       String? apiMethodReturnType;
+      bool recreatePackage = true;
+
       // getting cli options user entered
       if (argResults.wasParsed(GenerateCommand.optionDir)) {
         outputDirPath = argResults[GenerateCommand.optionDir];
@@ -80,6 +84,10 @@ class FantomConfig {
       if (argResults.wasParsed(GenerateCommand.optionPackageName)) {
         outputPackageName = argResults[GenerateCommand.optionPackageName];
       }
+      if (argResults.wasParsed(GenerateCommand.optionRecreatePackage)) {
+        recreatePackage = argResults[GenerateCommand.optionRecreatePackage];
+      }
+
       apiMethodReturnType = argResults[GenerateCommand.optionMethodRetuenType];
       return FantomConfig(
         path: file.path,
@@ -92,6 +100,7 @@ class FantomConfig {
         // excluded components & paths can only be read from fantom config file
         excludedComponents: [],
         excludedPaths: ExcludedPaths.fromFantomConfigValues([]),
+        recreatePackage: recreatePackage,
       );
     } else if (await file.isFantomConfigFile) {
       return fromFile(file);
@@ -142,6 +151,10 @@ class FantomConfig {
     String apiMethodReturnType =
         fantomConfig.getValue(GenerateCommand.optionMethodRetuenType) ??
             MethodReturnType.result;
+
+    bool recreatePackage =
+        fantomConfig.getBool(GenerateCommand.optionRecreatePackage) ?? true;
+
     MethodReturnType.check(apiMethodReturnType);
     List<String> excludedComponentNames =
         ((fantomConfig.getValue('excluded-components') as List?) ?? [])
@@ -166,6 +179,7 @@ class FantomConfig {
       outputDir: outputDirPath,
       excludedComponents: excludedComponentNames,
       excludedPaths: excludedPaths,
+      recreatePackage: recreatePackage,
     );
   }
 }

@@ -79,7 +79,7 @@ pubspec.lock
 # in case someone ran the fantom cli or its tests on current project
 # we don't want generated models and apis or packages to be added to fantom sourse code 
 lib/src/fantom/*
-bin/tmain.dart
+bin/tmain*.dart
 test/cli/testProjectDir/gen
 test/writer/packages
 test/generator/request_body/output.dart

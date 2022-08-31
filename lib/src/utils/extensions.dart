@@ -2,12 +2,26 @@ import 'dart:io';
 
 import 'package:dart_style/dart_style.dart';
 import 'package:fantom/src/utils/constants.dart';
+import 'package:fantom/src/utils/logger.dart';
 import 'package:fantom/src/utils/utililty_functions.dart';
 
 extension MapExt<K, V> on Map<K, V> {
   V? getValue(K key) {
     if (containsKey(key)) {
       return this[key];
+    }
+    return null;
+  }
+
+  bool? getBool(K key) {
+    if (containsKey(key)) {
+      Log.debug(this[key]);
+      
+      if (this[key] is bool) {
+        return this[key] as bool;
+      } else {
+        return null;
+      }
     }
     return null;
   }

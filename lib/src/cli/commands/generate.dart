@@ -35,9 +35,9 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     required this.defaultModelsOutputPath,
     required this.defaultApisOutputPath,
   }) : super(
-            name: 'generate',
-            description:
-                'generates network client module from openapi document');
+          name: 'generate',
+          description: 'generates network client module from openapi document',
+        );
 
   final Directory currentDirectory;
   final String defaultModelsOutputPath;
@@ -46,6 +46,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   static const String optionDir = 'dir';
   static const String optionPackage = 'package';
   static const String optionPackageName = 'package-name';
+  static const String optionRecreatePackage = 'recreate-package';
   static const String optionModelDir = 'model-dir';
   static const String optionApiDir = 'api-dir';
   static const String optionMethodRetuenType = 'method-return-type';
@@ -54,6 +55,7 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
   static const String abbrDir = 'd';
   static const String abbrPackage = 'p';
   static const String abbrPackageName = 'n';
+  static const String abbrRecreatePackage = 'R';
   static const String abbrModelsDir = 'm';
   static const String abbrApiDir = 'a';
   static const String abbrMethodReturnType = 'r';
@@ -91,6 +93,13 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
       optionPackageName,
       abbr: abbrPackageName,
       help: 'name you want for your generated network package and api-class',
+    );
+    argParser.addOption(
+      optionRecreatePackage,
+      abbr: abbrRecreatePackage,
+      help:
+          'if set to false package will not be created each time files are generated. default = true',
+      // defaultsTo: 'false', // does not work for boolean values
     );
     argParser.addOption(
       optionMethodRetuenType,
@@ -274,12 +283,12 @@ class GenerateCommand extends BaseCommand<GenerateConfig> {
     Map<String, dynamic> openApiMap,
     FantomConfig fantomConfig,
   ) async {
-    // warning user
     var outputModuleDirectory = await getDirectoryInPath(
       path: fantomConfig.outputPackageDir,
       directoryPathIsNotValid:
           '($optionPackage | $abbrPackage) module directory path is not provided or not valid',
     );
+
     return GenerateAsStandAlonePackageConfig(
       openApi: openApiMap,
       packageName: fantomConfig.packageName ?? kDefaultGeneratedPackageName,
