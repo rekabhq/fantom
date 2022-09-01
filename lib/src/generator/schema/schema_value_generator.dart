@@ -2,6 +2,7 @@ import 'package:fantom/src/generator/schema/equality.dart';
 import 'package:fantom/src/generator/schema/schema_enum_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/utils/exceptions.dart';
 
 class SchemaValueGenerator {
   const SchemaValueGenerator();
@@ -174,6 +175,7 @@ class SchemaValueGenerator {
         untyped: (untyped) {
           return _untyped(value);
         },
+        ref: (ref) => throw CannotGenerateReferenceDataElement(),
       );
     }
   }

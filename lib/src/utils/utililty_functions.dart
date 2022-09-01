@@ -26,6 +26,7 @@ GeneratedSchemaComponent createSchemaClassFrom({
     openApi: openApi,
     schema: schema,
     name: name,
+    schemaRef: schema.isReference ? schema.reference.ref : '',
   );
   if (dataElement.isGeneratable) {
     return schemaClassGenerator

@@ -6,22 +6,36 @@ final dataElementRegistry = DataElementRegistry._();
 class DataElementRegistry {
   DataElementRegistry._();
 
-  final _dataElements = <String, DataElement>{};
+  final _registeredDataElements = <String, DataElement>{};
 
-  bool isRegistered(String key) {
+  final _registeringDataElements = <String>{};
+
+  bool isRegistering(String ref) {
     // Log.debug('checking isRegistered for data element with key=$key');
-    return _dataElements.containsKey(key);
+    return _registeringDataElements.contains(ref);
   }
 
-  void register(String key, DataElement element) {
-    Log.debug('register dataElement with key=$key');
-    if (!isRegistered(key)) {
-      _dataElements[key] = element;
+  void setAsRegistering(String ref) {
+    if(ref.isEmpty) return;
+    _registeringDataElements.add(ref);
+  }
+
+  bool isRegistered(String ref) {
+    // Log.debug('checking isRegistered for data element with key=$key');
+    return _registeredDataElements.containsKey(ref);
+  }
+
+  void register(String ref, DataElement element) {
+    if(ref.isEmpty) return;
+    Log.debug('register dataElement with key=$ref');
+    if (!isRegistered(ref)) {
+      _registeredDataElements[ref] = element;
     }
+    _registeringDataElements.remove(ref);
   }
 
-  DataElement? operator [](String key) {
+  DataElement? operator [](String ref) {
     // Log.debug('getting data element with key=$key');
-    return _dataElements[key];
+    return _registeredDataElements[ref];
   }
 }

@@ -7,6 +7,7 @@ import 'package:fantom/src/generator/schema/schema_from_json_generator.dart';
 import 'package:fantom/src/generator/schema/schema_to_json_generator.dart';
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/utils/exceptions.dart';
 import 'package:recase/recase.dart';
 
 extension SchemaClassGeneratorExt on SchemaClassGenerator {
@@ -79,6 +80,7 @@ extension SchemaClassGeneratorExt on SchemaClassGenerator {
         number: (number) => [],
         string: (string) => [],
         untyped: (untyped) => [],
+        ref: (ref) => throw CannotGenerateReferenceDataElement(),
       ),
     ];
   }

@@ -141,6 +141,7 @@ class ParameterClassGenerator {
           openApi: openApi,
           schema: schema,
           name: name,
+          schemaRef: schema.isReference ? schema.reference.ref : '',
         );
       } else {
         throw StateError('Unexpected generated component type');
@@ -151,6 +152,7 @@ class ParameterClassGenerator {
       openApi: openApi,
       schema: schema,
       name: name,
+      schemaRef: schema.isReference ? schema.reference.ref : '',
     );
   }
 }

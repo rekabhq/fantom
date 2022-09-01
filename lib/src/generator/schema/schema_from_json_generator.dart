@@ -1,5 +1,6 @@
 import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
+import 'package:fantom/src/utils/exceptions.dart';
 
 String generateJsonDeserilzationBoilerplateFor({
   required DataElement element,
@@ -187,6 +188,7 @@ class SchemaFromJsonGenerator {
         untyped: (untyped) {
           return fixedName;
         },
+        ref: (ref) => throw CannotGenerateReferenceDataElement(),
       );
     }
 

@@ -2,6 +2,7 @@ import 'package:fantom/src/mediator/mediator/schema/data_element_registry.dart';
 import 'package:fantom/src/mediator/utils/schema/schema_resolution.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:fantom/src/utils/logger.dart';
 
 class SchemaMediator {
   const SchemaMediator();
@@ -17,18 +18,27 @@ class SchemaMediator {
     /// this will be schemas map key,
     /// or a generated name according to context.
     required final String name,
+
+    /// reference address of this component in openapi components
+    required final String schemaRef,
   }) =>
-      _convert(openApi, schema, name);
+      _convert(openApi, schema, name, schemaRef);
 
   DataElement _convert(
     final OpenApi openApi,
     final ReferenceOr<Schema> schema,
-    final String ref, {
+    final String name,
+    final String schemaRef, {
     final bool forceNullable = false,
   }) {
-    if (dataElementRegistry.isRegistered(ref)) {
-      return dataElementRegistry[ref]!;
+    if (dataElementRegistry.isRegistering(schemaRef)) {
+      return DataElement.reference(ref: schemaRef);
+    } else if (dataElementRegistry.isRegistered(schemaRef)) {
+      return dataElementRegistry[schemaRef]!;
     }
+
+    dataElementRegistry.setAsRegistering(schemaRef);
+
     if (schema.isReference) {
       var schemaReference = schema.reference;
       final resolution = openApi.resolveSchema(schemaReference);
@@ -38,11 +48,12 @@ class SchemaMediator {
         openApi,
         resolution.schema,
         resolution.name,
+        schemaReference.ref,
         // cascade forceNullable down the line:
         forceNullable: forceNullable,
       );
 
-      dataElementRegistry.register(ref, dataElement);
+      dataElementRegistry.register(schemaRef, dataElement);
       return dataElement;
     } else {
       final schemaValue = schema.value;
@@ -54,7 +65,7 @@ class SchemaMediator {
       switch (type) {
         case 'boolean':
           dataElement = DataElement.boolean(
-            name: ref,
+            name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
@@ -78,14 +89,8 @@ class SchemaMediator {
                   openApi,
                   as,
                   // concatenate `AdditionalProperty` to the end
-                  '${ref}AdditionalProperty',
-                );
-          if (additionalProperties != null) {
-            dataElementRegistry.register(
-              '${ref}AdditionalProperty',
-              additionalProperties,
-            );
-          }
+                  '${name}AdditionalProperty',
+                  '');
 
           // calculation for required items:
           final requiredItems = (schemaValue.requiredItems ?? []).toSet();
@@ -107,11 +112,16 @@ class SchemaMediator {
                           entry.value,
                           // concatenate `property name`
                           // with upper start to the end
-                          '$ref${entry.key.toUpperStart()}',
+                          '$name${entry.key.toUpperStart()}',
+                          entry.value.isReference
+                              ? entry.value.reference.ref
+                              : '',
                           forceNullable: !requiredItems.contains(entry.key),
                         );
                         dataElementRegistry.register(
-                          '$ref${entry.key.toUpperStart()}',
+                          entry.value.isReference
+                              ? entry.value.reference.ref
+                              : '',
                           dataElement,
                         );
                         return dataElement;
@@ -121,7 +131,7 @@ class SchemaMediator {
                   .toList();
 
           dataElement = DataElement.object(
-            name: ref,
+            name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
@@ -134,16 +144,14 @@ class SchemaMediator {
           // calculation for items:
           // recursive call:
           final items = _convert(
-            openApi,
-            schemaValue.items!,
-            // concatenate `Item` to the end
-            '${ref}Item',
-          );
-
-          dataElementRegistry.register('${ref}Item', items);
+              openApi,
+              schemaValue.items!,
+              // concatenate `Item` to the end
+              '${name}Item',
+              '');
 
           dataElement = DataElement.array(
-            name: ref,
+            name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
@@ -154,7 +162,7 @@ class SchemaMediator {
           break;
         case 'integer':
           dataElement = DataElement.integer(
-            name: ref,
+            name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
@@ -163,7 +171,7 @@ class SchemaMediator {
           break;
         case 'number':
           dataElement = DataElement.number(
-            name: ref,
+            name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
@@ -173,7 +181,7 @@ class SchemaMediator {
           break;
         case 'string':
           dataElement = DataElement.string(
-            name: ref,
+            name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
@@ -183,7 +191,7 @@ class SchemaMediator {
           break;
         case null:
           dataElement = DataElement.untyped(
-            name: ref,
+            name: name,
             isNullable: isNullable,
             isDeprecated: _extractIsDeprecated(schemaValue),
             defaultValue: _extractDefaultValue(schemaValue),
@@ -194,7 +202,10 @@ class SchemaMediator {
           throw AssertionError('unknown type "$type"');
       }
 
-      dataElementRegistry.register(ref, dataElement);
+      dataElementRegistry.register(schemaRef, dataElement);
+      dataElement = dataElement.resolveReferences(schemaRef);
+      dataElementRegistry.register(schemaRef, dataElement);
+
       return dataElement;
     }
   }
@@ -245,5 +256,45 @@ extension StringCaseExt on String {
       final p2 = substring(1);
       return p1.toUpperCase() + p2;
     }
+  }
+}
+
+extension DataElementMediatorExt on DataElement {
+  DataElement resolveReferences(String ref) {
+    final de = this;
+    if (de is ReferenceDataElement) {
+      Log.debug('KKKK resolving ReferenceDataElement with ref=${de.ref}');
+      final resolved = dataElementRegistry[de.ref];
+      return resolved ?? this;
+    } else if (de is ObjectDataElement) {
+      final resolvedProperties = de.properties.map((property) {
+        return ObjectProperty(
+          name: property.name,
+          item: property.item.resolveReferences(ref),
+        );
+      }).toList();
+
+      return ObjectDataElement(
+        name: de.name,
+        properties: resolvedProperties,
+        additionalProperties: de.additionalProperties?.resolveReferences(ref),
+        defaultValue: de.defaultValue,
+        enumeration: de.enumeration,
+        isDeprecated: de.isDeprecated,
+        isNullable: de.isNullable,
+      );
+    } else if (de is ArrayDataElement) {
+      return ArrayDataElement(
+        name: de.name,
+        items: de.items.resolveReferences(ref),
+        defaultValue: de.defaultValue,
+        enumeration: de.enumeration,
+        isDeprecated: de.isDeprecated,
+        isNullable: de.isNullable,
+        isUniqueItems: de.isUniqueItems,
+      );
+    }
+
+    return this;
   }
 }

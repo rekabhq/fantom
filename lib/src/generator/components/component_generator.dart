@@ -115,13 +115,15 @@ class ComponentsGenerator {
     Map<String, ReferenceOr<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
-      Log.debug('#/components/schemas/$ref');
+      final schemaRef = '#/components/schemas/$ref';
+      Log.debug(schemaRef);
       return MapEntry(
-        '#/components/schemas/$ref',
+        schemaRef,
         schemaMediator.convert(
           openApi: openApi,
           schema: schema,
           name: ref,
+          schemaRef: schemaRef,
         ),
       );
     }).map((ref, element) {

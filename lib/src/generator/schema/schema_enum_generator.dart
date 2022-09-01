@@ -5,6 +5,8 @@ import 'package:fantom/src/generator/utils/string_utils.dart';
 import 'package:fantom/src/mediator/model/schema/schema_model.dart';
 import 'package:recase/recase.dart';
 
+import '../../utils/exceptions.dart';
+
 extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
   GeneratedEnumComponent generate(final DataElement element) {
     return GeneratedEnumComponent(
@@ -47,6 +49,7 @@ extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
         number: (number) => [],
         string: (string) => [],
         untyped: (untyped) => [],
+        ref: (ref) => throw CannotGenerateReferenceDataElement(),
       ),
     ];
   }

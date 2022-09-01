@@ -149,7 +149,7 @@ abstract class DataElement {
   /// if not present means no enumeration.
   Enumeration? get enumeration;
 
-  /// [BooleanDataElement]
+  /// returns an instance of [BooleanDataElement]
   const factory DataElement.boolean({
     required String name,
     bool isNullable,
@@ -158,7 +158,7 @@ abstract class DataElement {
     Enumeration? enumeration,
   }) = BooleanDataElement;
 
-  /// [ObjectDataElement]
+  /// returns an instance of [ObjectDataElement]
   const factory DataElement.object({
     required String name,
     bool isNullable,
@@ -169,7 +169,7 @@ abstract class DataElement {
     DataElement? additionalProperties,
   }) = ObjectDataElement;
 
-  /// [ArrayDataElement]
+  /// returns an instance of [ArrayDataElement]
   const factory DataElement.array({
     required String name,
     bool isNullable,
@@ -180,7 +180,7 @@ abstract class DataElement {
     bool isUniqueItems,
   }) = ArrayDataElement;
 
-  /// [IntegerDataElement]
+  /// returns an instance of [IntegerDataElement]
   const factory DataElement.integer({
     required String name,
     bool isNullable,
@@ -189,7 +189,7 @@ abstract class DataElement {
     Enumeration? enumeration,
   }) = IntegerDataElement;
 
-  /// [NumberDataElement]
+  /// returns an instance of [NumberDataElement]
   const factory DataElement.number({
     required String name,
     bool isNullable,
@@ -199,7 +199,7 @@ abstract class DataElement {
     bool isFloat,
   }) = NumberDataElement;
 
-  /// [StringDataElement]
+  /// returns an instance of [StringDataElement]
   const factory DataElement.string({
     required String name,
     bool isNullable,
@@ -209,7 +209,7 @@ abstract class DataElement {
     StringDataElementFormat format,
   }) = StringDataElement;
 
-  /// [UntypedDataElement]
+  /// returns an instance of [UntypedDataElement]
   const factory DataElement.untyped({
     required String name,
     bool isNullable,
@@ -217,6 +217,11 @@ abstract class DataElement {
     DefaultValue? defaultValue,
     Enumeration? enumeration,
   }) = UntypedDataElement;
+
+  /// returns an instance of [UntypedDataElement]
+  const factory DataElement.reference({
+    required String ref,
+  }) = ReferenceDataElement;
 }
 
 /// bool
@@ -571,6 +576,48 @@ class UntypedDataElement with EquatableMixin implements DataElement {
       'defaultValue: $defaultValue, enumeration: $enumeration}';
 }
 
+/// dynamic
+///
+/// it's type is Object or Object?
+///
+/// it means any possible json value ... (?)
+class ReferenceDataElement with EquatableMixin implements DataElement {
+  final String ref;
+
+  const ReferenceDataElement({required this.ref});
+
+  @override
+  List<Object?> get props => [ref];
+
+  @override
+  String toString() => 'ReferenceDataElement{ref: $ref, }';
+
+  @override
+  DefaultValue? get defaultValue => throw Exception(
+        'cannot call defaultValue on an instance of ReferenceDataElement | ref=$ref',
+      );
+
+  @override
+  Enumeration? get enumeration => throw Exception(
+        'cannot call enumeration on an instance of ReferenceDataElement | ref=$ref',
+      );
+
+  @override
+  bool get isDeprecated => throw Exception(
+        'cannot call isDeprecated on an instance of ReferenceDataElement | ref=$ref',
+      );
+
+  @override
+  bool get isNullable => throw Exception(
+        'cannot call isNullable on an instance of ReferenceDataElement | ref=$ref',
+      );
+
+  @override
+  String get name => throw Exception(
+        'cannot call name on an instance of ReferenceDataElement | ref=$ref',
+      );
+}
+
 /// matching data elements
 extension DataElementMatchingExt on DataElement {
   R match<R extends Object?>({
@@ -581,6 +628,7 @@ extension DataElementMatchingExt on DataElement {
     required R Function(NumberDataElement number) number,
     required R Function(StringDataElement string) string,
     required R Function(UntypedDataElement untyped) untyped,
+    required R Function(ReferenceDataElement ref) ref,
   }) {
     final element = this;
     if (element is BooleanDataElement) {
@@ -597,6 +645,8 @@ extension DataElementMatchingExt on DataElement {
       return string(element);
     } else if (element is UntypedDataElement) {
       return untyped(element);
+    } else if (element is ReferenceDataElement) {
+      return ref(element);
     } else {
       throw AssertionError();
     }
@@ -610,6 +660,7 @@ extension DataElementMatchingExt on DataElement {
     R Function(NumberDataElement number)? number,
     R Function(StringDataElement string)? string,
     R Function(UntypedDataElement untyped)? untyped,
+    R Function(ReferenceDataElement ref)? ref,
     required R Function(DataElement element) orElse,
   }) {
     final element = this;
@@ -627,6 +678,8 @@ extension DataElementMatchingExt on DataElement {
       return string != null ? string(element) : orElse(element);
     } else if (element is UntypedDataElement) {
       return untyped != null ? untyped(element) : orElse(element);
+    } else if (element is ReferenceDataElement) {
+      return ref != null ? ref(element) : orElse(element);
     } else {
       throw AssertionError();
     }
@@ -647,6 +700,8 @@ extension DataElementCastingExt on DataElement {
 
   bool get isUntypedDataElement => this is UntypedDataElement;
 
+  bool get isReferenceDataElement => this is ReferenceDataElement;
+
   BooleanDataElement get asBooleanDataElement => this as BooleanDataElement;
 
   ObjectDataElement get asObjectDataElement => this as ObjectDataElement;
@@ -658,6 +713,9 @@ extension DataElementCastingExt on DataElement {
   StringDataElement get asStringDataElement => this as StringDataElement;
 
   UntypedDataElement get asUntypedDataElement => this as UntypedDataElement;
+
+  ReferenceDataElement get asReferenceDataElement =>
+      this as ReferenceDataElement;
 }
 
 /// extensions on [DataElement]
@@ -871,6 +929,9 @@ extension DataElementTypeExt on DataElement {
         untyped: (untyped) {
           return 'Object';
         },
+        ref: (ref) {
+          return 'Object';
+        },
       );
 
   /// recursive raw type with nullability sign.
@@ -921,6 +982,9 @@ extension DataElementTypeExt on DataElement {
         untyped: (untyped) {
           return 'Object';
         },
+        ref: (ref) {
+          return 'Object';
+        },
       );
 
   /// string raw type.
@@ -959,5 +1023,6 @@ extension DataElementGenerationExt on DataElement {
         number: (number) => false,
         string: (string) => false,
         untyped: (untyped) => false,
+        ref: (ref) => false,
       );
 }

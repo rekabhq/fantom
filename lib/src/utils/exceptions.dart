@@ -215,6 +215,15 @@ class OpenapiFileDownloadPathRequiredException extends FantomException {
         );
 }
 
+class CannotGenerateReferenceDataElement extends FantomException {
+  CannotGenerateReferenceDataElement()
+      : super(
+          'This exception was thrown because fantom tried to generate a DataElement of type ReferenceDataElement\n'
+          'ReferenceDataElements cannot be generated. if you\'re seeing this error please report this ',
+          io.ExitCode.software.code,
+        );
+}
+
 void handleExceptions(e, stacktrace) {
   if (e is FantomException) {
     Log.error('\n❌❌ ${e.message}');
