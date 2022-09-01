@@ -7,6 +7,7 @@ import 'package:fantom/src/generator/schema/schema_class_generator.dart';
 import 'package:fantom/src/generator/utils/reference_finder.dart';
 import 'package:fantom/src/mediator/mediator/schema/schema_mediator.dart';
 import 'package:fantom/src/reader/model/model.dart';
+import 'package:fantom/src/utils/logger.dart';
 
 class ComponentsGenerator {
   ComponentsGenerator({
@@ -114,6 +115,7 @@ class ComponentsGenerator {
     Map<String, ReferenceOr<Schema>> schemas,
   ) {
     return schemas.map((ref, schema) {
+      Log.debug('#/components/schemas/$ref');
       return MapEntry(
         '#/components/schemas/$ref',
         schemaMediator.convert(
