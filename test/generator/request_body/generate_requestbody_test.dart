@@ -36,7 +36,9 @@ void main() {
     test(
       'test request_body type generation from map of mediaTypes => contents',
       () async {
-        var requestBody = openapi.components!.requestBodies!.values.first.value;
+        final pair = openapi.components!.requestBodies!.entries.first;
+        var requestBody = pair.value.value;
+        var requestBodyRef = '#/components/requestBodies/${pair.key}';
 
         var output = requestBodyClassGenerator.generate(requestBody, 'Pet');
 
@@ -57,6 +59,7 @@ import 'package:equatable/equatable.dart';
                 openApi: openapi,
                 schema: requestBody.content.values.first.schema!,
                 name: 'PetBodyApplicationJson',
+                schemaRef: requestBodyRef,
               ),
             )
             .all
@@ -75,6 +78,7 @@ import 'package:equatable/equatable.dart';
               openApi: openapi,
               schema: schema,
               name: key,
+              schemaRef: '#/components/schemas/$key',
             );
             if (element is ObjectDataElement &&
                 element.format != ObjectDataElementFormat.map) {
