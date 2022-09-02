@@ -32,7 +32,21 @@ class SchemaMediator {
     final bool forceNullable = false,
   }) {
     if (dataElementRegistry.isRegistering(schemaRef)) {
-      return DataElement.reference(ref: schemaRef);
+      bool isNullable = schema.isValue
+          ? forceNullable || schema.value.nullable == true
+          : false;
+
+      if (schema.isReference) {
+        final resolution = openApi.resolveSchema(schema.reference);
+        isNullable = resolution.schema.value.nullable ?? false;
+      }
+
+      return DataElement.reference(
+        ref: schemaRef,
+        name: schemaRef.split('/').last,
+        isNullable: isNullable,
+      );
+
     } else if (dataElementRegistry.isRegistered(schemaRef)) {
       return dataElementRegistry[schemaRef]!;
     }

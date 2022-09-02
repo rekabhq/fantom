@@ -221,6 +221,8 @@ abstract class DataElement {
   /// returns an instance of [UntypedDataElement]
   const factory DataElement.reference({
     required String ref,
+    required String name,
+    required bool isNullable,
   }) = ReferenceDataElement;
 }
 
@@ -582,9 +584,19 @@ class UntypedDataElement with EquatableMixin implements DataElement {
 ///
 /// it means any possible json value ... (?)
 class ReferenceDataElement with EquatableMixin implements DataElement {
+  const ReferenceDataElement({
+    required this.ref,
+    required this.isNullable,
+    required this.name,
+  });
+
   final String ref;
 
-  const ReferenceDataElement({required this.ref});
+  @override
+  final bool isNullable;
+
+  @override
+  final String name;
 
   @override
   List<Object?> get props => [ref];
@@ -593,29 +605,13 @@ class ReferenceDataElement with EquatableMixin implements DataElement {
   String toString() => 'ReferenceDataElement{ref: $ref, }';
 
   @override
-  DefaultValue? get defaultValue => throw Exception(
-        'cannot call defaultValue on an instance of ReferenceDataElement | ref=$ref',
-      );
+  DefaultValue? get defaultValue => null;
 
   @override
-  Enumeration? get enumeration => throw Exception(
-        'cannot call enumeration on an instance of ReferenceDataElement | ref=$ref',
-      );
+  Enumeration? get enumeration => null;
 
   @override
-  bool get isDeprecated => throw Exception(
-        'cannot call isDeprecated on an instance of ReferenceDataElement | ref=$ref',
-      );
-
-  @override
-  bool get isNullable => throw Exception(
-        'cannot call isNullable on an instance of ReferenceDataElement | ref=$ref',
-      );
-
-  @override
-  String get name => throw Exception(
-        'cannot call name on an instance of ReferenceDataElement | ref=$ref',
-      );
+  bool get isDeprecated => false;
 }
 
 /// matching data elements
@@ -700,7 +696,7 @@ extension DataElementCastingExt on DataElement {
 
   bool get isUntypedDataElement => this is UntypedDataElement;
 
-  bool get isReferenceDataElement => this is ReferenceDataElement;
+  bool get isReference => this is ReferenceDataElement;
 
   BooleanDataElement get asBooleanDataElement => this as BooleanDataElement;
 
@@ -855,6 +851,8 @@ extension DataElementTypeExt on DataElement {
   String get type {
     if (isEnumerated) {
       return enumType;
+    } else if (isReference) {
+      return (this as ReferenceDataElement).ref.split('/').last;
     } else {
       return rawType;
     }
