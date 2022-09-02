@@ -38,7 +38,7 @@ class SchemaMediator {
 
       if (schema.isReference) {
         final resolution = openApi.resolveSchema(schema.reference);
-        isNullable =  forceNullable || resolution.schema.value.nullable == true;
+        isNullable = forceNullable || resolution.schema.value.nullable == true;
       }
 
       return DataElement.reference(

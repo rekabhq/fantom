@@ -189,9 +189,9 @@ class SchemaToJsonGenerator {
         untyped: (untyped) {
           return fixedName;
         },
-        ref: (ref) {
-          return '$fixedName.toJson()';
-        },
+        ref: (ref) => ref.isNullable == true
+            ? '$fixedName?.toJson()'
+            : '$fixedName.toJson()',
       );
     }
 

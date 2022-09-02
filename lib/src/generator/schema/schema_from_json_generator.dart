@@ -187,7 +187,9 @@ class SchemaFromJsonGenerator {
         untyped: (untyped) {
           return fixedName;
         },
-        ref: (ref) => '${ref.name}.fromJson($fixedName)',
+        ref: (ref) => ref.isNullable == true
+            ? '$fixedName == null ? null : ${ref.name}.fromJson($fixedName)'
+            : '${ref.name}.fromJson($fixedName)',
       );
     }
 
