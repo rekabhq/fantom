@@ -105,8 +105,8 @@ class ResourceApi{
         for (var model in generationData.models) {
           expect(actualModelFileNames.contains(model.fileName), isTrue);
         }
-        var apiFile = File(
-            '${packageInfo.libDir}/${generationData.apiClass.fileName}');
+        var apiFile =
+            File('${packageInfo.libDir}/${generationData.apiClass.fileName}');
         expect(await apiFile.exists(), isTrue);
       },
     );

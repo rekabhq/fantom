@@ -22,8 +22,6 @@ class FantomPackageInfo {
   final PubspecInfo pubspecInfo;
   final bool recreatePackage;
 
-
-
   String get libDir => '$generationPath/$name/lib/';
 
   String get modelsDirPath => '$libDir/model/';

@@ -16,7 +16,7 @@ extension MapExt<K, V> on Map<K, V> {
   bool? getBool(K key) {
     if (containsKey(key)) {
       Log.debug(this[key]);
-      
+
       if (this[key] is bool) {
         return this[key] as bool;
       } else {

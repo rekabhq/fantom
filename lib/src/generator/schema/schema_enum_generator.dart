@@ -33,22 +33,22 @@ extension SchemaEnumGeneratorExt on SchemaEnumGenerator {
     return [
       if (generateSelf && element.isEnumerated) generate(element),
       ...element.match(
-        boolean: (boolean) => [],
-        object: (object) => [
-          for (final property in object.properties)
-            ..._generateRecursively(property.item),
-          if (object.isAdditionalPropertiesAllowed)
-            ..._generateRecursively(object.additionalProperties!),
-        ],
-        array: (array) => [
-          ..._generateRecursively(array.items),
-        ],
-        integer: (integer) => [],
-        number: (number) => [],
-        string: (string) => [],
-        untyped: (untyped) => [],
-        ref: (ref) => [] //TODO: ref,
-      ),
+          boolean: (boolean) => [],
+          object: (object) => [
+                for (final property in object.properties)
+                  ..._generateRecursively(property.item),
+                if (object.isAdditionalPropertiesAllowed)
+                  ..._generateRecursively(object.additionalProperties!),
+              ],
+          array: (array) => [
+                ..._generateRecursively(array.items),
+              ],
+          integer: (integer) => [],
+          number: (number) => [],
+          string: (string) => [],
+          untyped: (untyped) => [],
+          ref: (ref) => [] //TODO: ref,
+          ),
     ];
   }
 }

@@ -16,7 +16,7 @@ class DataElementRegistry {
   }
 
   void setAsRegistering(String ref) {
-    if(ref.isEmpty) return;
+    if (ref.isEmpty) return;
     _registeringDataElements.add(ref);
   }
 
@@ -26,7 +26,7 @@ class DataElementRegistry {
   }
 
   void register(String ref, DataElement element) {
-    if(ref.isEmpty) return;
+    if (ref.isEmpty) return;
     Log.debug('register dataElement with key=$ref');
     if (!isRegistered(ref)) {
       _registeredDataElements[ref] = element;
