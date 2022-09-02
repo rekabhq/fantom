@@ -41,17 +41,17 @@ class SchemaMediator {
         isNullable = resolution.schema.value.nullable ?? false;
       }
 
+      Log.debug(
+          'OOO returning ReferenceDataElement $schemaRef because it is being created');
+
       return DataElement.reference(
         ref: schemaRef,
         name: schemaRef.split('/').last,
         isNullable: isNullable,
       );
-
     } else if (dataElementRegistry.isRegistered(schemaRef)) {
       return dataElementRegistry[schemaRef]!;
     }
-
-    dataElementRegistry.setAsRegistering(schemaRef);
 
     if (schema.isReference) {
       var schemaReference = schema.reference;
@@ -70,6 +70,8 @@ class SchemaMediator {
       dataElementRegistry.register(schemaRef, dataElement);
       return dataElement;
     } else {
+      dataElementRegistry.setAsRegistering(schemaRef);
+
       final schemaValue = schema.value;
       final type = schemaValue.type;
       final isNullable = forceNullable || schemaValue.nullable == true;
