@@ -38,19 +38,14 @@ class SchemaMediator {
 
       if (schema.isReference) {
         final resolution = openApi.resolveSchema(schema.reference);
-        isNullable = resolution.schema.value.nullable ?? false;
+        isNullable =  forceNullable || resolution.schema.value.nullable == true;
       }
-
-      Log.debug(
-          'OOO returning ReferenceDataElement $schemaRef because it is being created');
 
       return DataElement.reference(
         ref: schemaRef,
         name: schemaRef.split('/').last,
         isNullable: isNullable,
       );
-    } else if (dataElementRegistry.isRegistered(schemaRef)) {
-      return dataElementRegistry[schemaRef]!;
     }
 
     if (schema.isReference) {
